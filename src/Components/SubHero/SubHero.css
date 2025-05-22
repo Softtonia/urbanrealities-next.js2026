@@ -1,0 +1,49 @@
+.featured-wrapper {
+    margin: 40px 0;
+  }
+  
+  .featured-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .featured-title {
+    font-size: 24px;
+    font-weight: 600;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+  }
+  .lines {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .line {
+    height: 3px;
+    background-color: var(--Orange-Red);
+  }
+  
+  .long {
+    width: 80px;
+  }
+  
+  .short {
+    width: 50px;
+  }
+  .thired {
+    width: 30px;
+  }
+  
+  .featured-subtitle {
+    color:var(--Orange-Red);
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 14px;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+  }
+  

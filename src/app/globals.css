@@ -1,0 +1,343 @@
+:root {
+  /* Primary color */
+  --Orange-Red: #FB6A18;
+
+  /* Pure White */
+  --White: #FFFFFF;
+
+  /* Light Background */
+  --Floral-White: #FFF8F3;
+
+  /* Heading and Title */
+  --Eerie-Black: #191919;
+
+  /* Light Background for button */
+  --Misty-Rose: #FFEBE0;
+
+  /* Fill Star Rating */
+  --Selective-Yellow: #FFB800;
+
+  /* Empty star Rating */
+  --Caramel: #FFE195;
+
+  /* Price Badge */
+  --Nyanza: #EDFFE2;
+
+  /* Text and paragraph */
+  --Gray: #808080;
+
+  /* Price color property listing */
+  --Slimy-Green: #3D8B0D;
+
+  --Raisin-Black: #222222;
+}
+
+
+/* -----custom color css class-------- */
+
+.bg-dark-footer {
+  background-color: var(--Raisin-Black);
+}
+.bg-dark {
+  background-color: var(--Eerie-Black);
+}
+.bg-light{
+  background-color: var(--Floral-White);
+}
+.bg-white{
+  background-color: var(--White);
+}
+.text-white {
+  color: var(--White);
+}
+.text-gray {
+  color: var(--Gray);
+}
+.text-dark {
+  color: var(--Eerie-Black);
+}
+.orange-red{
+  background-color:var(--Orange-Red)
+}
+
+
+@font-face {
+  font-family: 'poppins-bold';
+  src: url("/fonts/Poppins-Bold.ttf");
+  font-weight: 700;
+
+}
+@font-face {
+  font-family: 'poppins-semibold';
+  src: url("/fonts/poppins-Semibold.ttf");
+  font-weight: 600;
+  
+}
+@font-face {
+  font-family: 'poppins-medium';
+  src: url("/fonts/Poppins-Medium.ttf");
+  font-weight: 500;
+  
+}
+
+@font-face {
+  font-family: 'poppins-regular';
+  src: url("/fonts/Poppins-Regular.ttf");
+  font-weight: 400;
+  
+}
+
+:root {
+  --font-bold: 'poppins-bold';
+  --font-semibold: 'poppins-semibold';
+  --font-medium: 'poppins-medium';
+  --font-regular: 'poppins-regular';
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-smooth: always;
+}
+
+.container{
+  max-width: 1440px !important;
+  margin: 0 auto;
+}
+
+h1 {
+  font-family: var(--font-bold);
+  font-size: 47.78px !important;
+}
+
+h2 {
+  font-family: var(--font-semibold);
+  font-size: 39.81px;
+}
+
+h3 {
+  font-family:var(--font-medium);
+  font-size: 33.18px;
+}
+
+h4 {
+  font-family:var(--font-medium);
+  font-size: 27.65px;
+}
+
+h5 {
+  font-family:var(--font-medium);
+  font-size: 23.04px;
+}
+
+h6 {
+  font-family:var(--font-medium);
+  font-size: 16.2px;
+}
+
+p {
+  font-family: var(--font-regular);
+  font-weight: 400;
+  font-size: 16px;
+}
+
+small {
+  font-family:var(--font-regular);
+  font-size: 13.33px;
+}
+
+.body-text-12{
+  font-size: 12px;
+  font-family: var(--font-regular);
+}
+.body-text-14{
+  font-size: 14px;
+  font-family: var(--font-regular);
+}
+.body-text-16{
+  font-size: 16px;
+  font-family: var(--font-medium);
+}
+li {
+  font-family:var(--font-regular);
+  font-size: 13px;
+}
+
+span {
+  font-family:var(--font-regular);
+  font-size: 13px;
+}
+
+/* =============all global btn css========  */
+
+.btn {
+  font-family:var(--font-regular);
+  font-size: 13px;
+}
+.btn-subscribe {
+  background-color: var(--Orange-Red)  !important;
+}
+
+.location-heading {
+  font-family: poppins-Medium;
+  font-size: 20px;
+}
+
+/* This button for property listing details */
+.btn-property-detail{
+  background-color: var(--Misty-Rose);
+  color:var(--Orange-Red);
+  padding: 12px 100px;
+  border-radius: 24px;
+  border: none;
+  font-family: var(--font-regular);
+  font-size: 13.33px;
+  text-transform: capitalize;
+
+}
+.btn-property-detail:hover{
+  background-color: var(--White);
+  color:var(--Orange-Red);
+  border: 1px solid var(--Orange-Red);
+  transition: 0.3s ease-in-out;
+}
+.price-tag{
+  background-color: var(--Nyanza);
+  color: var(--Slimy-Green);
+  font-family: var(--font-regular);
+  font-size: 10px;
+border-radius: 24px;
+border: 1px solid var(--Slimy-Green);
+padding: 8px;
+text-transform: capitalize;
+
+}
+.rating-tag{
+  background-color: var(--White);
+  color:var(--Eerie-Black) ;
+  font-family: var(--font-regular);
+  font-size: 10px;
+  border: none;
+  text-transform: capitalize;
+border-radius: 24px;
+padding: 8px;
+}
+.sponser-tag{
+  background-color: var(--Orange-Red);
+  color:var(--White) ;
+  font-family: var(--font-regular);
+  font-size: 10px;
+  border: none;
+  text-transform: capitalize;
+  padding: 2px;
+}
+.top-rated-tag{
+  background-color: var(--Orange-Red);
+  color:var(--White) ;
+  font-family: var(--font-regular);
+  font-size: 10px;
+  border: none;
+  text-transform: capitalize;
+border-radius: 10px;
+padding: 8px;
+}
+.btn-viewproject{
+  background-color: var(--Orange-Red);
+  color: var(--White);
+  font-family: var(--font-regular);
+  font-size: 13.33px;
+  border: none;
+  border-radius: 5px;
+  text-transform: capitalize;
+  padding: 10px 20px; 
+}
+.btn-viewproject:hover{
+  background-color: var(--White);
+  color: var(--Orange-Red);
+  border:1px solid var(--Orange-Red);
+transition: 0.3s ease-in-out;
+}
+.btn-secondary-wt{
+  background-color: transparent;
+  color: var(--Orange-Red);
+  font-family: var(--font-regular);
+  font-size: 13.33px;
+  border: none;
+text-transform: capitalize;
+padding: 10px 20px;
+}
+
+
+/* --------------------- */
+
+
+.location-heading{
+  font-family: var(--font-medium);
+  font-size: 20px;
+}
+
+
+/* All buttons are here... */
+
+.btn-property{
+  background-color: var(--Orange-Red);
+  color: var(--White);
+  padding: 10px 20px;
+  border: none;
+  font-size: 13.33px;
+}
+
+.navbar{
+  color: var(--White);
+  padding: 10px 20px;
+  border: none;
+  font-size: 13.33px;
+}
+
+.badge-property{
+  background-color: var(--White);
+  color: var(--Orange-Red);
+  padding: 1px 5px;
+  border-radius: 2px;
+  border: none;
+  font-size: 10px;
+}
+
+.navbar-menu{
+  color: var(--White);
+  display: flex;
+  font-size: 13.33px;
+  list-style: none;
+  background-color: var(--);
+}
+
+
+.btn-property {
+  background-color: var(--Orange-Red);
+  color: var(--White);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 14px;
+  border: none;
+}
+
+.badge-property {
+  background-color: var(--White);
+  color: var(--Orange-Red);
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.translate-x-0 {
+  transform: translateX(0) !important;
+}
+
+.translate-x-n100 {
+  transform: translateX(-100%) !important;
+}
+
+

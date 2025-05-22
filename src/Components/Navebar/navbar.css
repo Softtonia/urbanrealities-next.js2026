@@ -1,0 +1,16 @@
+.navbar {
+  background-color: var(--Eerie-Black);
+  color: var(--White);
+  padding: 10px 20px;
+}
+
+.nav-items-name{
+  font-size: 14px !important;
+  font-family: var(--font-regular) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.5;
+}
+
+.icon-color{
+  color: var(--Orange-Red);
+}

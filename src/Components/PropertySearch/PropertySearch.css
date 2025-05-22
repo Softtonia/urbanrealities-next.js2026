@@ -1,0 +1,196 @@
+.search-container {
+  display: flex;
+  max-width: 900px;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 50px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px 20px;
+  background-color: var(--white);
+  margin-top: 10px;
+}
+
+.dropdown .dropdown-toggle {
+  cursor: pointer;
+}
+
+.full-click-area {
+  cursor: pointer;
+  margin: 0;
+  min-width: 180px;
+}
+.dropdown-toggle {
+  width: 100%;
+  justify-content: flex-start;
+}
+.nav-text {
+  margin: 0;
+  font-family: var(--font-regular);
+  font-size: 14px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dropdown-toggle i {
+  color: var(--Orange-Red);
+  margin: 0;
+}
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item:active {
+  background-color: var(--white) !important;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background-color: transparent;
+  font-family: var(--font-regular);
+  font-size: 14px;
+}
+.Add-city {
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-family: var(--font-regular);
+  font-size: 14px;
+  background-color: var(--Misty-Rose);
+  font-weight: 500;
+}
+
+.vertical-line {
+  border-left: 1px solid var(--Gray);
+  height: 30px;
+  margin: 0;
+}
+
+.custom-dropdown {
+  width: 330px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--white) !important;
+  transform: translate(5px, 40px) !important;
+}
+.custom-dropdown-2 {
+  width: 510px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--white) !important;
+  transform: translate(5px, 40px) !important;
+}
+.custom-dropdown-3 {
+  width: 250px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--white) !important;
+  transform: translate(5px, 40px) !important;
+}
+.search-btn {
+  font-family: var(--font-regular);
+  font-size: 13.33px;
+  border-radius: 30px;
+  padding: 8px 20px;
+}
+.custom-dropdown i {
+  background-color: var(--Misty-Rose);
+  font-size: 20px;
+  padding: 8px 10px;
+  border-radius: 100%;
+}
+
+.accordion-button {
+  background-color: var(--white);
+  color: var(--Eerie-Black);
+  text-decoration: none !important;
+  box-shadow: none; /* optional */
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: var(--white);
+  color: var(--Eerie-Black);
+}
+.accordion-button::after {
+  filter: brightness(0) saturate(100%) invert(23%) sepia(98%) saturate(3080%)
+    hue-rotate(356deg) brightness(101%) contrast(104%);
+}
+
+.accordion-button:not(.collapsed)::after {
+  filter: brightness(0) saturate(100%) invert(23%) sepia(98%) saturate(3080%)
+    hue-rotate(356deg) brightness(101%) contrast(104%);
+}
+/* Remove top border from Residential */
+.accordion-item:first-child {
+  border-top: none !important;
+}
+
+/* Commercial ka bottom border hata diya */
+#propertyAccordion .accordion-item:nth-child(3) {
+  border-bottom: none !important;
+}
+
+/* Optional: side borders bhi hata do (agar chahiye) */
+#propertyAccordion .accordion-item {
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.radio-input {
+  display: none;
+}
+
+.radio-label {
+  display: inline-block;
+  padding: 8px 16px;
+  margin: 5px 5px 0 0;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Selected/checked state */
+.radio-input:checked + .radio-label {
+  background-color: var(--Misty-Rose);
+  color: var(--Eerie-Black);
+  border-color: var(--Misty-Rose)
+}
+
+.price-text input.form-control {
+  border-radius: 25px;
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  box-shadow: none;
+  text-align: center;
+}
+.price-section {
+  display: none;
+}
+.price-section.active {
+  display: block;
+}
+.price-list1 {
+  padding-left: 10px;
+}
+
+.price-container {
+  position: relative;
+  height: 200px;
+  width: 100%;
+  gap: 10px;
+  overflow-y: auto;
+}
+.price-section {
+  display: none;
+  position: absolute;
+  top: 0;
+  width: 40%;
+  max-height: 100%;
+  background: var(--white);
+  z-index: 10;
+}
+#minSection {
+  left: 0;
+}
+#maxSection {
+  right: 0;
+}

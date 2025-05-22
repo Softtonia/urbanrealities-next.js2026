@@ -1,0 +1,40 @@
+.popularcitiessection{
+    width: 100%;
+    height: 617px;
+    padding: 80px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+.popularcitiesmainbody{
+    width: 1440px;
+    height: 288px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+
+    /* background-color: aqua; */
+}
+.placecard{
+    width: 338px;
+    height: 128px;
+    border: 1px solid var(--Orange-Red);
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.placeimagediv{
+    width: 109px;
+    aspect-ratio: 1/1;
+}
+.placetitle{
+    font-family: 'poppins-medium';
+    font-weight: 19px;
+
+}
+.placeproperties{
+    font-family: 'poppins-regular';
+}
