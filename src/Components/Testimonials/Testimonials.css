@@ -79,7 +79,7 @@
 }
 
 .name {
-    font-family: 'poppins-semibold';
+    font-family: var(--font-semibold);
     font-size: 23px;
 }
 
