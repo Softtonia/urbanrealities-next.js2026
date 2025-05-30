@@ -1,0 +1,75 @@
+.popularcitiessection{
+width: 100%;
+padding: 80px 20px;
+display: flex;
+flex-direction: column;
+justify-content: space-around;
+align-items: center;
+}
+.popularcitiesmainbody{
+width: 1440px;
+height: 288px;
+display: flex;
+justify-content: space-between;
+gap: 20px;
+flex-wrap: wrap;
+padding-top: 60px;
+
+}
+.placecard{
+width: 338px;
+height: 128px;
+border: 1px solid var(--Orange-Red);
+border-radius: 12px;
+display: flex;
+justify-content: space-around;
+align-items: center;
+}
+.placeimagediv{
+width: 109px;
+aspect-ratio: 1/1;
+}
+.placetitle{
+font-family: 'poppins-medium';
+font-weight: 19px;
+
+}
+.placeproperties{
+font-family: 'poppins-regular';
+}
+@media (max-width:992px) {
+.popularcitiessection{
+padding: 60px 10px;
+}
+.popularcitiesmainbody{
+width: 100%;
+height: auto;
+display: flex;
+align-items: center;
+}
+.placecard{
+width: 338px;
+height: 128px;
+margin-bottom: 20px;
+}
+
+}
+
+@media (max-width: 576px) {
+.popularcitiessection{
+padding: 40px 10px;
+}
+/* .popularcitiesmainbody{
+width: 100%;
+height: auto;
+display: flex;
+flex-direction: column;
+align-items: center;
+} */
+/* .placecard{
+width: 90%;
+height: auto;
+margin-bottom: 20px;
+} */
+
+}
