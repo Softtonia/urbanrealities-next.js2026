@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @keyframes slideFadeInLeft {
   0% {
     opacity: 0;
@@ -32,6 +33,18 @@
 .nav a {
   color: var(--Eerie-Black);
   margin: 0;
+=======
+.nav{
+    justify-content: center;
+    margin-top: 40px;
+    font-family: var(--font-medium);
+    font-size: 18px;
+}
+
+.nav a{
+    color:var(--Eerie-Black);
+    margin:0;
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 .nav-link {
   position: relative;
@@ -41,7 +54,11 @@
   text-decoration: none;
   transition: color 0.3s;
 }
+<<<<<<< HEAD
 .nav-link:hover {
+=======
+.nav-link:hover{
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   color: var(--Eerie-Black);
 }
 .nav-link::after {
@@ -52,7 +69,11 @@
   height: 4px;
   border-radius: 100px;
   width: 0;
+<<<<<<< HEAD
   background-color:var(--Orange-Red);
+=======
+  background-color: var(--Orange-Red);
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   transition: width 0.3s ease;
 }
 
@@ -63,6 +84,7 @@
 .nav-link.active::after {
   width: 100%;
 }
+<<<<<<< HEAD
 
 @media (max-width: 768px) {
   .nav {
@@ -76,3 +98,5 @@
 display: none; 
  }
 }
+=======
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058

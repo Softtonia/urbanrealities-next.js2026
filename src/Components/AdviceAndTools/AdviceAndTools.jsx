@@ -33,7 +33,11 @@ const AdviceAndTools = () => {
       <SubHero subHeroHeading={"Advice And Tools"} subHeroText={""} />
       <div className="maincontainer">
         {cardData.map((card, index) => (
+<<<<<<< HEAD
           <div className='advicecard m-0 mb-2' key={index}>
+=======
+          <div className='advicecard' key={index}>
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
             <div className="cardinner">
               <div className="iconsection">
                 <img src={card.imgSrc} alt={card.title} />

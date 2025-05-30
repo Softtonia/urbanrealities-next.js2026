@@ -3,18 +3,29 @@
 }
 
 .maincontainer {
+<<<<<<< HEAD
     max-width: 1440px;
+=======
+    max-width: 1434px;
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
     margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
+<<<<<<< HEAD
     padding-top: 60px;
+=======
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 
 .advicecard {
     width: 100%;
+<<<<<<< HEAD
     max-width: 335px;
+=======
+    max-width: 336px;
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
     aspect-ratio: 1/1;
     display: flex;
     justify-content: center;
@@ -85,6 +96,7 @@
         padding: 40px 15px;
     }
     
+<<<<<<< HEAD
     /* .advicecard {
         max-width: 100%;
     } */
@@ -113,3 +125,9 @@
 }
   
  
+=======
+    .advicecard {
+        max-width: 100%;
+    }
+}
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058

@@ -7,23 +7,35 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 10px 20px;
   background-color: var(--white);
+<<<<<<< HEAD
   margin-top: 20px;
+=======
+  margin-top: 10px;
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 
 .dropdown .dropdown-toggle {
   cursor: pointer;
 }
 
+<<<<<<< HEAD
 
 .full-click-area {
   cursor: pointer;
   margin: 0;
 min-width: 180px;
+=======
+.full-click-area {
+  cursor: pointer;
+  margin: 0;
+  min-width: 180px;
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 .dropdown-toggle {
   width: 100%;
   justify-content: flex-start;
 }
+<<<<<<< HEAD
 .nav-text{
  margin: 0;
    font-family: var(--font-regular);
@@ -32,16 +44,29 @@ min-width: 180px;
   display: flex;
   justify-content: space-between;
   align-items: center;  
+=======
+.nav-text {
+  margin: 0;
+  font-family: var(--font-regular);
+  font-size: 14px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 .dropdown-toggle i {
   color: var(--Orange-Red);
   margin: 0;
+<<<<<<< HEAD
   width: 40px;
   height: 40px;
 }
 .icon-custom{
   color: var(--Orange-Red);
 
+=======
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 .dropdown-item:hover,
 .dropdown-item:focus,
@@ -49,8 +74,13 @@ min-width: 180px;
   background-color: var(--white) !important;
 }
 
+<<<<<<< HEAD
 .search-input{
    border: none;
+=======
+.search-input {
+  border: none;
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   outline: none;
   box-shadow: none;
   background-color: transparent;
@@ -60,8 +90,13 @@ min-width: 180px;
 .Add-city {
   padding: 4px 10px;
   border-radius: 50px;
+<<<<<<< HEAD
  font-family: var(--font-regular);
  font-size: 14px;
+=======
+  font-family: var(--font-regular);
+  font-size: 14px;
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   background-color: var(--Misty-Rose);
   font-weight: 500;
 }
@@ -72,6 +107,7 @@ min-width: 180px;
   margin: 0;
 }
 
+<<<<<<< HEAD
 .custom-dropdown{
   width: 330px;
   padding: 10px;
@@ -112,11 +148,49 @@ margin-bottom: 15px;
 .accordion-button {
   background-color: var(--white); 
   color: var(--Eerie-Black);          
+=======
+.custom-dropdown {
+  width: 330px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--white) !important;
+  transform: translate(5px, 40px) !important;
+}
+.custom-dropdown-2 {
+  width: 510px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--white) !important;
+  transform: translate(5px, 40px) !important;
+}
+.custom-dropdown-3 {
+  width: 250px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--white) !important;
+  transform: translate(5px, 40px) !important;
+}
+.search-btn {
+  font-family: var(--font-regular);
+  font-size: 13.33px;
+  border-radius: 30px;
+  padding: 8px 20px;
+}
+.custom-dropdown i {
+  background-color: var(--Misty-Rose);
+  font-size: 20px;
+  padding: 8px 10px;
+  border-radius: 100%;
+}
+
+.accordion-button {
+  background-color: var(--white);
+  color: var(--Eerie-Black);
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   text-decoration: none !important;
   box-shadow: none; /* optional */
 }
 
 .accordion-button:not(.collapsed) {
+<<<<<<< HEAD
   background-color:var(--white); 
   color: var(--Eerie-Black);            
 }
@@ -126,6 +200,19 @@ margin-bottom: 15px;
 
 .accordion-button:not(.collapsed)::after {
   filter: brightness(0) saturate(100%) invert(23%) sepia(98%) saturate(3080%) hue-rotate(356deg) brightness(101%) contrast(104%);
+=======
+  background-color: var(--white);
+  color: var(--Eerie-Black);
+}
+.accordion-button::after {
+  filter: brightness(0) saturate(100%) invert(23%) sepia(98%) saturate(3080%)
+    hue-rotate(356deg) brightness(101%) contrast(104%);
+}
+
+.accordion-button:not(.collapsed)::after {
+  filter: brightness(0) saturate(100%) invert(23%) sepia(98%) saturate(3080%)
+    hue-rotate(356deg) brightness(101%) contrast(104%);
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 /* Remove top border from Residential */
 .accordion-item:first-child {
@@ -143,7 +230,10 @@ margin-bottom: 15px;
   border-right: none !important;
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 .radio-input {
   display: none;
 }
@@ -162,6 +252,7 @@ margin-bottom: 15px;
 .radio-input:checked + .radio-label {
   background-color: var(--Misty-Rose);
   color: var(--Eerie-Black);
+<<<<<<< HEAD
   border-color: #f5c2c2;
 }
 
@@ -174,6 +265,12 @@ margin-bottom: 15px;
     overflow-y: auto;
 }
  .price-text input.form-control {
+=======
+  border-color: var(--Misty-Rose)
+}
+
+.price-text input.form-control {
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   border-radius: 25px;
   padding: 8px 16px;
   border: 1px solid #ccc;
@@ -181,6 +278,7 @@ margin-bottom: 15px;
   box-shadow: none;
   text-align: center;
 }
+<<<<<<< HEAD
 .price-list1{
 padding-left: 10px;
 
@@ -195,12 +293,34 @@ padding-left: 10px;
 
 
 /* .price-section {
+=======
+.price-section {
+  display: none;
+}
+.price-section.active {
+  display: block;
+}
+.price-list1 {
+  padding-left: 10px;
+}
+
+.price-container {
+  position: relative;
+  height: 200px;
+  width: 100%;
+  gap: 10px;
+  overflow-y: auto;
+}
+.price-section {
+  display: none;
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   position: absolute;
   top: 0;
   width: 40%;
   max-height: 100%;
   background: var(--white);
   z-index: 10;
+<<<<<<< HEAD
 } */
 
 /* #minSection{
@@ -265,3 +385,12 @@ padding-left: 10px;
   padding: 8px 10px !important;
   }
 }
+=======
+}
+#minSection {
+  left: 0;
+}
+#maxSection {
+  right: 0;
+}
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058

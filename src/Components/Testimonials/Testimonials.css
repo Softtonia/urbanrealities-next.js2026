@@ -3,6 +3,7 @@
     padding: 80px 20px;
     background-color: var(--Floral-White);
 }
+<<<<<<< HEAD
 .testimonials-title {
     font-family: var(--font-semibold);
     font-size: 32px;
@@ -10,6 +11,9 @@
     text-align: center;
     margin-bottom: 20px;
 }
+=======
+
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 .testimonialsmainbody {
     width: 100%;
     max-width: 1440px;
@@ -286,4 +290,8 @@
 
 .navigationbtn.left-btn img {
     transform: rotate(180deg);
+<<<<<<< HEAD
 }*/
+=======
+} */
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058

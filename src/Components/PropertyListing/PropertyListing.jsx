@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client"
 
 import React, { useEffect,useState } from 'react';
@@ -22,10 +23,33 @@ const PropertyCard = ({ property }) => (
     <div className="property-content">
       <div className="property-title body-text-14 bord-bottom">
         {/* {property.titleSegments.map((segment, i) => (
+=======
+import React from 'react';
+import './PropertyListing.css';
+
+const properties = Array.from({ length: 8 }, (_, index) => ({
+  id: index,
+  titleSegments: ['3BHK', 'Builder', 'Floor', '1700sqft.'],
+  location: 'Ernakulam, Kerala',
+  builder: 'Ganesh Property',
+  status: 'Ready To Move',
+  carpetArea: '1720 sqft',
+  imageUrl: '/propertylistingimage.png',
+}));
+
+const PropertyCard = ({ property }) => (
+  <div className="property-card">
+    <img src={property.imageUrl} alt="Property" className="property-image" />
+
+    <div className="property-content">
+      <div className="property-title body-text-14 bord-bottom">
+        {property.titleSegments.map((segment, i) => (
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
           <span key={i}>
             {segment}
             {i < property.titleSegments.length - 1 && <span className="pipe-divider"> | </span>}
           </span>
+<<<<<<< HEAD
         ))} */}
       </div>
 
@@ -37,6 +61,19 @@ const PropertyCard = ({ property }) => (
       <div className="property-details body-text-14 bord-bottom">
         <span className='property-status-1'>{property.status || 'Ready To Move'}</span>
         <span className='property-carpet-area'>Carpet Area {property.carpetArea || '1720 sqft'}</span>
+=======
+        ))}
+      </div>
+
+      <div className="property-info-row bord-bottom">
+        <div className="property-location">{property.location}</div>
+        <div className="property-builder">{property.builder}</div>
+      </div>
+
+      <div className="property-details body-text-14 bord-bottom">
+        <span>{property.status}</span>
+        <span>Carpet Area {property.carpetArea}</span>
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
       </div>
     </div>
 
@@ -45,6 +82,7 @@ const PropertyCard = ({ property }) => (
 );
 
 const PropertyListing = () => {
+<<<<<<< HEAD
   const [propertyList,setPropertyList] =useState([])
   useEffect(()=>{
     const fetchpropertlist= async()=>{
@@ -68,6 +106,16 @@ const PropertyListing = () => {
             <PropertyCard key={property.id} property={property} />
           ))}
           </div>
+=======
+  return (
+    <div className='container'>
+
+      <div className="property-listing-scroll">
+        <div className="property-listing">
+          {properties.map((property) => (
+            <PropertyCard key={property.id} property={property} />
+          ))}
+>>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
         </div>
       </div>
     </div>
