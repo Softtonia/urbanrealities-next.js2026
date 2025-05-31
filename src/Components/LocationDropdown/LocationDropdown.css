@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 .text-state{
     font-family: var(--font-regular);
 }
@@ -6,13 +5,6 @@
     font-size: 14px;
     color: var(--Eerie-Black);
     font-family: var(--font-semibold);
-=======
-
-.city-name{
-    font-size: 14px;
-    color: var(--Gray);
-    font-family: var(--font-regular);
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 
 .city-text{
@@ -69,8 +61,4 @@
   to {
     transform: translateY(0%);
   }
-<<<<<<< HEAD
 } 
-=======
-}
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058

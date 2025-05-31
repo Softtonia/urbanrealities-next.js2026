@@ -10,29 +10,18 @@
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
-<<<<<<< HEAD
     padding-top: 60px;
 }
 
 .propservicescard{
     /* width: 100%; */
-=======
-}
-
-.propservicescard{
-    width: 100%;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
     max-width: 338px;
     height: auto;
     min-height: 353px;
 }
 
 .propservicesimgdiv{
-<<<<<<< HEAD
     /* width: 100%; */
-=======
-    width: 100%;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
     height: 187px;
     border: 1px solid var(--Orange-Red);
     border-radius: 20px 20px 0 0;
@@ -79,7 +68,6 @@
         padding: 40px 15px;
     }
     
-<<<<<<< HEAD
  
 }
 @media (max-width: 576px) {
@@ -99,9 +87,4 @@
     .propservicesdesc {
         font-size: 14px;
     }
-=======
-    .propservicescard {
-        max-width: 100%;
-    }
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }

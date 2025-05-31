@@ -50,11 +50,7 @@ const PopularCities = () => {
   return (
     <div className="popularcitiessection">
       <div className="container">
-<<<<<<< HEAD
         <SubHero subHeroHeading={"Explore popular Cities"} subHeroText={"TOP CITIES"} />
-=======
-        <SubHero subHeroHeading={"Explore Real Estate in popular Cities"} subHeroText={"TOP CITIES"} />
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 
         <div className="popularcitiesmainbody">
         
@@ -77,35 +73,3 @@ const PopularCities = () => {
 
 export default PopularCities
 
-<<<<<<< HEAD
-=======
-
-// import React from 'react'
-// import './PopularCities.css'
-// import '../../app/globals.css'
-// import SubHero from '../SubHero/SubHero'
-
-// const PopularCities = () => {
-//   return (
-//     <div className="popularcitiessection">
-//       <div className="container">
-//           <SubHero subHeroHeading={"Explore Real Estate in popular Cities"} subHeroText={"TOP CITIES"} />
-
-//           <div className="popularcitiesmainbody">
-//             <div className="placecard">
-//               <div className="placeimagediv">
-//                 <img src="/delhi_image.png" alt="delhi_image.png" />
-//               </div>
-//               <div className="placetext">
-//                 <h6 className="placetitle">Delhi/NCR</h6>
-//                 <h6 className="placeproperties">162,000+ Properties</h6>
-//               </div>
-//             </div>
-//           </div>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default PopularCities
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058

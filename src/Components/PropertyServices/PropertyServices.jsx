@@ -19,21 +19,13 @@ const propertyServicesData = [
   {
     image: "/interior-design-image.png",
     title: "Interior Design",
-<<<<<<< HEAD
     description: "Bibendum a pulvinar sem. Nunc um a pulvinar sem. Nunc endum a pulvinar sem. Nunc um a pulvinar sem.",
-=======
-    description: "BibendBibendum a pulvinar sem. Nunc um a pulvinar sem. Nunc endum a pulvinar sem. Nunc um a pulvinar sem.",
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
     link: "#"
   },
   {
     image: "/interior-design-image.png",
     title: "Interior Design",
-<<<<<<< HEAD
     description: "Bibendum a pulvinar sem. Nunc um a pulvinar sem. Nunc endum a pulvinar sem. Nunc um a pulvinar sem.",
-=======
-    description: "BibendBibendum a pulvinar sem. Nunc um a pulvinar sem. Nunc endum a pulvinar sem. Nunc um a pulvinar sem.",
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
     link: "#"
   }
 ]
@@ -46,11 +38,7 @@ const PropertyServices = () => {
         <SubHero subHeroHeading={"Property Services"} subHeroText={""} />
         <div className="propservicescontainer">
           {propertyServicesData.map((service, index) => (
-<<<<<<< HEAD
             <div className="propservicescard m-0" key={index}>
-=======
-            <div className="propservicescard" key={index}>
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
               <div className="propservicesimgdiv">
                 <img src={service.image} alt={service.title} />
               </div>

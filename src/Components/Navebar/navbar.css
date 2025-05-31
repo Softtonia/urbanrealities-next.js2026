@@ -13,7 +13,6 @@
 
 .icon-color{
   color: var(--Orange-Red);
-<<<<<<< HEAD
 }
 .icon-nav-loc{
   color: var(--Orange-Red);
@@ -44,6 +43,4 @@
   .icon-color, .icon-nav-loc {
     font-size: 18px;
   }
-=======
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }

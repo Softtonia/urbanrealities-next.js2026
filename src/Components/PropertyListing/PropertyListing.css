@@ -1,16 +1,12 @@
 .property-listing-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-<<<<<<< HEAD
   scroll-snap-type: x mandatory; 
    padding: 60px 0;
 
 }
 .property-container{
   padding-top: 80px ;
-=======
-  scroll-snap-type: x mandatory;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 
 .property-listing-scroll::-webkit-scrollbar {
@@ -26,11 +22,7 @@
   gap: 20px;
   justify-content: space-between;
   width: 100%;
-<<<<<<< HEAD
   max-width: 1440px;
-=======
-  max-width: 1280px;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   margin: 0 auto;
 }
 
@@ -41,7 +33,6 @@
   border-radius: 12px;
   transition: 0.3s ease;
   background: #fff;
-<<<<<<< HEAD
   
 }
 .property-card:hover {
@@ -117,8 +108,6 @@
 .pipe-divider {
   color: rgba(128, 128, 128, 0.5);
   margin: 0 4px;
-=======
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 
 @media (max-width: 1279px) {
@@ -169,78 +158,4 @@
     width: 240px;
     max-width: 240px;
   }
-<<<<<<< HEAD
 }
-=======
-}
-
-.property-card:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.property-image {
-  width: 100%;
-  aspect-ratio: 336 / 168;
-  object-fit: cover;
-}
-
-.property-content {
-  font-size: 14px;
-}
-
-.property-title {
-  font-weight: 500;
-  margin-bottom: 4px;
-  color: #333;
-}
-
-.property-info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 4px;
-}
-
-.property-location {
-  font-size: 12px;
-  color: #666;
-}
-
-.property-builder {
-  color: var(--Orange-Red);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.property-details {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-}
-
-.btn-more-details {
-  margin: 10px 10px;
-  text-align: center;
-  background-color: #ffe6d5;
-  padding: 8px 0;
-  color: var(--Orange-Red);
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-}
-
-.btn-more-details:hover {
-  background-color: #ffd5b5;
-}
-
-.bord-bottom {
-  padding: 10px 10px;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.248);
-}
-
-.pipe-divider {
-  color: rgba(128, 128, 128, 0.5);
-  margin: 0 4px;
-}
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058

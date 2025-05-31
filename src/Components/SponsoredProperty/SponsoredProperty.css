@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 .sponsored-property-row-container{
    display: flex;
   flex-wrap: nowrap;
@@ -7,171 +6,73 @@
   width: 100%;
   padding: 0 0 80px 0;
 }
-=======
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 .sponsored-property-card {
   display: flex;  
   border: 1px solid var(--Orange-Red);
   border-radius: 5px;
   overflow: hidden;
   width: 460px;
-<<<<<<< HEAD
   margin: 0;
   height: 168px;
-=======
-  height: 150px;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   margin-bottom: 10px;
 }
 
 .sponsored-property-image-container {
   position: relative;
   width: 178px;
-<<<<<<< HEAD
   height: 168px;
   flex-shrink: 0;
  margin: 0;
 
-=======
-  height: 150px;
-  flex-shrink: 0;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 
 .sponsored-property-image {
   width: 100%;
-<<<<<<< HEAD
   aspect-ratio: 178 / 168;
   object-fit: contain;
-=======
-  aspect-ratio: 178 / 150;
-  object-fit: cover;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 
 .sponser-tag {
   position: absolute; 
   top: 10px; 
   left: 0; 
-<<<<<<< HEAD
 }
 .sponsored-property-content {
   padding: 20px 48px 32px 20px;
   /* flex-grow: 1;  */
   margin: 0;
-=======
-  z-index: 2;
-}
-
-.sponsored-label {
-  position: absolute;
-  top: 10px;
-  left: 0;
-  background-color: var(--Orange-Red);
-  color: var(--White);
-  padding: 4px 8px;
-  font-size: 12px;
-  font-weight: 600;
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
-  z-index: 1;
-}
-
-.sponsored-property-content {
-  padding: 20px;
-  flex-grow: 1; 
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-<<<<<<< HEAD
-=======
-  padding: 10px;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   font-size: 14px;
 }
 
 .sponsored-property-content-inner {
   width: 100%;
-<<<<<<< HEAD
   height: 100%;
   padding: 0;
 }
 
 .sponsored-property-title {
   margin-bottom: 5px;
-=======
-}
-
-.sponsored-property-title {
-  margin-bottom: 4px;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 
 .sponsored-property-info-row {
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
 justify-content: flex-start;}
 
 .sponsored-property-description, .sponsored-property-location {
   font-weight: var(--font-regular);
   margin: 0;
   margin-bottom: 5px;
-=======
-  align-items: flex-start;
-}
-
-.sponsored-property-description, .sponsored-property-location {
-  font-weight: var(--font-regular);
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 
 .sponsored-property-price {
   color: var(--Slimy-Green);
   font-weight: var(--font-regular);
-<<<<<<< HEAD
   margin: 0;
-=======
-  margin-top: 4px;
-}
-
-.sponsored-bord-bottom {
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.248);
-  margin-bottom: 10px;
-}
-
-.sponsored-pipe-divider {
-  color: rgba(128, 128, 128, 0.5);
-  margin: 0 4px;
-}
-
-.sponsored-btn-more-details {
-  display: block;
-  width: calc(100% - 20px);
-  margin: 0 10px 10px 10px;
-  text-align: center;
-  background-color: #ffe6d5;
-  padding: 8px 0;
-  color: #ff7a00;
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-}
-
-.sponsored-btn-more-details:hover {
-  background-color: #ffd5b5;
-}
-
-.sponsored-property-row-container {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 20px 0;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 
 @media (max-width: 1200px) {
@@ -181,11 +82,6 @@ justify-content: flex-start;}
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     gap: 15px;
-<<<<<<< HEAD
-=======
-    padding: 0 15px;
-    margin: 20px 0;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
     justify-content: flex-start;
   }
 
@@ -195,7 +91,6 @@ justify-content: flex-start;}
 
   .sponsored-property-card {
     flex: 0 0 auto;
-<<<<<<< HEAD
     scroll-snap-align: start;
   }
 
@@ -230,14 +125,4 @@ justify-content: flex-start;}
   z-index:2 !important;
 } */
 
-=======
-    width: 300px;
-    scroll-snap-align: start;
-    margin-right: 0;
-  }
-
-  .sponsored-property-card:last-child {
-    margin-right: 15px;
-  }
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }

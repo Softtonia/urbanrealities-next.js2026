@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 "use client"
 
 import React, { useEffect , useState } from 'react';
@@ -6,12 +5,6 @@ import './Testimonials.css';
 import '../../app/globals.css';
 import SubHero from '../SubHero/SubHero';
 import axios from 'axios';
-=======
-import React from 'react';
-import './Testimonials.css';
-import '../../app/globals.css';
-import SubHero from '../SubHero/SubHero';
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 
 const testimonialsData = [
   {
@@ -35,7 +28,6 @@ const testimonialsData = [
 ];
 
 const Testimonials = () => {
-<<<<<<< HEAD
   const [reviews,setReviews] = useState([])
 
 
@@ -59,19 +51,11 @@ const Testimonials = () => {
         <h6 className='testimonials-title text-center'>Where Every Home Tells a Story: </h6>
         <SubHero 
           subHeroHeading={`Discover the Experiences of Our Satisfied Clients.”`} 
-=======
-  return (
-    <div className='testimonialsssection'>
-      <div className="container">
-        <SubHero 
-          subHeroHeading={`“Where Every Home Tells a Story: Discover the Experiences of Our Satisfied Clients.”`} 
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
           subHeroText={""} 
         />
         
         <div className="testimonialsmainbody">
           <div className="testimonialscarddiv">
-<<<<<<< HEAD
       {reviews.map((testimonial, index) => (
         <div className="testimonialcard" key={index}>
           <div className="ratingdiv">
@@ -97,31 +81,6 @@ const Testimonials = () => {
       ))}
     </div>
 
-=======
-            {testimonialsData.map((testimonial, index) => (
-              <div className="testimonialcard" key={index}>
-                <div className="ratingdiv">
-                  <div className="starsdiv">
-                    {[...Array(5)].map((_, i) => (
-                      <img 
-                        key={i} 
-                        className='testimonialstar' 
-                        src={i < testimonial.rating ? "/yellowstar.png" : "/graystar.png"} 
-                        alt="star" 
-                      />
-                    ))}
-                  </div>
-                  <h6 className='ratingtext'>{testimonial.text}</h6>
-                </div>
-                <div className="persondiv">
-                  <h6 className="name">{testimonial.name}</h6>
-                  <h6 className="location">{testimonial.location}</h6>
-                </div>
-              </div>
-            ))}
-          </div>
-
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
           <div className="navigationdiv">
             <button className='navigationbtn left-btn'>
               <img src="/arrowvector.svg" alt="left arrow" />

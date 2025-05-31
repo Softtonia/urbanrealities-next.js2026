@@ -100,7 +100,6 @@ html {
   text-rendering: optimizeLegibility;
   font-smooth: always;
 }
-<<<<<<< HEAD
 *{
    margin: 0 auto;
   padding: 0;
@@ -112,12 +111,6 @@ html {
   padding: 0;
   box-sizing: border-box;
 
-=======
-
-.container{
-  max-width: 1440px !important;
-  margin: 0 auto;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 }
 
 h1 {
@@ -162,7 +155,6 @@ small {
 }
 
 .body-text-12{
-<<<<<<< HEAD
   font-size: 12px !important;
   font-family: var(--font-regular);
 }
@@ -172,17 +164,6 @@ small {
 }
 .body-text-16{
   font-size: 16px !important;
-=======
-  font-size: 12px;
-  font-family: var(--font-regular);
-}
-.body-text-14{
-  font-size: 14px;
-  font-family: var(--font-regular);
-}
-.body-text-16{
-  font-size: 16px;
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   font-family: var(--font-medium);
 }
 li {
@@ -366,7 +347,6 @@ padding: 10px 20px;
   transform: translateX(-100%) !important;
 }
 
-<<<<<<< HEAD
 .project-details{
   width: 500px;
   height: 600px;
@@ -383,6 +363,4 @@ padding: 10px 20px;
 .mobile-side-menu.open {
   transform: translateX(0);
 }
-=======
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
 

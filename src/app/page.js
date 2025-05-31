@@ -1,5 +1,4 @@
 import Image from "next/image";
-<<<<<<< HEAD
 import SearchPropertySection from "@/Components/SearchPropertySection/SearchPropertySection";
 import PropertyListing from "@/Components/PropertyListing/PropertyListing";
 import FeaturesCopy from "@/Components/FeaturesCopy/FeaturesCopy";
@@ -29,13 +28,5 @@ export default function Home() {
       <PopularCities />
       <Testimonials />
     </>
-=======
-
-export default function Home() {
-  return (
-   <>
-   
-   </>
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   );
 }

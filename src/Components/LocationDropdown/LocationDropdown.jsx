@@ -1,15 +1,8 @@
 import React from 'react';
-<<<<<<< HEAD
 import { FaMapMarkerAlt } from "react-icons/fa";
 import "../LocationDropdown/LocationDropdown.css"
 const cities = {
   nearbyCities: ["New Delhi", "Gurgaon", "Greater Noida", "Ghaziabad", "Mumbai"],
-=======
-import { FaMapMarkerAlt } from 'react-icons/fa';
-import "../LocationDropdown/LocationDropdown.css"
-const cities = {
-  nearbyCities: ["New Delhi", "Gurgaon", "Greater Noida", "Ghaziabad"],
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
   popularCities: [
     "Ahmedabad", "Bangalore", "Beyond Thane", "Chennai", "Gurgaon", "Hyderabad",
     "Indore", "Jaipur", "Kolkata", "Lucknow", "Mumbai", "Navi Mumbai", "New Delhi",
@@ -33,11 +26,7 @@ const renderCityGrid = (citiesArray) => {
   for (let i = 0; i < citiesArray.length; i += columnsPerRow) {
     const rowItems = citiesArray.slice(i, i + columnsPerRow);
     rows.push(
-<<<<<<< HEAD
       <div className="row " key={i}>
-=======
-      <div className="row mb-1" key={i}>
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
         {rowItems.map((city, index) => (
           <div className="col" key={index}>
             <div className="city-text">{city}</div>
@@ -56,7 +45,6 @@ const LocationDropdown = () => {
       className="position-absolute bg-white shadow rounded border p-4"
       style={{ width: '900px', height: '90vh', top: '100%', left: 0, zIndex: 1000, overflowY: 'auto' }}
     >
-<<<<<<< HEAD
       <div className=" text-dark d-flex align-items- mb-3">
 
   <FaMapMarkerAlt className=" m-0 mt-1 p-0 " />
@@ -67,35 +55,17 @@ const LocationDropdown = () => {
 
 
       <div className="">
-=======
-      <h6 className="  text-black mb-3 d-flex  align-items-center gap-2">
-  <FaMapMarkerAlt className="orange-red" />
-  INDIA
-</h6>
-
-
-      <div className="mb-3">
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
         <div className="city-name mb-2">Nearby Cities</div>
         {renderCityGrid(cities.nearbyCities)}
       </div>
 
-<<<<<<< HEAD
       <div className="mb-2">
         <div className="city-name mb-2 mt-2">Popular Cities</div>
-=======
-      <div className="mb-3">
-        <div className="city-name mb-2">Popular Cities</div>
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
         {renderCityGrid(cities.popularCities)}
       </div>
 
       <div>
-<<<<<<< HEAD
         <div className="city-name mb-2 mt-2">Other Cities</div>
-=======
-        <div className="city-name mb-2">Other Cities</div>
->>>>>>> affe8e027f897efe58cb99ae907056a34ed7d058
         {renderCityGrid(cities.otherCities)}
       </div>
     </div>
