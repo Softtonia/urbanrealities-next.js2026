@@ -1,9 +1,7 @@
 "use client";
-import Link from "next/link";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import "./PropertySearch.css";
-// import FilterMobileSearch from "../../app/FilterMobile/page";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { IoLocation } from "react-icons/io5";
 import { FaMapPin, FaHouse, FaRupeeSign, FaBuilding } from "react-icons/fa6";
@@ -13,7 +11,10 @@ export default function PropertySearch() {
 const [activePriceType, setActivePriceType] = useState("min");
 const [minPrice, setMinPrice] = useState("");
 const [maxPrice, setMaxPrice] = useState("");
-
+  const router = useRouter();
+ const handleViewProject = () => {
+   router.push("/FilterMobile");
+  };
   useEffect(() => {
     const dropdownMenus = document.querySelectorAll(".dropdown-menu");
     dropdownMenus.forEach((menu) => {
@@ -76,6 +77,7 @@ const [maxPrice, setMaxPrice] = useState("");
   }
     console.log(`${activePriceType.toUpperCase()} Price Selected:`, price);
   };
+  
 
   return (
     <>
@@ -386,20 +388,20 @@ const [maxPrice, setMaxPrice] = useState("");
 
       {/* Mobile view */}
       <div className="search-container-small">
-        <div className="small-search">
+        <div className="small-search"onClick={handleViewProject}>
           <IoLocation className={"icon-custom"} />
           <input
             type="text"
             placeholder="Search By City, Locality, Project"
             className="search-text"
+            readOnly
+ 
           />
         </div>
         <div className="small-btn">
-          <Link href="/FilterMobileSearch">
-            <div className="btn circle-btn text-white">
+            <div className="btn circle-btn text-white "onClick={handleViewProject}>
               <IoSearch />
             </div>
-          </Link>
         </div>
       </div>  
   </>

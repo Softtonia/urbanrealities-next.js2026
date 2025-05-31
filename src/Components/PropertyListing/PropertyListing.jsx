@@ -2,6 +2,7 @@
 
 import React, { useEffect,useState } from 'react';
 import './PropertyListing.css';
+import { useRouter } from 'next/navigation';
 import SubHero from './../SubHero/SubHero';
 import axios from 'axios';
 // const properties = Array.from({ length: 8 }, (_, index) => ({
@@ -14,7 +15,7 @@ import axios from 'axios';
 //   imageUrl: '/propertylistingimage.png',
 // }));
 
-const PropertyCard = ({ property }) => (
+const PropertyCard = ({ property,handleViewProject }) => (
   
   <div className="property-card">
     <img src={property.featured_image || 'https://cdn.pixabay.com/photo/2017/04/24/13/37/architecture-2256489_1280.jpg'} alt="Property" className="property-image" />
@@ -40,12 +41,16 @@ const PropertyCard = ({ property }) => (
       </div>
     </div>
 
-    <div className="btn-property-detail btn-more-details">More Details</div>
+    <div className="btn-property-detail btn-more-details"onClick={handleViewProject} >More Details</div>
   </div>
 );
 
 const PropertyListing = () => {
   const [propertyList,setPropertyList] =useState([])
+  const router = useRouter()
+  const handleViewProject = () => {
+    router.push("/Breadcrum");
+  };
   useEffect(()=>{
     const fetchpropertlist= async()=>{
     try {
@@ -65,7 +70,8 @@ const PropertyListing = () => {
       <div className="property-listing-scroll">
         <div className="property-listing">
           {propertyList.map((property) => (
-            <PropertyCard key={property.id} property={property} />
+            <PropertyCard key={property.id} property={property}
+             handleViewProject={handleViewProject} />
           ))}
           </div>
         </div>

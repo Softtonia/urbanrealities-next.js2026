@@ -30,6 +30,8 @@
   --Slimy-Green: #3D8B0D;
 
   --Raisin-Black: #222222;
+
+  --off-white: #F8F8F8;
 }
 
 
@@ -164,6 +166,14 @@ small {
 }
 .body-text-16{
   font-size: 16px !important;
+  font-family: var(--font-medium);
+}
+.body-text-rg16{
+  font-size: 16px !important;
+  font-family: var(--font-regular);
+}
+.body-text-20{
+  font-size: 20px !important;
   font-family: var(--font-medium);
 }
 li {
