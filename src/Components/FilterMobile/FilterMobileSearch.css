@@ -1,0 +1,112 @@
+.filter-sidebar {
+  width: 100%;
+  min-width: 360px;
+  padding: 16px;
+  background: var(--white);
+  border-radius: 8px;
+  overflow-y: auto;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.back-btn, .reset-btn {
+  background: none;
+  border: none;
+  color: var(--Orange-Red);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.filter-section,
+.filter-tags-group {
+  margin-bottom: 20px;
+}
+
+.filter-section label,
+.filter-tags-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-family:var(--font-medium);
+  line-height: 100%;
+}
+.input-location,select {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var( --Spanish-Gray);
+}
+
+.budget-dropdowns {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.range-slider {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-span {
+  background: var(--Cultured);
+  border:1px solid var(--Spanish-Gray);
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.filter-span.selected {
+  background: var(--Orange-Red);
+  color: white;
+}
+
+.checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.check-label {
+margin-left: 5px;
+}
+
+.see-all {
+  color: var(--Orange-Red);
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 8px;
+}
+
+.filter-switches {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.view-btn {
+  width: 100%;
+  background: var(--Orange-Red);
+  color: #fff;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-top: 10px;
+}

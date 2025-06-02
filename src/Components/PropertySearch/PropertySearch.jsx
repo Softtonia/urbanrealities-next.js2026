@@ -8,12 +8,12 @@ import { FaMapPin, FaHouse, FaRupeeSign, FaBuilding } from "react-icons/fa6";
 import { IoSearch } from "react-icons/io5";
 
 export default function PropertySearch() {
-const [activePriceType, setActivePriceType] = useState("min");
-const [minPrice, setMinPrice] = useState("");
-const [maxPrice, setMaxPrice] = useState("");
+  const [activePriceType, setActivePriceType] = useState("min");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const router = useRouter();
- const handleViewProject = () => {
-   router.push("/FilterMobile");
+  const handleViewsearch = () => {
+    router.push("/FilterMobile");
   };
   useEffect(() => {
     const dropdownMenus = document.querySelectorAll(".dropdown-menu");
@@ -39,7 +39,11 @@ const [maxPrice, setMaxPrice] = useState("");
     const bhkOptions = document.getElementById("bhkOptions");
 
     const handleCheckboxChange = () => {
-      if (flatCheckbox?.checked || villaCheckbox?.checked || plotCheckbox?.checked) {
+      if (
+        flatCheckbox?.checked ||
+        villaCheckbox?.checked ||
+        plotCheckbox?.checked
+      ) {
         bhkOptions.style.display = "flex";
       } else {
         bhkOptions.style.display = "none";
@@ -62,25 +66,47 @@ const [maxPrice, setMaxPrice] = useState("");
   };
 
   const priceOptions = [
-    "₹5 Lac", "₹10 Lac", "₹20 Lac", "₹30 Lac", "₹40 Lac", "₹50 Lac",
-    "₹60 Lac", "₹70 Lac", "₹80 Lac", "₹90 Lac", "₹1 Cr", "₹1.2 Cr",
-    "₹1.4 Cr", "₹1.6 Cr", "₹1.8 Cr", "₹2 Cr", "₹2.3 Cr", "₹2.6 Cr",
-    "₹3 Cr", "₹3.5 Cr", "₹4 Cr", "₹4.5 Cr", "₹5 Cr", "₹10 Cr", "₹20 Cr"
+    "₹5 Lac",
+    "₹10 Lac",
+    "₹20 Lac",
+    "₹30 Lac",
+    "₹40 Lac",
+    "₹50 Lac",
+    "₹60 Lac",
+    "₹70 Lac",
+    "₹80 Lac",
+    "₹90 Lac",
+    "₹1 Cr",
+    "₹1.2 Cr",
+    "₹1.4 Cr",
+    "₹1.6 Cr",
+    "₹1.8 Cr",
+    "₹2 Cr",
+    "₹2.3 Cr",
+    "₹2.6 Cr",
+    "₹3 Cr",
+    "₹3.5 Cr",
+    "₹4 Cr",
+    "₹4.5 Cr",
+    "₹5 Cr",
+    "₹10 Cr",
+    "₹20 Cr",
   ];
 
   const selectPrice = (price, e) => {
     e.stopPropagation();
-      if (activePriceType === "min") {
-    setMinPrice(price);
-  } else {
-    setMaxPrice(price);
-  }
+    if (activePriceType === "min") {
+      setMinPrice(price);
+    } else {
+      setMaxPrice(price);
+    }
     console.log(`${activePriceType.toUpperCase()} Price Selected:`, price);
   };
-  
 
   return (
     <>
+    <div className="container">
+    <div className="searchbar-cts d-flex justify-content-center align-items-center">
       <div className="search-container">
         {/* Location Dropdown */}
         <div className="dropdown full-click-area">
@@ -326,21 +352,27 @@ const [maxPrice, setMaxPrice] = useState("");
         <div className="vertical-line"></div>
 
         {/* Budget Dropdown */}
-      <div className="dropdown full-click-area">
-          <div className="dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+        <div className="dropdown full-click-area">
+          <div
+            className="dropdown-toggle d-flex align-items-center gap-2"
+            data-bs-toggle="dropdown"
+          >
             <FaRupeeSign className="icon-custom" />
             <div className="nav-text">
               <span className="text-muted nav-text">Budget</span>
             </div>
           </div>
 
-          <div className="dropdown-menu custom-dropdown-3" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="dropdown-menu custom-dropdown-3"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="price-text d-flex gap-2 mb-2 body-text-14">
               <input
                 type="text"
                 className="form-control"
                 placeholder="Min Price"
-                 value={minPrice}
+                value={minPrice}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleTogglePrice("min");
@@ -359,20 +391,42 @@ const [maxPrice, setMaxPrice] = useState("");
             </div>
 
             <div className="price-container d-flex body-text-12 text-muted">
-              <div className={`price-section ${activePriceType === "min" ? "active" : ""}`}>
+              <div
+                className={`price-section ${
+                  activePriceType === "min" ? "active" : ""
+                }`}
+              >
                 <div className="price-list">
-                  <span className="toggle-link" onClick={() => handleTogglePrice("min")}>Min</span>
+                  <span
+                    className="toggle-link"
+                    onClick={() => handleTogglePrice("min")}
+                  >
+                    Min
+                  </span>
                   {priceOptions.map((price, index) => (
-                    <div key={index} onClick={(e) => selectPrice(price, e)}>{price}</div>
+                    <div key={index} onClick={(e) => selectPrice(price, e)}>
+                      {price}
+                    </div>
                   ))}
                 </div>
               </div>
 
-              <div className={`price-section ${activePriceType === "max" ? "active" : ""}`}>
+              <div
+                className={`price-section ${
+                  activePriceType === "max" ? "active" : ""
+                }`}
+              >
                 <div className="price-list">
-                  <span className="toggle-link" onClick={() => handleTogglePrice("max")}>Max</span>
+                  <span
+                    className="toggle-link"
+                    onClick={() => handleTogglePrice("max")}
+                  >
+                    Max
+                  </span>
                   {priceOptions.map((price, index) => (
-                    <div key={index} onClick={(e) => selectPrice(price, e)}>{price}</div>
+                    <div key={index} onClick={(e) => selectPrice(price, e)}>
+                      {price}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -385,25 +439,29 @@ const [maxPrice, setMaxPrice] = useState("");
           Search
         </button>
       </div>
-
+      </div>
+</div>
       {/* Mobile view */}
-      <div className="search-container-small">
-        <div className="small-search"onClick={handleViewProject}>
-          <IoLocation className={"icon-custom"} />
-          <input
-            type="text"
-            placeholder="Search By City, Locality, Project"
-            className="search-text"
-            readOnly
- 
-          />
-        </div>
+      <div className="container">
+      <div className="search-container-small" onClick={handleViewsearch}>
+        <IoLocation className="icon-custom me-2" />
+        <input
+          type="text"
+          className="search-text"
+          // size={80}
+          placeholder="Search By City, Locality, Project"
+        />
         <div className="small-btn">
-            <div className="btn circle-btn text-white "onClick={handleViewProject}>
-              <IoSearch />
-            </div>
+          <div
+            className="btn circle-btn text-white "
+            onClick={handleViewsearch}
+          >
+            <IoSearch />
+          </div>
         </div>
+      </div>
+
       </div>  
-  </>
+    </>
   );
 }

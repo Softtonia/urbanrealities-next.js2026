@@ -15,7 +15,7 @@ import axios from 'axios';
 //   imageUrl: '/propertylistingimage.png',
 // }));
 
-const PropertyCard = ({ property,handleViewProject }) => (
+const PropertyCard = ({ property,handleViewProjectlist }) => (
   
   <div className="property-card">
     <img src={property.featured_image || 'https://cdn.pixabay.com/photo/2017/04/24/13/37/architecture-2256489_1280.jpg'} alt="Property" className="property-image" />
@@ -41,14 +41,14 @@ const PropertyCard = ({ property,handleViewProject }) => (
       </div>
     </div>
 
-    <div className="btn-property-detail btn-more-details"onClick={handleViewProject} >More Details</div>
+    <div className="btn-property-detail btn-more-details"onClick={handleViewProjectlist} >More Details</div>
   </div>
 );
 
 const PropertyListing = () => {
   const [propertyList,setPropertyList] =useState([])
   const router = useRouter()
-  const handleViewProject = () => {
+  const handleViewProjectlist = () => {
     router.push("/Breadcrum");
   };
   useEffect(()=>{
@@ -56,6 +56,7 @@ const PropertyListing = () => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_ENDPOINT}api/get-all-properties-listing`);
       const data = response.data;
+      console.log(" Property Data Fetched:", data);
       setPropertyList(data)
     } catch (error) {
       console.error("Error fetching Property Lists:", error);
@@ -71,7 +72,7 @@ const PropertyListing = () => {
         <div className="property-listing">
           {propertyList.map((property) => (
             <PropertyCard key={property.id} property={property}
-             handleViewProject={handleViewProject} />
+             handleViewProjectlist={handleViewProjectlist} />
           ))}
           </div>
         </div>

@@ -1,155 +1,225 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
+import "./FilterMobileSearch.css";
+import { IoArrowBackSharp } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 
- const FilterMobileSearch =() =>{
-  const [budgetMin, setBudgetMin] = useState("");
-  const [budgetMax, setBudgetMax] = useState("");
-  const [possession, setPossession] = useState([]);
-  const [subProperty, setSubProperty] = useState([]);
-  const [salesType, setSalesType] = useState([]);
-  const [postedBy, setPostedBy] = useState([]);
 
-  const toggleSelection = (stateSetter, state, value) => {
-    state.includes(value)
-      ? stateSetter(state.filter((v) => v !== value))
-      : stateSetter([...state, value]);
+const FilterMobileSearch = ( ) => {
+  const [verified, setVerified] = useState(false);
+  const [certified, setCertified] = useState(false);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [amenities, setAmenities] = useState([]);
+
+  const router = useRouter();
+  const resetFilters = () => {
+    setVerified(false);
+    setCertified(false);
+    setSelectedTags([]);
+    setAmenities([]);
+  };
+const openLocalities =()=>{
+  router.push("/filterpropertyresult")
+}
+
+const goBack = () => {
+  if (typeof window !== "undefined") {
+    if (window.history.length > 1) {
+      window.history.back(); 
+    } else {
+      router.push("/"); 
+    }
+  }
+};
+
+
+  const toggleTag = (tag) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
   };
 
-  return (
-    <div className="p-4 text-sm font-medium max-w-md mx-auto">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-base font-semibold">Filters</h2>
-        <button className="text-orange-500 text-sm">Reset</button>
-      </div>
+  const renderInputSection = (label, placeholder) => (
+    <div className="filter-section" onClick={openLocalities}  >
+      <label className="">{label}</label>
+      <input
+        type="text"
+        className="input-location body-text-14"
+        placeholder={placeholder}
+        readOnly
+      />
+    </div>
+  );
 
-      {/* City/Locality */}
-      <div className="mb-4">
-        <label className="block mb-1 text-gray-600">
-          Select City/Localities
-        </label>
-        <input
-          type="text"
-          placeholder="+ Enter city , Location"
-          className="w-full border rounded-md px-3 py-2 placeholder-gray-500"
-        />
+  const renderBudgetSection = () => (
+    <div className="filter-section">
+      <label>Budget</label>
+      <div className="budget-dropdowns">
+        <select>
+          <option>Min</option>
+        </select>
+        <span>to</span>
+        <select>
+          <option>Max</option>
+        </select>
       </div>
+      <input type="range" className="range-slider" />
+    </div>
+  );
 
-      {/* Budget */}
-      <div className="mb-4">
-        <label className="block mb-1 text-gray-600">Budget</label>
-        <div className="flex items-center gap-2 mb-2">
-          <select
-            className="border px-2 py-1 rounded-md w-full"
-            value={budgetMin}
-            onChange={(e) => setBudgetMin(e.target.value)}
+  const renderTagSection = (label, tags) => (
+    <div className="filter-tags-group border-bottom">
+      <label>{label}</label>
+      <div className="tag-row">
+        {tags.map((tag) => (
+          <span
+            key={tag}
+            className={`filter-span ${
+              selectedTags.includes(tag) ? "selected" : ""
+            }`}
+            onClick={() => toggleTag(tag)}
           >
-            <option>Min</option>
-            <option>10L</option>
-            <option>20L</option>
-          </select>
-          <span>to</span>
-          <select
-            className="border px-2 py-1 rounded-md w-full"
-            value={budgetMax}
-            onChange={(e) => setBudgetMax(e.target.value)}
-          >
-            <option>Max</option>
-            <option>50L</option>
-            <option>1Cr</option>
-          </select>
-        </div>
-        <input type="range" className="w-full accent-orange-500" />
-      </div>
-
-      {/* Possession Status */}
-      <div className="mb-4">
-        <label className="block mb-1 text-gray-600">Possession Status</label>
-        <div className="flex flex-wrap gap-2">
-          {["Ready To Move", "Under Construction"].map((item) => (
-            <button
-              key={item}
-              onClick={() => toggleSelection(setPossession, possession, item)}
-              className={`px-3 py-1 border rounded-full ${
-                possession.includes(item)
-                  ? "bg-orange-100 border-orange-500"
-                  : ""
-              }`}
-            >
-              + {item}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Sub Property Types */}
-      <div className="mb-4">
-        <label className="block mb-1 text-gray-600">Sub Property Types</label>
-        <div className="flex flex-wrap gap-2">
-          {[
-            "Flat",
-            "House/ Villas",
-            "Plot/Land",
-            "Office",
-            "Shop",
-            "Farm House",
-            "Godown",
-            "Commercial",
-            "Industrials Shed/Land",
-          ].map((item) => (
-            <button
-              key={item}
-              onClick={() => toggleSelection(setSubProperty, subProperty, item)}
-              className={`px-3 py-1 border rounded-full ${
-                subProperty.includes(item)
-                  ? "bg-orange-100 border-orange-500"
-                  : ""
-              }`}
-            >
-              + {item}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Sales Types */}
-      <div className="mb-4">
-        <label className="block mb-1 text-gray-600">Sales Types</label>
-        <div className="flex flex-wrap gap-2">
-          {["New", "Resale"].map((item) => (
-            <button
-              key={item}
-              onClick={() => toggleSelection(setSalesType, salesType, item)}
-              className={`px-3 py-1 border rounded-full ${
-                salesType.includes(item)
-                  ? "bg-orange-100 border-orange-500"
-                  : ""
-              }`}
-            >
-              + {item}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Posted By */}
-      <div className="mb-4">
-        <label className="block mb-1 text-gray-600">Posted By</label>
-        <div className="flex flex-wrap gap-2">
-          {["Owner", "Broker", "Agent"].map((item) => (
-            <button
-              key={item}
-              onClick={() => toggleSelection(setPostedBy, postedBy, item)}
-              className={`px-3 py-1 border rounded-full ${
-                postedBy.includes(item) ? "bg-orange-100 border-orange-500" : ""
-              }`}
-            >
-              + {item}
-            </button>
-          ))}
-        </div>
+            + {tag}
+          </span>
+        ))}
       </div>
     </div>
   );
-}
-export default FilterMobileSearch
+  const toggleAmenity = (option) => {
+    setAmenities((prev) =>
+      prev.includes(option)
+        ? prev.filter((a) => a !== option)
+        : [...prev, option]
+    );
+  };
+
+  const renderCheckboxSection = (label, options) => (
+    <div className="filter-section">
+      <label>{label}</label>
+      <div className="checkbox-row">
+        {options.map((opt) => (
+          <label key={opt}>
+            <input
+              type="checkbox"
+              checked={amenities.includes(opt)}
+              onChange={() => toggleAmenity(opt)}
+            />
+            <span className="check-label">{opt} </span>
+          </label>
+        ))}
+      </div>
+      {label === "Amenities" && <span className="see-all body-text-14">See all</span>}
+    </div>
+  );
+
+  const renderToggleSwitch = (label, state, setState) => (
+    <div className="filter-switches ">
+      <label
+        className="form-check-label  body-text-16 m-0"
+        htmlFor={`switch-${label.replace(/\s+/g, "-")}`}
+      >
+        {label}
+      </label>
+      <div className="form-check form-switch m-0">
+        <input
+          className="form-check-input"
+          type="checkbox"
+          checked={state}
+          onChange={() => setState(!state)}
+          role="switch"
+          id={`switch-${label.replace(/\s+/g, "-")}`}
+        />
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="filter-sidebar m-0">
+      <div className="container">
+        <div className="filter-header">
+          <button className="back-btn" onClick={goBack}>
+            <IoArrowBackSharp />
+          </button>
+          <span>Filters</span>
+          <button className="reset-btn" onClick={resetFilters}>
+            Reset
+          </button>
+        </div>
+
+        {renderInputSection(
+          "Select City/ Localities",
+          "+ Enter city , Location"
+        )}
+        {renderBudgetSection()}
+        {renderTagSection("Possession Status", [
+          "Ready To Move",
+          "Under Construction",
+        ])}
+        {renderTagSection("Sub Property Types", [
+          "Flat",
+          "House/ Villas",
+          "Plot/Land",
+          "Office",
+          "Shop",
+          "Farm House",
+          "Godown",
+          "Commercial",
+          "Industrials Shed/Land",
+        ])}
+        {renderTagSection("Sales Types", ["New", "Resale"])}
+        {renderTagSection("Posted By", ["Owner", "Broker", "Agent"])}
+        {renderTagSection("Ownership", [
+          "Freehold",
+          "leasehold",
+          "Co-operative Society",
+        ])}
+        {renderTagSection("Furnishing", [
+          "Furnished",
+          "Semi-Furnished",
+          "Unfurnished",
+        ])}
+        {renderCheckboxSection("Amenities", [
+          "Lift",
+          "Park",
+          "Power Backup",
+          "Kids Play Area",
+          "Club House",
+        ])}
+        {renderTagSection("Housing Facing", [
+          "East",
+          "North",
+          "North-West",
+          "West",
+          "South-East",
+          "South",
+          "South-West",
+          "North-East",
+        ])}
+        {renderTagSection("Floor", [
+          "Basement",
+          "Ground",
+          "1-4",
+          "5-8",
+          "9-10",
+          "11-15",
+        ])}
+        {renderTagSection("Bathrooms", ["1", "2", "3", "4", "5"])}
+        {renderTagSection("Properties in Location", [
+          "Upcoming Localities",
+          "Premium Localities",
+          "Developed Localities",
+        ])}
+        {renderToggleSwitch("Verified Property", verified, setVerified)}
+        {renderToggleSwitch(
+          "Posted By Certified Agents",
+          certified,
+          setCertified
+        )}
+
+        <button className="view-btn body-text-16">View 744 Properties</button>
+      </div>
+    </div>
+  );
+};
+
+export default FilterMobileSearch;
