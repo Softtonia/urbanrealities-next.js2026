@@ -40,7 +40,8 @@ const PropertygalleryBreadcrum = () => {
       </div>
 
       <div className="gallery">
-        <div className="container d-flex">
+        <div className="container">
+          <div className="gallery-content">
           <div className="main-image">
             <img
               src="/living.png"
@@ -59,13 +60,16 @@ const PropertygalleryBreadcrum = () => {
               className="project-img"
             />
             <div className="overlay-view d-flex">
+            <div className="side-sub-image">
               <img
                 src="/patio.png"
                 alt="img"
                 width={274}
                 height={227}
                 className="project-thumb-img"
-              />
+              />          
+                </div>
+
               <div className="view-more">
                 <img
                   src="/pool.png"
@@ -80,6 +84,7 @@ const PropertygalleryBreadcrum = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

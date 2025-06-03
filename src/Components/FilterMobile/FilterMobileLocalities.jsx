@@ -1,7 +1,8 @@
 "use client";
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { IoArrowBackSharp } from "react-icons/io5";
 import "./FilterMobileLocalities.css";
+
 const cities = {
   nearbyCities: [
     "New Delhi",
@@ -100,20 +101,24 @@ const FilterMobileLocalities = ({ onDone, onBack }) => {
     setSelectedCity(city);
   };
 
-  
   const handleDoneClick = () => {
-    if (selectedCity && onDone) {
-      onDone(selectedCity); 
+  if (selectedCity) {
+    localStorage.setItem("selectedCity", selectedCity);  // Save to localStorage
+    if (onDone) {
+      onDone(selectedCity);
     }
-  };
+  } else {
+    alert("Please select a city before proceeding");
+  }
+};
 
   return (
     <div className="location-container">
       {/* Header */}
       <div className="location-header">
-        <div className="location-header-left"   onClick={onBack}>
+        <div className="location-header-left" onClick={onBack || (() => window.history.back())}>
           <IoArrowBackSharp size={20} />
-          <span className="location-title">Add Location</span>
+          <span className="location-title body-text-16">Add Location</span>
         </div>
         <span className="location-done" onClick={handleDoneClick}>
           Done
@@ -123,19 +128,19 @@ const FilterMobileLocalities = ({ onDone, onBack }) => {
       {/* Search */}
       <input
         type="text"
-        className="location-search"
+        className="location-search body-text-14"
         placeholder="Enter City, Location"
         value={selectedCity}
-        readOnly
+        onChange={(e) => setSelectedCity(e.target.value)}
       />
 
       {/* Popular Cities */}
       <div className="city-section">
-        <div className="city-section-title">Popular City</div>
+        <div className="city-section-title body-text-16">Popular City</div>
         <div className="city-list">
           {cities.popularCities.map((city, index) => (
             <div
-              className={`city-name ${selectedCity === city ? "selected" : ""}`}
+              className={`loc-city-name body-text-rg16 ${selectedCity === city ? "selected" : ""}`}
               key={index}
               onClick={() => handleCityClick(city)}
             >
@@ -147,11 +152,11 @@ const FilterMobileLocalities = ({ onDone, onBack }) => {
 
       {/* Other Cities */}
       <div className="city-section">
-        <div className="city-section-title">Other City</div>
+        <div className="city-section-title body-text-16">Other City</div>
         <div className="city-list">
           {cities.otherCities.map((city, index) => (
             <div
-              className={`city-name ${selectedCity === city ? "selected" : ""}`}
+              className={`loc-city-name body-text-rg16 ${selectedCity === city ? "selected" : ""}`}
               key={index}
               onClick={() => handleCityClick(city)}
             >

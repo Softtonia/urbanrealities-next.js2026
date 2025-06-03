@@ -20,14 +20,10 @@
 
 .location-title {
   margin-left: 8px;
-  font-size: 15px;
-  font-weight: 500;
 }
 
 .location-done {
-  font-size: 14px;
-  color: #f26522;
-  font-weight: 500;
+  color: var(--Orange-Red);
 }
 
 /* Search Box */
@@ -36,28 +32,33 @@
   padding: 10px 0;
   margin-top: 16px;
   border: none;
-  border-bottom: 1px solid #ddd;
-  font-size: 14px;
+  border-bottom: 1px solid var(--Cultured);
   background-color: transparent;
   color: #000;
+}
+input:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 /* Section Title */
 .city-section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #000;
+  color: var(--Eerie-Black);
   margin-top: 20px;
   margin-bottom: 8px;
 }
 
 /* City List */
 .city-list {
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--Cultured);
+}
+.loc-city-name.selected {
+  /* font-weight: 600;  */
+  color: var(--Orange-Red); 
 }
 
-.city-name {
+.loc-city-name {
   padding: 12px 0;
-  border-bottom: 1px solid #eee;
-  font-size: 15px;
+  border-bottom: 1px solid var(--Cultured);
 }
+

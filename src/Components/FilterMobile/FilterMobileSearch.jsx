@@ -1,37 +1,49 @@
 "use client";
 import React, { useState } from "react";
+import { useEffect } from "react";
 import "./FilterMobileSearch.css";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
 
-
-const FilterMobileSearch = ( ) => {
+const FilterMobileSearch = () => {
+  const [city, setCity] = useState("");
   const [verified, setVerified] = useState(false);
   const [certified, setCertified] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const [amenities, setAmenities] = useState([]);
+  const [budgetRange, setBudgetRange] = useState([5, 2000]); // ₹5L to ₹20Cr
 
   const router = useRouter();
+
+  useEffect(() => {
+    const storedCity = localStorage.getItem("selectedCity");
+    if (storedCity) setCity(storedCity);
+  }, []);
+
   const resetFilters = () => {
     setVerified(false);
     setCertified(false);
     setSelectedTags([]);
     setAmenities([]);
+    setCity("");
+    localStorage.removeItem("selectedCity");
   };
-const openLocalities =()=>{
-  router.push("/filterpropertyresult")
-}
 
-const goBack = () => {
-  if (typeof window !== "undefined") {
-    if (window.history.length > 1) {
-      window.history.back(); 
-    } else {
-      router.push("/"); 
+  const openLocalities = () => {
+    router.push("/filterpropertyresult");
+  };
+
+  const goBack = () => {
+    if (typeof window !== "undefined") {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        router.push("/");
+      }
     }
-  }
-};
-
+  };
 
   const toggleTag = (tag) => {
     setSelectedTags((prev) =>
@@ -40,30 +52,105 @@ const goBack = () => {
   };
 
   const renderInputSection = (label, placeholder) => (
-    <div className="filter-section" onClick={openLocalities}  >
+    <div className="filter-section" onClick={openLocalities}>
       <label className="">{label}</label>
       <input
         type="text"
         className="input-location body-text-14"
         placeholder={placeholder}
-        readOnly
+        // readOnly
+        value={city}
       />
     </div>
   );
+  {
+    renderInputSection(
+      "Select City/ Localities",
+      city || "+ Enter city , Location"
+    );
+  }
+
+  const budgetOptions = [
+    5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300,
+    400, 500, 600, 700, 800, 900, 1000, 1500, 2000,
+  ];
+  const formatBudget = (value) => {
+    if (value >= 100) {
+      return `₹${value / 100} Cr`;
+    }
+    return `₹${value} L`;
+  };
+
+  // const renderBudgetSection = () => (
+  //   <div className="filter-section">
+  //     <label>Budget</label>
+  //     <div className="budget-dropdowns">
+  //       <select>
+  //         <option>Min</option>
+  //       </select>
+  //       <span>to</span>
+  //       <select>
+  //         <option>Max</option>
+  //       </select>
+  //     </div>
+  //     <input type="range" className="range-slider" />
+  //   </div>
+  // );
 
   const renderBudgetSection = () => (
-    <div className="filter-section">
+    <div className="filter-sectionone">
       <label>Budget</label>
+
+      {/* Dropdowns */}
       <div className="budget-dropdowns">
-        <select>
-          <option>Min</option>
-        </select>
+        <div className="dropdown">
+        <select 
+         className="budget-select"
+          value={budgetRange[0]}
+          onChange={(e) =>
+            setBudgetRange([parseInt(e.target.value), budgetRange[1]])
+          }
+        >
+          {budgetOptions.map((val) => (
+            <option key={val} value={val}>
+              {formatBudget(val)}
+            </option>
+          ))}
+        </select>       </div>
+
         <span>to</span>
-        <select>
-          <option>Max</option>
+        <select
+                 className="budget-select"
+          value={budgetRange[1]}
+          onChange={(e) =>
+            setBudgetRange([budgetRange[0], parseInt(e.target.value)])
+          }
+        >
+          {budgetOptions.map((val) => (
+            <option key={val} value={val}>
+              {formatBudget(val)}
+            </option>
+          ))}
         </select>
       </div>
-      <input type="range" className="range-slider" />
+
+      {/* Slider */}
+      <div className="range-slider-container mt-2">
+        <Slider
+          range
+          min={5}
+          max={2000}
+          step={5}
+          value={budgetRange}
+          onChange={(value) => setBudgetRange(value)}
+          trackStyle={[{ backgroundColor:"var(--Orange-Red)" }]}
+          handleStyle={[
+            { border: " 4px solid var(--Orange-Red)", backgroundColor: "var(--White)" },
+            { border: " 4px solid var(--Orange-Red)", backgroundColor: "var(--White)" },
+          ]}
+          railStyle={{ backgroundColor:"var(--Gray)" }}
+        />
+      </div>
     </div>
   );
 
@@ -108,7 +195,9 @@ const goBack = () => {
           </label>
         ))}
       </div>
-      {label === "Amenities" && <span className="see-all body-text-14">See all</span>}
+      {label === "Amenities" && (
+        <span className="see-all body-text-14">See all</span>
+      )}
     </div>
   );
 

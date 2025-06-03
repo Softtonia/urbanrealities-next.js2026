@@ -1,12 +1,23 @@
-import React from 'react';
-import FilterMobileLocalities from '@/Components/FilterMobile/FilterMobileLocalities';
+"use client";
+import React from "react";
+import { useRouter } from "next/navigation";
+import FilterMobileLocalities from "@/Components/FilterMobile/FilterMobileLocalities";
 
-const FilterLocalitiespage = () => {
+const FilterLocalitiesPage = () => {
+  const router = useRouter();
+
+  const handleDone = (selectedCity) => {
+    localStorage.setItem("selectedCity", selectedCity);
+    router.back();
+  };
+
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
-    <div>
-      <FilterMobileLocalities />
-    </div>
+    <FilterMobileLocalities onDone={handleDone} onBack={handleBack} />
   );
 };
 
-export default FilterLocalitiespage;
+export default FilterLocalitiesPage;
