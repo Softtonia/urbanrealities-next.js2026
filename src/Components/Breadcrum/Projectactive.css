@@ -1,0 +1,60 @@
+
+.property-activity {
+padding-top: 26px;
+}
+.property-stats{
+height: 223px;
+background-color: var(--White);
+border-radius: 12px;
+padding: 20px ;
+    margin-bottom: 24px;
+
+}
+
+.property-activity h4 {
+font-size: 16px;
+margin-bottom: 15px;
+color: #222;
+}
+
+.activity-stats {
+display: flex;
+align-items: center;
+justify-content: space-between;
+background-color: var(--off-white);
+gap: 6px;
+font-size: 14px;
+line-height: 100%;
+letter-spacing: 0%;
+}
+
+.activity-stats svg {
+font-size: 18px;
+margin-right: 8px;
+color: #f26522;
+}
+
+.activity-stats span {
+font-weight: bold;
+margin-right: 5px;
+}
+
+.report-btn {
+background: none;
+color: red;
+border: none;
+cursor: pointer;
+/* margin-bottom: 15px; */
+font-size: 14px;
+}
+
+.download-btn {
+background-color: #f26522;
+color: white;
+border: none;
+padding: 10px 20px;
+border-radius: 6px;
+cursor: pointer;
+font-weight: bold;
+margin-bottom: 24px;
+} 

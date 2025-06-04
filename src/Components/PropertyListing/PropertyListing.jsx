@@ -70,7 +70,7 @@ const PropertyListing = () => {
   const [propertyList, setPropertyList] = useState([]);
   const router = useRouter();
   const handleViewProjectlist = () => {
-    router.push("/Breadcrum");
+    router.push("/propertydetails");
   };
   useEffect(() => {
     const fetchpropertlist = async () => {

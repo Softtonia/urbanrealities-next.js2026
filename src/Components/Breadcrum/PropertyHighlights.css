@@ -1,0 +1,46 @@
+
+.highlite-container {
+  padding-top: 26px;
+}
+.property-highlights-container{
+    height: 286px;
+  background:var(--White);
+  border-radius: 12px;
+
+}
+.highlights-grid {
+      height: 234px;
+  display: grid;
+  padding: 26px 49px;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.highlight-box {
+  background-color: #fff;
+  text-align: center;
+  padding: 15px 0;
+  border-right: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.highlight-svg {
+  font-size: 24px;
+  margin-bottom: 5px;
+    color: var(--Orange-Red);
+
+}
+
+.highlight-span {
+  display: block;
+  font-family:var(--font-regular);
+  font-size: 16px;
+  color: var(--Eerie-Black);
+}
+
+.highlight-para {
+  font-size: 14px;
+    font-family:var(--font-regular);
+  color: var(--Gray);
+  margin: 4px 0 0;
+}

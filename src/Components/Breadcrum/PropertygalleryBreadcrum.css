@@ -31,38 +31,37 @@
   cursor: pointer;
 }
 
-.gallery{
-    background-color: var(--off-white);
-    padding-top: 11px;
-    display: flex;
-    flex-wrap: wrap;
-}
-.gallery-content{
+.gallery {
+  background-color: var(--off-white);
+  padding-top: 11px;
   display: flex;
-   flex-wrap: wrap;
+}
+
+.gallery-content {
+  display: flex;
   gap: 12px;
 }
-.main-image{
-  display: flex;
+.project-thumb-img,
+.project-img,
+.featured-img{
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
 }
-
-.side-images {
-
-  display: flex; 
+.side-images{
+  display: flex;
   flex-direction: column;
   gap: 12px;
 }
-
-
-.overlay-view {
-  display: flex;
+.overlay-view{
+  gap: 24px;
 }
 
 .view-more {
   position: relative;
 }
 
- .overlay-text {
+.overlay-text {
   position: absolute;
   bottom: 12px;
   left: 12px;
