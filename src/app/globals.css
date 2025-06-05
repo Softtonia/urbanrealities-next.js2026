@@ -36,6 +36,8 @@
   --Cultured: #F6F6F6;
 
   --Spanish-Gray: #9E9E9E ;
+
+  --Tart-Orange:#F54848;
 }
 
 
@@ -167,12 +169,20 @@ small {
   font-family: var(--font-regular);
 }
 .body-text-16{
-  font-size: 16px !important;
+  font-size:16px !important;
   font-family: var(--font-medium);
 }
 .body-text-rg16{
   font-size: 16px !important;
   font-family: var(--font-regular);
+}
+.body-text-sb18{
+  font-size: 18px !important;
+  font-family: var(--font-semibold);
+}
+.body-text-md18{
+  font-size: 18px !important;
+  font-family: var(--font-medium);
 }
 .body-text-20{
   font-size: 20px !important;
