@@ -1,4 +1,3 @@
-import Image from "next/image";
 import SearchPropertySection from "@/Components/SearchPropertySection/SearchPropertySection";
 import PropertyListing from "@/Components/PropertyListing/PropertyListing";
 import FeaturesCopy from "@/Components/FeaturesCopy/FeaturesCopy";

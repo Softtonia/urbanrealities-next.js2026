@@ -1,0 +1,124 @@
+.aboutProject-container {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background-color: #fff;
+  padding: 24px;
+  margin-top: 50px;
+}
+
+.aboutProject-title {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.aboutProject-desc {
+  font-size: 14px;
+  margin-top: 8px;
+  margin-bottom: 24px;
+  color: #555;
+}
+
+.aboutProject-highlights {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.aboutProject-box {
+  background: #f9f9f9;
+  padding: 16px 0;
+  border-radius: 6px;
+  text-align: center;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.aboutProject-box span {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  /* margin-top: 8px; */
+}
+
+.aboutProject-box p {
+  font-size: 13px;
+  color: #777;
+  margin-top: 4px;
+}
+
+.aboutProject-certificates {
+  border: 1px solid #eee;
+  padding: 20px;
+  border-radius: 6px;
+}
+
+.aboutProject-cert-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #777;
+}
+
+.aboutProject-cert-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.aboutProject-cert-box {
+  background: #f0f4ff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #333;
+}
+
+.aboutProject-view-all {
+  font-size: 14px;
+  color: #ff6a00;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.aboutProject-whybuy {
+  margin-top: 32px;
+}
+
+.aboutProject-whybuy-title {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.aboutProject-whybuy-list {
+  padding-left: 16px;
+  list-style-type: decimal;
+  color: #444;
+  font-size: 14px;
+}
+
+.aboutProject-more-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #ff6a00;
+  text-decoration: none;
+}
+
+.aboutProject-brochure-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 16px;
+  background: #fff;
+  color: #ff6a00;
+  border: 1px solid #ff6a00;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}

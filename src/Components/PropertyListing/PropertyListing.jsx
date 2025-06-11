@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
 import "./PropertyListing.css";
 import { useRouter } from "next/navigation";
 import SubHero from "./../SubHero/SubHero";
-import axios from "axios";
-// const properties = Array.from({ length: 8 }, (_, index) => ({
-//   id: index,
-//   titleSegments: ['3BHK', 'Builder', 'Floor', '1700sqft.'],
-//   location: 'Ernakulam, Kerala',
-//   builder: 'Ganesh Property',
-//   status: 'Ready To Move',
-//   carpetArea: '1720 sqft',
-//   imageUrl: '/propertylistingimage.png',
-// }));
+// import axios from "axios";
+const properties = Array.from({ length: 8 }, (_, index) => ({
+  id: index,
+  titleSegments: ['3BHK', 'Builder', 'Floor', '1700sqft.'],
+  location: 'Ernakulam, Kerala',
+  builder: 'Ganesh Property',
+  status: 'Ready To Move',
+  carpetArea: '1720 sqft',
+  imageUrl: '/propertylistingimage.png',
+}));
 
 const PropertyCard = ({ property, handleViewProjectlist }) => (
   <div className="property-card">
@@ -67,26 +67,26 @@ const PropertyCard = ({ property, handleViewProjectlist }) => (
 );
 
 const PropertyListing = () => {
-  const [propertyList, setPropertyList] = useState([]);
+  // const [propertyList, setPropertyList] = useState([]);
   const router = useRouter();
   const handleViewProjectlist = () => {
     router.push("/propertydetails");
   };
-  useEffect(() => {
-    const fetchpropertlist = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_ENDPOINT}api/get-all-properties-listing`
-        );
-        const data = response.data;
-        console.log(" Property Data Fetched:", data);
-        setPropertyList(data);
-      } catch (error) {
-        console.error("Error fetching Property Lists:", error);
-      }
-    };
-    fetchpropertlist();
-  }, []);
+  // useEffect(() => {
+  //   const fetchpropertlist = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${process.env.NEXT_PUBLIC_API_ENDPOINT}api/get-all-properties-listing`
+  //       );
+  //       const data = response.data;
+  //       console.log(" Property Data Fetched:", data);
+  //       setPropertyList(data);
+  //     } catch (error) {
+  //       console.error("Error fetching Property Lists:", error);
+  //     }
+  //   };
+  //   fetchpropertlist();
+  // }, []);
   return (
     <div className="container">
       <div className="property-container">
@@ -97,7 +97,7 @@ const PropertyListing = () => {
 
         <div className="property-listing-scroll">
           <div className="property-listing">
-            {propertyList.slice(0, 8).map((property) => (
+            {properties.slice(0, 8).map((property) => (
               <PropertyCard
                 key={property.id}
                 property={property}

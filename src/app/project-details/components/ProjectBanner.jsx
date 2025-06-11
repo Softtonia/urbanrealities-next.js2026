@@ -1,17 +1,12 @@
 import React from 'react'
-import styles from './ProjectDetailsHero.module.css'
-// Removed the import for globals.css as it should only be in the root layout
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import styles from './ProjectBanner.module.css'
 
-const ProjectDetailsHero = () => {
+const ProjectBanner = () => {
   return (
     <>
 
-        <div className={styles.projectdetailsherosection}>
-            {/* <FontAwesomeIcon icon={faThumbsUp} className="fa-fw" /> */}
-            {/* <div className="container"> */}
-                <div className={styles.herosection}>
+        <div className={styles.projectdetailsherosection }>
+                <div className={`${styles.herosection} container`}>
                     <div className={styles.contentsection}>
                         <div className={styles.infodiv}>
                             <div className={styles.info} id='info1'>
@@ -35,7 +30,6 @@ const ProjectDetailsHero = () => {
                         
                     </div>
                 </div>
-            {/* </div> */}
         </div>
 
 
@@ -43,4 +37,4 @@ const ProjectDetailsHero = () => {
   )
 }
 
-export default ProjectDetailsHero 
+export default ProjectBanner 

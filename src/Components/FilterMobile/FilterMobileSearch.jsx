@@ -14,6 +14,7 @@ const FilterMobileSearch = () => {
   const [selectedTags, setSelectedTags] = useState([]);
   const [amenities, setAmenities] = useState([]);
   const [budgetRange, setBudgetRange] = useState([5, 2000]); // ₹5L to ₹20Cr
+  const [openDropdown, setOpenDropdown] = useState(null); // 'min' or 'max'
 
   const router = useRouter();
 
@@ -63,79 +64,85 @@ const FilterMobileSearch = () => {
       />
     </div>
   );
-  {
-    renderInputSection(
-      "Select City/ Localities",
-      city || "+ Enter city , Location"
-    );
-  }
+  // {
+  //   renderInputSection(
+  //     "Select City/ Localities",
+  //     city || "+ Enter city , Location"
+  //   );
+  // }
 
   const budgetOptions = [
     5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300,
     400, 500, 600, 700, 800, 900, 1000, 1500, 2000,
   ];
-  const formatBudget = (value) => {
-    if (value >= 100) {
-      return `₹${value / 100} Cr`;
+ const formatBudget = (value) => {
+  return value >= 100 ? `₹${value / 100} Cr` : `₹${value} L`;
+};
+
+const renderBudgetSection = () => {
+
+  const handleSelect = (type, value) => {
+    if (type === "min") {
+      setBudgetRange([value, budgetRange[1]]);
+    } else {
+      setBudgetRange([budgetRange[0], value]);
     }
-    return `₹${value} L`;
+    setOpenDropdown(null); // close dropdown after selection
   };
 
-  // const renderBudgetSection = () => (
-  //   <div className="filter-section">
-  //     <label>Budget</label>
-  //     <div className="budget-dropdowns">
-  //       <select>
-  //         <option>Min</option>
-  //       </select>
-  //       <span>to</span>
-  //       <select>
-  //         <option>Max</option>
-  //       </select>
-  //     </div>
-  //     <input type="range" className="range-slider" />
-  //   </div>
-  // );
-
-  const renderBudgetSection = () => (
-    <div className="filter-sectionone">
+  return (
+    <div className="filter-section">
       <label>Budget</label>
 
-      {/* Dropdowns */}
+      {/* Custom Dropdowns */}
       <div className="budget-dropdowns">
-        <div className="dropdown">
-        <select 
-         className="budget-select"
-          value={budgetRange[0]}
-          onChange={(e) =>
-            setBudgetRange([parseInt(e.target.value), budgetRange[1]])
-          }
-        >
-          {budgetOptions.map((val) => (
-            <option key={val} value={val}>
-              {formatBudget(val)}
-            </option>
-          ))}
-        </select>       </div>
+        {/* Min Budget */}
+        <div className="range-dropdown">
+          <div
+            className="custom-select"
+            onClick={() =>
+              setOpenDropdown(openDropdown === "min" ? null : "min")
+            }
+          >
+            {formatBudget(budgetRange[0])}
+          </div>
+          {openDropdown === "min" && (
+            <ul className="dropdown-menu-custom">
+              {budgetOptions.map((val) => (
+                <li className="menu-list" key={val} onClick={() => handleSelect("min", val)}>
+                  {formatBudget(val)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         <span>to</span>
-        <select
-                 className="budget-select"
-          value={budgetRange[1]}
-          onChange={(e) =>
-            setBudgetRange([budgetRange[0], parseInt(e.target.value)])
-          }
-        >
-          {budgetOptions.map((val) => (
-            <option key={val} value={val}>
-              {formatBudget(val)}
-            </option>
-          ))}
-        </select>
+
+        {/* Max Budget */}
+        <div className="range-dropdown">
+          <div
+            className="custom-select"
+            onClick={() =>
+              setOpenDropdown(openDropdown === "max" ? null : "max")
+            }
+          >
+            {formatBudget(budgetRange[1])}
+          </div>
+          {openDropdown === "max" && (
+            <ul className="dropdown-menu-custom">
+              {budgetOptions.map((val) => (
+                <li className="menu-list"  key={val} onClick={() => handleSelect("max", val)}>
+                  {formatBudget(val)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
 
       {/* Slider */}
-      <div className="range-slider-container mt-2">
+      <div className="range-slider-container">
         <Slider
           range
           min={5}
@@ -143,16 +150,24 @@ const FilterMobileSearch = () => {
           step={5}
           value={budgetRange}
           onChange={(value) => setBudgetRange(value)}
-          trackStyle={[{ backgroundColor:"var(--Orange-Red)" }]}
+          trackStyle={[{ backgroundColor: "var(--Orange-Red)" }]}
           handleStyle={[
-            { border: " 4px solid var(--Orange-Red)", backgroundColor: "var(--White)" },
-            { border: " 4px solid var(--Orange-Red)", backgroundColor: "var(--White)" },
+            {
+              border: "4px solid var(--Orange-Red)",
+              backgroundColor: "var(--White)",
+            },
+            {
+              border: "4px solid var(--Orange-Red)",
+              backgroundColor: "var(--White)",
+            },
           ]}
-          railStyle={{ backgroundColor:"var(--Gray)" }}
+          railStyle={{ backgroundColor: "var(--Gray)" }}
         />
       </div>
     </div>
   );
+};
+
 
   const renderTagSection = (label, tags) => (
     <div className="filter-tags-group border-bottom">

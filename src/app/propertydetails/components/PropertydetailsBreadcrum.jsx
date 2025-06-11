@@ -3,9 +3,6 @@ import React from "react";
 import Link from "next/link";
 import "./PropertydetailsBreadcrum.css";
 import { FaChevronRight} from "react-icons/fa";
-import PropertygalleryBreadcrum from "./PropertygalleryBreadcrum";
-import PropertyHighlights from "./PropertyHighlights";
-import PropertyDescription from "./PropertyDescription";
 
 const PropertydetailsBreadcrum = () => {
   return (

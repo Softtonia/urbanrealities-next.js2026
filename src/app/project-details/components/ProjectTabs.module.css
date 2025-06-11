@@ -1,0 +1,27 @@
+.tabContainer{
+  background-color: var(--Misty-Rose);
+
+}
+.tab-crum {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  padding: 1rem 2rem;
+  overflow-x: auto;
+}
+
+.tabItem {
+  text-decoration: none;
+  color: var(--Eerie-Black);
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.tabItem:hover {
+  color: var(--Orange-Red);
+}
+
+.active {
+  color: var(--Orange-Red);
+  font-weight: 500;
+}

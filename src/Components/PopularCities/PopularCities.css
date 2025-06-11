@@ -7,10 +7,8 @@ justify-content: space-around;
 align-items: center;
 }
 .popularcitiesmainbody{
-width: 1440px;
-height: 288px;
 display: flex;
-justify-content: space-between;
+justify-content: space-evenly;
 gap: 20px;
 flex-wrap: wrap;
 padding-top: 60px;

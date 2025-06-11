@@ -1,14 +1,14 @@
 import React from "react";
-import "./PropertyDetails.css";
-import PropertydetailsBreadcrum from "../Breadcrum/PropertydetailsBreadcrum";
-import PropertygalleryBreadcrum from "../Breadcrum/PropertygalleryBreadcrum";
-import PropertyHighlights from "../Breadcrum/PropertyHighlights";
-import Projectactive from "../Breadcrum/Projectactive";
-import Projectagent from "../Breadcrum/Propertyagent";
-import ProjectDescription from "../Breadcrum/PropertyDescription";
-import PropertyEnquiryFrom from "../Breadcrum/PropertyEnquiryFrom";
-import Propertyareadata from "../Breadcrum/Propertyareadata";
-import Propertyprice from "../Breadcrum/Propertyprice";
+import "./PropertyAllDetails.css";
+import PropertydetailsBreadcrum from "./PropertydetailsBreadcrum";
+import PropertygalleryBreadcrum from "./PropertygalleryBreadcrum";
+import PropertyHighlights from "./PropertyHighlights";
+import Projectactive from "./Projectactive";
+import Projectagent from "./Propertyagent";
+import ProjectDescription from "./PropertyDescription";
+import PropertyEnquiryFrom from "./PropertyEnquiryFrom";
+import Propertyareadata from "./Propertyareadata";
+import Propertyprice from "./Propertyprice";
 
 
 
@@ -30,7 +30,7 @@ const PropertyDetails = () => {
             <PropertyHighlights/>
             <ProjectDescription/>
             <Propertyareadata/>
-            {/* <Propertyprice/> */}
+            <Propertyprice/>
           </div>
           <div className="col-4 small-col">
             <Projectactive/>
