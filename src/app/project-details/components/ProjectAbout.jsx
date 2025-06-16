@@ -1,4 +1,3 @@
-// components/AboutProject.jsx
 import styles from "./ProjectAbout.module.css";
 import {
   FaRulerCombined,
@@ -8,6 +7,9 @@ import {
   FaBed,
   FaDownload,
 } from "react-icons/fa";
+import { MdOutlineChair,
+  MdOutlineCorporateFare, 
+ } from "react-icons/md";
 
 export default function AboutProject() {
   return (
@@ -15,7 +17,7 @@ export default function AboutProject() {
       <h2 className={styles["aboutProject-title"]}>
         About Mundeshwari Connaught One
       </h2>
-      <p className={styles["aboutProject-desc"]}>
+      <p className={`${styles["aboutProject-desc"]} body-text-16`}>
         Exclusive housing welcomes the ultra modern families to come and
         experience the life changing space where it brings high rising towers to
         capture the city's bigger and uninterrupted view from the balcony.
@@ -23,55 +25,61 @@ export default function AboutProject() {
 
       <div className={styles["aboutProject-highlights"]}>
         <div className={styles["aboutProject-box"]}>
+          <p className="">Project Size</p>
           <span>1 Acre</span>
-          <p>Project Size</p>
-          <FaRulerCombined />
+          <FaRulerCombined   className={styles["aboutProject-icon"]}/>
         </div>
         <div className={styles["aboutProject-box"]}>
-          <span>May 22</span>
           <p>Launch Date</p>
-          <FaCalendarAlt />
+          <span>May 22</span>
+          <FaCalendarAlt  className={styles["aboutProject-icon"]} />
         </div>
         <div className={styles["aboutProject-box"]}>
-          <span>46</span>
           <p>Total Units</p>
-          <FaKey />
+          <span>46</span>
+          <FaKey   className={styles["aboutProject-icon"]}/>
         </div>
         <div className={styles["aboutProject-box"]}>
-          <span>1</span>
           <p>Total Towers</p>
-          <FaBuilding />
+          <span>1</span>
+          <FaBuilding  className={styles["aboutProject-icon"]} />
         </div>
         <div className={styles["aboutProject-box"]}>
-          <span>3,4</span>
           <p>BHK</p>
-          <FaBed />
+          <span>3,4</span>
+          <MdOutlineChair  className={styles["aboutProject-icon"]}/>
         </div>
       </div>
 
       <div className={styles["aboutProject-certificates"]}>
-        <p className={styles["aboutProject-cert-box"]}>
-          Available Certificates
-        </p>
         <div className={styles["aboutProject-cert-list"]}>
-          <div className={styles["aboutProject-cert-box"]}>C</div>
           <div className={styles["aboutProject-cert-box"]}>
-            Encumbrance Certificate 1
-            <span>
-              <FaDownload />
-            </span>
+            Available Certificates
+            <p className={styles["aboutProject-para-box"]}>C</p>
+            <div>
+              <FaDownload  className={styles["cert-icon"]} />
+            </div>
           </div>
           <div className={styles["aboutProject-cert-box"]}>
-            Encumbrance Certificate 2{" "}
-            <span>
-              <FaDownload />
-            </span>
+            Encumbrance
+            <p className={styles["aboutProject-para-box"]}>Certificate 1</p>
+            <div>
+              <FaDownload  className={styles["cert-icon"]}/>
+            </div>
           </div>
           <div className={styles["aboutProject-cert-box"]}>
-            Encumbrance Certificate 3
-            <span>
-              <FaDownload />
-            </span>
+            Encumbrance
+            <p className={styles["aboutProject-para-box"]}>Certificate 2</p>
+            <div>
+              <FaDownload className={styles["cert-icon"]}/>
+            </div>
+          </div>
+          <div className={styles["aboutProject-cert-box"]}>
+            Encumbrance
+            <p className={styles["aboutProject-para-box"]}>Certificate 3</p>
+            <div>
+              <FaDownload className={styles["cert-icon"]}/>
+            </div>
           </div>
         </div>
         <a className={styles["aboutProject-view-all"]} href="#">
@@ -84,12 +92,12 @@ export default function AboutProject() {
           Why Buy in Mundeshwari Connaught One?
         </h3>
         <ul className={styles["aboutProject-whybuy-list"]}>
-          <li>Lavish Ultra - Luxury 3 and 4 BHK Apartments</li>
-          <li>Surrounded by lush greens in the city's heart</li>
-          <li>G + 8 Storey (Terrace Garden on 9th Floor)</li>
-          <li>Double Heighted Entrance Lobby (20 ft)</li>
+          <li className={styles["whybuy-li"]}>Lavish Ultra - Luxury 3 and 4 BHK Apartments</li>
+          <li  className={styles["whybuy-li"]}>Surrounded by lush greens in the city's heart</li>
+          <li  className={styles["whybuy-li"]}>G + 8 Storey (Terrace Garden on 9th Floor)</li>
+          <li  className={styles["whybuy-li"]}>Double Heighted Entrance Lobby (20 ft)</li>
         </ul>
-        <a className={styles["aboutProject-more-link"]} href="#">
+        <a className={`${styles["aboutProject-more-link"]} body-text-rg16` }href="#">
           +18 More
         </a>
         <button className={styles["aboutProject-brochure-btn"]}>

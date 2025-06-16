@@ -38,6 +38,8 @@
   --Spanish-Gray: #9E9E9E ;
 
   --Tart-Orange:#F54848;
+
+  --Platnium:rgba(230, 230, 230, 1);
 }
 
 
@@ -151,7 +153,6 @@ h6 {
 
 p {
   font-family: var(--font-regular);
-  font-weight: 400;
   font-size: 16px;
 }
 

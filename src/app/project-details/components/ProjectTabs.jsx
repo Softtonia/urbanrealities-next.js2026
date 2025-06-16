@@ -1,4 +1,3 @@
-// components/ProjectTabs.js
 import styles from './ProjectTabs.module.css';
 
 const tabs = [
