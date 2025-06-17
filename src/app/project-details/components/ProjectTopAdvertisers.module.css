@@ -1,0 +1,84 @@
+
+.Advertisers {
+border: 1px solid var(--Platnium);
+border-radius: 8px;
+background-color: var(--White);
+padding: 20px;
+margin-top: 50px;
+}
+
+.heading {
+font-size: 32px;
+font-family: var( --font-semibold);
+color: var( --Eerie-Black);
+}
+.borderCard{
+display: inline-flex;
+align-items: center;
+border: 1px solid var(--Platnium);
+padding: 20px;
+border-radius: 8px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+background-color: var(--White);
+
+}
+
+.agentBadge {
+background-color: var(--Gray); 
+color: var(--White);
+font-size: 12px;
+padding: 4px 8px;
+border-radius: 4px;
+font-family: var(--font-regular); 
+text-transform: uppercase;
+}
+
+.advertiserInfo {
+display: flex;
+margin-top: 15px;
+}
+
+.advertiserName {
+font-size: 16px;
+font-family: var(--font-medium); 
+ color: var( --Eerie-Black);
+margin-bottom: 5px;
+}
+
+.rating {
+margin-bottom: 5px;
+margin: 0 10px;
+}
+
+.star {
+background-color: var( --Slimy-Green);
+color: var(--White); 
+border-radius: 100px;
+padding: 0px 6px;
+height: 18px;
+font-size: 12px;
+margin-right: 4px;
+}
+
+.advertiserTagline {
+font-size: 16px;
+font-family: var(--font-regular);
+color: var( --Eerie-Black);
+}
+
+.contactButton {
+color: var(--Orange-Red);
+background-color: var(--White);
+padding: 10px 20px;
+border:1px solid var(--Orange-Red);
+border-radius: 25px;
+cursor: pointer;
+font-size: 16px;
+font-family: var(--font-medium); 
+transition: background-color 0.3s ease;
+}
+
+.contactButton:hover {
+background-color: var(--Orange-Red); 
+color: var(--White);
+}

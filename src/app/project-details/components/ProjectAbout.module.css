@@ -1,8 +1,8 @@
 .aboutProject-container {
   border: 1px solid var(--Platnium);
   border-radius: 8px;
-  background-color: #fff;
-  padding: 24px;
+  background-color: var(--White);
+  padding: 20px;
   margin-top: 50px;
 }
 
@@ -35,7 +35,7 @@
 .aboutProject-box p {
   font-size: 16px;
   font-family: var(--font-regular);
-  color: #777;
+  color: var(--Eerie-Black);
   margin-top: 4px;
 }
 
@@ -54,7 +54,7 @@
 .aboutProject-para-box{
  font-size: 16px;
   font-family: var(--font-regular);
-  color: #333;
+  color: var(--Eerie-Black);
 
 }
 .aboutProject-cert-box {
@@ -63,7 +63,7 @@
   font-size: 16px;
   font-family: var(--font-regular);
   border-right:1px solid var(--Platnium)  ;
-  color: #333;
+  color: var(--Eerie-Black);
 }
 .aboutProject-cert-box:first-child,
 .aboutProject-cert-box:last-child {
@@ -71,7 +71,7 @@
 }
 .aboutProject-view-all {
   font-size: 14px;
-  color: #ff6a00;
+  color: var(--Orange-Red);
   text-decoration: none;
   font-family: var(--font-medium);
 }
@@ -89,7 +89,7 @@
 .aboutProject-whybuy-list {
   padding-left: 16px;
   list-style-type: decimal;
-  color: #444;
+  color: var(--Eerie-Black);
 }
 .whybuy-li{
   font-size: 16px;
@@ -99,7 +99,7 @@
 .aboutProject-more-link {
   display: inline-block;
   margin-top: 10px;
-  color: #ff6a00;
+  color: var(--Orange-Red);
   text-decoration: none;
 }
 
@@ -109,9 +109,9 @@
   gap: 8px;
   margin-top: 16px;
   padding: 10px 16px;
-  background: #fff;
-  color: #ff6a00;
-  border: 1px solid #ff6a00;
+  background: var(--White);
+  color: var(--Orange-Red);
+  border: 1px solid var(--Orange-Red);
   border-radius: 6px;
   font-size: 16px;
   font-family: var(--font-medium);

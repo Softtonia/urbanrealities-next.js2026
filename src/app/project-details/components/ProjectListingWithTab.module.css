@@ -2,7 +2,7 @@
      border: 1px solid var(--Platnium);
   border-radius: 8px;
   background-color: var(--White);
-  padding: 24px;
+  padding: 20px;
   margin-top: 50px;
 }
 
@@ -69,11 +69,11 @@
   }
 }
 
-@media (max-width: 1199.98px) { 
+/* @media (max-width: 1199.98px) { 
 .listing{
   display: none;
 }
 .pagination{
    display: none;
 }
- }
+ } */

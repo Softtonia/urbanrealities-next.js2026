@@ -9,9 +9,9 @@ import {
 } from "react-icons/fa";
 import { MdOutlineChair, MdOutlineCorporateFare } from "react-icons/md";
 import { FaRegCircleCheck } from "react-icons/fa6";
-import styles from "./PropertyCard.module.css";
+import styles from "./ProjectCard.module.css";
 
-export default function PropertyCard() {
+export default function ProjectCard() {
   return (
     <div className={styles.card}>
       <div className={styles.left}>
@@ -25,7 +25,7 @@ export default function PropertyCard() {
           />
         </div>
       </div>
-      <div className={styles.center}>
+      <div className={styles.cardCenter}>
         <div className={styles.titleRow}>
           <h3>3BHK Flat for Sale in New Delhi</h3>
           <FaShareAlt className={styles.shareIcon} />

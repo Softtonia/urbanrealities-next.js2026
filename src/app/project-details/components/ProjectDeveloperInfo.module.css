@@ -1,0 +1,145 @@
+.infocontainer {
+border: 1px solid var(--Platnium);
+border-radius: 8px;
+background-color: var(--White);
+padding: 20px;
+margin-top: 50px;
+}
+
+.heading {
+  font-size: 32px;
+font-family: var(--font-semibold); 
+ margin-bottom: 16px;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--Platnium);
+  padding: 15px 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.name {
+  font-size: 19px;
+font-family: var(--font-semibold); 
+  margin: 0;
+}
+
+.experience {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-family: var(--font-regular); 
+  color: var( --Eerie-Black);
+}
+
+
+
+.statsGrid {
+  border: 1px solid var(--Platnium);
+  border-radius: 6px;
+  margin-bottom: 16px;
+  padding: 15px 0px;
+}
+
+.statBox {
+    padding: 0px 10px;
+}
+
+.borderRight {
+  border-right: 1px solid var(--Platnium);
+}
+
+.borderBottom {
+  border-bottom: 1px solid var(--Platnium);
+}
+
+.infoBorder {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  border-bottom: 1px solid var(--Platnium);
+  padding: 10px 0;
+}
+
+
+
+.label {
+  margin: 0;
+  font-size: 16px;
+  font-family: var(--font-regular); 
+  color: var(--Eerie-Black);
+}
+
+.value {
+  font-size: 16px;
+  font-family: var(--font-regular); 
+  display: block;
+  margin-top: 4px;
+}
+
+.plus {
+ font-size: 16px;
+font-family: var(--font-regular); 
+color: var(--Orange-Red);
+}
+
+
+
+
+
+.description {
+  border: 1px solid var(--Platnium);
+  padding: 12px;
+  font-size: 16px;
+  font-family: var(--font-regular); 
+  line-height: 1.5;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.readMore {
+  color: var(--Orange-Red);
+  cursor: pointer;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.outlineBtn {
+  border: 1px solid var(--Orange-Red);
+  color: var(--Orange-Red);
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--font-regular); 
+}
+
+.primaryBtn {
+  background-color: var(--Orange-Red);
+  color:var(--White);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--font-regular); 
+}
+@media (min-width: 992px) {
+  .statBox:nth-child(3) .infoBorder,
+  .statBox:nth-child(4) .infoBorder {
+    border-bottom: none;
+  }
+}
+
+@media (max-width:991.99px){
+    .statBox:nth-child(4) .infoBorder {
+  border-bottom: none;
+}
+}

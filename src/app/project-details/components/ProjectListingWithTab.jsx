@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from 'react';
-import styles from './PropertyListingWithTab.module.css';
-import PropertyList from "./PropertyList";
+import styles from './ProjectListingWithTab.module.css';
+import ProjectList from "./ProjectList";
 import PropertyTabs from "./PropertyTabs";
 
 function getPagination(currentPage, totalPages, maxVisible = 6) {
@@ -45,7 +45,7 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
 }
 
 
-const PropertyListingWithTab = () => {
+const ProjectListingWithTab = () => {
   const totalProperties = Array(96).fill(1); // Dummy 24 cards
   const cardsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,7 +76,7 @@ const PropertyListingWithTab = () => {
     {isLoading ? (
       <div className={styles.loader}>Loading properties...</div>
     ) : (
-      <PropertyList
+      <ProjectList
         currentPage={currentPage}
         cardsPerPage={cardsPerPage}
         totalProperties={totalProperties}
@@ -104,4 +104,4 @@ const PropertyListingWithTab = () => {
   );
 };
 
-export default PropertyListingWithTab;
+export default ProjectListingWithTab;

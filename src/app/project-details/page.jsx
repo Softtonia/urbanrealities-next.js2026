@@ -3,8 +3,12 @@ import ProjectBanner from './components/ProjectBanner'
 // import { useSearchParams } from "next/navigation";
 import ProjectTabs from './components/ProjectTabs';
 import ProjectAbout from './components/ProjectAbout';
-import PropertyListingWithTab from './components/PropertyListingWithTab';
-
+import ProjectListingWithTab from './components/ProjectListingWithTab';
+import ProjectFAQ from './components/ProjectFAQ';
+import ProjectPhotosAndReviews from './components/ProjectPhotosAndReviews';
+import ProjectTopAdvertisers from './components/ProjectTopAdvertisers';
+import ProjectDeveloperInfo from './components/ProjectDeveloperInfo'
+import FloorPlanSection from './components/FloorPlanSection';
 
 const Page = () => {
   // const params = useSearchParams();
@@ -33,7 +37,12 @@ const Page = () => {
         <div className="row tab-row">
           <div className="col-9 large-tab-col">
       <ProjectAbout/>
-      <PropertyListingWithTab/>
+      <ProjectListingWithTab/>
+      <ProjectTopAdvertisers/>
+      <FloorPlanSection/>
+      <ProjectPhotosAndReviews/>
+      <ProjectDeveloperInfo/>
+      <ProjectFAQ/>
         </div>
           <div className="col-3 small-tab-col">
           </div>
