@@ -1,21 +1,19 @@
 .card {
 display: flex;
-justify-content: space-between;
-padding: 8px;
+/* justify-content: space-between; */
+padding: 10px;
 border: 1px solid var(--Orange-Red);
 border-radius: 10px;
 margin: 20px 0;
 background: var(--White);
 align-items: center;
-gap: 16px;
+gap: 24px;
 width: 100%;
 height: 249px;
-flex-shrink: 1;
 }
 
 .image-card {
-  width: 100%;
-/* width:284px; */
+width:284px;
 height: 229px;
  flex-shrink: 1;
 object-fit: cover;
@@ -47,8 +45,12 @@ border-radius: 25px;
 font-size: 44px;
 color:var(--Eerie-Black);
 }
+
 .cardCenter{
-  flex-shrink: 1;
+  width: 100%;
+flex-grow: 1;
+flex-shrink: 1;
+flex-basis: auto;
 
 }
 .titleRow {
@@ -102,6 +104,7 @@ margin: 8px;
 }
 .details{
 display: flex;
+ flex-wrap: wrap;
 gap: 10px;
 
 } 
@@ -129,7 +132,7 @@ justify-content: center;
 align-items: center;
 flex-direction: column;
 background-color: var( --off-white);
-width: 100%;
+width: 196px;
 height: 222px;
 border-radius: 10px;
 padding: 0px 10px;
@@ -143,8 +146,8 @@ font-family: var(--font-bold);
 }
 
 .button {
-   font-size: clamp(12px, 1.8vw, 16px);
-   font-family: var(--font-regular);
+font-size: clamp(12px, 1.8vw, 16px);
+font-family: var(--font-regular);
 margin-top: 10px;
 padding: 8px 12px;
 background: var(--Orange-Red);
@@ -158,4 +161,75 @@ cursor: pointer;
 .shareIcon,
 .locationIcon {
   font-size: clamp(14px, 2vw, 16px);
+}
+@media (max-width: 1270px) {
+  .card {
+    gap: 12px;
+    padding: 12px;
+    height: auto; /* Allow height to adjust based on content */
+  }
+
+  .image-card {
+    width: 180px;
+  }
+
+  .cardCenter {
+    flex: 1;
+  }
+
+  .pricesection {
+    width: 160px;
+    padding: 8px;
+  }
+
+  .titleRow h3 {
+    font-size: clamp(13px, 3vw, 15px);
+  }
+
+  .location {
+    font-size: clamp(11px, 2.2vw, 13px);
+  }
+
+  .owner {
+    font-size: clamp(11px, 2vw, 13px);
+  }
+
+  .cardtag {
+    font-size: clamp(10px, 2vw, 11px);
+    padding: 3px 6px;
+  }
+
+  .details p {
+    font-size: clamp(10px, 2vw, 12px);
+  }
+
+  .description {
+    font-size: clamp(10px, 2vw, 12px);
+  }
+
+  .price {
+    font-size: clamp(15px, 3vw, 17px);
+  }
+
+  .button {
+    font-size: clamp(11px, 2vw, 14px);
+    padding: 6px 10px;
+  }
+
+  .card-icon,
+  .card-check,
+  .shareIcon,
+  .locationIcon {
+    font-size: clamp(13px, 2.2vw, 15px);
+  }
+
+  .badge {
+    font-size: 10px;
+    padding: 2px 20px;
+  }
+
+  .tagIconOnImage {
+    font-size: 36px;
+    padding: 8px 0;
+  }
 }

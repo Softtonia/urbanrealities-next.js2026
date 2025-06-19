@@ -54,12 +54,12 @@ const FloorPlanSection = () => {
             <div className={styles.floorText}>
               <p className={styles.flatTitle}>{plan.title}</p>
               <p>{plan.area}</p>
-              <p>
-                <strong>Sale:</strong> <strong>{plan.sale}</strong>
-              </p>
-              <p>
-                <strong>Rent:</strong> {plan.rent}
-              </p>
+              <div className={styles.flatPara}>
+                <p>Sale:</p> <p>{plan.sale}</p>
+              </div>
+              <div className={styles.flatPara}>
+                <p>Rent:</p> <p>{plan.rent}</p>
+              </div>
             </div>
             <div className={styles.floorCardImage}>
               <img src={plan.images[0]} alt="floor" />

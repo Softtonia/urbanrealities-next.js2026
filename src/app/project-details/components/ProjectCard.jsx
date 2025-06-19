@@ -14,7 +14,7 @@ import styles from "./ProjectCard.module.css";
 export default function ProjectCard() {
   return (
     <div className={styles.card}>
-      <div className={styles.left}>
+      <div className={styles.cardleft}>
         <div className={styles.imageContainer}>
           <span className={styles.badge}>Featured</span>
           <FaRegBookmark className={styles.tagIconOnImage} />
@@ -34,41 +34,52 @@ export default function ProjectCard() {
           <FaMapMarkerAlt className={styles.locationIcon} /> New Ashok Nagar,
           Near Metro Station
         </p>
-        <div className={styles.cardtags}>
-          <span className={styles.cardtag}>
-            <MdOutlineChair className={styles["card-icon"]} />
-            3BHK
-          </span>
-          <span className={styles.cardtag}>
-            <MdOutlineCorporateFare className={styles["card-icon"]} />
-            4–5 Floor
-          </span>
-          <span className={styles.cardtag}>
-            <FaRulerCombined className={styles["card-icon"]} />
-            1700sqft.
-          </span>
-        </div>
+     <div className={styles.cardtags}>
+  {[
+    {
+      icon: <MdOutlineChair className={styles["card-icon"]} />,
+      label: "3BHK"
+    },
+    {
+      icon: <MdOutlineCorporateFare className={styles["card-icon"]} />,
+      label: "4–5 Floor"
+    },
+    {
+      icon: <FaRulerCombined className={styles["card-icon"]} />,
+      label: "1700sqft."
+    },
+    {
+      icon: <FaBuilding className={styles["card-icon"]} />,
+      label: "Extra Tag"
+    }
+  ].slice(0, 3).map((tag, index) => (
+    <span key={index} className={styles.cardtag}>
+      {tag.icon}
+      {tag.label}
+    </span>
+  ))}
+</div>
+
         <p className={styles.owner}>Ganesh Property</p>
         <div className={styles.details}>
           <p>
-            <FaRegCircleCheck className={styles["card-check"]} /> For: Sell
+            <FaRegCircleCheck className={styles["card-check"]} />  Sell
           </p>
           <p>
-            <FaRegCircleCheck className={styles["card-check"]} /> Property: Residentials
+            <FaRegCircleCheck className={styles["card-check"]} /> Residentials
           </p>
-        </div>
-          <div className={styles.details}>
           <p>
-            <FaRegCircleCheck className={styles["card-check"]} /> Property Type: Flats
+            <FaRegCircleCheck className={styles["card-check"]} />  Flats
           </p>
           <p>
             <FaRegCircleCheck className={styles["card-check"]} /> Newly Constructed Property
-          </p></div>
+          </p>
+          </div>
         <p className={styles.description}>
           3 bhk newly constructed semi furnished flat with modular kitchen
         </p>
       </div>
-      <div className={styles.right}>
+      <div className={styles.cardright}>
         <div className={styles.pricesection}>
         <p className={styles.price}>$ 56000</p>
         <button className={styles.button}>Contact Agent</button>

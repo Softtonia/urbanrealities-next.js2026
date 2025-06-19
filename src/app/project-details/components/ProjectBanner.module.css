@@ -1,78 +1,50 @@
 .projectdetailsherosection{
-    /* width: 100%; */
-    height: 610px;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* margin: 50px 0; */
-
+    padding-top: 50px;
+    padding-bottom: 55px;
     background-image: url('/project_details_hero.png');
+    background-position: center;
+    background-repeat: no-repeat;
 }
 .herosection{
-    width: 1440px;
-    height: 505px;
     display: flex;
     justify-content: space-between;
 }
-.contentsection{
-    width: 442px;
-    height: 505px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    
-}
+
 .logosection{
     width: 152px;
-    height: 119px;
+    /* height: 119px; */
     background-image: url('/salford_logo.png');
-    
-    
+    background-repeat: no-repeat;
 }
-.infodiv{
-    width: 442px;
-    height: 425px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
+
+.info1,
 .info{
     padding: 16px;
     border-radius: 12px;
     background: #2E2B2B80;
     backdrop-filter: blur(12px);
-    
-
-
-}
-.infoinner{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     color: var(--White);
-}
-#info1inner{
-    width: 410px;
-    height: 154px;
+ }
 
-}
-#info2inner{
-    width: 380px;
-    height: 183px;
-}
-#info1{
+.info{
     width: 442px;
-    height: 186px;
+    /* height: 186px; */
+    margin-bottom: 24px;
 }
-#info2{
+.info1{
 
     width: 412px;
-    height: 215px;
+    /* height: 215px; */
+        margin-bottom: 29px;
+
 }
 .contentbtn{
-    width: 215px;
-    height: 51px;
-
+    background-color: var(--Orange-Red);
+    color: var(--White);
+    border: none;
     padding: 16px 32px;
     border-radius: 6px;
 }
@@ -86,7 +58,47 @@
     font-size: 48px;
 
 }
-.second {
-    width: 100%;
-    height: 400px;
+@media screen and (max-width: 768px) and (min-width: 414px) {
+  .projectdetailsherosection {
+    padding-top: clamp(30px, 6vw, 50px);
+    padding-bottom: clamp(30px, 6vw, 55px);
+    background-size: cover;
+  }
+
+  .herosection {
+    /* flex-direction: column; */
+    /* align-items: center; */
+    gap: clamp(20px, 4vw, 32px);
+  }
+
+  .logosection {
+    width: clamp(100px, 15vw, 152px);
+    height: clamp(80px, 12vw, 119px);
+    background-size: contain;
+    background-position: center;
+  }
+
+  .info,
+  .info1 {
+    width: 90%;
+    padding: clamp(12px, 3vw, 16px);
+    margin-bottom: clamp(18px, 4vw, 29px);
+  }
+
+  .name,
+  .price {
+    font-size: clamp(28px, 5vw, 48px);
+  }
+
+  .rarea,
+  .builder,
+  .bhk,
+  .posession {
+    font-size: clamp(14px, 2.5vw, 19px);
+  }
+
+  .contentbtn {
+    padding: clamp(12px, 3vw, 16px) clamp(20px, 6vw, 32px);
+    font-size: clamp(14px, 3vw, 16px);
+  }
 }

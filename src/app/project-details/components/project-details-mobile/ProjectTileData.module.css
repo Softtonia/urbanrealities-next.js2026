@@ -1,0 +1,31 @@
+.TileContainer{
+    padding: 23px 20px 0px 20px;
+}
+.tileHead {
+  font-size: 20px;
+  font-family: var(--font-semibold);
+  margin-bottom: 1rem;
+}
+
+.scrollContainer {
+  display: flex;
+ position: relative;
+  overflow-x: auto;
+  gap: 16px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; 
+
+}
+.filterRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-top: 31px;
+}
+
+.filterRow select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}

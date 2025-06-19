@@ -1,0 +1,37 @@
+.wrapper {
+  background: var(--White);
+  padding: 20px;
+  padding-bottom: 42px;
+  border-radius: 8px;
+}
+
+.heading {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--Spanish-Gray);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+}
+
+.count {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.label {
+  font-size: 14px;
+  color: #666;
+}
+
+.visit {
+  color: var(--Orange-Red);
+  font-weight: 500;
+  cursor: pointer;
+}

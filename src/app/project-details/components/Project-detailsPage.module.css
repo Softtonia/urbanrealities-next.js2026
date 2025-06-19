@@ -1,0 +1,15 @@
+.mobileCol{
+    display: none ;
+}
+
+
+@media (max-width:991.99px){
+    .smallTabCol,
+    .largeTabCol{
+        display: none !important;
+    }
+    .mobileCol{
+    display: block;
+    background-color: var(--Cultured);
+}
+}

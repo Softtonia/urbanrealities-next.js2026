@@ -1,20 +1,28 @@
 .tabContainer{
   background-color: var(--Misty-Rose);
+  overflow-x: auto; 
+ padding: 1rem 2rem;
 
 }
 .tab-crum {
   display: flex;
   justify-content: space-around;
-  flex-wrap: wrap;
-  padding: 1rem 2rem;
+  flex-wrap: nowrap;
+  gap: 24px;
   overflow-x: auto;
+  scrollbar-width: none;
+ scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
 }
-
+.tab-crum::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
 .tabItem {
   text-decoration: none;
   color: var(--Eerie-Black);
   white-space: nowrap;
   transition: color 0.3s ease;
+   scroll-snap-align: start;
 }
 
 .tabItem:hover {
@@ -24,4 +32,11 @@
 .active {
   color: var(--Orange-Red);
   font-weight: 500;
+   border-bottom: 2px solid var(--Orange-Red);
+}
+@media (max-width:991.99px){
+.tabContainer{
+  background-color: var(--Cultured);
+} 
+
 }

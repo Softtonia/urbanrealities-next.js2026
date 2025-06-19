@@ -1,0 +1,64 @@
+.devContainer{
+  padding-bottom: 239px;
+}
+.devInfoBox {
+  background: var(--White);
+}
+
+.title {
+  font-weight: 600;
+  font-size: 20px;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+ border-top: 1px solid var(--Cultured);
+ border-bottom: 1px solid var(--Cultured);
+
+}
+.devContent{
+    padding: 20px;
+    padding-bottom: 34px;
+}
+.description {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.readMore {
+  color: #ff5a1f;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+.divider {
+  margin: 10px 0;
+  border: none;
+  border-top: 1px solid #eee;
+}
+
+.section {
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #333;
+}
+
+.address {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.icon {
+  color: #ff5a1f;
+  margin-right: 6px;
+  margin-top: 3px;
+  font-size: 14px;
+}
+
+.cities {
+  margin-top: 6px;
+  line-height: 1.5;
+}
