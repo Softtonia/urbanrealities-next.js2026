@@ -1,6 +1,6 @@
 "use client"
 import React from 'react';
-import PropertyAllDetails from './components/components/PropertyAllDetails'
+import PropertyAllDetails from './components/PropertyAllDetails'
 const page = () => {
   return (
     <div>

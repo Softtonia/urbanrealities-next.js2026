@@ -1,0 +1,52 @@
+.amenitiesBox {
+  background-color: var(--White);
+  border-radius: 12px;
+  padding: 20px 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-top: 24px;
+}
+
+.sectionTitle {
+  margin-bottom: 16px;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 26px;
+  /* width: 671px; */
+}
+
+.tab {
+  border: 1px solid var(--Orange-Red);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--Orange-Red);
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.activeTab {
+  background-color: var(--Orange-Red);
+  color: var(--White);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 0px;
+}
+
+.amenityItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon {
+ color: var(--Orange-Red);
+  font-size: 20px;
+}

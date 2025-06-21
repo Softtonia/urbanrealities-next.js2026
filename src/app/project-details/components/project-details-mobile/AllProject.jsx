@@ -8,8 +8,9 @@ const AllProjects = () => {
   ];
 
   return (
-    <div className={styles.wrapper}>
+    <div className={` text-dark ${styles.wrapper}`}>
       <h5 className={styles.heading}>All Projects</h5>
+        <div className={styles.cardRow}>
       {projectData.map((item, index) => (
         <div key={index} className={styles.card}>
           <div>
@@ -19,6 +20,7 @@ const AllProjects = () => {
           <div className={styles.visit}>Visit</div>
         </div>
       ))}
+    </div>
     </div>
   );
 };

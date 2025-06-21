@@ -1,7 +1,6 @@
 "use client";
 import styles from "./components/Project-detailsPage.module.css";
 import ProjectBanner from "./components/ProjectBanner";
-// import { useSearchParams } from "next/navigation";
 import ProjectTabs from "./components/ProjectTabs";
 import ProjectAbout from "./components/ProjectAbout";
 import ProjectListingWithTab from "./components/ProjectListingWithTab";
@@ -15,25 +14,13 @@ import AllProject from "./components/project-details-mobile/AllProject";
 import DeveloperInfoMobile from "./components/project-details-mobile/DeveloperInfoMobile";
 import ProjectTileData from "./components/project-details-mobile/ProjectTileData";
 import CompletedProjectTiles from "./components/project-details-mobile/CompletedProjectTiles";
+import OtherBuilders from "./components/project-details-mobile/OtherBuilders";
+import FAQAccordion from "./components/project-details-mobile/FAQAccordion";
+import HomeLoanOffers from "./components/project-details-mobile/HomeLoanOffers";
 const Page = () => {
-  // const params = useSearchParams();
-
-  // const project = {
-  //   location: params.get("location"),
-  //   builder: params.get("builder"),
-  //   reraNo: params.get("reraNo"),
-  //   rating: params.get("rating"),
-  //   propertyType: params.get("propertyType"),
-  //   ongoingPrice: params.get("ongoingPrice"),
-  //   areaSqft: params.get("areaSqft"),
-  //   bhk: params.get("bhk"),
-  //   builderFloor: params.get("builderFloor"),
-  //   status: params.get("status"),
-  // };
 
   return (
     <div>
-      {/* <ProjectBanner project={project} /> */}
       <ProjectBanner />
       <ProjectTabs />
 
@@ -54,7 +41,10 @@ const Page = () => {
             <AllProject />
             <DeveloperInfoMobile />
             <ProjectTileData  headingText="Ongoing Project by Mundeshwari II"/>
+            <OtherBuilders/>
             <CompletedProjectTiles />
+            <FAQAccordion/>
+            <HomeLoanOffers/>
           </div>
         </div>
       </div>

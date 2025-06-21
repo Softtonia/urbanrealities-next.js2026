@@ -9,7 +9,7 @@ import ProjectDescription from "./PropertyDescription";
 import PropertyEnquiryFrom from "./PropertyEnquiryFrom";
 import Propertyareadata from "./Propertyareadata";
 import Propertyprice from "./Propertyprice";
-
+import PropertyAmenities from "./PropertyAmenities";
 
 
 
@@ -31,6 +31,7 @@ const PropertyDetails = () => {
             <ProjectDescription/>
             <Propertyareadata/>
             <Propertyprice/>
+            <PropertyAmenities/>
           </div>
           <div className="col-4 small-col">
             <Projectactive/>

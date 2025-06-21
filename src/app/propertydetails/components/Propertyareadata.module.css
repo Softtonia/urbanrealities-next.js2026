@@ -1,4 +1,4 @@
-.property-price-details-box {
+.propertyDetailsBox {
   background-color: var(--White);
   border-radius: 12px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
@@ -6,37 +6,36 @@
   padding-bottom: 20px;
 }
 
-.property-section-title {
- padding: 20px 20px 18px;
-border-bottom: 4px solid var(--Cultured);
+.sectionTitle {
+  padding: 20px 20px 18px;
+  border-bottom: 4px solid var(--Cultured);
   font-size: 18px;
   margin: 0;
  font-family: var(--font-semibold);
 }
 
-.property-price-grid {
+.propertyDetailsGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  row-gap: 20px;
-  column-gap: 32px;
-  padding: 41px 20px 0px 20px;
-
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 24px 50px;
+  padding: 41px 0px 0px 20px;
 }
 
-.property-label {
+
+.label {
+  font-family: var(--font-regular);
   font-size: 14px;
-  font-family: var(--font-regular);
   color: var(--Spanish-Gray);
+  margin-bottom: 10px;
 }
 
-.property-value {
-  font-size: 16px;
+.value {
   font-family: var(--font-regular);
-    color: var(--Eerie-Black);
-
+  font-size: 16px;
+  color: var(--Eerie-Black);
 }
 
-.property-view-more {
+.viewMore {
   font-size: 14px;
   font-family: var(--font-regular);
   margin-left: 20px;
@@ -49,8 +48,8 @@ border-bottom: 4px solid var(--Cultured);
   transition: color 0.3s ease;
 }
 @media (max-width:1199.98px){
-  .property-price-grid {
-  grid-template-columns: repeat(2, 1fr); 
+  .propertyDetailsGrid {
+  grid-template-columns: repeat(3, 1fr); 
 }
   
 }

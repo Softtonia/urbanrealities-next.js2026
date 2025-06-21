@@ -1,0 +1,41 @@
+.dropdownWrapper {
+  position: relative;
+}
+.selectedValue {
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.arrow {
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  z-index: 10;
+  margin-top: 4px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+}
+
+.option {
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.option:hover {
+  background-color: #f0f0f0;
+}

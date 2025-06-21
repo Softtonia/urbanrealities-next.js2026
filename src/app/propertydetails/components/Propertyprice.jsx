@@ -10,7 +10,7 @@ const Propertyprice = () => {
     <div className="property-price-details-box">
       <h4 className="property-section-title">Price Details</h4>
       <div className="property-price-grid">
-        {(showAll ? priceData : priceData.slice(0, 8)).map((item, index) => (
+        {(showAll ? priceData : priceData.slice(0, 6)).map((item, index) => (
           <div key={index} className="property-price-column">
             <div className="d-flex justify-content-between">
               <p className="property-label">Price Breakup</p>
@@ -23,9 +23,9 @@ const Propertyprice = () => {
           </div>
         ))}
       </div>
-      <p className="property-view-more" onClick={() => setShowAll(!showAll)}>
+      <button className="property-view-more" onClick={() => setShowAll(!showAll)}>
         {showAll ? "View less Details" : "View all Details"}
-      </p>
+      </button>
     </div>
   );
 };
