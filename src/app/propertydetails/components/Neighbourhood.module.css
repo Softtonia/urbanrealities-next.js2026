@@ -1,0 +1,94 @@
+.wrapper {
+  padding: 20px;
+  background-color: #fff;
+}
+
+.heading {
+  border-bottom: 2px solid #f36f45;
+  display: inline-block;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.locationWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.locationIcon {
+  font-size: 20px;
+}
+
+.dropdown,
+.input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.getDirectionBtn {
+  background-color: #fff;
+  border: 1px solid #f36f45;
+  color: #f36f45;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tabs {
+  display: flex;
+  gap: 16px;
+}
+
+.tab {
+  padding: 8px 0;
+  cursor: pointer;
+  color: #888;
+}
+
+.active {
+  color: #f36f45;
+  border-bottom: 2px solid #f36f45;
+}
+
+.bottomRow {
+  display: flex;
+  margin-top: 20px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.mapContainer {
+  flex: 2;
+  min-width: 300px;
+}
+
+.map {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.listContainer {
+  flex: 1;
+  min-width: 200px;
+  border: 1px solid #eee;
+  padding: 16px;
+  border-radius: 4px;
+  background-color: #fafafa;
+}
+
+.transitItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}

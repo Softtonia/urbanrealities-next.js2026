@@ -134,15 +134,14 @@ export default function Navbar() {
   const [showSellMenu, setShowSellMenu] = useState(false);
   const [sitedata, setSitedata] = useState({});
 
-
-// fetching data
+  // fetching data
   useEffect(() => {
     const fetchSiteData = async () => {
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_ENDPOINT}api/site-setting`
         );
-        const data = response.data; 
+        const data = response.data;
         setSitedata(data.data);
       } catch (error) {
         console.error("Error fetching site settings:", error);
@@ -183,7 +182,14 @@ export default function Navbar() {
         <div className="container-fluid d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
             <Link className="navbar-brand d-flex align-items-center" href="/">
-              <img src={mobileMenuOpen ? sitedata.mobile_logo: sitedata?.website_logo} alt="Urbanrealities" width={90} height={30} />
+              <img
+                src={
+                  mobileMenuOpen ? sitedata.mobile_logo : sitedata?.website_logo
+                }
+                alt="Urbanrealities"
+                width={90}
+                height={30}
+              />
             </Link>
             <div
               className="position-relative"
@@ -281,9 +287,12 @@ export default function Navbar() {
               <a className="text-white text-decoration-none" href="#">
                 Help
               </a>
-              <a className="text-white text-decoration-none" href="#">
+              <Link
+                className="text-white text-decoration-none"
+                href="/auth/login"
+              >
                 Sign In
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -305,9 +314,9 @@ export default function Navbar() {
             <a className="text-decoration-none text-dark" href="#">
               Help
             </a>
-            <a className="text-decoration-none text-dark" href="#">
+            <Link className="text-decoration-none text-dark"  href="/auth/login">
               Sign In
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -389,7 +398,7 @@ export default function Navbar() {
             onClick={() => setMobileMenuOpen(false)}
           >
             <FaTimes size={18} color="#fff" />
-          </div> 
+          </div>
           <MobileSideMenu />
         </div>
       </>

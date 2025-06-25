@@ -1,0 +1,25 @@
+
+
+.leftSubText,
+.leftHeading {
+  font-size: 20px;
+  font-family: var(--font-medium);
+}
+.leftSubText{
+  margin-bottom: 30px;
+
+}
+.leftSubHeading {
+  font-size: 18px;
+  font-family: var(--font-medium);
+  margin-bottom: 7px;
+}
+.leftList{
+  margin-bottom: 30px;
+}
+.leftListItem {
+  font-size: 16px;
+  font-family: var(--font-regular);
+  margin-bottom: 10px;
+}
+

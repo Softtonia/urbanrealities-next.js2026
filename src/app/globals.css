@@ -365,6 +365,15 @@ padding: 10px 20px;
   font-weight: 600;
 }
 
+.loginBtn {
+  width: 100%;
+  background: var(--Orange-Red);
+  color: var(--White);
+  padding: 5px 20px; ;
+  border: none;
+  border-radius: 10px;
+}
+
 .translate-x-0 {
   transform: translateX(0) !important;
 }

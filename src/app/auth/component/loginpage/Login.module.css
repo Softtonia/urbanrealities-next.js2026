@@ -1,0 +1,76 @@
+
+
+.rightHeading{
+  font-size: 20px;
+ font-family: var(--font-medium);
+  color: var(--Black);
+}
+.formGroup{
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 14px;
+font-family: var(--font-regular);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.input {
+  width: 100%;
+  padding: 5px 20px ;
+  font-size: 14px;
+  font-family: var(--font-regular);
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  margin-bottom: 15px;
+}
+.loginBtn {
+  margin-bottom: 15px;
+}
+
+.googleBtn {
+  width: 100%;
+  margin-bottom: 30px;
+  padding: 5px 20px;
+  background: var(--White);
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+.googleIcon{
+  margin-right: 5px;
+}
+.links{
+  text-align: center;
+}
+.link {
+  color: var(--Orange-Red);
+  font-size: 16px;
+  font-family: var(--font-regular);
+}
+
+/*---------------- register ----------------*/
+.radioGroup {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.radioOption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #333;
+}
+
+ .nextBtn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+  margin-bottom: 30px;
+}

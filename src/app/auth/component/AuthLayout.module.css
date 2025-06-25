@@ -1,0 +1,44 @@
+.authContainer{
+  display: flex;
+  justify-content: center;
+    padding: 20px 0;
+
+}
+.loginContainer {
+  display: flex;
+ width: 100%;
+ max-width: 800px;
+ height: 600px;
+  border: 1px solid var(--Gray);
+}
+.leftPanel {
+  width: 393px;
+  background: url('/login-bg.png');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-clip: border-box;
+  color: var(--White);
+  padding: 50px 35px 29px 35px;
+}
+.rightPanel{
+  padding: 0px 25px 72px 0px;
+  width: 407px;
+}
+.formWrapper {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+    padding: 40px 0px 0px 25px;
+
+}
+/* .leftPanel {
+  flex: 1;
+  min-width: 50%;
+}
+
+.rightPanel {
+  flex: 1;
+  min-width: 50%;
+} */
