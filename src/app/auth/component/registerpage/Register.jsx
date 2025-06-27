@@ -23,47 +23,47 @@ const Register = ({ selected, onChange }) => {
 
   return (
     <div>
-      <h2 className={styles.rightHeading}>{data.heading}</h2>
-      <p className={styles.rightSubText}>{data.subText}</p>
+      <h2 className={` formHeading ${styles.formHeading}`}>{data.heading}</h2>
+      <p className={` formSubHeading ${styles.formSubHeading}`}>{data.subText}</p>
 
       <div className={styles.formGroup}>
-        <label htmlFor="Name" className={styles.label}>
+        <label htmlFor="Name" className={` formLabel ${styles.formLabel}`}>
           {data.nameLabel}
         </label>
         <input
           type="text"
           id="Name"
-          className={styles.input}
+          className={` formInput ${styles.formInput}`}
           placeholder={data.namePlaceholder}
         />
       </div>
 
       <div className={styles.formGroup}>
-        <label htmlFor="email" className={styles.label}>
+        <label htmlFor="email" className={` formLabel ${styles.formLabel}`}>
           {data.emailLabel}
         </label>
         <input
           type="email"
           id="email"
-          className={styles.input}
+          className={` formInput ${styles.formInput}`}
           placeholder={data.emailPlaceholder}
         />
       </div>
 
       <div className={styles.formGroup}>
-        <label htmlFor="Phone" className={styles.label}>
+        <label htmlFor="Phone" className={` formLabel ${styles.formLabel}`}>
           {data.phoneLabel}
         </label>
         <input
           type="tel"
           id="Phone"
-          className={styles.input}
+          className={` formInput ${styles.formInput}`}
           placeholder={data.phonePlaceholder}
         />
       </div>
 
       <div className={styles.formGroup}>
-        <label htmlFor="radio" className={styles.label}>
+        <label htmlFor="radio" className={` formLabel ${styles.formLabel}`}>
           {data.userTypeLabel}
         </label>
         <div className={styles.radioGroup}>
@@ -82,14 +82,14 @@ const Register = ({ selected, onChange }) => {
         </div>
       </div>
 
-      <Link href="/auth/setpassword" className={`body-text-14 loginBtn ${styles.nextBtn}`}>
+      <Link href="/auth/login/setpassword" className={`body-text-14 formGroupBtn ${styles.nextBtn}`}>
         {data.nextButton}
       </Link>
 
-      <div className={styles.links}>
-        <p className={styles.linkText}>
+      <div className={styles.formLinks}>
+        <p className={` formLinkText ${styles.formLinkText}`}>
           {data.loginText}{" "}
-          <Link href={data.loginLink} className={styles.link}>
+          <Link href={data.loginLink} className={` formLink ${styles.formLink}`}>
             {data.loginLinkText}
           </Link>
         </p>

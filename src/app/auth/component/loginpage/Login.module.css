@@ -1,55 +1,36 @@
 
 
-.rightHeading{
-  font-size: 20px;
- font-family: var(--font-medium);
-  color: var(--Black);
+.formHeading{
+  margin-bottom: 10px;
+}
+.formSubHeading{
+  margin-bottom: 25px;
 }
 .formGroup{
   display: flex;
   flex-direction: column;
 }
 
-.label {
-  font-size: 14px;
-font-family: var(--font-regular);
+.formLabel {
   display: block;
   margin-bottom: 4px;
 }
 
-.input {
-  width: 100%;
-  padding: 5px 20px ;
-  font-size: 14px;
-  font-family: var(--font-regular);
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  outline: none;
+.formInput {
   margin-bottom: 15px;
 }
-.loginBtn {
+.formGroupBtn {
   margin-bottom: 15px;
 }
 
 .googleBtn {
-  width: 100%;
   margin-bottom: 30px;
-  padding: 5px 20px;
-  background: var(--White);
-  color: #333;
-  border: 1px solid #ccc;
-  border-radius: 10px;
 }
 .googleIcon{
   margin-right: 5px;
 }
-.links{
+.formLinks{
   text-align: center;
-}
-.link {
-  color: var(--Orange-Red);
-  font-size: 16px;
-  font-family: var(--font-regular);
 }
 
 /*---------------- register ----------------*/
@@ -68,7 +49,6 @@ font-family: var(--font-regular);
 }
 
  .nextBtn {
-  width: 100%;
   display: flex;
   justify-content: center;
   text-decoration: none;

@@ -1,31 +1,33 @@
 import React from 'react';
-import styles from "../loginpage/LoginLeft.module.css"
-const RegisterLeft = () => {
+import styles from "../loginpage/LoginLeft.module.css";
+
+const ResetPasswordLeft = () => {
       const data = {
-    heading: "Welcome to UrbanRealities!",
-    subText: "To access your account:",
+    heading: "To set a new password for  ",
+    subText: "your UrbanRealities account",
     loginEmailHeading: "Login with email & password",
     loginEmailSteps: [
-      "Enter your registered email address or phone number",
-      "Input your password in the password field",
-      "Click the \"Login\" button to access your account"
-    ],
-  
+    "Set New password for your account",
+    "Confirm your new, secure password.",
+    "Save or submit the changes."    ],
+
   };
   return (
-    <div>
+     <div>
       <p className={`authHeading  ${styles.authHeading}`}>{data.heading}</p>
       <p className={`authSubHeading  ${styles.authSubHeading}`}>{data.subText}</p>
 
       <h4 className={`authsmallHeading  ${styles.authsmallHeading}`}>{data.loginEmailHeading}</h4>
-      <ul className={styles.authList}>
+      <ol className={styles.authList}>
         {data.loginEmailSteps.map((step, index) => (
           <li key={index} className={styles.authListItem}>{step}</li>
         ))}
-      </ul>
-      
+      </ol>
+
+    
     </div>
   );
 }
 
-export default RegisterLeft;
+export default ResetPasswordLeft;
+

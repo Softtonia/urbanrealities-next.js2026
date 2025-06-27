@@ -22,54 +22,54 @@ export default function LoginPage() {
 
   return (
     <div>
-      <h2 className={styles.rightHeading}>{data.heading}</h2>
-      <p className={styles.rightSubText}>{data.subText}</p>
+      <h5 className={` formHeading ${styles.formHeading}`}>{data.heading}</h5>
+      <p className={` formSubHeading ${styles.formSubHeading}`}>{data.subText}</p>
 
       <div className={styles.formGroup}>
-        <label htmlFor="email" className={styles.label}>
+        <label htmlFor="email" className={`formLabel ${styles.formLabel}`}>
           {data.emailLabel}
         </label>
         <input
           type="text"
           id="email"
-          className={styles.input}
+          className={`formInput ${styles.formInput}`}
           placeholder={data.emailPlaceholder}
         />
       </div>
 
       <div className={styles.formGroup}>
-        <label htmlFor="password" className={styles.label}>
+        <label htmlFor="password" className={styles.formLabel}>
           {data.passwordLabel}
         </label>
         <input
           type="password"
           id="password"
-          className={styles.input}
+          className={`formInput ${styles.formInput}`}
           placeholder={data.passwordPlaceholder}
         />
       </div>
 
       <div>
-        <button className={`body-text-14 loginBtn ${styles.loginBtn}`}>
+        <button className={`body-text-14 formGroupBtn ${styles.formGroupBtn}`}>
           {data.loginButton}
         </button>
       </div>
 
-      <button className={`body-text-14 ${styles.googleBtn}`}>
+      <button className={`body-text-14 googleBtn ${styles.googleBtn}`}>
         <img src="/Google.png" alt="Google" className={styles.googleIcon} />
         {data.googleButton}
       </button>
 
-      <div className={styles.links}>
-        <p className={styles.linkText}>
+      <div className={styles.formLinks}>
+        <p className={`formLinkText ${styles.formLinkText}`}>
           {data.noAccountText}{" "}
-          <Link href="/auth/register" className={styles.link}>
+          <Link href="/auth/login/register" className={`formLink ${styles.formLink}`}>
             {data.signUpText}
           </Link>
         </p>
-        <p className={styles.linkText}>
+        <p className={`formLinkText ${styles.formLinkText}`}>
           {data.troubleshootText}{" "}
-          <Link href="#" className={styles.link}>
+          <Link href="/auth/forgot-password" className={`formLink ${styles.formLink}`}>
             {data.forgotPasswordText}
           </Link>
         </p>

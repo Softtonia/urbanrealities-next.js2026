@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from "../loginpage/LoginLeft.module.css";
 
-const SetPasswordLeft = () => {
+const ForgotPasswordVerifyLeft = () => {
       const data = {
     heading: "Verify your email/phone for  ",
     subText: "UrbanRealities account authentication",
@@ -15,7 +15,7 @@ const SetPasswordLeft = () => {
   };
   return (
      <div>
-       <p className={`authHeading  ${styles.authHeading}`}>{data.heading}</p>
+      <p className={`authHeading  ${styles.authHeading}`}>{data.heading}</p>
       <p className={`authSubHeading  ${styles.authSubHeading}`}>{data.subText}</p>
 
       <h4 className={`authsmallHeading  ${styles.authsmallHeading}`}>{data.loginEmailHeading}</h4>
@@ -24,10 +24,10 @@ const SetPasswordLeft = () => {
           <li key={index} className={styles.authListItem}>{step}</li>
         ))}
       </ol>
-
     
     </div>
   );
 }
 
-export default SetPasswordLeft;
+export default ForgotPasswordVerifyLeft;
+

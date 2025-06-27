@@ -2,14 +2,14 @@
   display: flex;
   justify-content: center;
     padding: 20px 0;
-
+background-color: var(--off-white);
 }
 .loginContainer {
   display: flex;
  width: 100%;
  max-width: 800px;
  height: 600px;
-  border: 1px solid var(--Gray);
+  /* border: 1px solid var(--Gray); */
 }
 .leftPanel {
   width: 393px;
@@ -22,16 +22,38 @@
   padding: 50px 35px 29px 35px;
 }
 .rightPanel{
-  padding: 0px 25px 72px 0px;
+  padding: 90px 25px 80px 25px;
   width: 407px;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  background-color: var(--White);
+}
+.blobShape{
+  display:inline-block;
+  width: 159px;
+  height: 46px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.closeIcon{
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  font-size: 24px;
+  display: inline-block;
 }
 .formWrapper {
   background: white;
   display: flex;
   flex-direction: column;
   justify-content: center;
-    padding: 40px 0px 0px 25px;
-
+  /* padding: 40px 0px 0px 25px; */
+width: 100%;
+  height: 100%;
 }
 /* .leftPanel {
   flex: 1;
@@ -42,3 +64,14 @@
   flex: 1;
   min-width: 50%;
 } */
+@media (max-width: 768px) {
+
+  .leftPanel {
+    display: none;
+  }
+.loginContainer {
+  display: flex;
+ width: 100%;
+ max-width: 414px;
+}
+}

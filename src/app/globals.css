@@ -130,38 +130,46 @@ h1 {
 
 h2 {
   font-family: var(--font-semibold);
-  font-size: 39.81px;
+  font-size: 39.81px !important;
 }
 
 h3 {
   font-family:var(--font-medium);
-  font-size: 33.18px;
+  font-size: 33.18px !important;
 }
 
 h4 {
   font-family:var(--font-medium);
-  font-size: 27.65px;
+  font-size: 27.65px !important;
 }
 
 h5 {
-  font-family:var(--font-medium);
-  font-size: 23.04px;
+  font-family:var(--font-semibold);
+  font-size: 23.33px ;
 }
 
 h6 {
   font-family:var(--font-medium);
-  font-size: 16.2px;
+  font-size: 16.2px !important;
 }
 
 p {
   font-family: var(--font-regular);
+  font-size: 16px ;
+}
+li {
+  font-family:var(--font-regular);
   font-size: 16px;
 }
 
+span {
+  font-family:var(--font-regular);
+  font-size: 16px;
+}
 
 small {
   font-family:var(--font-regular);
-  font-size: 13.33px;
+  font-size: 13.33px !important;
 }
 
 .body-text-12{
@@ -192,15 +200,7 @@ small {
   font-size: 20px !important;
   font-family: var(--font-medium);
 }
-li {
-  font-family:var(--font-regular);
-  font-size: 13px;
-}
 
-span {
-  font-family:var(--font-regular);
-  font-size: 16px;
-}
 
 /* =============all global btn css========  */
 
@@ -365,14 +365,7 @@ padding: 10px 20px;
   font-weight: 600;
 }
 
-.loginBtn {
-  width: 100%;
-  background: var(--Orange-Red);
-  color: var(--White);
-  padding: 5px 20px; ;
-  border: none;
-  border-radius: 10px;
-}
+
 
 .translate-x-0 {
   transform: translateX(0) !important;
@@ -398,3 +391,63 @@ padding: 10px 20px;
   transform: translateX(0);
 }
 
+/*-------------- auth-CSS ---------------*/
+.authHeading {
+  font-size: 20px;
+  font-family: var(--font-medium);
+}
+
+.authSubHeading {
+  font-size: 20px;
+  font-family: var(--font-medium);
+}
+.authsmallHeading {
+  font-size: 18px !important;
+  font-family: var(--font-medium);
+}
+.formLabel {
+  font-size: 14px;
+font-family: var(--font-regular);
+}
+.formInput {
+  width: 100%;
+  padding: 5px 20px ;
+  font-size: 14px;
+  font-family: var(--font-regular);
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+}
+.formGroupBtn {
+  width: 100%;
+  background: var(--Orange-Red);
+  color: var(--White);
+  padding: 5px 20px; ;
+  border: none;
+  border-radius: 10px;
+}
+.googleBtn {
+  width: 100%;
+  padding: 5px 20px;
+  background: var(--White);
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+.formHeading{
+  font-size: 20px !important;
+  font-family: var(--font-medium);
+}
+.formSubHeading{
+  font-size: 16px !important;
+  font-family: var(--font-regular);
+}
+formLinkText {
+  font-size: 16px;
+  font-family: var(--font-regular);
+}
+.formLink {
+  color: var(--Orange-Red);
+  font-size: 16px;
+  font-family: var(--font-regular);
+}

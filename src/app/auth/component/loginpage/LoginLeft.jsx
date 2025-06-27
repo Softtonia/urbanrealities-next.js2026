@@ -22,20 +22,20 @@ const LoginLeft = () => {
 
   return (
     <div>
-      <h2 className={styles.leftHeading}>{data.heading}</h2>
-      <p className={styles.leftSubText}>{data.subText}</p>
+      <p className={`authHeading  ${styles.authHeading}`}>{data.heading}</p>
+      <p className={`authSubHeading  ${styles.authSubHeading}`}>{data.subText}</p>
 
-      <h4 className={styles.leftSubHeading}>{data.loginEmailHeading}</h4>
-      <ul className={styles.leftList}>
+      <h4 className={`authsmallHeading  ${styles.authsmallHeading}`}>{data.loginEmailHeading}</h4>
+      <ul className={styles.authList}>
         {data.loginEmailSteps.map((step, index) => (
-          <li key={index} className={styles.leftListItem}>{step}</li>
+          <li key={index} className={styles.authListItem}>{step}</li>
         ))}
       </ul>
 
-      <h4 className={styles.leftSubHeading}>{data.loginGoogleHeading}</h4>
-      <ul className={styles.leftList}>
+      <h4 className={`authsmallHeading  ${styles.authsmallHeading}`}>{data.loginGoogleHeading}</h4>
+      <ul className={styles.authList}>
         {data.loginGoogleSteps.map((step, index) => (
-          <li key={index} className={styles.leftListItem}>{step}</li>
+          <li key={index} className={styles.authListItem}>{step}</li>
         ))}
       </ul>
     </div>
