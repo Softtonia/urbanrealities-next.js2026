@@ -45,6 +45,7 @@ const SetPassword = () => {
    <Link href="/auth/login/verify-otp" className={`body-text-14 formGroupBtn ${styles.nextBtn}`}>
         {data.nextButton}
       </Link>
+      
    </div>
   );
 };

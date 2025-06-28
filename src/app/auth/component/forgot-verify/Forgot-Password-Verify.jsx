@@ -10,6 +10,8 @@ const ForgotPasswordVerify = () => {
     otpLabel: "OTP verification",
     otpPlaceholder: "Enter OTP",
     nextButton: "Verify",
+      knowText: "Know More",
+    guideText: "Verify Account?",
   };
 
   return (
@@ -33,6 +35,15 @@ const ForgotPasswordVerify = () => {
    <Link href="/auth/forgot-password/reset-password" className={`body-text-14 formGroupBtn ${styles.nextBtn}`}>
         {data.nextButton}
       </Link>
+
+       <div className={styles.formLinks}>
+       <p className={`formLinkText ${styles.KnowLinkText}`}>
+          {data.guideText}{" "}
+          <Link href="#" className={`formLink ${styles.KnowLink}`}>
+            {data.knowText}
+          </Link>
+        </p>
+        </div>
    </div>
   );
 };

@@ -23,6 +23,7 @@
   margin-bottom: 15px;
 }
 
+
 .googleBtn {
   margin-bottom: 30px;
 }
@@ -45,7 +46,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #333;
+  color: var(--Eerie-Black);
 }
 
  .nextBtn {
@@ -53,4 +54,16 @@
   justify-content: center;
   text-decoration: none;
   margin-bottom: 30px;
+}
+.KnowLink{
+  text-decoration: none !important;
+}
+.KnowLinkText{
+  display: none !important;
+}
+@media (max-width: 768px) {
+  .KnowLinkText{
+    display: block !important;
+  }
+
 }

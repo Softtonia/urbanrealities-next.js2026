@@ -12,6 +12,8 @@ const ResetPassword = () => {
     confirmPasswordLabel: "Confirm Password",
     confirmPasswordPlaceholder: "Re-enter password",
     nextButton: "Confirm",
+      knowText: "Know More",
+    guideText: "Set Password?",
   };
 
   return (
@@ -42,9 +44,18 @@ const ResetPassword = () => {
           placeholder={data.confirmPasswordPlaceholder}
         />
       </div>
-   <Link href="/" className={`body-text-14 formGroupBtn ${styles.nextBtn}`}>
+   <Link href="/auth/login" className={`body-text-14 formGroupBtn ${styles.nextBtn}`}>
         {data.nextButton}
       </Link>
+            <div className={styles.formLinks}>
+ <p className={`formLinkText ${styles.KnowLinkText}`}>
+          {data.guideText}{" "}
+          <Link href="#" className={`formLink ${styles.KnowLink}`}>
+            {data.knowText}
+          </Link>
+        </p>
+              </div>
+
    </div>
   );
 };

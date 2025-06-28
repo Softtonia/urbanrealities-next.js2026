@@ -15,7 +15,9 @@ export default function ForgotPassword() {
     noAccountText: "",
     signUpText: "Back to Login",
     troubleshootText: "Troubleshoot?",
-    forgotPasswordText: "Forgot Password"
+    forgotPasswordText: "Forgot Password",
+      knowText: "Know More",
+    guideText: "Forgot Account?",
   };
 
   return (
@@ -51,6 +53,12 @@ export default function ForgotPassword() {
           <IoArrowBackSharp/> 
           <Link href="/auth/login" className={`formLink ${styles.formLink}`}>
            {data.signUpText}
+          </Link>
+        </p>
+         <p className={`formLinkText ${styles.KnowLinkText}`}>
+          {data.guideText}{" "}
+          <Link href="#" className={`formLink ${styles.KnowLink}`}>
+            {data.knowText}
           </Link>
         </p>
        

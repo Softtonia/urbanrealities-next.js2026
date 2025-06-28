@@ -37,6 +37,8 @@
 
   --Spanish-Gray: #9E9E9E ;
 
+  --Lavender-Gray: #C5C9D1;
+
   --Tart-Orange:#F54848;
 
   --Platnium:rgba(230, 230, 230, 1);
@@ -125,22 +127,22 @@ html {
 
 h1 {
   font-family: var(--font-bold);
-  font-size: 47.78px !important;
+  font-size: 47.78px ;
 }
 
 h2 {
   font-family: var(--font-semibold);
-  font-size: 39.81px !important;
+  font-size: 39.81px ;
 }
 
 h3 {
   font-family:var(--font-medium);
-  font-size: 33.18px !important;
+  font-size: 33.18px ;
 }
 
 h4 {
   font-family:var(--font-medium);
-  font-size: 27.65px !important;
+  font-size: 27.65px ;
 }
 
 h5 {
@@ -150,7 +152,7 @@ h5 {
 
 h6 {
   font-family:var(--font-medium);
-  font-size: 16.2px !important;
+  font-size: 16.2px ;
 }
 
 p {
@@ -169,7 +171,7 @@ span {
 
 small {
   font-family:var(--font-regular);
-  font-size: 13.33px !important;
+  font-size: 13.33px ;
 }
 
 .body-text-12{
@@ -414,11 +416,13 @@ font-family: var(--font-regular);
   padding: 5px 20px ;
   font-size: 14px;
   font-family: var(--font-regular);
-  border: 1px solid #ccc;
+  border: 1px solid var(--Lavender-Gray);
   border-radius: 10px;
   outline: none;
 }
 .formGroupBtn {
+  display: flex;
+  justify-content: center;
   width: 100%;
   background: var(--Orange-Red);
   color: var(--White);
@@ -427,11 +431,13 @@ font-family: var(--font-regular);
   border-radius: 10px;
 }
 .googleBtn {
+  display: flex;
+  justify-content: center;
   width: 100%;
   padding: 5px 20px;
   background: var(--White);
-  color: #333;
-  border: 1px solid #ccc;
+  color: var(--Eerie-Black);
+  border: 1px solid var(--Lavender-Gray);
   border-radius: 10px;
 }
 .formHeading{

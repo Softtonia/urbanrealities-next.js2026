@@ -18,7 +18,9 @@ const Register = ({ selected, onChange }) => {
     nextButton: "Next",
     loginText: "Already have an account?",
     loginLinkText: "Login",
-    loginLink: "/auth/login"
+    loginLink: "/auth/login",
+      knowText: "Know More",
+    guideText: "Sign Up Guide?",
   };
 
   return (
@@ -91,6 +93,12 @@ const Register = ({ selected, onChange }) => {
           {data.loginText}{" "}
           <Link href={data.loginLink} className={` formLink ${styles.formLink}`}>
             {data.loginLinkText}
+          </Link>
+        </p>
+         <p className={`formLinkText ${styles.KnowLinkText}`}>
+          {data.guideText}{" "}
+          <Link href="#" className={`formLink ${styles.KnowLink}`}>
+            {data.knowText}
           </Link>
         </p>
       </div>

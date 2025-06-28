@@ -1,0 +1,105 @@
+
+.card {
+  display: flex;
+  border-radius: 0 24px  12px 0;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  background: #fff;
+  margin-bottom: 20px;
+ /* max-width:612px; */
+  max-height: 242px;
+
+}
+
+.imageWrapper {
+  position: relative;
+
+}
+
+.verified {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #ff6b35;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 8px;
+  z-index: 2;
+}
+
+.image {
+  border-radius: 0;
+flex: 1;
+}
+
+.details {
+  padding: 15px;
+  position: relative;
+}
+
+.statusRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.approved {
+  background-color: #67c37b;
+  color: white;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.bellIcon {
+  color: #999;
+  font-size: 16px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.price {
+  color: green;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 4px 0 8px 0;
+}
+
+.infoLine {
+  margin-bottom: 8px; 
+  color: #333;
+  font-size: 16px;
+}
+
+.projectName {
+  color: #f97316;
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.highlight {
+  font-weight: 500;
+  margin-left: 6px;
+}
+
+.actionLinks {
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.blueLink {
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.orangeLink {
+  color: #f97316;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+}

@@ -17,7 +17,10 @@ export default function LoginPage() {
     noAccountText: "Don't have an account?",
     signUpText: "Sign Up",
     troubleshootText: "Troubleshoot?",
-    forgotPasswordText: "Forgot Password"
+    forgotPasswordText: "Forgot Password",
+    knowText: "Know More",
+    guideText: "Login Guide?",
+
   };
 
   return (
@@ -50,15 +53,15 @@ export default function LoginPage() {
       </div>
 
       <div>
-        <button className={`body-text-14 formGroupBtn ${styles.formGroupBtn}`}>
+        <Link href="/my-account-dashboard" className={`body-text-14 formGroupBtn ${styles.formGroupBtn}`}>
           {data.loginButton}
-        </button>
+        </Link>
       </div>
 
-      <button className={`body-text-14 googleBtn ${styles.googleBtn}`}>
+      <Link href="#" className={`body-text-14 googleBtn ${styles.googleBtn}`}>
         <img src="/Google.png" alt="Google" className={styles.googleIcon} />
         {data.googleButton}
-      </button>
+      </Link>
 
       <div className={styles.formLinks}>
         <p className={`formLinkText ${styles.formLinkText}`}>
@@ -71,6 +74,12 @@ export default function LoginPage() {
           {data.troubleshootText}{" "}
           <Link href="/auth/forgot-password" className={`formLink ${styles.formLink}`}>
             {data.forgotPasswordText}
+          </Link>
+        </p>
+        <p className={`formLinkText ${styles.KnowLinkText}`}>
+          {data.guideText}{" "}
+          <Link href="#" className={`formLink ${styles.KnowLink}`}>
+            {data.knowText}
           </Link>
         </p>
       </div>

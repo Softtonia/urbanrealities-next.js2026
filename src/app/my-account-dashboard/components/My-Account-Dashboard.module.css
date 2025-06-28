@@ -1,0 +1,33 @@
+
+.dashboard {
+  display: flex;
+ background-color: var(--off-white);
+}
+.main-container{
+    display: flex;
+    flex-direction: column;
+}
+.heading {
+    text-align: center;
+ padding: 50px 0;
+}
+
+.main {
+ /* display: flex;
+  justify-content: center;
+  flex: 1; */
+  padding: 20px;
+}
+
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  /* grid-template-columns: repeat(2,1fr); */
+  /* gap: 0 53px ; */
+}
+
+.pagination {
+  margin-top: 2rem;
+  text-align: end;
+}
