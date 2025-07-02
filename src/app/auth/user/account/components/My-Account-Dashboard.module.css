@@ -1,0 +1,96 @@
+
+
+.insightcard{
+  overflow: hidden;
+background-color: var(--White);
+padding:  20px ;
+border-radius: 10px;
+border: 1px solid #eee;
+
+}
+.pagerow{
+  overflow: hidden;
+}
+.dashboard {
+display: flex;
+background-color: var(--off-white);
+}
+.main-container{
+display: flex;
+flex-direction: column;
+overflow: hidden;
+width: 100%;
+}
+.heading {
+text-align: center;
+padding: 50px 0;
+margin: 0;
+}
+.Sidebarcol{
+  padding-right: 0px;
+}
+.main {
+  overflow: hidden;
+padding: 0 20px ;
+}
+
+
+.grid {
+display: flex;
+flex-direction: column;
+}
+
+.pagination {
+margin: 20px;
+text-align: end;
+}
+.pagination button {
+padding: 6px 12px;
+background-color: #fff;
+border: 1px solid #ddd;
+cursor: pointer;
+border-radius: 4px;
+}
+
+.pagination button:hover {
+background-color: #f26522;
+color: white;
+}
+.loaderWrapper {
+height: 100%;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.spinner {
+width: 50px;
+height: 50px;
+border: 6px solid #eee;
+border-top: 6px solid #f26522;
+border-radius: 50%;
+animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+to {
+transform: rotate(360deg);
+}
+}
+@media (max-width:991.98px){
+.insightcard{
+border: none !important;
+background-color: transparent !important;
+}
+.insightcard{
+padding: 0 ; 
+}
+}
+@media (max-width: 767.98px) {
+.Sidebarcol {
+display: none !important; 
+}
+
+
+
+}

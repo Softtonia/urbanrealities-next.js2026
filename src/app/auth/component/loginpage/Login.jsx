@@ -53,7 +53,7 @@ export default function LoginPage() {
       </div>
 
       <div>
-        <Link href="/my-account-dashboard" className={`body-text-14 formGroupBtn ${styles.formGroupBtn}`}>
+        <Link href="/auth/user/account" className={`body-text-14 formGroupBtn ${styles.formGroupBtn}`}>
           {data.loginButton}
         </Link>
       </div>

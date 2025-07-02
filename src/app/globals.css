@@ -44,6 +44,8 @@
   --Platnium:rgba(230, 230, 230, 1);
 
   --Light-Moss-Green : #A5D6A7;
+
+  --Bright-Gray : #EBECF0 ;
 }
 
 
@@ -391,6 +393,27 @@ padding: 10px 20px;
 
 .mobile-side-menu.open {
   transform: translateX(0);
+}
+.loaderWrapper {
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #eee;
+  border-top: 6px solid #f26522;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /*-------------- auth-CSS ---------------*/
