@@ -1,33 +1,30 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import styles from '../components/My-Account-Dashboard.module.css';
-import MyAccountInsight from './components/My-Account-Insight';
+import styles from '../components/My-Account-Dashboard.module.css'; // same layout CSS
+import MyAccountListing from './components/My-Account-listing';
 
-const MyAccountDashboard = () => {
+const ListingPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const itemsPerPage = 6;
 
-  const dummyProperties = Array.from({ length: 96 }, (_, i) => ({
-    id: `47852569-${i}`,
-    companyName: "Ganesh Property pvt ltd.",
-    location: "Ernakulam, Kerala",
-    price: "₹ 3 Crore",
-    image: "/insight-card.png",
-    stats: {
-      impression: 741,
-      views: 741,
-      email: 741,
-      percentage: 78,
-    },
-    createdAt: "2024-01-24T00:24:00",
-    expiresAt: "2025-06-14T12:24:00",
+  const dummyListings = Array.from({ length: 30 }, (_, i) => ({
+    id: `listing-${i}`,
+    imageUrl: '/image-card.png',
+    price: `₹ ${3 + i} Crore`,
+    bhk: `${2 + (i % 3)} BHK`,
+    type: 'Apartment',
+    size: `${1500 + i * 10} sqft`,
+    location: 'Bangalore, Karnataka',
+    projectName: 'Dream Towers',
+    availableFor: 'Sale',
+    carpetArea: `${1200 + i * 5} sqft`,
   }));
 
-  const totalPages = Math.ceil(dummyProperties.length / itemsPerPage);
+  const totalPages = Math.ceil(dummyListings.length / itemsPerPage);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800);
+    const timer = setTimeout(() => setLoading(false), 600);
     return () => clearTimeout(timer);
   }, [currentPage]);
 
@@ -38,7 +35,7 @@ const MyAccountDashboard = () => {
     }
   };
 
-  const paginatedData = dummyProperties.slice(
+  const paginatedListings = dummyListings.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -51,11 +48,11 @@ const MyAccountDashboard = () => {
         </div>
       ) : (
         <>
-          <div className={styles.insightcard}>
-              {paginatedData.map((prop) => (
-                <MyAccountInsight key={prop.id} data={prop} />
+            <section className={styles.listingcard}>
+              {paginatedListings.map((listing) => (
+                <MyAccountListing key={listing.id} data={listing} />
               ))}
-          </div>
+            </section>
 
           <nav className={styles.pagination}>
             <button
@@ -97,4 +94,4 @@ const MyAccountDashboard = () => {
   );
 };
 
-export default MyAccountDashboard;
+export default ListingPage;

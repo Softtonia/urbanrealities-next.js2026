@@ -6,11 +6,14 @@
   flex-direction: column;
   border-radius: 0.5rem;
   padding-bottom: 35px;
-   max-height: 843px; 
+  width: 155px;
 }
 
 .menuItem {
   display: flex;
+  text-decoration: none;
+  align-items: center;
+  color: var( --Gray ) ;
   cursor: pointer;
   font-size: 12px;
   transition: all 0.2s ease;
@@ -22,36 +25,26 @@
   color: #ff6600;
 }
 .menuContent{
-  display: flex;
+  margin-left: 25%;
 align-items: center;
-padding: 0 43px 6px 30px;
 }
 
 .icon {
-  display: flex;
   font-size: 32px;
    color: var(--Gray);
 
 }
 
 .label {
-  margin-left: 15px;
-  font-size: 14px;
+    font-size: 14px;
   font-family: var(--font-regular);
 }
 
 
 @media (max-width: 1199.98px) {
-  .sidebar {
-    padding: 10px 0;
-  }
-  .menuContent {
-    padding: 0;
-  }
 
   .label {
-    margin-left: 5px;
-    font-size: 12px;
+   font-size: 12px;
   }
   .icon {
   display: flex;

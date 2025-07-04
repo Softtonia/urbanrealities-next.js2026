@@ -1,9 +1,10 @@
+
 .property-card {
 background: var(--White);
 border-radius: 10px;
-/* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); */
 margin-bottom: 16px;
 border: 1px solid var(--Bright-Gray);
+width: 852p;
 }
 
 .property-content{
@@ -126,4 +127,6 @@ height: auto;
 .property-card {
 margin-bottom: 4px;
 }
+
 }
+

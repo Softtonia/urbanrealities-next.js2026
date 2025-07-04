@@ -18,6 +18,7 @@ const MyAccountInsight = ({ data }) => {
   } = data;
 
   return (
+
      <div className={styles['property-card']}>
       <div className={`row align-items-center m-0 ${styles['property-content']}`}>
         <div className= {` ${styles['top-content']} col-lg-2 col-4  p-0 m-0`}>
@@ -35,7 +36,6 @@ const MyAccountInsight = ({ data }) => {
           <p className={styles['property-price']}>{price}</p>
         </div>
 
-          {/* <div className={styles.verticalDivider}></div> */}
 
 
         <div className={` ${styles.Progressbar} col-lg-3 col-6 `}>
@@ -61,7 +61,6 @@ const MyAccountInsight = ({ data }) => {
 
           </div>
           
-              {/* <div className={styles.verticalDivider}></div> */}
 
         <div className= {` ${styles['insight-views']} col-lg-3 col-6  text-center`}>
           <button className={styles['insight-btn']}>Insight Views</button>
@@ -82,6 +81,7 @@ const MyAccountInsight = ({ data }) => {
         </div>
       </div>
     </div>
+
   );
 };
 

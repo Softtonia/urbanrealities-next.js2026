@@ -204,7 +204,10 @@ small {
   font-size: 20px !important;
   font-family: var(--font-medium);
 }
-
+.top-heading{
+  font-size: 30px !important;
+  font-family: var(--font-semibold);
+}
 
 /* =============all global btn css========  */
 
@@ -479,4 +482,18 @@ formLinkText {
   color: var(--Orange-Red);
   font-size: 16px;
   font-family: var(--font-regular);
+}
+
+
+
+
+
+
+
+
+
+@media (max-width: 575.98px) {
+.top-heading{
+  font-size: 18px !important;
+}
 }
