@@ -1,12 +1,13 @@
 .dashboard {
 display: flex;
 background-color: var(--off-white);
+padding: 50px 0;
 }
 
 
 .insightcard{
-  width: 100%;
-  overflow: hidden;
+ width: 100%;
+overflow: hidden;
 background-color: var(--White);
 padding:  20px ;
 border-radius: 10px;
@@ -25,7 +26,7 @@ width: 100%;
 }
 .heading {
 text-align: center;
-padding: 50px 0;
+padding-bottom: 50px ;
 margin: 0;
 }
 .Sidebarcol{
@@ -44,7 +45,7 @@ flex-direction: column;
 .listingcard{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  /* gap: 0 20px; */
+  gap: 0 20px;
 }
 
 .pagination {
@@ -123,18 +124,29 @@ animation: spin 0.8s linear infinite;
   }
 }
 
-.closeBtn {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  font-size: 22px;
-  background: none;
+.backBtn {
+  display: inline-block;
+  margin-bottom: 15px;
+  background-color: #e0e0e0;
   border: none;
+  padding: 10px 14px;
+  font-size: 15px;
+  border-radius: 5px;
   cursor: pointer;
 }
+
 @keyframes spin {
 to {
 transform: rotate(360deg);
+}
+}
+
+@media (max-width:1100px){
+
+.listingcard{
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 0 20px;
 }
 }
 @media (max-width:991.98px){
@@ -145,17 +157,17 @@ background-color: transparent !important;
 .insightcard{
 padding: 0 ; 
 }
-.listingcard{
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 0 20px;
-}
+
 }
 @media (max-width: 767.98px) {
-.Sidebarcol {
-display: none !important; 
-}
-  .hamburger {
-    display: block;
+  /* .main {
+    display: none;
   }
+
+  .main.active {
+    display: block;
+  } */
+  .Sidebarcol{
+ width: 100%;
+}
 }

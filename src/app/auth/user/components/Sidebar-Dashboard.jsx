@@ -1,13 +1,10 @@
+'use client';
 import styles from "./Sidebar-Dashboard.module.css";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
-  FaChartBar,
-  FaBuilding,
-  FaEnvelope,
-  FaBook,
-  FaCalendarAlt,
-  FaLifeRing,
-  FaCog,
+  FaChartBar, FaBuilding, FaEnvelope, FaBook,
+  FaCalendarAlt, FaLifeRing, FaCog
 } from "react-icons/fa";
 import { HiDocumentChartBar } from "react-icons/hi2";
 
@@ -22,18 +19,42 @@ const menuItems = [
   { icon: <FaCog />, label: "Settings", link: "/auth/user/setting" },
 ];
 
-export default function SidebarDashboard() {
+export default function SidebarDashboard({onItemClick}) {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const handleMobileClick = (link) => {
+    if(onItemClick) onItemClick();
+    router.push(link);
+  };
+console.log(onItemClick);
   return (
-    <div className={styles.sidebar}>
-      {menuItems.map((item, index) => (
-        <Link href={item.link} key={index} className={styles.menuItem}>
-          <div className={styles.menuContent}>
-          <div className={styles.icon}>{item.icon}</div>
-          <span className={styles.label}>{item.label}</span>
-        </div>
-        </Link>
-      ))}
-    
+    <div className={styles.sidebarContainer}>
+      {/* Desktop Sidebar */}
+      <div className={styles.sidebarDesktop}>
+        {menuItems.map((item, index) => (
+          <Link href={item.link} key={index} className={`${styles.menuItem} ${pathname === item.link ? styles.active : ''}`}>
+            <div className={styles.menuContent}>
+              <div className={styles.icon}>{item.icon}</div>
+              <span className={styles.label}>{item.label}</span>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* Mobile Grid Sidebar */}
+      <div className={styles.sidebarMobile}>
+        {menuItems.map((item, index) => (
+          <button
+            key={index}
+            className={styles.gridItem}
+            onClick={() => handleMobileClick(item.link)}
+          >
+            <div className={styles.gridIcon}>{item.icon}</div>
+            <div className={styles.gridLabel}>{item.label}</div>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

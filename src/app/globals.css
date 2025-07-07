@@ -29,6 +29,8 @@
   /* Price color property listing */
   --Slimy-Green: #3D8B0D;
 
+  --Apple: #7CBC3B;
+
   --Raisin-Black: #222222;
 
   --off-white: #F8F8F8;
@@ -46,6 +48,26 @@
   --Light-Moss-Green : #A5D6A7;
 
   --Bright-Gray : #EBECF0 ;
+  
+  --Persian-Blue: #1125D2;
+
+   --Bleu-De-France: #2B98D6;
+
+   --Light-Coral: #F07E7E ;
+
+   --Dark-Tangerine: #FF9F0F;
+
+   --Tomato: #FF6746 ; 
+   
+   --UFO-Green: #37D159 ;
+
+   --Violet-Blue: #3B4CB8 ;
+
+   --KU-Crimson: #E40E0E ;
+
+   --Lotion: #FAFAFA ;
+
+   --Gainsboro: #DDDDDD ;
 }
 
 
@@ -484,6 +506,16 @@ formLinkText {
   font-family: var(--font-regular);
 }
 
+.btn-AddTicket{
+  background-color: var(--Orange-Red);
+  color: var(--White);
+  font-family: var(--font-regular);
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  text-transform: capitalize;
+  padding: 10px 20px; 
+}
 
 
 

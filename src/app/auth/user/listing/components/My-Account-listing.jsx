@@ -3,9 +3,9 @@ import { FaBell } from "react-icons/fa";
 
 export default function MyAccountlisting({ data }) {
   return (
-    <div className={` ${styles.card} row `}>
+    <div className={` ${styles.card} `}>
       {/* Image with Verified tag */}
-      <div className={` ${styles.imageWrapper} col-6 `}>
+      <div className={` ${styles.imageWrapper} `}>
         <span className={styles.verified}>Verified</span>
         <img
           src={data.imageUrl}
@@ -15,7 +15,7 @@ export default function MyAccountlisting({ data }) {
       </div>
 
       {/* Details Section */}
-      <div className={` ${styles.details} col-6 `}>
+      <div className={` ${styles.details} `}>
         <div className={styles.statusRow}>
           <span className={styles.approved}>Approve</span>
           <FaBell className={styles.bellIcon} />
@@ -31,13 +31,13 @@ export default function MyAccountlisting({ data }) {
           {data.location} <span className={styles.projectName}>{data.projectName}</span>
         </p>
 
-        {/* <p className={styles.infoLine}>
+        <p className={styles.infoLine}>
           Available for <span className={styles.highlight}>{data.availableFor}</span>
         </p>
 
         <p className={styles.infoLine}>
           Carpet Area <span className={styles.highlight}>{data.carpetArea}</span>
-        </p> */}
+        </p>
 
         <div className={styles.actionLinks}>
           <a className={styles.blueLink}>View Insight</a>

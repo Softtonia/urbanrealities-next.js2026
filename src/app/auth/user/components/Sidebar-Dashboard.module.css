@@ -1,7 +1,11 @@
+.sidebarContainer {
+  width: 100%;
+}
 
-.sidebar {
+/* 🖥️ Desktop sidebar */
+.sidebarDesktop {
   background: var(--White);
-  border: 1px solid var(--Bright-Gray );
+  border: 1px solid var(--Bright-Gray);
   display: flex;
   flex-direction: column;
   border-radius: 0.5rem;
@@ -13,41 +17,77 @@
   display: flex;
   text-decoration: none;
   align-items: center;
-  color: var( --Gray ) ;
+  color: var(--Gray);
   cursor: pointer;
   font-size: 12px;
   transition: all 0.2s ease;
   height: 94px;
   margin-bottom: 8px;
-  padding: 14px 7px; 
+  padding: 14px 7px;
 }
-.menuItem:hover {
-  color: #ff6600;
+
+.menuItem:hover,
+.active {
+  color: var(--Orange-Red);
 }
-.menuContent{
+
+.menuContent {
   margin-left: 25%;
-align-items: center;
+  align-items: center;
 }
 
 .icon {
   font-size: 32px;
-   color: var(--Gray);
-
+  color: var(--Gray);
 }
-
 .label {
-    font-size: 14px;
+  font-size: 14px;
   font-family: var(--font-regular);
 }
 
-
-@media (max-width: 1199.98px) {
-
-  .label {
-   font-size: 12px;
-  }
-  .icon {
-  display: flex;
-  font-size: 24px;
+/* 📱 Mobile Grid Sidebar */
+.sidebarMobile {
+  display: none;
 }
+
+/* Responsive changes */
+@media (max-width: 767.98px) {
+  .sidebarDesktop {
+    display: none;
+  }
+
+  .sidebarMobile {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 16px;
+    background: var(--White);
+    border-radius: 0.5rem;
+  }
+
+  .gridItem {
+    text-align: center;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    padding: 16px;
+    text-decoration: none;
+    border: none;
+    color: var(--Gray);
+    transition: all 0.2s ease;
+  }
+
+  .gridItem:hover {
+    color: var(--Orange-Red);
+  }
+
+  .gridIcon {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+
+  .gridLabel {
+    font-size: 12px;
+    font-family: var(--font-regular);
+  }
 }

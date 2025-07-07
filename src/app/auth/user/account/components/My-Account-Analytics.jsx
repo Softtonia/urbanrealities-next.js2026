@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./My-Account-Insight.module.css";
+import styles from "./My-Account-Analytics.module.css";
 import format from "date-fns/format";
 import Link from "next/link";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";

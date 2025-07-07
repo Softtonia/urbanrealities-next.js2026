@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import styles from '../components/My-Account-Dashboard.module.css';
-import MyAccountInsight from './components/My-Account-Insight';
+import MyAccountAnalytics from './components/My-Account-Analytics';
 
 const MyAccountDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,7 +53,7 @@ const MyAccountDashboard = () => {
         <>
           <div className={styles.insightcard}>
               {paginatedData.map((prop) => (
-                <MyAccountInsight key={prop.id} data={prop} />
+                <MyAccountAnalytics key={prop.id} data={prop} />
               ))}
           </div>
 
