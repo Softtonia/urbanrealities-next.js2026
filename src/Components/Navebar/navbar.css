@@ -29,7 +29,9 @@
   margin-bottom: 15px;
   margin-top: 15px;
 }
-
+.btn-property{
+  text-decoration: none;
+}
 
 @media (max-width: 992px) {
   .navbar {
