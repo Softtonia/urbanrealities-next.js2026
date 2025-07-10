@@ -1,50 +1,8 @@
-.postFormContainer {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 50px 0;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-.postFormLeft {
-  display: flex;
-  align-items: center;
-}
-
-.postFormImage {
-  max-width: 100%;
-  height: auto;
-}
-
-.postFormBenefits {
-    width: 476px;
-    height: 100%;
-  margin-top: 1rem;
-  text-align: left;
-}
-.post-add{
-    margin-bottom: 50px;
-}
-.postFormHighlight {
-  color: orange;
-  font-weight: bold;
-}
-
-.postFormRight {
-  /* flex: 1; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .postFormCard {
-  background-color: #fff;
+  background-color: var(--White);
   padding: 60px 46px 55px 46px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 454px;
-  height: 534px;
   position: relative;
 
 }
@@ -56,35 +14,38 @@
   top: 0;
   left: 0;
 }
-
-.postFormSubtitle {
-  color: #555;
-  font-size: 0.9rem;
+.postformHeading{
+  margin-bottom: 10px;
 }
+.postFormSubtitle {
+  color: var(--Eerie-Black);
+  margin-bottom: 25px;
+}
+
 
 .postFormRadioGroup {
   display: flex;
-  justify-content: space-between;
+  gap: 5px;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 15px;
+}
+
+.radioOption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--Eerie-Black);
 }
 
 .postFormInput {
-  margin-bottom: 1rem;
+  margin-bottom: 15px;
 }
 
 .postFormSignup {
-  font-size: 0.85rem;
-  margin-top: 1rem;
   text-align: center;
 }
 
-.postFormSignup span {
-  color: var(--Orange-Red);
-  cursor: pointer;
-  font-weight: 500;
+
+.postFormButton{
+  margin-bottom: 25px;
 }
-
-
-

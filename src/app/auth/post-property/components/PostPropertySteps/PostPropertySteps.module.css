@@ -1,0 +1,68 @@
+.stepsSection {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #ffffff;
+}
+
+.howToPost {
+  font-size: 14px;
+  font-family: var(--font-medium);
+  color: #888;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.postHeading {
+  color: #0d1c3d;
+  margin-bottom: 40px;
+}
+
+.stepsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.stepCard {
+  flex: 1 1 280px;
+  max-width: 320px;
+  text-align: left;
+}
+
+.stepIcon {
+  margin-bottom: 32px;
+}
+
+.stepTitle {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.stepNumber {
+  color: var(--Orange-Red);
+    font-size: 20px;
+
+}
+
+.stepDesc {
+  font-size: 14px;
+  color: var(--Gray);
+}
+
+.ctaButton {
+  background-color: var(--Orange-Red);
+  color: #fff;
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.ctaButton:hover {
+  background-color: #005bb5;
+}

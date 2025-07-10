@@ -1,34 +1,18 @@
 import styles from "./PostPropertyForm.module.css";
-import Image from "next/image";
+import Link from "next/link";
 
 export default function PostPropertyForm() {
-  const dummyUserTypes = ["Owner", "Buyer", "Agent", "Developer"];
-  const dummyListingPurposes = ["Rent", "Buy", "Sell"];
+  const postdata = {
+    dummyUserTypes: ["Owner", "Buyer", "Agent", "Developer"],
+    dummyListingPurposes: ["Rent", "Buy", "Sell"],
+    postPropertyAdd: [
+      "Get Access to 4 Lakh+ Buyers",
+      "Sell Faster with Premium Service",
+      "Get Expert Advice on Market Trends and Insights",
+    ],
+  };
 
   return (
-    <div className={styles.postFormContainer}>
-      <div className={styles.postFormLeft}>
-        <Image
-          src="/post-property-girl.png"
-          alt="Woman with laptop"
-          width={429}
-          height={526}
-          className={styles.postFormImage}
-        />
-      </div>
-        <div className={styles.postFormBenefits}>
-          <h2 className={`top-heading ${styles['post-add']}`}>
-            Post property Ad to sell or rent online for{" "}
-            <span className={` top-heading ${styles.postFormHighlight}`}>Free!</span>
-          </h2>
-          <ul>
-            <li>Get Access to 4 Lakh+ Buyers</li>
-            <li>Sell Faster with Premium Service</li>
-            <li>Get Expert Advice on Market Trends and Insights</li>
-          </ul>
-        </div>
-
-      <div className={styles.postFormRight}>
         <div className={styles.postFormCard}>
           <img
             src="/Blob-Shape.png"
@@ -43,12 +27,12 @@ export default function PostPropertyForm() {
           </p>
           <div className={styles.formGroup}>
             <label htmlFor="radio" className={` formLabel ${styles.formLabel}`}>
-              {/* {data.userTypeLabel} */}you're
+              you're
             </label>
             <div className={styles.postFormRadioGroup}>
-              {dummyUserTypes.map((type) => (
-                <label key={type}>
-                  <input type="radio" name="user" />
+              {postdata.dummyUserTypes.map((type) => (
+                <label key={type} className={styles.radioOption}>
+                  <input type="radio" name="user" value={type} />
                   <span className={`body-text-14 ${styles.spanOption}`}>
                     {type}
                   </span>
@@ -58,12 +42,12 @@ export default function PostPropertyForm() {
           </div>
           <div className={styles.formGroup}>
             <label htmlFor="radio" className={` formLabel ${styles.formLabel}`}>
-              {/* {data.userTypeLabel} */} Looking For
+              Looking For
             </label>
             <div className={styles.postFormRadioGroup}>
-              {dummyListingPurposes.map((purpose) => (
-                <label key={purpose}>
-                  <input type="radio" name="looking" />
+              {postdata.dummyListingPurposes.map((purpose) => (
+                <label key={purpose} className={styles.radioOption}>
+                  <input type="radio" name="looking" value={purpose} />
                   <span className={`body-text-14 ${styles.spanOption}`}>
                     {purpose}
                   </span>
@@ -87,16 +71,17 @@ export default function PostPropertyForm() {
             Login
           </div>
 
-          <p className={styles.postFormSignup}>
-            Don’t have an account? <span>Sign Up</span>
-          </p>
+          <div className={styles.formLinks}>
+            <p className={` formLinkText ${styles.postFormSignup}`}>
+              Don’t have an account?
+              <Link
+                href="/auth/login"
+                className={` formLink ${styles.formLink}`}
+              >
+                Sign Up{" "}
+              </Link>
+            </p>
+          </div>
         </div>
-      </div>
-      {/* <div className={styles.rightPanel}>
-            <img src="/Blob-Shape.png" alt="Decoration"className={styles.blobShape} />
-             <div className={styles.formWrapper}>
-        </div>
-    </div> */}
-    </div>
   );
 }
