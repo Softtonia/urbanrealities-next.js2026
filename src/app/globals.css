@@ -477,6 +477,7 @@ margin-bottom: 4px;
   padding: 5px 20px; ;
   border: none;
   border-radius: 10px;
+  text-decoration: none;
 }
 .googleBtn {
   display: flex;
@@ -524,8 +525,4 @@ margin-bottom: 4px;
 
 
 
-@media (max-width: 575.98px) {
-.top-heading{
-  font-size: 18px !important;
-}
-}
+

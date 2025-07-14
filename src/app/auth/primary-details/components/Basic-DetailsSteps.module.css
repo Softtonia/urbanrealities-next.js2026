@@ -1,0 +1,42 @@
+.content {
+  flex: 1;
+  padding: 24px;
+  background-color: white;
+  border-radius: 12px;
+}
+
+.optionGroup {
+  margin-bottom: 24px;
+}
+
+.optionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.optionBtn {
+  padding: 10px 18px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.selected {
+  border-color: var(--Orange-Red);
+  color: var(--Orange-Red);
+  font-weight: 600;
+}
+
+.continueBtn {
+  margin-top: 24px;
+  background-color: var(--Orange-Red);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

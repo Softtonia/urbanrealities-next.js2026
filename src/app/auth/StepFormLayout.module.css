@@ -1,0 +1,7 @@
+.wrapper {
+  display: flex;
+  gap: 24px;
+  /* background-color: #f2f4f8; */
+  padding: 32px;
+  border-radius: 16px;
+}

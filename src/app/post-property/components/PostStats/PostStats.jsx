@@ -7,24 +7,30 @@ export default function StatsSection() {
       <div className={styles.backgroundImage}>
         <div className={styles.overlayBox}>
           <p className={` body-text-20 ${styles.description}`}>
-            With over 7 million unique visitors monthly, your property gets maximum visibility on <br/> Urbanrealities
+            With over 7 million unique visitors monthly, your property gets maximum visibility on Urbanrealities
           </p>
-
+          
           <div className={styles.statsGrid}>
             <div className={styles.statItem}>
-              <h3 className='top-heading'>1M</h3>
+              <span className={` top-heading ${styles.statSpan} `}> 1M</span>
               <p>Property Listing</p>
             </div>
             <div className={styles.statItem}>
-              <h3 className='top-heading'>2.7M</h3>
+             <span className={` top-heading ${styles.statSpan} `}> 2.7M</span>
               <p>Monthly Searches</p>
             </div>
             <div className={styles.statItem}>
-              <h3 className='top-heading'>270K</h3>
+              <span className={` top-heading ${styles.statSpan} `}> 270K</span>
               <p>Owner Advertising Monthly</p>
             </div>
           </div>
         </div>
+
+         <div className={styles.MobileoverlayBox}>
+          <p className={` body-text-20 ${styles.description}`}>
+            With over 7 million unique visitors monthly, your property gets maximum visibility on Urbanrealities
+          </p>
+          </div>
       </div>
     </section>
   );

@@ -13,7 +13,6 @@
 }
 
 .postHeading {
-  color: #0d1c3d;
   margin-bottom: 40px;
 }
 
@@ -64,5 +63,7 @@
 }
 
 .ctaButton:hover {
-  background-color: #005bb5;
+  background-color: var(--White);
+  color: var(--Orange-Red);
+  border: 1px solid var(--Orange-Red);
 }

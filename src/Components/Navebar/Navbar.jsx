@@ -274,7 +274,7 @@ export default function Navbar() {
           </ul>
 
           <div className="d-flex align-items-center gap-3">
-            <Link href="/auth/post-property" className="btn-property d-flex align-items-center gap-2 rounded-pill">
+            <Link href="/post-property" className="btn-property d-flex align-items-center gap-2 rounded-pill">
               <Image
                 src={homeLogo}
                 alt="Post Property"
@@ -343,7 +343,7 @@ export default function Navbar() {
             </div>
           </div>
           <div className="m-0">
-            <button className="btn-property d-flex align-items-center gap-2 rounded-pill text-sm px-3 py-1">
+            <Link href="/post-property"className="btn-property d-flex align-items-center gap-2 rounded-pill text-sm px-3 py-1">
               <Image
                 src={homeLogo}
                 alt="Post Property"
@@ -351,7 +351,7 @@ export default function Navbar() {
                 height={18}
               />
               Post Property <span className="badge-property">Free</span>
-            </button>
+            </Link>
           </div>
         </div>
       </nav>

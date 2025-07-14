@@ -49,3 +49,10 @@
 .postFormButton{
   margin-bottom: 25px;
 }
+@media (max-width: 991.98px) {
+  .postFormCard {
+  padding: 60px 46px 55px 46px;
+
+}
+
+}

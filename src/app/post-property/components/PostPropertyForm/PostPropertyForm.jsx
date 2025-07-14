@@ -67,9 +67,11 @@ export default function PostPropertyForm() {
             />
           </div>
 
-          <div className={`  formGroupBtn ${styles.postFormButton} `}>
+          <Link
+          href="/auth/primary-details"
+          className={`  formGroupBtn ${styles.postFormButton} `}>
             Login
-          </div>
+          </Link>
 
           <div className={styles.formLinks}>
             <p className={` formLinkText ${styles.postFormSignup}`}>

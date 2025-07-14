@@ -1,4 +1,7 @@
-/* FAQVisibility.module.css */
+.postClient-container{
+  background-color: var(--off-white);
+}
+
 .faqAccordion {
   display: none;
 }
