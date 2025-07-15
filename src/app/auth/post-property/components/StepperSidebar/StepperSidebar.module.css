@@ -1,10 +1,11 @@
-
 .sidebar {
-  width: 280px;
+  /* width: 293px; */
   height: max-content;
   background-color: #f2f3f5;
-  padding: 1.5rem;
+  padding: 32px 24px;
   border-radius: 12px;
+  display: flex;
+  flex-direction: column;
 }
 
 .step {
@@ -22,9 +23,15 @@
   margin-right: 1rem;
   position: relative;
   z-index: 2;
+  flex-shrink: 0;
 }
 
 .activeCircle {
+  border-color: var(--Orange-Red);
+  background-color: var(--Orange-Red);
+}
+
+.completedCircle {
   border-color: var(--Orange-Red);
   background-color: var(--Orange-Red);
 }
@@ -37,6 +44,22 @@
   height: calc(100% - 20px);
   background-color: #cbd5e0;
   z-index: 1;
+}
+
+.stepLineFilled {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--Orange-Red);
+  transform-origin: top;
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.stepLineFilled.full {
+  transform: scaleY(1);
 }
 
 .activeStep .stepTitle {

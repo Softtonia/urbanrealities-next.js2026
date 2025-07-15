@@ -1,6 +1,8 @@
 "use client"
 import styles from './Basic-DetailsSteps.module.css';
 import { useState } from 'react';
+import { useRouter } from "next/navigation";
+
 
 export default function StepContent() {
   const [selectedPurpose, setSelectedPurpose] = useState('Sell');
@@ -18,6 +20,11 @@ export default function StepContent() {
     'Farmhouse',
     'Other',
   ];
+  const router = useRouter();
+
+ const handleContinue = () => {
+router.push('/auth/post-property/location-details');
+};
 
   return (
     <div className={styles.content}>
@@ -66,7 +73,7 @@ export default function StepContent() {
         ))}
       </div>
 
-      <button className={styles.continueBtn}>Continue</button>
+      <button className={styles.continueBtn} onClick={handleContinue}>Continue</button>
     </div>
   );
 }
