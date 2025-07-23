@@ -57,7 +57,7 @@ export default function PostPropertyForm() {
       </div>
 
       <div className={styles.formGroup}>
-        <label htmlFor="Phone" className={` formLabel ${styles.formLabel}`}>
+        <label htmlFor="Phone" className={` formLabel ${styles.postformLabel}`}>
           Your contact details for the buyer to reach you
         </label>
         <input

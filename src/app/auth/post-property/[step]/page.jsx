@@ -33,10 +33,12 @@ export default function StepPage() {
   return (
     <div className="container">
    <div className={`${styles.wrapper} row`}>
-      <div className="col-3 ">
+      <div className="col-3 p-0">
+      <div className={styles.sidebarCol}>
         <StepSidebar currentStep={setStep} />
+        </div>
       </div>
-      <div className="col-9">
+      <div className="col-9 p-0 ">
         <div className={styles.mainContent}>{renderStepContent()}</div>
       </div>
     </div>

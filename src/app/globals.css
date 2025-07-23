@@ -242,7 +242,7 @@ small {
 }
 
 .location-heading {
-  font-family: poppins-Medium;
+  font-family:var(--font-medium);
   font-size: 20px;
 }
 
@@ -457,7 +457,6 @@ padding: 10px 20px;
 .formLabel {
   font-size: 14px;
 font-family: var(--font-regular);
-margin-bottom: 4px;
 }
 .formInput {
   width: 100%;
@@ -517,7 +516,22 @@ margin-bottom: 4px;
   text-transform: capitalize;
   padding: 10px 20px; 
 }
-
+.continueBtn {
+  margin-top: 24px;
+  background-color: var(--Orange-Red);
+  color: var(--White);
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.back-btn, .reset-btn {
+  background: none;
+  border: none;
+  color: var(--Orange-Red);
+  font-size: 16px;
+  cursor: pointer;
+}
 
 
 

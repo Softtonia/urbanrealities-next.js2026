@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./PostClientsSay.module.css";
 
 const testimonials = [
@@ -8,7 +8,7 @@ const testimonials = [
     name: "Lilly Bennett",
     location: "Ernakulam, Kerala",
     message:
-      "Urbanrealities is a full stack service provider for all real estate needs...",
+      "Urbanrealities is a full stack service provider for all real estate needs, with 15+ services including home loans, pay rent, packers and movers, legal assistance.",
     image: "/lily.png",
     cotes: "/cotes.png",
   },
@@ -16,16 +16,17 @@ const testimonials = [
     id: 2,
     name: "Arjun Mehta",
     location: "Mumbai, Maharashtra",
-    message: "Very helpful and professional staff. Got my dream home.",
+    message:
+      "Urbanrealities is a full stack service provider for all real estate needs, with 15+ services including home loans, pay rent, packers and movers, legal assistance.",
     image: "/lily.png",
     cotes: "/cotes.png",
   },
-
   {
     id: 3,
     name: "Rahul Sharma",
     location: "Delhi",
-    message: "They helped me with legal documentation. Great support!",
+    message:
+      "Urbanrealities is a full stack service provider for all real estate needs, with 15+ services including home loans, pay rent, packers and movers, legal assistance.",
     image: "/lily.png",
     cotes: "/cotes.png",
   },
@@ -33,7 +34,8 @@ const testimonials = [
     id: 4,
     name: "Priya Desai",
     location: "Ahmedabad, Gujarat",
-    message: "Smooth experience from start to end.",
+    message:
+      "Urbanrealities is a full stack service provider for all real estate needs, with 15+ services including home loans, pay rent, packers and movers, legal assistance.",
     image: "/lily.png",
     cotes: "/cotes.png",
   },
@@ -41,7 +43,8 @@ const testimonials = [
     id: 5,
     name: "Aman Verma",
     location: "Pune, Maharashtra",
-    message: "Super satisfied with the customer service.",
+    message:
+      "Urbanrealities is a full stack service provider for all real estate needs, with 15+ services including home loans, pay rent, packers and movers, legal assistance.",
     image: "/lily.png",
     cotes: "/cotes.png",
   },
@@ -49,7 +52,8 @@ const testimonials = [
     id: 6,
     name: "Sneha Kapoor",
     location: "Bangalore, Karnataka",
-    message: "Excellent service and great options to choose from.",
+    message:
+      "Urbanrealities is a full stack service provider for all real estate needs, with 15+ services including home loans, pay rent, packers and movers, legal assistance.",
     image: "/lily.png",
     cotes: "/cotes.png",
   },
@@ -58,54 +62,66 @@ const testimonials = [
 export default function TestimonialSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(3);
+  const sliderRef = useRef(null);
+  const [startX, setStartX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     const updateVisibleCards = () => {
       const width = window.innerWidth;
       if (width <= 576) {
-        setVisibleCards(1.2);
+        setVisibleCards(1);
       } else {
         setVisibleCards(3);
       }
     };
 
-    updateVisibleCards(); // initial check
+    updateVisibleCards();
     window.addEventListener("resize", updateVisibleCards);
     return () => window.removeEventListener("resize", updateVisibleCards);
   }, []);
 
-  const totalItems = testimonials.length;
-  const maxIndex = Math.max(
-    0,
-    Math.ceil(totalItems - Math.floor(visibleCards))
-  );
-  const dotCount = maxIndex + 1;
-  // Auto-slide every 3s
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setCurrentIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
-  //   }, 3000);
-  //   return () => clearInterval(interval);
-  // }, [maxIndex]);
+  const maxIndex = Math.max(0, testimonials.length - visibleCards);
 
   const handleDotClick = (index) => {
     setCurrentIndex(index);
   };
 
+  const handleTouchStart = (e) => {
+    setStartX(e.touches[0].clientX);
+    setIsDragging(true);
+  };
+  const handleTouchEnd = (e) => {
+    const endX = e.changedTouches[0].clientX;
+    if (isDragging) {
+      if (startX - endX > 50) {
+        // Swipe left
+        setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
+      } else if (endX - startX > 50) {
+        // Swipe right
+        setCurrentIndex((prev) => Math.max(prev - 1, 0));
+      }
+      setIsDragging(false);
+    }
+  };
   const translateX = `translateX(-${(100 / visibleCards) * currentIndex}%)`;
-
   return (
     <section className={styles.testimonialSection}>
-      <h2 className={styles.heading}>What our clients say</h2>
+      <h2 className={`${styles.heading} body-text-20 `}>What our clients say</h2>
       <div className={styles.sliderContainer}>
-        <div className={styles.sliderWrapper} style={{ transform: translateX }}>
+        <div
+          className={styles.sliderWrapper}
+          ref={sliderRef}
+          style={{ transform: translateX }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           {testimonials.map((item, index) => (
-            <div className={styles.card} key={index}>
+            <div key={index} className={styles.card}>
               <div className={styles.innerCard}>
-                <div className="d-flex">
-                  <div className="">
-                  <img src={item.cotes} alt="" /></div>
-                  <p className={styles.message}>{item.message}</p>
+                <div className={styles.quoteRow}>
+                  <img src={item.cotes} alt="" />
+                  <p className={`${styles.message} text-center `}>{item.message}</p>
                 </div>
                 <div className={styles.profile}>
                   <img
@@ -114,8 +130,8 @@ export default function TestimonialSlider() {
                     className={styles.avatar}
                   />
                   <div>
-                    <p className={styles.name}>{item.name}</p>
-                    <p className={styles.location}>{item.location}</p>
+                    <p className={`${styles.name} body-text-md18 `}>{item.name}</p>
+                    <p className={`${styles.location}`}>{item.location}</p>
                   </div>
                 </div>
               </div>
@@ -125,7 +141,7 @@ export default function TestimonialSlider() {
       </div>
 
       <div className={styles.dots}>
-        {Array.from({ length: dotCount }).map((_, index) => (
+        {Array.from({ length: maxIndex + 1 }).map((_, index) => (
           <span
             key={index}
             className={`${styles.dot} ${

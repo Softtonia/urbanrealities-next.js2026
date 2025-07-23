@@ -1,0 +1,33 @@
+.content {
+  background-color: var(--White);
+  border-radius: 12px;
+}
+
+.backWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.title {
+  margin-bottom: 6px;
+}
+.subtitle {
+  margin-bottom: 24px;
+}
+.label {
+  margin-bottom: 8px;
+}
+.formGroup{
+    margin-bottom: 14px;
+}
+
+.error {
+  color: var( --KU-Crimson);
+  font-size: 13px;
+  font-family: var(--font-regular);
+  margin-top: 4px;
+}
+

@@ -36,7 +36,10 @@
   gap: 6px;
   color: var(--Eerie-Black);
 }
+.postformLabel{
+    margin-bottom: 4px;
 
+}
 .postFormInput {
   margin-bottom: 15px;
 }
