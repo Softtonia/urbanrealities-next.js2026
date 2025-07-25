@@ -1,7 +1,7 @@
 .stepsSection {
   text-align: center;
   padding: 60px 20px;
-  background-color: #ffffff;
+  background-color: var(--White);
 }
 
 .howToPost {
@@ -52,13 +52,13 @@
 
 .ctaButton {
   background-color: var(--Orange-Red);
-  color: #fff;
+  color: var(--White);
   padding: 12px 24px;
   font-size: 16px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
+  font-family: var(--font-medium);
   transition: background-color 0.3s;
 }
 

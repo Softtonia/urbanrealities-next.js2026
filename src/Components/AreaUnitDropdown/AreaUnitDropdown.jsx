@@ -83,17 +83,6 @@ if (selectedUnit === "sqft") {
 }
   return (
     <div className={styles.dropdownWrapper}>
-
-        {/* <select
-        value={region}
-        onChange={(e) => setRegion(e.target.value)}
-        className={styles.regionSelector}
-      >
-        <option value="bangalore">Bangalore</option>
-        <option value="punjab">Punjab</option>
-      </select> */}
-
-      {/* <label className={styles.label}>Carpet Area</label> */}
       <div className={styles.selectedValue} onClick={() => setIsOpen(!isOpen)}>
         {convertedValue} {selectedUnit}
         <span className={styles.arrow}>▼</span>

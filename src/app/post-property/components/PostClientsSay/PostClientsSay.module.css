@@ -26,7 +26,7 @@
 }
 
 .card {
-  background-color: #fff;
+  background-color: var(--White);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13);
   padding: 20px 30px 30px 30px;
   border-radius: 8px;
@@ -83,7 +83,7 @@
   height: 10px;
   margin: 5px;
   border-radius: 50%;
-  background: #ccc;
+  background: var( --Spanish-Gray);
   cursor: pointer;
   transition: background-color 0.3s;
 }
