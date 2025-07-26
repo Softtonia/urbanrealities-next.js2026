@@ -4,9 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function StepContent() {
-  const [selectedPurpose, setSelectedPurpose] = useState("Sell");
+  const [selectedPurpose, setSelectedPurpose] = useState("");
   const [selectedPropertyType, setSelectedPropertyType] =
-    useState("Residential");
+    useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [expandedCategory, setExpandedCategory] = useState("");
   const [selectedSubOption, setSelectedSubOption] = useState("");

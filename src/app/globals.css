@@ -1,75 +1,74 @@
 :root {
   /* Primary color */
-  --Orange-Red: #FB6A18;
+  --Orange-Red: #fb6a18;
 
   /* Pure White */
-  --White: #FFFFFF;
+  --White: #ffffff;
 
   /* Light Background */
-  --Floral-White: #FFF8F3;
+  --Floral-White: #fff8f3;
 
   /* Heading and Title */
   --Eerie-Black: #191919;
 
   /* Light Background for button */
-  --Misty-Rose: #FFEBE0;
+  --Misty-Rose: #ffebe0;
 
   /* Fill Star Rating */
-  --Selective-Yellow: #FFB800;
+  --Selective-Yellow: #ffb800;
 
   /* Empty star Rating */
-  --Caramel: #FFE195;
+  --Caramel: #ffe195;
 
   /* Price Badge */
-  --Nyanza: #EDFFE2;
+  --Nyanza: #edffe2;
 
   /* Text and paragraph */
   --Gray: #808080;
 
   /* Price color property listing */
-  --Slimy-Green: #3D8B0D;
+  --Slimy-Green: #3d8b0d;
 
-  --Apple: #7CBC3B;
+  --Apple: #7cbc3b;
 
   --Raisin-Black: #222222;
 
-  --off-white: #F8F8F8;
+  --off-white: #f8f8f8;
 
-  --Cultured: #F6F6F6;
+  --Cultured: #f6f6f6;
 
-  --Spanish-Gray: #9E9E9E ;
+  --Spanish-Gray: #9e9e9e;
 
-  --Lavender-Gray: #C5C9D1;
+  --Lavender-Gray: #c5c9d1;
 
-  --Tart-Orange:#F54848;
+  --Bright-Gray: #ebecf0;
 
-  --Platnium:rgba(230, 230, 230, 1);
+  --Tart-Orange: #f54848;
 
-  --Light-Moss-Green : #A5D6A7;
+  --Platnium: rgba(230, 230, 230, 1);
 
-  --Bright-Gray : #EBECF0 ;
-  
-  --Persian-Blue: #1125D2;
+  --Light-Moss-Green: #a5d6a7;
 
-   --Bleu-De-France: #2B98D6;
+  --Persian-Blue: #1125d2;
 
-   --Light-Coral: #F07E7E ;
+  --Bleu-De-France: #2b98d6;
 
-   --Dark-Tangerine: #FF9F0F;
+  --Light-Coral: #f07e7e;
 
-   --Tomato: #FF6746 ; 
-   
-   --UFO-Green: #37D159 ;
+  --Dark-Tangerine: #ff9f0f;
 
-   --Violet-Blue: #3B4CB8 ;
+  --Tomato: #ff6746;
 
-   --KU-Crimson: #E40E0E ;
+  --UFO-Green: #37d159;
 
-   --Lotion: #FAFAFA ;
+  --Violet-Blue: #3b4cb8;
 
-   --Gainsboro: #DDDDDD ;
+  --KU-Crimson: #e40e0e;
+
+  --Lotion: #fafafa;
+
+  --Gainsboro: #dddddd;
 }
-
 
 /* -----custom color css class-------- */
 
@@ -79,10 +78,10 @@
 .bg-dark {
   background-color: var(--Eerie-Black);
 }
-.bg-light{
+.bg-light {
   background-color: var(--Floral-White);
 }
-.bg-white{
+.bg-white {
   background-color: var(--White);
 }
 .text-white {
@@ -94,42 +93,37 @@
 .text-dark {
   color: var(--Eerie-Black);
 }
-.orange-red{
-  background-color:var(--Orange-Red)
+.orange-red {
+  background-color: var(--Orange-Red);
 }
 
-
 @font-face {
-  font-family: 'poppins-bold';
+  font-family: "poppins-bold";
   src: url("/fonts/Poppins-Bold.ttf");
   font-weight: 700;
-
 }
 @font-face {
-  font-family: 'poppins-semibold';
+  font-family: "poppins-semibold";
   src: url("/fonts/poppins-Semibold.ttf");
   font-weight: 600;
-  
 }
 @font-face {
-  font-family: 'poppins-medium';
+  font-family: "poppins-medium";
   src: url("/fonts/Poppins-Medium.ttf");
   font-weight: 500;
-  
 }
 
 @font-face {
-  font-family: 'poppins-regular';
+  font-family: "poppins-regular";
   src: url("/fonts/Poppins-Regular.ttf");
   font-weight: 400;
-  
 }
 
 :root {
-  --font-bold: 'poppins-bold';
-  --font-semibold: 'poppins-semibold';
-  --font-medium: 'poppins-medium';
-  --font-regular: 'poppins-regular';
+  --font-bold: "poppins-bold";
+  --font-semibold: "poppins-semibold";
+  --font-medium: "poppins-medium";
+  --font-regular: "poppins-regular";
 }
 
 html {
@@ -138,95 +132,94 @@ html {
   text-rendering: optimizeLegibility;
   font-smooth: always;
 }
-*{
+* {
   padding: 0;
   box-sizing: border-box;
 }
-.container{
+.container {
   max-width: 1440px !important;
   padding: 0;
   box-sizing: border-box;
-
 }
 
 h1 {
   font-family: var(--font-bold);
-  font-size: 47.78px ;
+  font-size: 47.78px;
 }
 
 h2 {
   font-family: var(--font-semibold);
-  font-size: 39.81px ;
+  font-size: 39.81px;
 }
 
 h3 {
-  font-family:var(--font-medium);
-  font-size: 33.18px ;
+  font-family: var(--font-medium);
+  font-size: 33.18px;
 }
 
 h4 {
-  font-family:var(--font-medium);
-  font-size: 27.65px ;
+  font-family: var(--font-medium);
+  font-size: 27.65px;
 }
 
 h5 {
-  font-family:var(--font-semibold);
-  font-size: 23.33px ;
+  font-family: var(--font-semibold);
+  font-size: 23.33px;
 }
 
 h6 {
-  font-family:var(--font-medium);
-  font-size: 16.2px ;
+  font-family: var(--font-medium);
+  font-size: 16.2px;
 }
 
 p {
   font-family: var(--font-regular);
-  font-size: 16px ;
+  font-size: 16px;
 }
 li {
-  font-family:var(--font-regular);
+  font-family: var(--font-regular);
   font-size: 16px;
 }
 
 span {
-  font-family:var(--font-regular);
+  font-family: var(--font-regular);
   font-size: 16px;
 }
 
 small {
-  font-family:var(--font-regular);
-  font-size: 13.33px ;
+  font-family: var(--font-regular);
+  font-size: 13.33px;
 }
 
-.body-text-12{
+.body-text-12 {
   font-size: 12px !important;
   font-family: var(--font-regular);
 }
-.body-text-14{
+.body-text-14 {
   font-size: 14px !important;
   font-family: var(--font-regular);
 }
-.body-text-16{
-  font-size:16px !important;
+.body-text-16 {
+  font-size: 16px !important;
   font-family: var(--font-medium);
 }
-.body-text-rg16{
+.body-text-rg16 {
   font-size: 16px !important;
   font-family: var(--font-regular);
 }
-.body-text-sb18{
+.body-text-sb18 {
   font-size: 18px !important;
   font-family: var(--font-semibold);
 }
-.body-text-md18{
+.body-text-md18 {
   font-size: 18px !important;
   font-family: var(--font-medium);
 }
-.body-text-20{
+.body-text-20 {
   font-size: 20px !important;
   font-family: var(--font-medium);
 }
-.top-heading{
+.top-heading {
   font-size: 30px !important;
   font-family: var(--font-semibold);
 }
@@ -234,77 +227,75 @@ small {
 /* =============all global btn css========  */
 
 .btn {
-  font-family:var(--font-regular);
+  font-family: var(--font-regular);
   font-size: 13px;
 }
 .btn-subscribe {
-  background-color: var(--Orange-Red)  !important;
+  background-color: var(--Orange-Red) !important;
 }
 
 .location-heading {
-  font-family:var(--font-medium);
+  font-family: var(--font-medium);
   font-size: 20px;
 }
 
 /* This button for property listing details */
-.btn-property-detail{
+.btn-property-detail {
   background-color: var(--Misty-Rose);
-  color:var(--Orange-Red);
+  color: var(--Orange-Red);
   padding: 12px 100px;
   border-radius: 24px;
   border: none;
   font-family: var(--font-regular);
   font-size: 13.33px;
   text-transform: capitalize;
-
 }
-.btn-property-detail:hover{
+.btn-property-detail:hover {
   background-color: var(--White);
-  color:var(--Orange-Red);
+  color: var(--Orange-Red);
   border: 1px solid var(--Orange-Red);
   transition: 0.3s ease-in-out;
 }
-.price-tag{
+.price-tag {
   background-color: var(--Nyanza);
   color: var(--Slimy-Green);
   font-family: var(--font-regular);
   font-size: 10px;
-border-radius: 24px;
-border: 1px solid var(--Slimy-Green);
-padding: 8px;
-text-transform: capitalize;
-
+  border-radius: 24px;
+  border: 1px solid var(--Slimy-Green);
+  padding: 8px;
+  text-transform: capitalize;
 }
-.rating-tag{
+.rating-tag {
   background-color: var(--White);
-  color:var(--Eerie-Black) ;
+  color: var(--Eerie-Black);
   font-family: var(--font-regular);
   font-size: 10px;
   border: none;
   text-transform: capitalize;
-border-radius: 24px;
-padding: 8px;
+  border-radius: 24px;
+  padding: 8px;
 }
-.sponser-tag{
+.sponser-tag {
   background-color: var(--Orange-Red);
-  color:var(--White) ;
+  color: var(--White);
   font-family: var(--font-regular);
   font-size: 10px;
   border: none;
   text-transform: capitalize;
   padding: 2px;
 }
-.top-rated-tag{
+.top-rated-tag {
   background-color: var(--Orange-Red);
-  color:var(--White) ;
+  color: var(--White);
   font-family: var(--font-regular);
   font-size: 10px;
   border: none;
   text-transform: capitalize;
-border-radius: 10px;
-padding: 8px;
+  border-radius: 10px;
+  padding: 8px;
 }
-.btn-viewproject{
+.btn-viewproject {
   background-color: var(--Orange-Red);
   color: var(--White);
   font-family: var(--font-regular);
@@ -312,37 +303,34 @@ padding: 8px;
   border: none;
   border-radius: 5px;
   text-transform: capitalize;
-  padding: 10px 20px; 
+  padding: 10px 20px;
 }
-.btn-viewproject:hover{
+.btn-viewproject:hover {
   background-color: var(--White);
   color: var(--Orange-Red);
-  border:1px solid var(--Orange-Red);
-transition: 0.3s ease-in-out;
+  border: 1px solid var(--Orange-Red);
+  transition: 0.3s ease-in-out;
 }
-.btn-secondary-wt{
+.btn-secondary-wt {
   background-color: transparent;
   color: var(--Orange-Red);
   font-family: var(--font-regular);
   font-size: 13.33px;
   border: none;
-text-transform: capitalize;
-padding: 10px 20px;
+  text-transform: capitalize;
+  padding: 10px 20px;
 }
-
 
 /* --------------------- */
 
-
-.location-heading{
+.location-heading {
   font-family: var(--font-medium);
   font-size: 20px;
 }
 
-
 /* All buttons are here... */
 
-.btn-property{
+.btn-property {
   background-color: var(--Orange-Red);
   color: var(--White);
   padding: 10px 20px;
@@ -350,14 +338,14 @@ padding: 10px 20px;
   font-size: 13.33px;
 }
 
-.navbar{
+.navbar {
   color: var(--White);
   padding: 10px 20px;
   border: none;
   font-size: 13.33px;
 }
 
-.badge-property{
+.badge-property {
   background-color: var(--White);
   color: var(--Orange-Red);
   padding: 1px 5px;
@@ -366,14 +354,13 @@ padding: 10px 20px;
   font-size: 10px;
 }
 
-.navbar-menu{
+.navbar-menu {
   color: var(--White);
   display: flex;
   font-size: 13.33px;
   list-style: none;
   background-color: var(--);
 }
-
 
 .btn-property {
   background-color: var(--Orange-Red);
@@ -394,8 +381,6 @@ padding: 10px 20px;
   font-weight: 600;
 }
 
-
-
 .translate-x-0 {
   transform: translateX(0) !important;
 }
@@ -404,10 +389,10 @@ padding: 10px 20px;
   transform: translateX(-100%) !important;
 }
 
-.project-details{
+.project-details {
   width: 500px;
   height: 600px;
-  background-color: #FB6A18;
+  background-color: #fb6a18;
 }
 
 /* navbar.css or globals.css */
@@ -456,11 +441,11 @@ padding: 10px 20px;
 }
 .formLabel {
   font-size: 14px;
-font-family: var(--font-regular);
+  font-family: var(--font-regular);
 }
 .formInput {
   width: 100%;
-  padding: 5px 20px ;
+  padding: 5px 20px;
   font-size: 14px;
   font-family: var(--font-regular);
   border: 1px solid var(--Lavender-Gray);
@@ -473,7 +458,7 @@ font-family: var(--font-regular);
   width: 100%;
   background: var(--Orange-Red);
   color: var(--White);
-  padding: 5px 20px; ;
+  padding: 5px 20px;
   border: none;
   border-radius: 10px;
   text-decoration: none;
@@ -488,11 +473,11 @@ font-family: var(--font-regular);
   border: 1px solid var(--Lavender-Gray);
   border-radius: 10px;
 }
-.formHeading{
+.formHeading {
   font-size: 20px !important;
   font-family: var(--font-medium);
 }
-.formSubHeading{
+.formSubHeading {
   font-size: 16px !important;
   font-family: var(--font-regular);
 }
@@ -506,7 +491,7 @@ font-family: var(--font-regular);
   font-family: var(--font-regular);
 }
 
-.btn-AddTicket{
+.btn-AddTicket {
   background-color: var(--Orange-Red);
   color: var(--White);
   font-family: var(--font-regular);
@@ -514,7 +499,7 @@ font-family: var(--font-regular);
   border: none;
   border-radius: 5px;
   text-transform: capitalize;
-  padding: 10px 20px; 
+  padding: 10px 20px;
 }
 .continueBtn {
   margin-top: 24px;
@@ -525,18 +510,11 @@ font-family: var(--font-regular);
   border-radius: 6px;
   cursor: pointer;
 }
-.back-btn, .reset-btn {
+.back-btn,
+.reset-btn {
   background: none;
   border: none;
   color: var(--Orange-Red);
   font-size: 16px;
   cursor: pointer;
 }
-
-
-
-
-
-
-
-

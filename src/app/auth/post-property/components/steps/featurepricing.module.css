@@ -1,0 +1,244 @@
+
+.sectionTitle {
+  font-size: 28.8px;
+  color: #333;
+  margin-bottom: 24px; /* Increased margin for title */
+  font-weight: 600;
+}
+
+.optionalText {
+  font-size: 16px;
+  color: #666;
+  font-weight: 400;
+}
+
+/* Warning Box Styles (from Screenshot 1) */
+.warningBox {
+  background: #fff3cd;
+  padding: 16px;
+  border-left: 5px solid #ffc107;
+  border-radius: 5px;
+  color: #856404;
+  display: flex;
+  align-items: flex-start; /* Align items to start for close button */
+  gap: 10px;
+  margin-bottom: 32px;
+  position: relative; /* For positioning close button */
+}
+
+.warningHighlight {
+  font-weight: bold;
+}
+
+.uploadNowLink {
+  color: var(--Orange-Red);
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 5px;
+}
+
+.closeWarningButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #856404;
+  cursor: pointer;
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  padding: 0;
+  line-height: 1;
+}
+
+.formQuestion {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+  margin-top: 32px; /* Add margin to separate sections */
+}
+
+.priceInputsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 16px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.amountInWords {
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+.basedOnDropdown {
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  position: relative; /* For positioning the hidden select */
+}
+
+.dropdownValue {
+  font-weight: 500;
+  color: #333;
+}
+
+.hiddenSelect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkboxGroup {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+}
+
+.formCheckbox {
+  margin-right: 8px;
+  width: 18px;
+  height: 18px;
+  accent-color: #007bff; /* Custom color for checkbox */
+}
+
+.addMaintenanceLink {
+  color: var(--Orange-Red);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 24px;
+  display: inline-block; /* Allows margin-bottom to work */
+}
+
+.maintenanceBookingSection {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 32px;
+  border: 1px solid #eee;
+}
+
+.securityDepositTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.securityDepositOptions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.depositButton {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  color: #555;
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+.depositButton:hover {
+  background-color: #e0e0e0;
+}
+
+.selectedDeposit {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.selectedDeposit:hover {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.descriptionHint {
+  font-size: 14px;
+  color: #666;
+  margin-top: -10px; /* Adjust margin to be closer to title */
+  margin-bottom: 16px;
+}
+
+.formTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  min-height: 100px;
+  resize: vertical; /* Allow vertical resizing */
+}
+
+.charCount {
+  font-size: 14px;
+  color: #666;
+  text-align: right;
+  margin-top: 8px;
+}
+
+
+
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 16px;
+  }
+
+  .priceInputsGrid {
+    grid-template-columns: 1fr; /* Stack inputs on small screens */
+  }
+
+  .checkboxGroup {
+    flex-direction: column; /* Stack checkboxes on small screens */
+  }
+}

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Select from "react-select";
 import styles from "./Location.module.css";
 import { IoArrowBackSharp } from "react-icons/io5";
-import { MdWidthNormal } from "react-icons/md";
 
 const locationData = {
   India: {

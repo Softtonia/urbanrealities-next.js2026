@@ -1,49 +1,41 @@
-/* .wrapper {
+.wrapper {
   margin: 0 auto;
 }
-
+.backWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
 .sectionTitle {
-  font-size: 1.8rem;
-  font-weight: 600;
+  margin-bottom: 8px;
 }
 
-.optionalText {
-  font-size: 1rem;
-  font-weight: 400;
-}
 
 .sectionSubText {
-  font-size: 0.95rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
 .desktopUploadPrompt {
-  font-size: 1rem;
-  margin-bottom: 1rem;
+  font-size: 16px;
+  margin-bottom: 16px;
 }
 
-.videoUploadCard {
-  border: 1px dashed #ccc;
+.uploadCard {
+  border: 1px dashed var(--Lavender-Gray);
   border-radius: 10px;
-  background: var(--Floral-White);
-  margin-bottom: 2rem;
+  background: var(--Floral-White, );
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
+
 
 .photoInitialUploadCard {
-  border: 1px dashed #ccc;
-  border-radius: 10px;
-  background: var(--Floral-White);
-  margin-bottom: 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    padding: 32px 16px;
 }
 
 .videoUploadHeader {
@@ -52,24 +44,22 @@
   justify-content: center;
   gap: 10px;
   padding: 16px;
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  border-bottom: 4px solid var(--Orange-Red, #ff4500);
+  font-size: 17.6px;
+  border-bottom: 4px solid var(--Orange-Red, );
   width: 100%;
 }
 
 .newTag {
-  background-color: #ffe0e0;
-  color: #c00;
+  background-color: var(--Misty-Rose);
+  color: var(--KU-Crimson);
   padding: 2px 8px;
-  font-size: 0.75rem;
+  font-size: 12px;
   border-radius: 3px;
   font-weight: bold;
 }
 
 .uploadHeaderText {
-  font-weight: bold;
-  color: #333;
+  font-family: var(--font-bold);
 }
 
 .uploadBody {
@@ -89,96 +79,92 @@
 }
 
 .videoIcon {
-  font-size: 3rem;
-  color: #666;
-  margin-bottom: 0.5rem;
+  font-size: 48px;
+  color: var(--Spanish-Gray);
+  margin-bottom: 8px;
 }
 
 .dragDropText {
-  font-size: 1rem;
-  color: #444;
-  margin-top: 0.5rem;
+    font-size: 14px;
+  color: var(--Gray);
 }
 
 .linkText {
-  color: var(--Orange-Red);
+  color: var(--Orange-Red, );
   cursor: pointer;
-  font-weight: 500;
+ font-size: 14px;
   display: inline-flex;
   align-items: center;
   gap: 5px;
 }
 
 .uploadInfo {
-  font-size: 0.85rem;
-  color: #777;
+    font-size: 14px;
+  color: var(--Gray);
 }
 
 .videoSuccessMessage {
-  color: green;
-  font-size: 0.85rem;
+  color: var( --Slimy-Green);
+  font-size: 13.6px;
   text-align: center;
-  margin-top: 1rem;
+  margin-top: 16px;
 }
 
 .warningBox {
   background: #fff3cd;
-  padding: 1rem;
-  border-left: 5px solid #ffc107;
+  padding: 16px;
+  border-left: 5px solid var(--Selective-Yellow );
   border-radius: 5px;
   color: #856404;
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 2rem;
+  margin: 32px 0;
 }
 
 .warningText {
-  font-size: 0.95rem;
+  font-size: 14px;
   flex-grow: 1;
   margin: 0;
 }
 
 .warningBox::before {
   content: "⚠️";
-  font-size: 1.2rem;
-  
+  font-size: 19.2px;
 }
 
 .contactUpgradeText {
-  font-weight: bold;
+  font-family: var(--font-bold);
   color: var(--Orange-Red);
   cursor: pointer;
 }
 
 .photoPrompt {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
-  margin-top: 1rem;
+  font-size: 17.6px;
+  font-family: var(--font-semibold);
+  margin-top: 16px;
 }
 
 .docGalleryImg {
-  width: 70px;
-  height: 50px;
-  object-fit: cover;
-  margin-top: 20px;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin-bottom: 10px;
 }
 
 .photoGridContainer {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(241px, 1fr));
   gap: 15px;
-  margin-top: 1rem;
-
+  margin-top: 16px;
 }
 
 .photoThumbnailWrapper {
   position: relative;
   border-radius: 8px;
   overflow: visible;
-  background-color: #fff;
-
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: var(--White);
 }
 
 .previewImg {
@@ -198,14 +184,13 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 8px;
+
 }
-
-
 
 .deleteIcon,
 .zoomIcon {
-  color: white;
-  font-size: 1.5rem;
+  color: var(--White);
+  font-size: 24px;
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
@@ -214,6 +199,7 @@
   align-items: center;
   justify-content: center;
   transition: background-color 0.3s ease;
+  z-index: 10;
 }
 
 .deleteIcon:hover,
@@ -223,23 +209,24 @@
 
 .coverPhotoTag {
   position: absolute;
-  bottom: 25px; 
+  bottom: 25px;
   left: 8px;
   background-color: rgba(0, 0, 0, 0.7);
-  color: white;
+  color: var(--White);
   padding: 4px 8px;
-  font-size: 0.8rem;
+  font-size: 12.8px;
   border-radius: 5px;
   z-index: 10;
 }
+
 .makeCoverPhotoLabel {
   position: absolute;
   bottom: 25px;
   left: 8px;
   background-color: rgba(0, 0, 0, 0.7);
-  color: white;
+  color: var(--White);
   padding: 4px 8px;
-  font-size: 0.8rem;
+  font-size: 12.8px;
   border-radius: 5px;
   z-index: 10;
   display: flex;
@@ -250,7 +237,7 @@
 
 .photoActions {
   display: flex;
-  justify-content: center; 
+  justify-content: center;
   align-items: center;
   position: relative;
   z-index: 1;
@@ -258,58 +245,59 @@
 
 .customDropdown {
   position: relative;
-  width: 100%; 
+  width: 100%;
   max-width: 100%;
   z-index: 20;
 }
 
 .dropdownSelected {
-  font-size: 0.9rem;
-  background-color: white;
+  border-radius: 5px;
+  font-size: 14.4px;
+  font-family: var(--font-medium);
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: var(--font-medium);
-
 }
 
 .dropdownArrow {
-  font-size: 1.2rem;
+  font-size: 19.2px;
   margin-left: 5px;
 }
 
 .dropdownOptions {
   position: absolute;
-  top: 100%; 
+  top: 100%;
   left: 0;
   width: 100%;
-  background-color: white;
-  border: 1px solid #ccc;
+  background-color: var(--White);
+  border: 1px solid var(--Lavender-Gray);
   border-radius: 5px;
   list-style: none;
   padding: 0;
   margin: 0;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   max-height: 200px;
-  overflow-y: auto; 
+  overflow-y: auto;
 }
 
 .dropdownOptionItem {
   padding: 8px 10px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 14.4px;
 }
 
 .dropdownOptionItem:hover {
-  background-color: #f0f0f0;
+  background-color: var(--off-white);
 }
 
+
+
 .addMorePhotosCard {
-  border: 1px dashed #ccc;
+  border: 1px dashed var(--Lavender-Gray);
   border-radius: 10px;
   background: var(--Floral-White);
-  padding: 2rem 1rem;
+  /* padding: 32px 16px; */
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -320,23 +308,22 @@
 }
 
 .addMorePhotosCard:hover {
-  background-color: #f0f0f0;
+  background-color: var(--Floral-White);
 }
 
 .addMoreText {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
+  font-size: 17.6px;
+  font-family: var(--font-semibold);
 }
 
 .uploadPhotosBtn {
   background-color: var(--Orange-Red);
-  color: white;
+  color: var(--White);
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 16px;
   transition: background-color 0.2s ease;
 }
 
@@ -348,19 +335,17 @@
 
 .mobileHelp {
   border-radius: 8px;
-  margin-top: 2rem;
+  margin-top: 32px;
 }
 
 .mobileHelpTitle {
-  margin-bottom: 0.5rem;
-  color: #333;
-  font-weight: 500;
+    font-family: var(--font-semibold);
 }
 
 .mobilePhoneNumber {
-  font-size: 1.1rem;
+  font-size: 14px;
   font-weight: 500;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }
 
 .phoneNumberValue {
@@ -371,7 +356,7 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  margin-top: 1rem;
+  margin-top: 16px;
 }
 
 .radioLabel {
@@ -379,13 +364,13 @@
   align-items: center;
   width: max-content;
   gap: 8px;
-  background: white;
+  background: var(--White);
   border: 1px solid var(--Orange-Red);
-  padding: 0.75rem 1.25rem;
+  padding: 12px 20px;
   border-radius: 50px;
   cursor: pointer;
-  font-size: 0.95rem;
-  color: #333;
+  font-size: 15.2px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .radioInput {
@@ -399,9 +384,7 @@
   object-fit: contain;
 }
 
-.mt4 {
-  margin-top: 1.5rem; 
-}
+
 .loadingOverlay {
   position: fixed;
   top: 0;
@@ -418,11 +401,11 @@
 
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #007bff;
+  border-left-color: var(--Orange-Red);
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  animation: spin 1s linear infinite;
+  animation: spin 5s linear infinite;
 }
 
 @keyframes spin {
@@ -434,19 +417,19 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw; 
-  height: 100vh; 
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.9);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1001; 
+  z-index: 1001;
 }
 
 .fullScreenImage {
-  max-width: 90%; 
+  max-width: 90%;
   max-height: 90%;
-  object-fit: contain; 
+  object-fit: contain;
 }
 
 .closeButton {
@@ -454,12 +437,12 @@
   top: 20px;
   right: 20px;
   background: rgba(255, 255, 255, 0.2);
-  color: white;
+  color: var(--White);
   border: none;
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  font-size: 1.5rem;
+  font-size: 24px;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -470,8 +453,11 @@
 .closeButton:hover {
   background-color: rgba(255, 255, 255, 0.4);
 }
-@media (max-width: 768px) {
 
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 16px;
+  }
 
   .photoGridContainer {
     grid-template-columns: 1fr;
@@ -486,11 +472,12 @@
     width: 100%;
     justify-content: center;
   }
-    .closeButton {
+
+  .closeButton {
     top: 10px;
     right: 10px;
     width: 30px;
     height: 30px;
-    font-size: 1.2rem;
+    font-size: 19.2px;
   }
-} */
+}
