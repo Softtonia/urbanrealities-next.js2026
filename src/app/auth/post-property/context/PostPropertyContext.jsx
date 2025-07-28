@@ -54,8 +54,9 @@ export function PostPropertyProvider({ children }) {
       yearlyRentIncrease: "",
       propertyUniqueDescription: "",
     },
+    
   });
-
+console.log("Context Provider rendered"); 
   const updateFormData = (key, value) => {
     setFormData((prev) => ({
       ...prev,

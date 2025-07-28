@@ -1,5 +1,4 @@
 "use client";
-import { PostPropertyProvider } from "../context/PostPropertyContext";
 import { useParams } from "next/navigation";
 import Step1 from "../components/steps/Basic-DetailsSteps";
 import Step2 from "../components/steps/Location";
@@ -32,7 +31,6 @@ export default function StepPage() {
   };
 
   return (
-    <PostPropertyProvider>
     <div className="container">
    <div className={`${styles.wrapper} row`}>
       <div className="col-3 p-0">
@@ -45,6 +43,5 @@ export default function StepPage() {
       </div>
     </div>
     </div>
-    </PostPropertyProvider>
   );
 }
