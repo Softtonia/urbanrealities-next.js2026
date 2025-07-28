@@ -11,14 +11,14 @@ const PricingAndOthers = () => {
   const router = useRouter();
   const [expectedRent, setExpectedRent] = useState("");
   const [pricePerSqFt, setPricePerSqFt] = useState("");
-  const [rentInWords, setRentInWords] = useState(""); // This would ideally be generated
+  const [rentInWords, setRentInWords] = useState("");
   const [basedOn, setBasedOn] = useState("Carpet Area");
   const [electricityWaterExcluded, setElectricityWaterExcluded] = useState(false);
   const [priceNegotiable, setPriceNegotiable] = useState(false);
   const [showMaintenanceBooking, setShowMaintenanceBooking] = useState(false);
   const [maintenanceCharges, setMaintenanceCharges] = useState("");
   const [bookingAmount, setBookingAmount] = useState("");
-  const [securityDepositType, setSecurityDepositType] = useState("Fixed"); // Fixed, Multiple of Rent, None
+  const [securityDepositType, setSecurityDepositType] = useState(""); 
   const [securityDepositValue, setSecurityDepositValue] = useState("");
   const [lockInPeriod, setLockInPeriod] = useState("");
   const [yearlyRentIncrease, setYearlyRentIncrease] = useState("");
@@ -77,9 +77,9 @@ const PricingAndOthers = () => {
       </div>
 
       <p className={styles.formQuestion}>What price you are expecting for this property?</p>
-      <div className={styles.priceInputsGrid}>
         <div className={styles.formGroup}>
           <label htmlFor="expectedRent" className={styles.formLabel}>₹ Expected Rent</label>
+      <div className={styles.priceInputsGrid}>
           <input
             type="number"
             id="expectedRent"
@@ -88,10 +88,7 @@ const PricingAndOthers = () => {
             onChange={(e) => setExpectedRent(e.target.value)}
             placeholder="₹ Expected Rent"
           />
-          <p className={styles.amountInWords}>₹ {rentInWords}</p>
-        </div>
-        <div className={styles.formGroup}>
-          <label htmlFor="pricePerSqFt" className={styles.formLabel}>₹ Price per sq.ft.</label>
+          
           <input
             type="number"
             id="pricePerSqFt"
@@ -99,7 +96,9 @@ const PricingAndOthers = () => {
             value={pricePerSqFt}
             onChange={(e) => setPricePerSqFt(e.target.value)}
             placeholder="pricePerSqFt"
+            readOnly
           />
+          <p className={styles.amountInWords}>₹ {rentInWords}</p>
           <div className={styles.basedOnDropdown}>
             Based on <span className={styles.dropdownValue}>{basedOn}</span>{" "}
             <select

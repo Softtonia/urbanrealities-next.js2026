@@ -1,17 +1,19 @@
 "use client";
-import styles from "./Basic-DetailsSteps.module.css";
-import { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import styles from "./Basic-DetailsSteps.module.css";
+import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
 
 export default function StepContent() {
-  const [selectedPurpose, setSelectedPurpose] = useState("");
-  const [selectedPropertyType, setSelectedPropertyType] =
-    useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [expandedCategory, setExpandedCategory] = useState("");
-  const [selectedSubOption, setSelectedSubOption] = useState("");
-
+  const { formData, updateFormData } = useContext(PostPropertyContext);
   const router = useRouter();
+
+  // Initialize state from context formData
+  const [selectedPurpose, setSelectedPurpose] = useState(formData.basicDetails?.purpose || "");
+  const [selectedPropertyType, setSelectedPropertyType] = useState(formData.basicDetails?.propertyType || "");
+  const [selectedCategory, setSelectedCategory] = useState(formData.basicDetails?.category || "");
+  const [expandedCategory, setExpandedCategory] = useState(formData.basicDetails?.expandedCategory || "");
+  const [selectedSubOption, setSelectedSubOption] = useState(formData.basicDetails?.subOption || "");
 
   const purposes = ["Sell", "Rent / Lease", "PG"];
 
@@ -29,17 +31,8 @@ export default function StepContent() {
   const commercialCategories = [
     {
       label: "Office Space",
-        subtext: [
-        "What kind of office is it?",
-       
-      ],
-      subOptions: [
-        "Ready to Move",
-        "Furnished",
-        "Under Construction",
-        "Bare Shell",
-      ],
-
+      subtext: ["What kind of office is it?"],
+      subOptions: ["Ready to Move", "Furnished", "Under Construction", "Bare Shell"],
     },
     { label: "Shop" },
     { label: "Showroom" },
@@ -50,12 +43,38 @@ export default function StepContent() {
     { label: "Other" },
   ];
 
+  // Determine categories based on selectedPropertyType
   const categories =
     selectedPropertyType === "Residential"
       ? residentialCategories
       : commercialCategories;
 
+  // Debugging: Log state changes
+  useEffect(() => {
+    console.log("BasicDetails - Current State:");
+    console.log("  Purpose:", selectedPurpose);
+    console.log("  Property Type:", selectedPropertyType);
+    console.log("  Category:", selectedCategory);
+    console.log("  Sub Option:", selectedSubOption);
+  }, [selectedPurpose, selectedPropertyType, selectedCategory, selectedSubOption]);
+
+
   const handleContinue = () => {
+    // Save current state to context before navigating
+    updateFormData("basicDetails", {
+      purpose: selectedPurpose,
+      propertyType: selectedPropertyType,
+      category: selectedCategory,
+      expandedCategory: expandedCategory,
+      subOption: selectedSubOption,
+    });
+    console.log("BasicDetails - Data saved to Context:", {
+      purpose: selectedPurpose,
+      propertyType: selectedPropertyType,
+      category: selectedCategory,
+      expandedCategory: expandedCategory,
+      subOption: selectedSubOption,
+    });
     router.push("/auth/post-property/location-details");
   };
 
@@ -66,14 +85,12 @@ export default function StepContent() {
 
       {/* Purpose Selection */}
       <div className={styles.optionGroup}>
-        <p className={` body-text-md18 ${styles.subPara} `} >I'm looking to</p>
+        <p className={styles.subPara}>I'm looking to</p>
         <div className={styles.optionButtons}>
           {purposes.map((p) => (
             <button
               key={p}
-              className={`${styles.optionBtn} ${
-                selectedPurpose === p ? styles.selected : ""
-              }`}
+              className={`${styles.optionBtn} ${selectedPurpose === p ? styles.selected : ""}`}
               onClick={() => setSelectedPurpose(p)}
             >
               {p}
@@ -84,14 +101,12 @@ export default function StepContent() {
 
       {/* Property Type Selection */}
       <div className={styles.optionGroup}>
-        <p className={` body-text-md18 ${styles.subPara} `} >What kind of property do you have?</p>
+        <p className={styles.subPara}>What kind of property do you have?</p>
         <div className={styles.radioGroup}>
           {["Residential", "Commercial"].map((type) => (
             <label
               key={type}
-              className={`${styles.radioLabel} ${
-                selectedPropertyType === type ? styles.selected : ""
-              }`}
+              className={`${styles.radioLabel} ${selectedPropertyType === type ? styles.selected : ""}`}
             >
               <input
                 type="radio"
@@ -100,6 +115,7 @@ export default function StepContent() {
                 checked={selectedPropertyType === type}
                 onChange={() => {
                   setSelectedPropertyType(type);
+                  // Reset category and sub-options when property type changes
                   setSelectedCategory("");
                   setExpandedCategory("");
                   setSelectedSubOption("");
@@ -117,9 +133,7 @@ export default function StepContent() {
         {categories.map((cat) => (
           <button
             key={cat.label}
-            className={`${styles.optionBtn} ${
-              selectedCategory === cat.label ? styles.selected : ""
-            }`}
+            className={`${styles.optionBtn} ${selectedCategory === cat.label ? styles.selected : ""}`}
             onClick={() => {
               setSelectedCategory(cat.label);
               if (cat.subOptions) {
@@ -138,28 +152,23 @@ export default function StepContent() {
       {/* Sub-options shown separately below */}
       {expandedCategory &&
         categories.find((c) => c.label === expandedCategory)?.subOptions && (
-                <div className={styles.optionGroup}>
-        <p className={` body-text-md18 ${styles.subPara} `} > 
-        {
-          categories.find((c) => c.label === expandedCategory)?.subtext?.[0] ||
-          "Select an option"
-        }          </p>
-
-          <div className={styles.optionButtons}>
-            {categories
-              .find((c) => c.label === expandedCategory)
-              .subOptions.map((sub) => (
-                <button
-                  key={sub}
-                  className={`${styles.optionBtn} ${
-                    selectedSubOption === sub ? styles.selected : ""
-                  }`}
-                  onClick={() => setSelectedSubOption(sub)}
-                >
-                  {sub}
-                </button>
-              ))}
-          </div>
+          <div className={styles.optionGroup}>
+            <p className={styles.subPara}>
+              {categories.find((c) => c.label === expandedCategory)?.subtext?.[0] || "Select an option"}
+            </p>
+            <div className={styles.optionButtons}>
+              {categories
+                .find((c) => c.label === expandedCategory)
+                .subOptions.map((sub) => (
+                  <button
+                    key={sub}
+                    className={`${styles.optionBtn} ${selectedSubOption === sub ? styles.selected : ""}`}
+                    onClick={() => setSelectedSubOption(sub)}
+                  >
+                    {sub}
+                  </button>
+                ))}
+            </div>
           </div>
         )}
 

@@ -1,36 +1,60 @@
 "use client";
-import React, { useState } from "react";
-// import { usePostProperty } from "@/app/auth/post-property/context/PostPropertyContext";
+import React, { useState, useContext, useEffect } from "react";
 import styles from "./PropertyProfile.module.css";
 import Select from "react-select";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { useRouter } from "next/navigation";
-
+import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
 
 export default function PropertyProfileStep() {
-  // const { formData, updateFormData } = usePostProperty();
-  const [localFields, setLocalFields] = useState({});
-  const selectedCategory = "Flat/Apartment";
-  const handleChange = (fieldName, value) => {
-    setLocalFields((prev) => ({
-      ...prev,
-      [fieldName]: value,
-    }));
-  };
+  const { formData, updateFormData } = useContext(PostPropertyContext);
   const router = useRouter();
 
-  const handleContinue = () => {
-    console.log("Saved Profile Data:", localFields);
-    // updateFormData("propertyProfile", localFields);
-        router.push('/auth/post-property/photodetails');
+  // Initialize local state from context formData.propertyProfile
+  const [localFields, setLocalFields] = useState(formData.propertyProfile || {});
 
+  // Get selectedCategory from context basicDetails
+  const selectedCategory = formData.basicDetails?.category || "";
+
+  // Debugging: Log the selectedCategory and full formData
+  useEffect(() => {
+    console.log("PropertyProfile - formData:", formData);
+    console.log("PropertyProfile - selectedCategory from Context:", selectedCategory);
+  }, [formData, selectedCategory]);
+
+
+  // Update localFields and save to context
+  const handleChange = (fieldName, value) => {
+    setLocalFields((prev) => {
+      const updatedFields = {
+        ...prev,
+        [fieldName]: value,
+      };
+      updateFormData("propertyProfile", updatedFields);
+      return updatedFields;
+    });
+  };
+
+  const handleContinue = () => {
+    console.log("Saved Property Profile Data:", localFields);
+    router.push("/auth/post-property/photodetails");
+  };
+
+  const goBack = () => {
+    if (typeof window !== "undefined") {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        router.push("/");
+      }
+    }
   };
 
   const profileFieldsMap = {
     "Flat/Apartment": [
       {
-        label: "carpet Built-up Area (sq.ft.)",
-        name: "carpetBuiltupArea",
+        label: "Carpet Area (sq.ft.)",
+        name: "carpetArea",
         type: "text",
         options: areaUnitOptions(),
       },
@@ -67,7 +91,7 @@ export default function PropertyProfileStep() {
         type: "select",
         options: ["1 BHK", "2 BHK", "3 BHK", "4 BHK", "5 BHK+"],
       },
-      { label: "Plot Area (sq.ft.)", name: "plotArea", type: "text" },
+      { label: "Plot Area (sq.ft.)", name: "plotArea", type: "text", options: areaUnitOptions() },
       {
         label: "Furnishing",
         name: "furnishing",
@@ -77,7 +101,7 @@ export default function PropertyProfileStep() {
       { label: "Floors in House", name: "floors", type: "text" },
     ],
     "Plot / Land": [
-      { label: "Plot Area (sq.ft.)", name: "plotArea", type: "text" },
+      { label: "Plot Area (sq.ft.)", name: "plotArea", type: "text", options: areaUnitOptions() },
       {
         label: "Boundary Wall?",
         name: "boundaryWall",
@@ -92,7 +116,7 @@ export default function PropertyProfileStep() {
       },
     ],
     "Office Space": [
-      { label: "Carpet Area (sq.ft.)", name: "carpetArea", type: "text" },
+      { label: "Carpet Area (sq.ft.)", name: "carpetArea", type: "text", options: areaUnitOptions() },
       {
         label: "Furnishing",
         name: "furnishing",
@@ -113,7 +137,7 @@ export default function PropertyProfileStep() {
       },
     ],
     Shop: [
-      { label: "Built-up Area (sq.ft.)", name: "builtUpArea", type: "text" },
+      { label: "Built-up Area (sq.ft.)", name: "builtUpArea", type: "text", options: areaUnitOptions() },
       {
         label: "Furnishing",
         name: "furnishing",
@@ -128,7 +152,7 @@ export default function PropertyProfileStep() {
       },
     ],
     "Warehouse / Godown": [
-      { label: "Carpet Area (sq.ft.)", name: "carpetArea", type: "text" },
+      { label: "Carpet Area (sq.ft.)", name: "carpetArea", type: "text", options: areaUnitOptions() },
       { label: "Ceiling Height (ft.)", name: "ceilingHeight", type: "text" },
       {
         label: "Loading Dock?",
@@ -138,58 +162,49 @@ export default function PropertyProfileStep() {
       },
     ],
   };
-  const goBack = () => {
-    if (typeof window !== "undefined") {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        router.push("/");
-      }
-    }
-  };
-  // const selectedCategory = formData.category;
+
   const fieldsToRender = profileFieldsMap[selectedCategory] || [];
 
   return (
     <div className={styles.selectedCategory}>
-      <div className={` ${styles.backWrapper} d-flex align-item-center`}>
-        <IoArrowBackSharp className="back-btn" size={20} onClick={goBack} />
+      <div className={styles.backWrapper}>
+        <IoArrowBackSharp size={20} onClick={goBack} />
         <p className="m-0">Back</p>
       </div>
       <h3>Tell us about your property</h3>
 
       {fieldsToRender.length === 0 ? (
-        <p>No fields available for this category.</p>
+        <p>No fields available for this category. Please select a property type and category in Basic Details.</p>
       ) : (
         fieldsToRender.map((field) => (
           <div className={styles.formGroup} key={field.name}>
             <label>{field.label}</label>
 
-            {/* Text input with unit dropdown */}
             {field.type === "text" && field.options ? (
               <div className={styles.areaInputWrapper}>
                 <input
-                  type="text"
+                  type="number"
                   placeholder="Enter area"
                   value={localFields[field.name]?.value || ""}
                   onChange={(e) =>
                     handleChange(field.name, {
                       ...localFields[field.name],
                       value: e.target.value,
+                      unit: localFields[field.name]?.unit || "sq.ft"
                     })
                   }
                   className={styles.areaInput}
                 />
-
                 <Select
                   className={styles.unitSelect}
                   classNamePrefix="unit"
                   value={field.options.find(
-                    (opt) => opt.value === localFields[field.name]?.unit
+                    (opt) => opt.value === (localFields[field.name]?.unit || "sq.ft")
                   )}
                   onChange={(selected) =>
                     handleChange(field.name, {
                       ...localFields[field.name],
+                      value: localFields[field.name]?.value || "",
                       unit: selected.value,
                     })
                   }
@@ -206,17 +221,16 @@ export default function PropertyProfileStep() {
               />
             ) : null}
 
-            {/* Select dropdown */}
             {field.type === "select" && (
               <Select
                 className={styles.select}
                 classNamePrefix="react-select"
                 value={
-                  field.options.find(
-                    (opt) => opt === localFields[field.name]
+                  field.options.map(opt => ({ label: opt, value: opt })).find(
+                    (opt) => opt.value === localFields[field.name]?.value
                   ) || null
                 }
-                onChange={(selected) => handleChange(field.name, selected)}
+                onChange={(selected) => handleChange(field.name, { value: selected.value, label: selected.label })}
                 options={field.options.map((opt) => ({
                   label: opt,
                   value: opt,
@@ -245,10 +259,7 @@ export default function PropertyProfileStep() {
         ))
       )}
 
-      <button
-        className={`continueBtn ${styles.continueBtn}`}
-        onClick={handleContinue}
-      >
+       <button className={` continueBtn ${styles.continueBtn}`} onClick={handleContinue}>
         Continue
       </button>
     </div>

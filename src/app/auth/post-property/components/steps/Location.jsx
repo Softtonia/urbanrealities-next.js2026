@@ -1,10 +1,10 @@
 "use client";
-
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import Select from "react-select";
 import styles from "./Location.module.css";
 import { IoArrowBackSharp } from "react-icons/io5";
+import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
 
 const locationData = {
   India: {
@@ -26,11 +26,12 @@ const locationData = {
 };
 
 const Location = () => {
+  const { formData, updateFormData } = useContext(PostPropertyContext);
   const router = useRouter();
 
-  const [selectedCountry, setSelectedCountry] = useState(null);
-  const [selectedState, setSelectedState] = useState(null);
-  const [selectedCity, setSelectedCity] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(formData.locationDetails?.country || null);
+  const [selectedState, setSelectedState] = useState(formData.locationDetails?.state || null);
+  const [selectedCity, setSelectedCity] = useState(formData.locationDetails?.city || null);
   const [errors, setErrors] = useState({});
 
   const handleContinue = () => {
@@ -44,6 +45,12 @@ const Location = () => {
       setErrors(newErrors);
       return;
     }
+
+    updateFormData("locationDetails", {
+      country: selectedCountry,
+      state: selectedState,
+      city: selectedCity,
+    });
 
     router.push("/auth/post-property/property-profile");
   };
@@ -78,60 +85,57 @@ const Location = () => {
       value: city,
     }));
 
- const customStyles = {
-  control: (provided, state) => ({
-    ...provided,
-    border: "1px solid #9E9E9E",
-    backgroundColor: "#fff",
-    borderRadius: "8px",
-    paddingLeft: "4px",
-    minHeight: "42px",
-    boxShadow: "none", // removes blue glow
-    outline: "none",
-    "&:hover": {
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
       border: "1px solid #9E9E9E",
-    },
-  }),
+      backgroundColor: "#fff",
+      borderRadius: "8px",
+      paddingLeft: "4px",
+      minHeight: "42px",
+      boxShadow: "none",
+      outline: "none",
+      "&:hover": {
+        border: "1px solid #9E9E9E",
+      },
+    }),
 
-  option: (provided, state) => ({
-    ...provided,
-    backgroundColor: state.isSelected
-      ? "#fff"
-      : state.isFocused
-      ? "#f0f0f0"
-      : "#fff",
-    color: "#000",
-    cursor: "pointer",
-
-    // 👇 active (when clicked)
-    ":active": {
-      backgroundColor: "#f0f0f0", 
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? "#fff"
+        : state.isFocused
+        ? "#f0f0f0"
+        : "#fff",
       color: "#000",
-    },
-  }),
+      cursor: "pointer",
 
-  menu: (provided) => ({
-    ...provided,
-    zIndex: 9999,
-  }),
-};
+      ":active": {
+        backgroundColor: "#f0f0f0",
+        color: "#000",
+      },
+    }),
 
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
+  };
 
   return (
     <div className={styles.content}>
-      <div className={` ${styles.backWrapper} d-flex align-item-center`}>
-        <IoArrowBackSharp className="back-btn " size={20} onClick={goBack} />
+      <div className={styles.backWrapper}>
+        <IoArrowBackSharp size={20} onClick={goBack} />
         <p className="m-0">Back</p>
       </div>
 
       <h3 className={styles.title}>Where is your Property Location</h3>
-      <p className={` formLabel ${styles.subtitle}`}>
+      <p className={styles.subtitle}>
         An accurate location helps you connect with the right buyers
       </p>
 
-      {/* Country */}
       <div className={styles.formGroup}>
-        <label className={` body-text-16 ${styles.label}`}>Country</label>
+        <label className={styles.label}>Country</label>
         <Select
           options={countryOptions}
           value={selectedCountry}
@@ -149,9 +153,8 @@ const Location = () => {
         {errors.country && <p className={styles.error}>{errors.country}</p>}
       </div>
 
-      {/* State */}
       <div className={styles.formGroup}>
-        <label className={` body-text-16 ${styles.label}`}>State</label>
+        <label className={styles.label}>State</label>
         <Select
           options={stateOptions}
           value={selectedState}
@@ -161,16 +164,14 @@ const Location = () => {
             setErrors((prev) => ({ ...prev, state: null }));
           }}
           placeholder="Select State"
-          // isDisabled={!selectedCountry}
           error={errors.state}
           styles={customStyles}
         />
         {errors.state && <p className={styles.error}>{errors.state}</p>}
       </div>
 
-      {/* City */}
       <div className={styles.formGroup}>
-        <label className={` body-text-16 ${styles.label}`}>City</label>
+        <label className={styles.label}>City</label>
         <Select
           options={cityOptions}
           value={selectedCity}
@@ -185,10 +186,7 @@ const Location = () => {
         {errors.city && <p className={styles.error}>{errors.city}</p>}
       </div>
 
-      <button
-        className={`continueBtn ${styles.continueBtn}`}
-        onClick={handleContinue}
-      >
+      <button className={` continueBtn ${styles.continueBtn}`} onClick={handleContinue}>
         Continue
       </button>
     </div>

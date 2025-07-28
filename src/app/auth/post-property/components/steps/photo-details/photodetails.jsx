@@ -1,24 +1,25 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { useRouter } from "next/navigation";
-import { IoMdClose } from "react-icons/io"; 
+import { IoMdClose } from "react-icons/io";
 import { IoArrowBackSharp } from "react-icons/io5";
 
 import VideoSection from "./video-section";
 import PhotoSection from "./photo-section";
 
-import styles from "./photodetails.module.css"; // Main CSS Module
+import styles from "./photodetails.module.css";
+import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
 
 const PhotoDetails = () => {
+  const { formData, updateFormData } = useContext(PostPropertyContext);
   const router = useRouter();
-  const [photos, setPhotos] = useState([]);
-  const [video, setVideo] = useState(null);
-  const photoInputRef = useRef(null); // Ref for photo input
-  const [isProcessingImages, setIsProcessingImages] = useState(false); // State to handle image processing
-  const [fullScreenImage, setFullScreenImage] = useState(null); // State for full-screen image view
+  const [photos, setPhotos] = useState(formData.photos || []);
+  const [video, setVideo] = useState(formData.video || null);
+  const photoInputRef = useRef(null);
+  const [isProcessingImages, setIsProcessingImages] = useState(false);
+  const [fullScreenImage, setFullScreenImage] = useState(null);
 
-  // Function to optimize the image (core logic for the photo section)
   const optimizeImage = (file) => {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -63,7 +64,6 @@ const PhotoDetails = () => {
     });
   };
 
-  // Handler for photo upload
   const handlePhotoUpload = async (e) => {
     const selectedFiles = Array.from(e.target.files);
     const validImages = selectedFiles.filter((file) =>
@@ -94,11 +94,11 @@ const PhotoDetails = () => {
       if (updatedPhotos.length > 0 && !updatedPhotos.some((p) => p.isCover)) {
         updatedPhotos[0].isCover = true;
       }
+      updateFormData("photos", updatedPhotos);
       return updatedPhotos;
     });
   };
 
-  // Handler for video upload
   const handleVideoUpload = (e) => {
     const file = e.target.files[0];
     if (
@@ -109,6 +109,7 @@ const PhotoDetails = () => {
     ) {
       if (file.size <= 80 * 1024 * 1024) {
         setVideo(file);
+        updateFormData("video", file);
       } else {
         console.log("Video file must be less than 80MB");
       }
@@ -117,55 +118,54 @@ const PhotoDetails = () => {
     }
   };
 
-  // Handler to delete a photo
   const handleDeletePhoto = (indexToDelete) => {
     setPhotos((prevPhotos) => {
       const updatedPhotos = prevPhotos.filter((_, i) => i !== indexToDelete);
       if (prevPhotos[indexToDelete].isCover && updatedPhotos.length > 0) {
         updatedPhotos[0].isCover = true;
       }
+      updateFormData("photos", updatedPhotos);
       return updatedPhotos;
     });
   };
 
-  // Handler to set a photo as cover photo
   const handleSetCoverPhoto = (indexToSetCover) => {
-    setPhotos((prevPhotos) =>
-      prevPhotos.map((photo, i) => ({
+    setPhotos((prevPhotos) => {
+      const updatedPhotos = prevPhotos.map((photo, i) => ({
         ...photo,
         isCover: i === indexToSetCover,
-      }))
-    );
+      }));
+      updateFormData("photos", updatedPhotos);
+      return updatedPhotos;
+    });
   };
 
-  // Handler to change photo category
   const handleCategoryChange = (index, newCategory) => {
-    setPhotos((prevPhotos) =>
-      prevPhotos.map((photo, i) =>
+    setPhotos((prevPhotos) => {
+      const updatedPhotos = prevPhotos.map((photo, i) =>
         i === index ? { ...photo, category: newCategory } : photo
-      )
-    );
+      );
+      updateFormData("photos", updatedPhotos);
+      return updatedPhotos;
+    });
   };
 
-  // Handler for 'Add more photos' button
   const handleAddMorePhotosClick = () => {
     photoInputRef.current.click();
   };
 
-  // On zoom icon click, show the full-screen image
   const handleZoomClick = (imageUrl) => {
     setFullScreenImage(imageUrl);
   };
 
-  // Close full-screen image view
   const handleCloseFullScreen = () => {
     setFullScreenImage(null);
   };
 
-  // Handler for 'Continue' button
   const handleContinue = () => {
     router.push("/auth/post-property/featurepricing");
   };
+
   const goBack = () => {
     if (typeof window !== "undefined") {
       if (window.history.length > 1) {
@@ -175,19 +175,18 @@ const PhotoDetails = () => {
       }
     }
   };
+
   return (
     <div className={styles.wrapper}>
-              <div className={` ${styles.backWrapper} d-flex align-item-center`}>
-        <IoArrowBackSharp className="back-btn " size={20} onClick={goBack} />
+      <div className={styles.backWrapper}>
+        <IoArrowBackSharp size={20} onClick={goBack} />
         <p className="m-0">Back</p>
       </div>
-      {/* Video upload section component */}
       <VideoSection
         video={video}
         onVideoUpload={handleVideoUpload}
       />
 
-      {/* Photo upload section component */}
       <PhotoSection
         photos={photos}
         onPhotoUpload={handlePhotoUpload}
@@ -200,16 +199,10 @@ const PhotoDetails = () => {
         isProcessingImages={isProcessingImages}
       />
 
-      {/* 'Continue' button */}
-      <button
-        className={`continueBtn ${styles.continueBtn}`}
-        onClick={handleContinue}
-      >
+      <button className={` continueBtn ${styles.continueBtn}`} onClick={handleContinue}>
         Continue
       </button>
 
-
-      {/* Full-screen image viewer (Modal) */}
       {fullScreenImage && (
         <div className={styles.fullScreenViewer}>
           <button className={styles.closeButton} onClick={handleCloseFullScreen}>

@@ -60,8 +60,8 @@
 
 .priceInputsGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 20px ;
   margin-bottom: 24px;
 }
 
@@ -188,15 +188,15 @@
 }
 
 .selectedDeposit {
-  background-color: #007bff;
+  background-color: var(--Orange-Red);
   color: white;
-  border-color: #007bff;
+  border-color: var(--Orange-Red);
 }
 
 .selectedDeposit:hover {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
+  background-color: var(--White);
+  color: var(--Orange-Red);
+  border-color: #ddd;
 }
 
 .descriptionHint {
