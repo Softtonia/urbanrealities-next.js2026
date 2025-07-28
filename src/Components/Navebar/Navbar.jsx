@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import "../Navebar/navbar.css";
 import DropdownMegaMenu from "../MegaMenu/DropdownMegaMenu";
 import SellerDropdown from "../MegaMenu/SellerDropdown";
@@ -20,6 +20,8 @@ import homeLogo from "../../../img/add_home.svg";
 import LocationDropdown from "../LocationDropdown/LocationDropdown";
 import { GoChevronDown } from "react-icons/go";
 import { IoArrowBackSharp } from "react-icons/io5";
+// import { get } from "@/lib/api";
+import getSiteSettings from "@/utils/getsitedata";
 
 const cities = {
   nearbyCities: ["New Delhi", "Gurgaon", "Greater Noida"],
@@ -132,23 +134,21 @@ export default function Navbar() {
   const [showMegaMenu, setShowMegaMenu] = useState(false);
   const [showRentMenu, setShowRentMenu] = useState(false);
   const [showSellMenu, setShowSellMenu] = useState(false);
-  const [sitedata, setSitedata] = useState({});
+  const [siteData, setSiteData] = useState({});
 
   // fetching data
   useEffect(() => {
-    const fetchSiteData = async () => {
+    const fetchsiteData = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_ENDPOINT}api/site-setting`
-        );
-        const data = response.data;
-        setSitedata(data.data);
+        const data = await getSiteSettings();
+        setSiteData(data);
       } catch (error) {
         console.error("Error fetching site settings:", error);
       }
     };
-    fetchSiteData();
+    fetchsiteData();
   }, []);
+  console.log("onon", siteData)
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -184,7 +184,7 @@ export default function Navbar() {
             <Link className="navbar-brand d-flex align-items-center" href="/">
               <img
                 src={
-                  mobileMenuOpen ? sitedata.mobile_logo : sitedata?.website_logo
+                  siteData?.website_logo
                 }
                 alt="Urbanrealities"
                 width={90}
@@ -200,9 +200,8 @@ export default function Navbar() {
                 <FaMapMarkerAlt className="icon-nav-loc me-1" />
               </div>
               <div
-                className={`transition-opacity duration-300 ${
-                  showDropdown ? "opacity-100 visible" : "opacity-0 invisible"
-                } position-absolute top-100 start-0`}
+                className={`transition-opacity duration-300 ${showDropdown ? "opacity-100 visible" : "opacity-0 invisible"
+                  } position-absolute top-100 start-0`}
               >
                 <LocationDropdown />
               </div>
@@ -220,9 +219,8 @@ export default function Navbar() {
               </div>
 
               <div
-                className={`dropdown-menu mega-menu p-3 ${
-                  showMegaMenu ? "show" : ""
-                }`}
+                className={`dropdown-menu mega-menu p-3 ${showMegaMenu ? "show" : ""
+                  }`}
                 style={{ width: "50vw" }}
               >
                 <DropdownMegaMenu />
@@ -238,9 +236,8 @@ export default function Navbar() {
                 Rent <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${
-                  showRentMenu ? "show" : ""
-                }`}
+                className={`dropdown-menu mega-menu p-3 ${showRentMenu ? "show" : ""
+                  }`}
                 style={{ width: "50vw" }}
               >
                 <DropdownMegaMenu />
@@ -256,9 +253,8 @@ export default function Navbar() {
                 Sell <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${
-                  showSellMenu ? "show" : ""
-                }`}
+                className={`dropdown-menu mega-menu p-3 ${showSellMenu ? "show" : ""
+                  }`}
                 style={{ width: "60vw" }}
               >
                 <SellerDropdown />
@@ -314,7 +310,7 @@ export default function Navbar() {
             <a className="text-decoration-none text-dark" href="#">
               Help
             </a>
-            <Link className="text-decoration-none text-dark"  href="/auth/login">
+            <Link className="text-decoration-none text-dark" href="/auth/login">
               Sign In
             </Link>
           </div>
@@ -339,12 +335,12 @@ export default function Navbar() {
               </svg>
             </div>
             <div>
-              <Image src={logo} alt="Urbanrealities" width={100} height={25} />
+              <image src={`${siteData.mobile_logo}`} alt="Urbanrealities" width={100} height={25} />
             </div>
           </div>
           <div className="m-0">
-            <Link href="/post-property"className="btn-property d-flex align-items-center gap-2 rounded-pill text-sm px-3 py-1">
-              <Image
+            <Link href="/post-property" className="btn-property d-flex align-items-center gap-2 rounded-pill text-sm px-3 py-1">
+              <image
                 src={homeLogo}
                 alt="Post Property"
                 width={18}

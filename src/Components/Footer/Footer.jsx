@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import "../Footer/Footer.css";
 import "../../app/globals.css";
 import { FaFacebook, FaTwitter } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
+import { get } from "@/lib/api";
+import getSiteSettings from "@/utils/getsitedata";
 const Footer = () => {
   const [siteData, setSiteData] = useState({});
   const [email, setEmail] = useState('')
@@ -13,11 +15,9 @@ const Footer = () => {
   useEffect(() => {
     const fetchSiteData = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_ENDPOINT}api/site-setting`
-        );
-        const data = response.data;
-        setSiteData(data.data);
+
+        const data =await getSiteSettings();
+        setSiteData(data);
       } catch (error) {
         console.error("Error fetching site settings:", error);
       }
@@ -26,11 +26,13 @@ const Footer = () => {
     fetchSiteData();
   }, []);
 
+  console.log("demo",siteData)
+
 
   const handlesubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_ENDPOINT}api/insert-subscribe-email`, { email })
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_ENDPOINT}api/-subscribe-email`, { email })
       const data = response.data;
       console.log(data)
     } catch (error) {

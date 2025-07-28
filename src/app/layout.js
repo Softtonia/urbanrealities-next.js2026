@@ -1,9 +1,14 @@
+
+
 import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/Components/Navebar/Navbar";
 import Footer from "@/Components/Footer/Footer";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import BootstrapClient from "@/Components/BootstrapClient";
+import { get } from "@/lib/api";
+import axios from "axios";
+import getSiteSettings from "@/utils/getsitedata";
 // import "../app/layout.css";
 
 const geistSans = Geist({
@@ -16,44 +21,54 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
+
 // async function getSiteSettings() {
 //   try {
-//     const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}api/site-setting`);
-//     if (!response.ok) {
-//       throw new Error('Failed to fetch site settings');
-//     }
-//     return await response.json();
+//     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/site-setting`, {
+//       headers: {
+//         'X-Client-ID': process.env.NEXT_PUBLIC_X_CLIENT_ID,
+//         'X-Client-Secret': process.env.NEXT_PUBLIC_X_CLIENT_SECRET,
+//         'Accept': 'application/json',
+//       },
+//       timeout: 5000, // optional: timeout in ms
+//     });
+
+//     return response.data;
 //   } catch (error) {
-//     console.error('Error fetching site settings:', error);
+//     console.error('Error fetching site settings:', error.message);
 //     return {
 //       site_name: 'UrbanRealities',
-//       site_short_description: 'We build your dream'
+//       site_short_description: 'We build your dream',
 //     };
 //   }
 // }
 
-// export async function generateMetadata() {
-//   const settings = await getSiteSettings();
-//   console.log(settings.data.site_name)
 
-//   return {
-//     title: settings.data.site_name || 'UrbanRealities',
-//     description: settings.data.site_short_description || 'We build your dream',
-//     icons: {
-//       icon: [
-//         {
-//           url: settings.data.favicon || '/favicon.ico',
-//           type: 'image/png',
-//           sizes: '32x32',
-//         },
-//       ],
-//       shortcut: settings.data.favicon || '/favicon.ico',
-//       apple: settings.data.favicon || '/favicon.ico',
-//     },
-//     other: {
-//       'msapplication-TileImage': settings.data.favicon || '/favicon.ico',
-//     },
-//   };}
+export async function generateMetadata() {
+  const settings = await getSiteSettings();
+console.log(settings)
+
+  return {
+    title: settings.site_name || 'UrbanRealitiess',
+    description: settings.site_short_description || 'We build your dream',
+    icons: {
+      icon: [
+        {
+          url: settings.favicon || '/favicon.ico',
+          type: 'image/png',
+          sizes: '32x32',
+        },
+      ],
+      shortcut: settings.favicon || '/favicon.ico',
+      apple: settings.favicon || '/favicon.ico',
+    },
+    other: {
+      'msapplication-TileImage': settings.favicon || '/favicon.ico',
+    },
+  };
+}
+
 
 
 export default function RootLayout({ children }) {
@@ -70,10 +85,10 @@ export default function RootLayout({ children }) {
       </head>
 
       <body className={`antialiased`}>
-        <BootstrapClient/>
+        <BootstrapClient />
         <Navbar />
         <main>{children}</main>
-        <Footer/>
+        <Footer />
       </body>
     </html>
   );
