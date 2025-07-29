@@ -3,14 +3,16 @@ import axios from "axios";
 const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_ENDPOINT,
     headers: {
-        'X-Client-ID': process.env.NEXT_PUBLIC_X_CLIENT_ID,
-        'X-Client-Secret': process.env.NEXT_PUBLIC_X_CLIENT_SECRET,
+        'X-Client-ID': process.env.X_CLIENT_ID,
+        'X-Client-Secret': process.env.X_CLIENT_SECRET,
         // 'Origin':process.env.NEXT_PUBLIC_API_URL
     },
     withCredentials: true,
 });
-console.log("Client ID:", process.env.NEXT_PUBLIC_X_CLIENT_ID);
-console.log("Client Secret:", process.env.NEXT_PUBLIC_X_CLIENT_SECRET);
+console.log("SERVER ENV CHECK");
+console.log("Client ID:", process.env.X_CLIENT_ID);
+console.log("Client Secret:", process.env.X_CLIENT_SECRET);
+
 
 
 // for token verifying
