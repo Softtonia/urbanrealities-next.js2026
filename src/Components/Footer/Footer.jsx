@@ -1,45 +1,42 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-// import axios from "axios";
 import "../Footer/Footer.css";
 import "../../app/globals.css";
 import { FaFacebook, FaTwitter } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
-import { get } from "@/lib/api";
-import getSiteSettings from "@/utils/getsitedata";
-const Footer = () => {
-  const [siteData, setSiteData] = useState({});
-  const [email, setEmail] = useState('')
+// import getSiteSettings from "@/utils/getsitedata";
 
-  useEffect(() => {
-    const fetchSiteData = async () => {
-      try {
+const Footer = ({ siteData }) => {
+  // const [siteData, setSiteData] = useState({});
+  const [email, setEmail] = useState("");
 
-        const data =await getSiteSettings();
-        setSiteData(data);
-      } catch (error) {
-        console.error("Error fetching site settings:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchsiteData = async () => {
+  //       console.log("siteData", siteData);
 
-    fetchSiteData();
-  }, []);
+  //     try {
+  //       const data = await getSiteSettings();
+  //       setSiteData(data);
+  //     } catch (error) {
+  //       console.error("Error fetching site settings:", error);
+  //     }
+  //   };
+  //   fetchsiteData();
+  // }, []);
+  // console.log("siteData", siteData);
 
-  console.log("demo",siteData)
+  // const handlesubmit = async (e) => {
+  //   e.preventDefault()
+  //   try {
+  //     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/subscribe-email`, { email })
+  //     const data = response.data;
+  //     console.log(data)
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
 
-
-  const handlesubmit = async (e) => {
-    e.preventDefault()
-    try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_ENDPOINT}api/-subscribe-email`, { email })
-      const data = response.data;
-      console.log(data)
-    } catch (error) {
-      console.error(error)
-    }
-
-  }
+  // }
 
   return (
     <>
@@ -47,14 +44,28 @@ const Footer = () => {
         <div className="container">
           <div className="row d-flex">
             <div className="col-xl-4 col-lg-12">
-              <div className="footer-aboutus footer-primiry-heading">About Us</div>
+              <div className="footer-aboutus footer-primiry-heading">
+                About Us
+              </div>
               <p className="body-text-14">
                 {siteData?.site_short_description || "Loading..."}
+              </p>
+
+              <div className="footer-aboutus footer-primiry-heading">
+                Address
+              </div>
+              <p className="body-text-14">
+                {siteData?.address || "Loading..."}
+              </p>
+              <p className="body-text-14">
+                {siteData?.mobile_number || "Loading..."}
               </p>
             </div>
 
             <div className="col-xl-2 col-lg-6">
-              <div className="footer-properties footer-primiry-heading">Properties in India</div>
+              <div className="footer-properties footer-primiry-heading">
+                Properties in India
+              </div>
               <ul className="footer-list-none">
                 <li>Properties in Delhi</li>
                 <li>Properties in Hyderabad</li>
@@ -67,33 +78,81 @@ const Footer = () => {
             </div>
 
             <div className="col-xl-2 col-lg-6">
-              <div className="footer-company footer-primiry-heading">Company</div>
+              <div className="footer-company footer-primiry-heading">
+                Company
+              </div>
               <ul className="list-color footer-list-none">
-                <li><a href="">About Us</a></li>
-                <li><a href="">Careers</a></li>
-                <li><a href="">FAQs</a></li>
-                <li><a href="">Contact Us</a></li>
-                <li><a href="">Privacy Policy</a></li>
-                <li><a href="">Terms of Use</a></li>
-                <li><a href="">Legal</a></li>
+                <li>
+                  <a href="">About Us</a>
+                </li>
+                <li>
+                  <a href="">Careers</a>
+                </li>
+                <li>
+                  <a href="">FAQs</a>
+                </li>
+                <li>
+                  <a href="">Contact Us</a>
+                </li>
+                <li>
+                  <a href="">Privacy Policy</a>
+                </li>
+                <li>
+                  <a href="">Terms of Use</a>
+                </li>
+                <li>
+                  <a href="">Legal</a>
+                </li>
               </ul>
             </div>
 
             <div className="col-xl-4 col-lg-12">
-              <div className="footer-subscribe footer-primiry-heading">Subscribe</div>
-              <form className="d-flex gap-2" onSubmit={handlesubmit}>
+              <div className="footer-subscribe footer-primiry-heading">
+                Subscribe
+              </div>
+              <form className="d-flex gap-2">
+                {/* onSubmit={handlesubmit} */}
                 <div>
-                  <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email address" />
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    // onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                  />
                 </div>
                 <div>
-                  <button className="btn btn-subscribe text-white" type="submit">Subscribe</button>
+                  <button
+                    className="btn btn-subscribe text-white"
+                    type="submit"
+                  >
+                    Subscribe
+                  </button>
                 </div>
               </form>
 
               <div className="mb-3 mt-3">
-                <a href={siteData?.facebook || "#"} target="blank" className="text-white me-3"><FaFacebook /></a>
-                <a href={siteData?.instagram || "#"} target="blank" className="text-white me-3"><FaInstagram /></a>
-                <a href={siteData?.twitter || "#"} target="blank" className="text-white me-3"><FaTwitter /></a>
+                <a
+                  href={siteData?.facebook || ""}
+                  target="_blank"
+                  className="text-white me-3"
+                >
+                  <FaFacebook />
+                </a>
+                <a
+                  href={siteData?.instagram || ""}
+                  target="_blank"
+                  className="text-white me-3"
+                >
+                  <FaInstagram />
+                </a>
+                <a
+                  href={siteData?.twitter || ""}
+                  target="_blank"
+                  className="text-white me-3"
+                >
+                  <FaTwitter />
+                </a>
               </div>
 
               <p className="body-text-14 mt-0">

@@ -6,10 +6,7 @@ import Navbar from "@/Components/Navebar/Navbar";
 import Footer from "@/Components/Footer/Footer";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import BootstrapClient from "@/Components/BootstrapClient";
-import { get } from "@/lib/api";
-import axios from "axios";
 import getSiteSettings from "@/utils/getsitedata";
-// import "../app/layout.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,31 +20,9 @@ const geistMono = Geist_Mono({
 
 
 
-// async function getSiteSettings() {
-//   try {
-//     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/site-setting`, {
-//       headers: {
-//         'X-Client-ID': process.env.NEXT_PUBLIC_X_CLIENT_ID,
-//         'X-Client-Secret': process.env.NEXT_PUBLIC_X_CLIENT_SECRET,
-//         'Accept': 'application/json',
-//       },
-//       timeout: 5000, // optional: timeout in ms
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     console.error('Error fetching site settings:', error.message);
-//     return {
-//       site_name: 'UrbanRealities',
-//       site_short_description: 'We build your dream',
-//     };
-//   }
-// }
-
-
 export async function generateMetadata() {
   const settings = await getSiteSettings();
-console.log(settings)
+// console.log(settings)
 
   return {
     title: settings.site_name || 'UrbanRealitiess',
@@ -71,7 +46,8 @@ console.log(settings)
 
 
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+    const siteSettings = await getSiteSettings()
   return (
     <html lang="en">
       <head>
@@ -86,9 +62,9 @@ export default function RootLayout({ children }) {
 
       <body className={`antialiased`}>
         <BootstrapClient />
-        <Navbar />
+        <Navbar siteData={siteSettings}   />
         <main>{children}</main>
-        <Footer />
+        <Footer siteData={siteSettings}  />
       </body>
     </html>
   );
