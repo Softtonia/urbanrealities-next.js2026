@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 
 export async function generateMetadata() {
   const settings = await getSiteSettings();
-// console.log(settings)
+console.log(settings)
 
   return {
     title: settings.site_name || 'UrbanRealitiess',
@@ -47,7 +47,7 @@ export async function generateMetadata() {
 
 
 export default async function RootLayout({ children }) {
-    const siteSettings = await getSiteSettings()
+    // const siteSettings = await getSiteSettings()
   return (
     <html lang="en">
       <head>
@@ -62,9 +62,13 @@ export default async function RootLayout({ children }) {
 
       <body className={`antialiased`}>
         <BootstrapClient />
-        <Navbar siteData={siteSettings}   />
+        <Navbar 
+        // siteData={siteSettings} 
+          />
         <main>{children}</main>
-        <Footer siteData={siteSettings}  />
+        <Footer
+          // siteData={siteSettings}
+        />
       </body>
     </html>
   );

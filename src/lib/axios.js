@@ -9,10 +9,6 @@ const axiosInstance = axios.create({
   },
   withCredentials: true,
 });
-console.log(" SERVER ENV CHECK");
-console.log("API Endpoint:", process.env.NEXT_PUBLIC_API_ENDPOINT);
-console.log("Client ID:", process.env.X_CLIENT_ID);
-console.log("Client Secret:", process.env.X_CLIENT_SECRET);
 
 
 

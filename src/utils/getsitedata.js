@@ -14,8 +14,6 @@ export default async function getSiteSettings() {
       status: error.response?.status,
     });
     return {
-      // site_name: 'UrbanRealities',
-      // site_short_description: 'We build your dream',
     };
   }
 }
