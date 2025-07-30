@@ -1,19 +1,20 @@
 "use client";
 
-// import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./PropertyListing.css";
 import { useRouter } from "next/navigation";
 import SubHero from "./../SubHero/SubHero";
 // import axios from "axios";
-const properties = Array.from({ length: 8 }, (_, index) => ({
-  id: index,
-  titleSegments: ['3BHK', 'Builder', 'Floor', '1700sqft.'],
-  location: 'Ernakulam, Kerala',
-  builder: 'Ganesh Property',
-  status: 'Ready To Move',
-  carpetArea: '1720 sqft',
-  imageUrl: '/propertylistingimage.png',
-}));
+import {get} from "@/lib/api";
+// const properties = Array.from({ length: 8 }, (_, index) => ({
+//   id: index,
+//   titleSegments: ['3BHK', 'Builder', 'Floor', '1700sqft.'],
+//   location: 'Ernakulam, Kerala',
+//   builder: 'Ganesh Property',
+//   status: 'Ready To Move',
+//   carpetArea: '1720 sqft',
+//   imageUrl: '/propertylistingimage.png',
+// }));
 
 const PropertyCard = ({ property, handleViewProjectlist }) => (
   <div className="property-card">
@@ -49,7 +50,7 @@ const PropertyCard = ({ property, handleViewProjectlist }) => (
 
       <div className="property-details body-text-14 bord-bottom">
         <span className="property-status-1">
-          {property.status || "Ready To Move"}
+          {property.property_status_id_name || "Ready To Move"}
         </span>
         <span className="property-carpet-area">
           Carpet Area {property.carpetArea || "1720 sqft"}
@@ -59,7 +60,8 @@ const PropertyCard = ({ property, handleViewProjectlist }) => (
 
     <div
       className="btn-property-detail btn-more-details"
-      onClick={handleViewProjectlist}
+      // onClick={handleViewProjectlist}
+      onClick={() => handleViewProjectlist(property.id)} 
     >
       More Details
     </div>
@@ -67,26 +69,36 @@ const PropertyCard = ({ property, handleViewProjectlist }) => (
 );
 
 const PropertyListing = () => {
-  // const [propertyList, setPropertyList] = useState([]);
+  const [propertyList, setPropertyList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const router = useRouter();
+
+
   const handleViewProjectlist = () => {
     router.push("/propertydetails");
   };
-  // useEffect(() => {
-  //   const fetchpropertlist = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `${process.env.NEXT_PUBLIC_API_ENDPOINT}api/get-all-properties-listing`
-  //       );
-  //       const data = response.data;
-  //       console.log(" Property Data Fetched:", data);
-  //       setPropertyList(data);
-  //     } catch (error) {
-  //       console.error("Error fetching Property Lists:", error);
-  //     }
-  //   };
-  //   fetchpropertlist();
-  // }, []);
+
+useEffect(() => {
+const fetchPropertyList = async () => {
+  try {
+    const response = await fetch('/api/get-all-properties'); // Uses the proxy
+    const data = await response.json();
+    
+    if (!response.ok) throw new Error(data.error || 'Failed to fetch');
+    
+    setPropertyList(data.data); // Adjust based on API response
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+    fetchPropertyList();
+  }, []);
+
+ 
   return (
     <div className="container">
       <div className="property-container">
@@ -97,13 +109,17 @@ const PropertyListing = () => {
 
         <div className="property-listing-scroll">
           <div className="property-listing">
-            {properties.slice(0, 8).map((property) => (
-              <PropertyCard
-                key={property.id}
-                property={property}
-                handleViewProjectlist={handleViewProjectlist}
-              />
-            ))}
+   {propertyList.length > 0 ? (
+              propertyList.map((property) => (
+                <PropertyCard
+                  key={property.id}
+                  property={property}
+                  handleViewProjectlist={handleViewProjectlist}
+                />
+              ))
+            ) : (
+              <p>No properties available.</p>
+            )}
           </div>
         </div>
       </div>

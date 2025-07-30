@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 
 export async function generateMetadata() {
   const settings = await getSiteSettings();
-console.log(settings)
+// console.log(settings)
 
   return {
     title: settings.site_name || 'UrbanRealitiess',

@@ -19,7 +19,6 @@ import homeLogo from "../../../img/add_home.svg";
 import LocationDropdown from "../LocationDropdown/LocationDropdown";
 import { GoChevronDown } from "react-icons/go";
 import { IoArrowBackSharp } from "react-icons/io5";
-import getSiteSettings from "@/utils/getsitedata";
 
 const cities = {
   nearbyCities: ["New Delhi", "Gurgaon", "Greater Noida"],
