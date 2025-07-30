@@ -15,12 +15,10 @@ import {
 } from "react-icons/fa";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "../../../img/Logo.png";
 import homeLogo from "../../../img/add_home.svg";
 import LocationDropdown from "../LocationDropdown/LocationDropdown";
 import { GoChevronDown } from "react-icons/go";
 import { IoArrowBackSharp } from "react-icons/io5";
-// import { get } from "@/lib/api";
 import getSiteSettings from "@/utils/getsitedata";
 
 const cities = {
@@ -140,15 +138,21 @@ export default function Navbar() {
   useEffect(() => {
     const fetchsiteData = async () => {
       try {
-        const data = await getSiteSettings();
-        setSiteData(data);
+        const res = await fetch('/api/site-setting'); // 🔒 safe server-side API
+        if (!res.ok) throw new Error('Failed to fetch site settings');
+        const data = await res.json();
+        setSiteData(data.data);
       } catch (error) {
         console.error("Error fetching site settings:", error);
       }
     };
+
     fetchsiteData();
   }, []);
-  console.log("onon", siteData)
+
+
+ 
+
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -182,14 +186,15 @@ export default function Navbar() {
         <div className="container-fluid d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
             <Link className="navbar-brand d-flex align-items-center" href="/">
-              <img
+              <Image
                 src={
-                  siteData?.website_logo
+                  siteData?.website_logo || siteData?.mobile_logo || "/logo.png"
                 }
                 alt="Urbanrealities"
                 width={90}
                 height={30}
               />
+
             </Link>
             <div
               className="position-relative"
@@ -270,7 +275,10 @@ export default function Navbar() {
           </ul>
 
           <div className="d-flex align-items-center gap-3">
-            <Link href="/post-property" className="btn-property d-flex align-items-center gap-2 rounded-pill">
+            <Link
+              href="/post-property"
+              className="btn-property d-flex align-items-center gap-2 rounded-pill"
+            >
               <Image
                 src={homeLogo}
                 alt="Post Property"
@@ -335,12 +343,27 @@ export default function Navbar() {
               </svg>
             </div>
             <div>
-              <image src={`${siteData.mobile_logo}`} alt="Urbanrealities" width={100} height={25} />
+              <Image
+                src={
+                  siteData?.website_logo?.startsWith('http')
+                    ?siteData.website_logo
+                    : siteData?.mobile_logo?.startsWith('http')
+                      ? siteData.mobile_logo
+                      : "/logo.png"
+                }
+                alt="Urbanrealities"
+                width={100}
+                height={25}
+                priority // Optional: for faster loading above-the-fold
+              />
             </div>
           </div>
           <div className="m-0">
-            <Link href="/post-property" className="btn-property d-flex align-items-center gap-2 rounded-pill text-sm px-3 py-1">
-              <image
+            <Link
+              href="/post-property"
+              className="btn-property d-flex align-items-center gap-2 rounded-pill text-sm px-3 py-1"
+            >
+              <Image
                 src={homeLogo}
                 alt="Post Property"
                 width={18}

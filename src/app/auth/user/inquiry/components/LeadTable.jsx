@@ -121,7 +121,7 @@ export default function LeadsTable() {
       </div>
       <table className={styles.table}>
         <thead className={styles.thead}>
-          <tr className={styles.tr}>
+          <tr className={styles.tableRow}>
             {/* <th className={`${styles.th} ${styles.checkboxCol}`}>
               <input
                 type="checkbox"
