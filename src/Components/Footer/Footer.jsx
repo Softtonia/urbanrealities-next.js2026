@@ -17,6 +17,7 @@ const Footer = () => {
       try {
 
         const data =await getSiteSettings();
+        
         setSiteData(data);
       } catch (error) {
         console.error("Error fetching site settings:", error);
