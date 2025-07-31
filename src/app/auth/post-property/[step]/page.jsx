@@ -48,6 +48,9 @@
 // }
 
 // This is a server component
+
+import StepComponent from './genratestep';
+
 export async function generateStaticParams() {
   return [
     { step: 'basic-details' },
@@ -58,8 +61,7 @@ export async function generateStaticParams() {
   ];
 }
 
-import StepComponent from './genratestep';
-
 export default function Page({ params }) {
-  return <StepComponent step={params.step} />;
+  const { step } = params;
+  return <StepComponent step={step} />;
 }

@@ -5,7 +5,7 @@ import "./PropertyListing.css";
 import { useRouter } from "next/navigation";
 import SubHero from "./../SubHero/SubHero";
 // import axios from "axios";
-import {get} from "@/lib/api";
+// import {get} from "@/lib/api";
 // const properties = Array.from({ length: 8 }, (_, index) => ({
 //   id: index,
 //   titleSegments: ['3BHK', 'Builder', 'Floor', '1700sqft.'],

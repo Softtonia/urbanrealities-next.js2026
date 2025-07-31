@@ -1,247 +1,497 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import styles from "./featurepricing.module.css";
-import { ToWords } from 'to-words';
-
-
+import styles from "./featurepricing.module.css"; // Ensure this path is correct
+import { ToWords } from "to-words";
+import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
+import { IoArrowBackSharp } from "react-icons/io5";
 
 const PricingAndOthers = () => {
   const router = useRouter();
-  const [expectedRent, setExpectedRent] = useState("");
-  const [pricePerSqFt, setPricePerSqFt] = useState("");
-  const [rentInWords, setRentInWords] = useState("");
-  const [basedOn, setBasedOn] = useState("Carpet Area");
-  const [electricityWaterExcluded, setElectricityWaterExcluded] = useState(false);
-  const [priceNegotiable, setPriceNegotiable] = useState(false);
-  const [showMaintenanceBooking, setShowMaintenanceBooking] = useState(false);
-  const [maintenanceCharges, setMaintenanceCharges] = useState("");
-  const [bookingAmount, setBookingAmount] = useState("");
-  const [securityDepositType, setSecurityDepositType] = useState(""); 
-  const [securityDepositValue, setSecurityDepositValue] = useState("");
-  const [lockInPeriod, setLockInPeriod] = useState("");
-  const [yearlyRentIncrease, setYearlyRentIncrease] = useState("");
-  const [propertyUniqueDescription, setPropertyUniqueDescription] = useState("");
+  const { formData, updateFormData } = useContext(PostPropertyContext);
 
+  const [pricingData, setPricingData] = useState(formData.pricingDetails || {});
+
+  const selectedPurpose = formData.basicDetails?.purpose || "";
+  const selectedCategory = formData.basicDetails?.category || "";
+
+  const [rentInWords, setRentInWords] = useState("");
 
   const toWords = new ToWords({
-  localeCode: 'en-IN',
-  converterOptions: {
-    currency: true,
-    ignoreDecimal: true,
-    ignoreZeroCurrency: false,
-  },
-});
-  // Placeholder for converting number to words (would need a more robust library in a real app)
- const convertNumberToWords = (num) => {
-  if (!num || isNaN(num)) return '';
-  return toWords.convert(num); // This will return like: "Rupees Two Thousand Six Hundred Only"
-};
+    localeCode: "en-IN",
+    converterOptions: {
+      currency: true,
+      ignoreDecimal: true,
+      ignoreZeroCurrency: false,
+    },
+  });
 
+  const convertNumberToWords = (num) => {
+    if (!num || isNaN(num)) return '';
+    return toWords.convert(num);
+  };
 
-  React.useEffect(() => {
-    setRentInWords(convertNumberToWords(parseInt(expectedRent)));
-  }, [expectedRent]);
+  useEffect(() => {
+    setRentInWords(convertNumberToWords(parseInt(pricingData.expectedRent)));
+  }, [pricingData.expectedRent]);
+
+  const prevPricePerSqFtRef = useRef();
+
+  useEffect(() => {
+    const rent = parseFloat(pricingData.expectedRent);
+    const propertyProfile = formData.propertyProfile || {};
+
+    let areaValue = 0;
+    let calculatedPrice = "";
+    
+    if (pricingData.basedOn === "Carpet Area" && propertyProfile.carpetArea?.value) {
+      areaValue = parseFloat(propertyProfile.carpetArea.value);
+    } else if (pricingData.basedOn === "Built-up Area" && propertyProfile.builtUpArea?.value) {
+      areaValue = parseFloat(propertyProfile.builtUpArea.value);
+    } else if (pricingData.basedOn === "Super Built-up Area" && propertyProfile.superBuiltupArea?.value) {
+      areaValue = parseFloat(propertyProfile.superBuiltupArea.value);
+    } else if (pricingData.basedOn === "Plot Area" && propertyProfile.plotArea?.value) {
+      areaValue = parseFloat(propertyProfile.plotArea.value);
+    }
+
+    if (!isNaN(rent) && rent > 0 && !isNaN(areaValue) && areaValue > 0) {
+      calculatedPrice = (rent / areaValue).toFixed(2);
+    }
+
+    if (calculatedPrice !== prevPricePerSqFtRef.current) {
+      setPricingData(prev => ({ ...prev, pricePerSqFt: calculatedPrice }));
+      updateFormData("pricingDetails", { ...pricingData, pricePerSqFt: calculatedPrice });
+      prevPricePerSqFtRef.current = calculatedPrice;
+    }
+
+    console.log("PricingAndOthers - Property Profile Areas:", {
+      carpetArea: propertyProfile.carpetArea?.value,
+      builtUpArea: propertyProfile.builtUpArea?.value,
+      superBuiltupArea: propertyProfile.superBuiltupArea?.value,
+      plotArea: propertyProfile.plotArea?.value,
+      basedOn: pricingData.basedOn,
+      areaValueUsed: areaValue,
+      calculatedPricePerSqFt: calculatedPrice,
+      selectedCategoryForProfile: selectedCategory,
+      selectedPurposeForProfile: selectedPurpose
+    });
+
+  }, [
+    pricingData.expectedRent,
+    pricingData.basedOn,
+    formData.propertyProfile,
+    updateFormData,
+    selectedCategory,
+    selectedPurpose,
+  ]);
+
+  useEffect(() => {
+    console.log("PricingAndOthers - formData:", formData);
+    console.log("PricingAndOthers - selectedPurpose from Context:", selectedPurpose);
+    console.log("PricingAndOthers - selectedCategory from Context:", selectedCategory);
+  }, [formData, selectedPurpose, selectedCategory]);
+
+  const handleChange = (fieldName, value) => {
+    setPricingData((prev) => {
+      const updatedFields = {
+        ...prev,
+        [fieldName]: value,
+      };
+      updateFormData("pricingDetails", updatedFields);
+      return updatedFields;
+    });
+  };
+
+  const toggleBoolean = (fieldName) => {
+    handleChange(fieldName, !pricingData[fieldName]);
+  };
+
+  const dynamicFieldsMap = {
+    "Sell": {
+      "Flat/Apartment": [
+        { name: "totalPrice", label: "₹ Total Price", type: "number" },
+        { name: "pricePerSqFt", label: "₹ Price per sq.ft.", type: "readonly-text", basedOn: true },
+        { name: "electricityWaterExcluded", type: "checkbox", label: "Electricity & Water charges excluded" },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "maintenanceCharges", label: "Maintenance Charges (Monthly)", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "bookingAmount", label: "Booking Amount", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "securityDepositType", type: "security-deposit" },
+        { name: "securityDepositValue", type: "number", placeholder: "No. of months (Max 30)", showIf: "pricingData.securityDepositType === 'Multiple of Rent'" },
+        { name: "lockInPeriod", label: "Lock-in Period (Months)", type: "number" },
+        { name: "yearlyRentIncrease", label: "Yearly Rent Increase (%)", type: "number" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+      "Independent House / Villa": [
+        { name: "totalPrice", label: "₹ Total Price", type: "number" },
+        { name: "pricePerSqFt", label: "₹ Price per sq.ft.", type: "readonly-text", basedOn: true },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "securityDepositType", type: "security-deposit" },
+        { name: "securityDepositValue", type: "number", placeholder: "No. of months (Max 30)", showIf: "pricingData.securityDepositType === 'Multiple of Rent'" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+      "Plot / Land": [
+        { name: "totalPrice", label: "₹ Total Price", type: "number" },
+        { name: "pricePerSqFt", label: "₹ Price per sq.ft.", type: "readonly-text", basedOn: true },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+      "Office Space": [
+        { name: "totalPrice", label: "₹ Total Price", type: "number" },
+        { name: "pricePerSqFt", label: "₹ Price per sq.ft.", type: "readonly-text", basedOn: true },
+        { name: "maintenanceCharges", label: "Maintenance Charges (Monthly)", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "bookingAmount", label: "Booking Amount", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "securityDepositType", type: "security-deposit" },
+        { name: "securityDepositValue", type: "number", placeholder: "No. of months (Max 30)", showIf: "pricingData.securityDepositType === 'Multiple of Rent'" },
+        { name: "lockInPeriod", label: "Lock-in Period (Months)", type: "number" },
+        { name: "yearlyRentIncrease", label: "Yearly Rent Increase (%)", type: "number" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+      "Shop": [
+        { name: "totalPrice", label: "₹ Total Price", type: "number" },
+        { name: "pricePerSqFt", label: "₹ Price per sq.ft.", type: "readonly-text", basedOn: true },
+        { name: "maintenanceCharges", label: "Maintenance Charges (Monthly)", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "bookingAmount", label: "Booking Amount", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "securityDepositType", type: "security-deposit" },
+        { name: "securityDepositValue", type: "number", placeholder: "No. of months (Max 30)", showIf: "pricingData.securityDepositType === 'Multiple of Rent'" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+      "Warehouse / Godown": [
+        { name: "totalPrice", label: "₹ Total Price", type: "number" },
+        { name: "pricePerSqFt", label: "₹ Price per sq.ft.", type: "readonly-text", basedOn: true },
+        { name: "maintenanceCharges", label: "Maintenance Charges (Monthly)", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "bookingAmount", label: "Booking Amount", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "securityDepositType", type: "security-deposit" },
+        { name: "securityDepositValue", type: "number", placeholder: "No. of months (Max 30)", showIf: "pricingData.securityDepositType === 'Multiple of Rent'" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+    },
+    "Rent / Lease": {
+      "Flat/Apartment": [
+        { name: "expectedRent", label: "₹ Expected Rent", type: "number" },
+        { name: "pricePerSqFt", label: "₹ Price per sq.ft.", type: "readonly-text", basedOn: true },
+        { name: "electricityWaterExcluded", type: "checkbox", label: "Electricity & Water charges excluded" },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "maintenanceCharges", label: "Maintenance Charges (Monthly)", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "bookingAmount", label: "Booking Amount", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "securityDepositType", type: "security-deposit" },
+        { name: "securityDepositValue", type: "number", placeholder: "No. of months (Max 30)", showIf: "pricingData.securityDepositType === 'Multiple of Rent'" },
+        { name: "lockInPeriod", label: "Lock-in Period (Months)", type: "number" },
+        { name: "yearlyRentIncrease", label: "Yearly Rent Increase (%)", type: "number" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+      "Independent House / Villa": [
+        { name: "expectedRent", label: "₹ Expected Rent", type: "number" },
+        { name: "pricePerSqFt", label: "₹ Price per sq.ft.", type: "readonly-text", basedOn: true },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "securityDepositType", type: "security-deposit" },
+        { name: "securityDepositValue", type: "number", placeholder: "No. of months (Max 30)", showIf: "pricingData.securityDepositType === 'Multiple of Rent'" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+      "Plot / Land": [
+        { name: "expectedRent", label: "₹ Expected Rent", type: "number" },
+        { name: "pricePerSqFt", label: "₹ Price per sq.ft.", type: "readonly-text", basedOn: true },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+      "Office Space": [
+        { name: "expectedRent", label: "₹ Expected Rent", type: "number" },
+        { name: "pricePerSqFt", label: "₹ Price per sq.ft.", type: "readonly-text", basedOn: true },
+        { name: "maintenanceCharges", label: "Maintenance Charges (Monthly)", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "bookingAmount", label: "Booking Amount", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "securityDepositType", type: "security-deposit" },
+        { name: "securityDepositValue", type: "number", placeholder: "No. of months (Max 30)", showIf: "pricingData.securityDepositType === 'Multiple of Rent'" },
+        { name: "lockInPeriod", label: "Lock-in Period (Months)", type: "number" },
+        { name: "yearlyRentIncrease", label: "Yearly Rent Increase (%)", type: "number" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+      "Shop": [
+        { name: "expectedRent", label: "₹ Expected Rent", type: "number" },
+        { name: "pricePerSqFt", label: "₹ Price per sq.ft.", type: "readonly-text", basedOn: true },
+        { name: "maintenanceCharges", label: "Maintenance Charges (Monthly)", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "bookingAmount", label: "Booking Amount", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "securityDepositType", type: "security-deposit" },
+        { name: "securityDepositValue", type: "number", placeholder: "No. of months (Max 30)", showIf: "pricingData.securityDepositType === 'Multiple of Rent'" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+      "Warehouse / Godown": [
+        { name: "expectedRent", label: "₹ Expected Rent", type: "number" },
+        { name: "pricePerSqFt", label: "₹ Price per sq.ft.", type: "readonly-text", basedOn: true },
+        { name: "maintenanceCharges", label: "Maintenance Charges (Monthly)", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "bookingAmount", label: "Booking Amount", type: "number", showIf: "showMaintenanceBooking" },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "securityDepositType", type: "security-deposit" },
+        { name: "securityDepositValue", type: "number", placeholder: "No. of months (Max 30)", showIf: "pricingData.securityDepositType === 'Multiple of Rent'" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+    },
+    "PG": {
+      "1 RK/ Studio Apartment": [
+        { name: "expectedRent", label: "₹ Expected Rent (per bed/room)", type: "number" },
+        { name: "priceNegotiable", type: "checkbox", label: "Price Negotiable" },
+        { name: "securityDepositType", type: "security-deposit" },
+        { name: "securityDepositValue", type: "number", placeholder: "No. of months (Max 30)", showIf: "pricingData.securityDepositType === 'Multiple of Rent'" },
+        { name: "propertyUniqueDescription", label: "What makes your property unique", type: "textarea" },
+      ],
+    }
+  };
+
+  const fieldsToRender = (dynamicFieldsMap[selectedPurpose] && dynamicFieldsMap[selectedPurpose][selectedCategory]) || [];
 
   const handleContinue = () => {
-    console.log("Pricing and Others Details:", {
-      expectedRent,
-      pricePerSqFt,
-      electricityWaterExcluded,
-      priceNegotiable,
-      maintenanceCharges,
-      bookingAmount,
-      securityDepositType,
-      securityDepositValue,
-      lockInPeriod,
-      yearlyRentIncrease,
-      propertyUniqueDescription,
-    });
-    router.push("/auth/post-property/summary"); // Next step
+    updateFormData("pricingDetails", pricingData);
+    console.log("Saved Pricing Details:", pricingData);
+    router.push("/auth/post-property/summary");
   };
 
-  const handleBack = () => {
-    router.push("/auth/post-property/photo-details"); // Previous step
+  const goBack = () => {
+    if (typeof window !== "undefined") {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        router.push("/");
+      }
+    }
   };
+
+  // Extract primary pricing fields for the grid layout
+  const primaryPricingFields = fieldsToRender.filter(
+    (field) => field.name === "expectedRent" || field.name === "totalPrice" || field.name === "pricePerSqFt"
+  );
 
   return (
     <div className={styles.wrapper}>
+      <div className={styles.backWrapper}>
+        <IoArrowBackSharp size={20} onClick={goBack} />
+        <p className="m-0">Back</p>
+      </div>
+
       <h2 className={styles.sectionTitle}>Add pricing and details...</h2>
 
-      {/* Warning Box (from Screenshot 1) */}
       <div className={styles.warningBox}>
         You might get <strong className={styles.warningHighlight}>Low responses</strong>, as your listing has no photos. Rank up your listing by adding pictures{" "}
         <span className={styles.uploadNowLink}>Upload Now</span>
         <button className={styles.closeWarningButton}>&times;</button>
       </div>
 
-      <p className={styles.formQuestion}>What price you are expecting for this property?</p>
-        <div className={styles.formGroup}>
-          <label htmlFor="expectedRent" className={styles.formLabel}>₹ Expected Rent</label>
-      <div className={styles.priceInputsGrid}>
-          <input
-            type="number"
-            id="expectedRent"
-            className={styles.formInput}
-            value={expectedRent}
-            onChange={(e) => setExpectedRent(e.target.value)}
-            placeholder="₹ Expected Rent"
-          />
-          
-          <input
-            type="number"
-            id="pricePerSqFt"
-            className={styles.formInput}
-            value={pricePerSqFt}
-            onChange={(e) => setPricePerSqFt(e.target.value)}
-            placeholder="pricePerSqFt"
-            readOnly
-          />
-          <p className={styles.amountInWords}>₹ {rentInWords}</p>
-          <div className={styles.basedOnDropdown}>
-            Based on <span className={styles.dropdownValue}>{basedOn}</span>{" "}
-            <select
-              className={styles.hiddenSelect}
-              value={basedOn}
-              onChange={(e) => setBasedOn(e.target.value)}
-            >
-              <option value="Carpet Area">Carpet Area</option>
-              <option value="Built-up Area">Built-up Area</option>
-              <option value="Super Built-up Area">Super Built-up Area</option>
-            </select>
+      {fieldsToRender.length === 0 && (
+        <p className={styles.formQuestion}>
+          Please go back to Basic Details and select a Purpose and Property Type/Category to see pricing options.
+        </p>
+      )}
+
+      {/* Primary Pricing Section: Expected Rent/Total Price and Price per Sq.Ft. */}
+      {(primaryPricingFields.length > 0) && (
+        <>
+          <p className={styles.formQuestion}>
+            What price you are expecting for this property?
+          </p>
+          <div className={styles.formGroup}>
+            <div className={styles.priceInputsGrid}>
+              {primaryPricingFields.map((field) => {
+                if (field.name === "expectedRent" || field.name === "totalPrice") {
+                  return (
+                    <div key={field.name}>
+                      <label htmlFor={field.name} className={styles.formLabel}>
+                        {field.label}
+                      </label>
+                      <input
+                        type="number"
+                        id={field.name}
+                        className={styles.formInput}
+                        value={pricingData[field.name] || ""}
+                        onChange={(e) => handleChange(field.name, e.target.value)}
+                        placeholder={field.placeholder || field.label}
+                      />
+                      {field.name === "expectedRent" && (
+                        <p className={styles.amountInWords}>₹ {rentInWords}</p>
+                      )}
+                    </div>
+                  );
+                } else if (field.name === "pricePerSqFt") {
+                  return (
+                    <div key={field.name}>
+                      <label htmlFor={field.name} className={styles.formLabel}>
+                        {field.label}
+                      </label>
+                      <input
+                        type="text"
+                        id={field.name}
+                        className={styles.formInput}
+                        value={pricingData[field.name] || ""}
+                        readOnly
+                        placeholder={field.placeholder || field.label}
+                      />
+                      {field.basedOn && (
+                        <div className={styles.basedOnDropdown}>
+                          Based on{" "}
+                          <span className={styles.dropdownValue}>
+                            {pricingData.basedOn || "Carpet Area"}
+                          </span>{" "}
+                          <select
+                            className={styles.hiddenSelect}
+                            value={pricingData.basedOn || "Carpet Area"}
+                            onChange={(e) => handleChange("basedOn", e.target.value)}
+                          >
+                            <option value="Carpet Area">Carpet Area</option>
+                            <option value="Built-up Area">Built-up Area</option>
+                            <option value="Super Built-up Area">Super Built-up Area</option>
+                            <option value="Plot Area">Plot Area</option>
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+                return null;
+              })}
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
 
-      <div className={styles.checkboxGroup}>
-        <label className={styles.checkboxLabel}>
-          <input
-            type="checkbox"
-            className={styles.formCheckbox}
-            checked={electricityWaterExcluded}
-            onChange={(e) => setElectricityWaterExcluded(e.target.checked)}
-          />
-          Electricity & Water charges excluded
-        </label>
-        <label className={styles.checkboxLabel}>
-          <input
-            type="checkbox"
-            className={styles.formCheckbox}
-            checked={priceNegotiable}
-            onChange={(e) => setPriceNegotiable(e.target.checked)}
-          />
-          Price Negotiable
-        </label>
-      </div>
+      {/* Render remaining fields dynamically */}
+      {fieldsToRender.filter(f => !primaryPricingFields.includes(f)).map((field) => {
+        let shouldShow = true;
+        if (field.showIf) {
+          try {
+            const evaluateCondition = new Function('pricingData', `return ${field.showIf};`);
+            shouldShow = evaluateCondition(pricingData);
+          } catch (e) {
+            console.error(`Error evaluating showIf condition for ${field.name}:`, e);
+            shouldShow = false;
+          }
+        }
 
-      <div className={styles.addMaintenanceLink} onClick={() => setShowMaintenanceBooking(!showMaintenanceBooking)}>
-        + Add Maintenance and Booking Amount
-      </div>
+        if (!shouldShow) return null;
 
-      {showMaintenanceBooking && (
+        if (field.type === "checkbox") {
+          return (
+            <div className={styles.checkboxGroup} key={field.name}>
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  className={styles.formCheckbox}
+                  checked={pricingData[field.name] || false}
+                  onChange={() => toggleBoolean(field.name)}
+                />
+                {field.label}
+              </label>
+            </div>
+          );
+        } else if (field.type === "security-deposit") {
+          return (
+            <React.Fragment key={field.name}>
+              <p className={styles.securityDepositTitle}>
+                Security deposit <span className={styles.optionalText}>(Optional)</span>
+              </p>
+              <div className={styles.securityDepositOptions}>
+                {["Fixed", "Multiple of Rent", "None"].map((type) => (
+                  <button
+                    key={type}
+                    className={`${styles.depositButton} ${
+                      pricingData.securityDepositType === type
+                        ? styles.selectedDeposit
+                        : ""
+                    }`}
+                    onClick={() => handleChange("securityDepositType", type)}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </React.Fragment>
+          );
+        } else if (field.type === "textarea") {
+          return (
+            <div className={styles.formGroup} key={field.name}>
+              <p className={styles.formQuestion}>{field.label}</p>
+              <p className={styles.descriptionHint}>
+                Adding description will increase your listing visibility
+              </p>
+              <textarea
+                className={styles.formTextarea}
+                value={pricingData[field.name] || ""}
+                onChange={(e) => handleChange(field.name, e.target.value)}
+                placeholder="Share some details about your property like spacious area, nearby markets, metro connectivity and more"
+                rows="5"
+              ></textarea>
+              <p className={styles.charCount}>
+                Minimum 30 characters required{" "}
+                {pricingData[field.name]?.length || 0}/5000
+              </p>
+            </div>
+          );
+        } else if (field.type === "number" && (field.name !== "expectedRent" && field.name !== "totalPrice" && field.name !== "pricePerSqFt")) {
+            // Render other number fields not part of the primary pricing grid
+            return (
+                <div className={styles.formGroup} key={field.name}>
+                    <label htmlFor={field.name} className={styles.formLabel}>
+                        {field.label}
+                    </label>
+                    <input
+                        type="number"
+                        id={field.name}
+                        className={styles.formInput}
+                        value={pricingData[field.name] || ""}
+                        onChange={(e) => handleChange(field.name, e.target.value)}
+                        placeholder={field.placeholder || field.label}
+                    />
+                </div>
+            );
+        }
+        return null;
+      })}
+
+      {/* Maintenance and Booking Section - conditionally rendered based on showMaintenanceBooking */}
+      {pricingData.showMaintenanceBooking && (
         <div className={styles.maintenanceBookingSection}>
-          <div className={styles.formGroup}>
-            <label htmlFor="maintenanceCharges" className={styles.formLabel}>Maintenance Charges (Monthly)</label>
-            <input
-              type="number"
-              id="maintenanceCharges"
-              className={styles.formInput}
-              value={maintenanceCharges}
-              onChange={(e) => setMaintenanceCharges(e.target.value)}
-              placeholder="Enter monthly maintenance"
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label htmlFor="bookingAmount" className={styles.formLabel}>Booking Amount</label>
-            <input
-              type="number"
-              id="bookingAmount"
-              className={styles.formInput}
-              value={bookingAmount}
-              onChange={(e) => setBookingAmount(e.target.value)}
-              placeholder="Enter booking amount"
-            />
-          </div>
+          {fieldsToRender.find(f => f.name === "maintenanceCharges") && (
+            <div className={styles.formGroup}>
+              <label htmlFor="maintenanceCharges" className={styles.formLabel}>
+                Maintenance Charges (Monthly)
+              </label>
+              <input
+                type="number"
+                id="maintenanceCharges"
+                className={styles.formInput}
+                value={pricingData.maintenanceCharges || ""}
+                onChange={(e) => handleChange("maintenanceCharges", e.target.value)}
+                placeholder="Enter monthly maintenance"
+              />
+            </div>
+          )}
+          {fieldsToRender.find(f => f.name === "bookingAmount") && (
+            <div className={styles.formGroup}>
+              <label htmlFor="bookingAmount" className={styles.formLabel}>
+                Booking Amount
+              </label>
+              <input
+                type="number"
+                id="bookingAmount"
+                className={styles.formInput}
+                value={pricingData.bookingAmount || ""}
+                onChange={(e) => handleChange("bookingAmount", e.target.value)}
+                placeholder="Enter booking amount"
+              />
+            </div>
+          )}
         </div>
       )}
 
-      <p className={styles.securityDepositTitle}>Security deposit <span className={styles.optionalText}>(Optional)</span></p>
-      <div className={styles.securityDepositOptions}>
+      <div className={styles.navigationButtons}>
         <button
-          className={`${styles.depositButton} ${securityDepositType === "Fixed" ? styles.selectedDeposit : ""}`}
-          onClick={() => setSecurityDepositType("Fixed")}
-        >
-          Fixed
-        </button>
-        <button
-          className={`${styles.depositButton} ${securityDepositType === "Multiple of Rent" ? styles.selectedDeposit : ""}`}
-          onClick={() => setSecurityDepositType("Multiple of Rent")}
-        >
-          Multiple of Rent
-        </button>
-        <button
-          className={`${styles.depositButton} ${securityDepositType === "None" ? styles.selectedDeposit : ""}`}
-          onClick={() => setSecurityDepositType("None")}
-        >
-          None
-        </button>
-      </div>
-
-      {securityDepositType === "Multiple of Rent" && (
-        <div className={styles.formGroup}>
-          <input
-            type="number"
-            className={styles.formInput}
-            value={securityDepositValue}
-            onChange={(e) => setSecurityDepositValue(e.target.value)}
-            placeholder="No. of months (Max 30)"
-          />
-        </div>
-      )}
-
-      <p className={styles.formQuestion}>Lock - in Period <span className={styles.optionalText}>(Optional)</span></p>
-      <div className={styles.formGroup}>
-        <input
-          type="number"
-          className={styles.formInput}
-          value={lockInPeriod}
-          onChange={(e) => setLockInPeriod(e.target.value)}
-          placeholder="Enter Number of Months"
-        />
-      </div>
-
-      <p className={styles.formQuestion}>Yearly rent is expected to increase by <span className={styles.optionalText}>(Optional)</span></p>
-      <div className={styles.formGroup}>
-        <input
-          type="number"
-          className={styles.formInput}
-          value={yearlyRentIncrease}
-          onChange={(e) => setYearlyRentIncrease(e.target.value)}
-          placeholder="Percentage (%) of increase in rent"
-        />
-      </div>
-
-      <p className={styles.formQuestion}>What makes your property unique <span className={styles.optionalText}></span></p>
-      <p className={styles.descriptionHint}>Adding description will increase your listing visibility</p>
-      <div className={styles.formGroup}>
-        <textarea
-          className={styles.formTextarea}
-          value={propertyUniqueDescription}
-          onChange={(e) => setPropertyUniqueDescription(e.target.value)}
-          placeholder="Share some details about your property like spacious area, nearby markets, metro connectivity and more"
-          // rows="5"
-        ></textarea>
-        <p className={styles.charCount}>Minimum 30 characters required {propertyUniqueDescription.length}/5000</p>
-      </div>
-
-
-        <button
-          className={` continueBtn ${styles.continueBtn}`}
+          className={`${styles.continueBtn} continueBtn`} // Added direct class "continueBtn"
           onClick={handleContinue}
         >
           Continue
         </button>
+      </div>
     </div>
   );
 };
