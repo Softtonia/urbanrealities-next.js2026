@@ -61,7 +61,7 @@ export async function generateStaticParams() {
   ];
 }
 
-export default function Page({ params }) {
-  const { step } = params;
+export default async function Page({ params }) {
+  const { step } = await params;
   return <StepComponent step={step} />;
 }

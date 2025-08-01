@@ -4,15 +4,16 @@ import React, { useEffect, useState } from "react";
 import "../Footer/Footer.css";
 import "../../app/globals.css";
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
-import { post } from '@/lib/api';
+import { post } from "@/lib/api";
+import Link from "next/link";
 
 const Footer = () => {
   const [siteData, setSiteData] = useState(null); // null for initial state
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState({ 
-    success: false, 
-    message: "" 
+  const [submitStatus, setSubmitStatus] = useState({
+    success: false,
+    message: "",
   });
 
   // Fetch site data with better error handling
@@ -20,16 +21,16 @@ const Footer = () => {
     const fetchsiteData = async () => {
       try {
         const res = await fetch("/api/site-setting");
-        
+
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
-        
+
         const contentType = res.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
           throw new Error("Invalid content type");
         }
-        
+
         const data = await res.json();
         setSiteData(data.data || {});
       } catch (error) {
@@ -37,7 +38,7 @@ const Footer = () => {
         setSiteData({}); // Set empty object as fallback
       }
     };
-    
+
     fetchsiteData();
   }, []);
 
@@ -49,7 +50,7 @@ const Footer = () => {
     if (!validateEmail(email)) {
       setSubmitStatus({
         success: false,
-        message: "Please enter a valid email address"
+        message: "Please enter a valid email address",
       });
       return;
     }
@@ -63,8 +64,8 @@ const Footer = () => {
         { email },
         {
           headers: {
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
 
@@ -72,16 +73,16 @@ const Footer = () => {
         throw new Error(response.data?.message || "Subscription failed");
       }
 
-      setSubmitStatus({ 
-        success: true, 
-        message: "Thank you for subscribing!" 
+      setSubmitStatus({
+        success: true,
+        message: "Thank you for subscribing!",
       });
       setEmail("");
     } catch (error) {
       console.error("Subscription error:", error);
       setSubmitStatus({
         success: false,
-        message: error.message || "Failed to subscribe. Please try again."
+        message: error.message || "Failed to subscribe. Please try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -99,12 +100,16 @@ const Footer = () => {
     if (!url) return null;
     if (url.startsWith("http")) return url;
     if (url.startsWith("www.")) return `https://${url}`;
-    
+
     switch (platform) {
-      case "facebook": return `https://facebook.com/${url.replace("@", "")}`;
-      case "instagram": return `https://instagram.com/${url.replace("@", "")}`;
-      case "twitter": return `https://twitter.com/${url.replace("@", "")}`;
-      default: return `https://${url}`;
+      case "facebook":
+        return `https://facebook.com/${url.replace("@", "")}`;
+      case "instagram":
+        return `https://instagram.com/${url.replace("@", "")}`;
+      case "twitter":
+        return `https://twitter.com/${url.replace("@", "")}`;
+      default:
+        return `https://${url}`;
     }
   };
 
@@ -112,9 +117,7 @@ const Footer = () => {
   if (siteData === null) {
     return (
       <div className="footer-main-div bg-dark-footer text-white">
-        <div className="container text-center py-4">
-          Loading footer data...
-        </div>
+        <div className="container text-center py-4">Loading footer data...</div>
       </div>
     );
   }
@@ -125,15 +128,16 @@ const Footer = () => {
         <div className="container">
           <div className="row d-flex">
             {/* About Us Section */}
-            <div className="col-xl-4 col-lg-12">
+            <div className="col-xl-3 col-md-6">
               <div className="footer-aboutus footer-primiry-heading">
                 About Us
               </div>
               <p className="body-text-14">
                 {siteData.site_short_description || "Not available"}
               </p>
-
-              <div className="footer-aboutus footer-primiry-heading">
+            </div>
+            <div className="col-xl-2 col-md-6">
+              <div className="footer-address footer-primiry-heading">
                 Address
               </div>
               <p className="body-text-14">
@@ -143,26 +147,41 @@ const Footer = () => {
                 {siteData.mobile_number || "Not available"}
               </p>
             </div>
-
             {/* Properties Section */}
-            <div className="col-xl-2 col-lg-6">
+            <div className="col-xl-2 col-md-6">
               <div className="footer-properties footer-primiry-heading">
                 Properties in India
               </div>
               <ul className="footer-list-none">
-                {["Delhi", "Hyderabad", "Kerala", "Gujarat", "Pune", "Bangalore", "Mumbai"].map((city) => (
+                {[
+                  "Delhi",
+                  "Hyderabad",
+                  "Kerala",
+                  "Gujarat",
+                  "Pune",
+                  "Bangalore",
+                  "Mumbai",
+                ].map((city) => (
                   <li key={city}>Properties in {city}</li>
                 ))}
               </ul>
             </div>
 
             {/* Company Section */}
-            <div className="col-xl-2 col-lg-6">
+            <div className="col-xl-2 col-md-6">
               <div className="footer-company footer-primiry-heading">
                 Company
               </div>
               <ul className="list-color footer-list-none">
-                {["About Us", "Careers", "FAQs", "Contact Us", "Privacy Policy", "Terms of Use", "Legal"].map((item) => (
+                {[
+                  "About Us",
+                  "Careers",
+                  "FAQs",
+                  "Contact Us",
+                  "Privacy Policy",
+                  "Terms of Use",
+                  "Legal",
+                ].map((item) => (
                   <li key={item}>
                     <a href="#">{item}</a>
                   </li>
@@ -171,7 +190,7 @@ const Footer = () => {
             </div>
 
             {/* Subscribe Section */}
-            <div className="col-xl-4 col-lg-12">
+            <div className="col-xl-3 col-md-6">
               <div className="footer-subscribe footer-primiry-heading">
                 Subscribe
               </div>
@@ -194,7 +213,11 @@ const Footer = () => {
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
-                      <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span
+                        className="spinner-border spinner-border-sm"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
                     ) : (
                       "Subscribe"
                     )}
@@ -203,7 +226,11 @@ const Footer = () => {
               </form>
 
               {submitStatus.message && (
-                <div className={`mt-2 alert ${submitStatus.success ? "alert-success" : "alert-danger"}`}>
+                <div
+                  className={`mt-2 alert ${
+                    submitStatus.success ? "alert-success" : "alert-danger"
+                  }`}
+                >
                   {submitStatus.message}
                 </div>
               )}
@@ -221,7 +248,9 @@ const Footer = () => {
                 )}
                 {siteData.instagram && (
                   <a
-                    href={formatSocialUrl(siteData.instagram, "instagram") || "#"}
+                    href={
+                      formatSocialUrl(siteData.instagram, "instagram") || "#"
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-white me-3"
@@ -242,15 +271,28 @@ const Footer = () => {
               </div>
 
               <p className="body-text-14 mt-0">
-                {siteData.subscribe_short_description || "Stay updated with our newsletter"}
+                {siteData.subscribe_short_description ||
+                  "Stay updated with our newsletter"}
               </p>
             </div>
           </div>
 
           <hr className="border-secondary" />
-          <div className="text-end">
-            {["Privacy Policy", "Terms of Use", "Sales and Refunds", "Legal"].map((item) => (
-              <span key={item} className="me-3">{item}</span>
+          <div className="text-center text-md-end">
+            {[
+              { label: "Privacy Policy", href: "/privacy-policy" },
+              { label: "Terms of Use", href: "/terms-of-use" },
+              { label: "Sales and Refunds", href: "/sales-refunds" },
+              { label: "Legal", href: "/legal" },
+              { label: "Testimonials", href: "/testimonials" },
+            ].map(({ label, href }) => (
+              <Link
+                href={href}
+                key={label}
+                className="me-3 text-white text-decoration-none"
+              >
+                {label}
+              </Link>
             ))}
           </div>
         </div>
@@ -263,7 +305,8 @@ const Footer = () => {
               {siteData.disclaimer || "All rights reserved"}
             </p>
             <p className="body-text-12 mb-0">
-              {siteData.copyright_text || `© ${new Date().getFullYear()} Your Company`}
+              {siteData.copyright_text ||
+                `© ${new Date().getFullYear()} Your Company`}
             </p>
           </div>
         </div>

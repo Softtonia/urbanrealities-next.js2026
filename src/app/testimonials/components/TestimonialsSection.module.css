@@ -1,0 +1,43 @@
+
+.testimonials-section {
+/* background-color: #f8f8f8;  */
+text-align: center;
+}
+
+.section-header h1 {
+background-image: url('/project_details_hero.png');
+background-position: center;
+background-repeat: no-repeat;
+height: 133px;
+font-size: 32px;
+font-family: var(--font-regular);
+color: var(--White);
+align-items: center;
+display: flex;
+justify-content: center;
+}
+
+.section-header h2 {
+font-size: 32px;
+font-family: var(--font-regular);
+color: var( --Eerie-Black);
+margin: 36px 0 14px 0;
+}
+
+.testimonials-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr); /* Responsive grid */
+gap: 32px;
+max-width: 1200px;
+margin: 0 auto;
+padding-bottom: 50px;
+}
+.testimonials-content{
+    padding: 0 20px;
+}
+/* Optional: Add media queries for responsiveness */
+@media (max-width: 768px) {
+.testimonials-grid {
+grid-template-columns: 1fr; /* Stack testimonials on smaller screens */
+}
+}
