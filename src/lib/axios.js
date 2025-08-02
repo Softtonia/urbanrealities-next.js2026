@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_ENDPOINT,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
     "X-Client-ID": process.env.X_CLIENT_ID,
     "X-Client-Secret": process.env.X_CLIENT_SECRET,
@@ -9,7 +9,5 @@ const axiosInstance = axios.create({
   },
   withCredentials: true,
 });
-
-
 
 export default axiosInstance;
