@@ -21,25 +21,43 @@ const geistMono = Geist_Mono({
 
 
 export async function generateMetadata() {
-  const settings = await getSiteSettings();
-// console.log(settings)
+  let settings = {};
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/site-setting`, {
+      headers: {
+        'X-Client-ID': process.env.X_CLIENT_ID,
+        'X-Client-Secret': process.env.X_CLIENT_SECRET,
+        Origin: process.env.NEXT_PUBLIC_API_URL,
+      },
+      // cache: 'no-store', 
+      next: { revalidate: 3600 }
+    });
+
+    if (!res.ok) throw new Error('Failed to fetch site settings');
+    const result = await res.json();
+    console.log(result); // Debugging line
+    settings = result.data;
+  } catch (err) {
+    console.error('Error fetching site settings in metadata:', err.message);
+  }
 
   return {
-    title: settings.site_name || 'UrbanRealitiess',
-    description: settings.site_short_description || 'We build your dream',
+    title: settings?.site_name || 'UrbanRealitiess',
+    description: settings?.site_short_description || 'We build your dream',
     icons: {
       icon: [
         {
-          url: settings.favicon || '/favicon.ico',
+          url: settings?.favicon || '/favicon.ico',
           type: 'image/png',
           sizes: '32x32',
         },
       ],
-      shortcut: settings.favicon || '/favicon.ico',
-      apple: settings.favicon || '/favicon.ico',
+      shortcut: settings?.favicon || '/favicon.ico',
+      apple: settings?.favicon || '/favicon.ico',
     },
     other: {
-      'msapplication-TileImage': settings.favicon || '/favicon.ico',
+      'msapplication-TileImage': settings?.favicon || '/favicon.ico',
     },
   };
 }
@@ -47,7 +65,6 @@ export async function generateMetadata() {
 
 
 export default async function RootLayout({ children }) {
-    // const siteSettings = await getSiteSettings()
   return (
     <html lang="en">
       <head>
@@ -63,11 +80,9 @@ export default async function RootLayout({ children }) {
       <body className={`antialiased`}>
         <BootstrapClient />
         <Navbar 
-        // siteData={siteSettings} 
           />
         <main>{children}</main>
         <Footer
-          // siteData={siteSettings}
         />
       </body>
     </html>
