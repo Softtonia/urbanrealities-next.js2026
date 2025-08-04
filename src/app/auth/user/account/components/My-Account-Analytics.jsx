@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-const MyAccountInsight = ({ data }) => {
+const MyAccountAnalytics = ({ data }) => {
   const {
     id,
     companyName,
@@ -85,4 +85,4 @@ const MyAccountInsight = ({ data }) => {
   );
 };
 
-export default MyAccountInsight;
+export default MyAccountAnalytics;

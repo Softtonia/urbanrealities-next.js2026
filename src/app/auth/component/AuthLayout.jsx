@@ -2,7 +2,7 @@ import React from 'react';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './AuthLayout.module.css';
 import { CiCircleRemove } from "react-icons/ci";
-const AuthLayout = ({ leftContent, children }) => {
+const AuthLayout = ({ leftContent, rightContent }) => {
   return (
     // <div className="container p-0">
       <div className={styles.authContainer}>
@@ -20,7 +20,7 @@ const AuthLayout = ({ leftContent, children }) => {
               {/* <div className={` text-center ${styles.formlogo}`} >
                 <img src="/form-logo.png" alt="" />
               </div> */}
-          {children}
+          {rightContent}
         </div>
         </div>
 

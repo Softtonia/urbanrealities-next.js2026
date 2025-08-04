@@ -1,43 +1,43 @@
 'use client';
 import "./DropdownMegaMenu.css";
-import SellData from "../MobileMenudata/SellData";
+// import SellData from "../MobileMenudata/SellData";
 
-// const menusell = [
-//   {
-//     heading: "For Owner",
-//     items: [
-//       { name: "Post Property", badge: "FREE" },
-//       { name: "My Dashboard" },
-//     ],
-//     extraInfo: {
-//       title: "Sell / Rent Ad Packages",
-//       contact: "+91 9870 260 930 / ",
-//       email: "Email Us",
-//       emailHref: "#",
-//     },
-//   },
-//   {
-//     heading: "For Agent & Builder",
-//     items: [
-//       { name: "My Dashboard" },
-//       { name: "Developer Lounge" },
-//       { name: "Sales Enquiry" },
-//     ],
-//     extraInfo: {
-//       title: "Ad Packages",
-//       contact: "0120-5135525",
-//     },
-//   },
-//   {
-//     heading: "Selling Tools",
-//     items: [
-//       { name: "Property Valuation" },
-//       { name: "Find an Agent" },
-//       { name: "Rates & Trends" },
-//       { name: "PropWorth" },
-//     ],
-//   },
-// ];
+const menusell = [
+  {
+    heading: "For Owner",
+    items: [
+      { name: "Post Property", badge: "FREE" },
+      { name: "My Dashboard" },
+    ],
+    extraInfo: {
+      title: "Sell / Rent Ad Packages",
+      contact: "+91 9870 260 930 / ",
+      email: "Email Us",
+      emailHref: "#",
+    },
+  },
+  {
+    heading: "For Agent & Builder",
+    items: [
+      { name: "My Dashboard" },
+      { name: "Developer Lounge" },
+      { name: "Sales Enquiry" },
+    ],
+    extraInfo: {
+      title: "Ad Packages",
+      contact: "0120-5135525",
+    },
+  },
+  {
+    heading: "Selling Tools",
+    items: [
+      { name: "Property Valuation" },
+      { name: "Find an Agent" },
+      { name: "Rates & Trends" },
+      { name: "PropWorth" },
+    ],
+  },
+];
 
 const SellerDropdown = () => {
   return (
@@ -45,7 +45,7 @@ const SellerDropdown = () => {
       <div className="container">
 
       <div className="row">
-        {SellData.map((column, idx) => (
+        {menusell.map((column, idx) => (
           <div className="col" key={idx}>
             <h6 className="dropdown-header m-0 ">{column.heading}</h6>
             <span className="dropdown-header-separator"></span>

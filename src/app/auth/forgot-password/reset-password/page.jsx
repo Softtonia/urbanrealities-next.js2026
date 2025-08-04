@@ -6,8 +6,7 @@ import ResetPasswordLeft from './../../component/reset-Form/Reset-PasswordLeft';
 
 const page = () => {
   return (
-    <AuthLayout leftContent={<ResetPasswordLeft />}>
-      <ResetPassword />
+    <AuthLayout leftContent={<ResetPasswordLeft />} rightContent={<ResetPassword />}>
     </AuthLayout>
   );
 }

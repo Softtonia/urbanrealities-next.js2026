@@ -1,13 +1,12 @@
 import React from 'react';
 import AuthLayout from '../component/AuthLayout';
-import LoginLeft from '../component/loginpage/LoginLeft';
-import Login from '../component/loginpage/Login';
-const page = () => {
+import LoginLeft from '../component/loginform/LoginLeft';
+import Login from '../component/loginform/Login';
+const LoginPage  = () => {
   return (
-    <AuthLayout leftContent={<LoginLeft />}>
-      <Login/>
+    <AuthLayout leftContent={<LoginLeft />} rightContent={<Login />}>
     </AuthLayout>
   );
 }
 
-export default page;
+export default LoginPage;

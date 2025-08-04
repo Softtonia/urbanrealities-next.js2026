@@ -1,46 +1,53 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "../Footer/Footer.css";
 import "../../app/globals.css";
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
 import { post } from "@/lib/api";
 import Link from "next/link";
 
-const Footer = () => {
-  const [siteData, setSiteData] = useState(null); // null for initial state
+const Footer = ({ serverData }) => {
+  // const [siteData, setSiteData] = useState(serverData || null); // null for initial state
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({
     success: false,
     message: "",
   });
+  const [year, setYear] = useState(null);
 
-  // Fetch site data with better error handling
+  const siteData = serverData || {
+    site_short_description: "We build your dream",
+    address: "Not available",
+    mobile_number: "Not available",
+    disclaimer: "All rights reserved",
+    copyright_text: `© ${new Date().getFullYear()} Your Company`,
+    subscribe_short_description: "Stay updated with our newsletter",
+  };
+
   useEffect(() => {
-    const fetchsiteData = async () => {
-      try {
-        const res = await fetch("/api/site-setting");
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const contentType = res.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("Invalid content type");
-        }
-
-        const data = await res.json();
-        setSiteData(data.data || {});
-      } catch (error) {
-        console.error("Fetch error:", error);
-        setSiteData({}); // Set empty object as fallback
-      }
-    };
-
-    fetchsiteData();
+    setYear(new Date().getFullYear());
   }, []);
+
+  //  const initialData = useMemo(() => serverData || null, [serverData]);
+  // useEffect(() => {
+  //   if (!initialData) {
+  //     const fetchSiteData = async () => {
+  //       try {
+  //         const res = await fetch("/api/site-setting");
+  //         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+  //         const data = await res.json();
+  //         setSiteData(data.data || {});
+  //       } catch (error) {
+  //         console.error("Fetch error:", error);
+  //         setSiteData({});
+  //       }
+  //     };
+  //     fetchSiteData();
+  //   }
+  // }, [initialData]);
 
   // Enhanced email submission
   const handleSubmit = async (e) => {
@@ -66,6 +73,8 @@ const Footer = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({ email }),
+          credentials: "include",
         }
       );
 
@@ -114,13 +123,13 @@ const Footer = () => {
   };
 
   // Loading state
-  if (siteData === null) {
-    return (
-      <div className="footer-main-div bg-dark-footer text-white">
-        <div className="container text-center py-4">Loading footer data...</div>
-      </div>
-    );
-  }
+  // if (siteData === null) {
+  //   return (
+  //     <div className="footer-main-div bg-dark-footer text-white">
+  //       <div className="container text-center py-4">Loading footer data...</div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -305,8 +314,7 @@ const Footer = () => {
               {siteData.disclaimer || "All rights reserved"}
             </p>
             <p className="body-text-12 mb-0">
-              {siteData.copyright_text ||
-                `© ${new Date().getFullYear()} Your Company`}
+              {siteData.copyright_text || (year && `© ${year} Your Company`)}
             </p>
           </div>
         </div>

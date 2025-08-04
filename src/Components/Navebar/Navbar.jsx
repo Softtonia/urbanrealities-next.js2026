@@ -1,6 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
-// import axios from "axios";
+import React, { useState, useEffect,useMemo } from "react";
 import "../Navebar/navbar.css";
 import DropdownMegaMenu from "../MegaMenu/DropdownMegaMenu";
 import SellerDropdown from "../MegaMenu/SellerDropdown";
@@ -19,6 +18,7 @@ import homeLogo from "../../../img/add_home.svg";
 import LocationDropdown from "../LocationDropdown/LocationDropdown";
 import { GoChevronDown } from "react-icons/go";
 import { IoArrowBackSharp } from "react-icons/io5";
+import { get } from '@/lib/api';
 
 const cities = {
   nearbyCities: ["New Delhi", "Gurgaon", "Greater Noida"],
@@ -122,7 +122,7 @@ const renderCityGrid = (citiesArray) => {
   return rows;
 };
 
-export default function Navbar() {
+export default function Navbar({serverData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLocationSlider, setShowLocationSlider] = useState(false);
@@ -131,24 +131,29 @@ export default function Navbar() {
   const [showMegaMenu, setShowMegaMenu] = useState(false);
   const [showRentMenu, setShowRentMenu] = useState(false);
   const [showSellMenu, setShowSellMenu] = useState(false);
-  const [siteData, setSiteData] = useState({});
-
-  // fetching data
-  useEffect(() => {
-    const fetchsiteData = async () => {
-      try {
-        const res = await fetch('/api/site-setting'); // 🔒 safe server-side API
-        if (!res.ok) throw new Error('Failed to fetch site settings');
-        const data = await res.json();
-        setSiteData(data.data);
-      } catch (error) {
-        console.error("Error fetching site settings:", error);
-      }
-    };
-
-    fetchsiteData();
-  }, []);
-
+  // const [siteData, setSiteData] = useState(serverData || null); 
+ const siteData = serverData || {
+    website_logo: "/logo.png",
+    mobile_logo: "/logo.png"
+  };
+  //   const initialData = useMemo(() => serverData || null, [serverData]);
+  //  useEffect(() => {
+  //    if (!initialData) {
+  //      const fetchSiteData = async () => {
+  //        try {
+  //          const res = await fetch("/api/site-setting");
+  //          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+           
+  //          const data = await res.json();
+  //          setSiteData(data.data || {});
+  //        } catch (error) {
+  //          console.error("Fetch error:", error);
+  //          setSiteData({});
+  //        }
+  //      };
+  //      fetchSiteData();
+  //    }
+  //  }, [initialData]); 
 
  
 
@@ -345,7 +350,7 @@ export default function Navbar() {
               <Image
                 src={
                   siteData?.website_logo?.startsWith('http')
-                    ?siteData.website_logo
+                    ? siteData.website_logo
                     : siteData?.mobile_logo?.startsWith('http')
                       ? siteData.mobile_logo
                       : "/logo.png"

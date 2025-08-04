@@ -13,25 +13,28 @@ export default function PropertySearch() {
   const [maxPrice, setMaxPrice] = useState("");
   const [inputLocation, setInputLocation] = useState("");
   const router = useRouter();
+
+
   const handleViewsearch = () => {
     router.push("/FilterMobile");
   };
-  useEffect(() => {
-    const dropdownMenus = document.querySelectorAll(".dropdown-menu");
-    dropdownMenus.forEach((menu) => {
-      menu.addEventListener("click", function (e) {
-        e.stopPropagation();
-      });
-    });
+ useEffect(() => {
+  const dropdownMenus = document.querySelectorAll(".dropdown-menu");
 
-    return () => {
-      dropdownMenus.forEach((menu) => {
-        menu.removeEventListener("click", function (e) {
-          e.stopPropagation();
-        });
-      });
-    };
-  }, []);
+  const stopPropagation = (e) => {
+    e.stopPropagation();
+  };
+
+  dropdownMenus.forEach((menu) => {
+    menu.addEventListener("click", stopPropagation);
+  });
+
+  return () => {
+    dropdownMenus.forEach((menu) => {
+      menu.removeEventListener("click", stopPropagation);
+    });
+  };
+}, []);
 
   useEffect(() => {
     const flatCheckbox = document.getElementById("flat");
@@ -385,6 +388,7 @@ export default function PropertySearch() {
                       e.stopPropagation();
                       handleTogglePrice("min");
                     }}
+                      onChange={(e) => setMinPrice(e.target.value)} 
                   />
                   <input
                     type="text"
@@ -395,6 +399,7 @@ export default function PropertySearch() {
                       e.stopPropagation();
                       handleTogglePrice("max");
                     }}
+                    onChange={(e) => setMaxPrice(e.target.value)}
                   />
                 </div>
 

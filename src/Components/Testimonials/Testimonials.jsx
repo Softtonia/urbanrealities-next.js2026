@@ -30,21 +30,21 @@ const testimonialsData = [
 const Testimonials = () => {
   const [reviews, setReviews] = useState([]);
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}api/get-client-review`
-        );
-        const data = response.data; // ✅ access actual data
-        setReviews(data);
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchReviews = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${process.env.NEXT_PUBLIC_API_BASE_URL}api/get-client-review`
+  //       );
+  //       const data = response.data; // ✅ access actual data
+  //       setReviews(data);
+  //     } catch (error) {
+  //       console.error("Error fetching reviews:", error);
+  //     }
+  //   };
 
-    fetchReviews();
-  }, []);
+  //   fetchReviews();
+  // }, []);
 
   return (
     <div className="testimonialsssection">
@@ -64,12 +64,13 @@ const Testimonials = () => {
                 <div className="ratingdiv">
                   <div className="starsdiv">
                     {[...Array(5)].map((_, i) => (
-                      <img
-                        key={i}
-                        className="testimonialstar"
-                        src={i < 5 ? "/yellowstar.png" : "/graystar.png"} // Hardcoded 5 stars for now
-                        alt="star"
-                      />
+                      <div key={i} className="star">
+                        <FaStar
+                          className={
+                            i < testimonial.rating ? "filled" : "unfilled"
+                          }
+                        />
+                      </div>
                     ))}
                   </div>
                   <h6 className="ratingtext">{testimonial.review}</h6>

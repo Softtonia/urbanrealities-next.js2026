@@ -6,8 +6,7 @@ import ForgotPasswordVerifyLeft from '../../component/forgot-verify/Forgot-Passw
 
 const page = () => {
   return (
-    <AuthLayout leftContent={<ForgotPasswordVerifyLeft />}>
-      <ForgotPasswordVerify />
+    <AuthLayout leftContent={<ForgotPasswordVerifyLeft />} rightContent={<ForgotPasswordVerify />} >
     </AuthLayout>
   );
 }

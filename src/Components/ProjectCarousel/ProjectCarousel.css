@@ -24,7 +24,11 @@
   box-sizing: border-box;
   transition: all 0.3s ease;
 }
-
+.project-card__rating{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 .project-card__image-wrapper {
   width: 311px;
   height: 100%;

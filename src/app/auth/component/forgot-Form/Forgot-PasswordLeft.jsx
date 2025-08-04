@@ -1,6 +1,6 @@
 'use client';
 
-import styles from "../loginpage/LoginLeft.module.css";
+import styles from "../loginform/LoginLeft.module.css";
 
 const ForgotPasswordLeft = () => {
   // Dummy data variable

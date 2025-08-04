@@ -1,14 +1,13 @@
 "use client";
 import React from "react";
-import AuthLayout from '../../component/AuthLayout';
-import SetPasswordLeft from '../../component/set-passwordpage/SetPasswordLeft';
-import SetPassword from '../../component/set-passwordpage/SetPassword';
-const page = () => {
+import AuthLayout from "../../component/AuthLayout";
+import SetPasswordLeft from "../../component/set-passwordform/SetPasswordLeft";
+import SetPassword from "../../component/set-passwordform/SetPassword";
+const SetPasswordPage = () => {
   return (
-    <AuthLayout leftContent={<SetPasswordLeft />} >
-      <SetPassword />
+    <AuthLayout leftContent={<SetPasswordLeft />} rightContent={<SetPassword />}>
     </AuthLayout>
   );
-}
+};
 
-export default page;
+export default SetPasswordPage;

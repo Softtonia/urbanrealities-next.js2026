@@ -5,9 +5,14 @@ const axiosInstance = axios.create({
   headers: {
     "X-Client-ID": process.env.X_CLIENT_ID,
     "X-Client-Secret": process.env.X_CLIENT_SECRET,
+    "Content-Type": "application/json",
     Origin: process.env.NEXT_PUBLIC_API_URL,
   },
   withCredentials: true,
+});
+axiosInstance.interceptors.request.use(config => {
+  console.log("Request Headers:", config.headers); 
+  return config;
 });
 
 export default axiosInstance;

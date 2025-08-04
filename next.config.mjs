@@ -1,13 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-        remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: 'api.urbanrealities.com',
-            },
-        ],
-    },
-};
+  reactStrictMode: true,
 
-export default nextConfig;
+  experimental: {
+    serverActions: {
+      enabled: true
+    }
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'api.urbanrealities.com',
+      },
+    ],
+  }
+
+}
+
+export default nextConfig

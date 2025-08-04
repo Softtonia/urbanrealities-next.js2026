@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import styles from '../components/My-Account-Dashboard.module.css';
 import MyAccountAnalytics from './components/My-Account-Analytics';
 
-const MyAccountDashboard = () => {
+const MyAccount = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const itemsPerPage = 6;
@@ -97,4 +97,4 @@ const MyAccountDashboard = () => {
   );
 };
 
-export default MyAccountDashboard;
+export default MyAccount;

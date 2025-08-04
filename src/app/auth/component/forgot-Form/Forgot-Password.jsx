@@ -1,7 +1,7 @@
 'use client';
 
 import React from "react";
-import styles from "../loginpage/Login.module.css";
+import styles from "../loginform/Login.module.css";
 import Link from "next/link";
 import { IoArrowBackSharp } from "react-icons/io5";
 

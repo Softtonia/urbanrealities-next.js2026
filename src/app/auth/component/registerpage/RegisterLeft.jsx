@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from "../loginpage/LoginLeft.module.css"
+import styles from "../loginform/LoginLeft.module.css"
 const RegisterLeft = () => {
       const data = {
     heading: "Welcome to UrbanRealities!",

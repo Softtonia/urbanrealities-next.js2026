@@ -23,10 +23,13 @@ export default function SidebarDashboard({onItemClick}) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleMobileClick = (link) => {
-    if(onItemClick) onItemClick();
+const handleMobileClick = (link) => {
+  if (pathname !== link) {
+    if (onItemClick) onItemClick();
     router.push(link);
-  };
+  }
+};
+
 console.log(onItemClick);
   return (
     <div className={styles.sidebarContainer}>

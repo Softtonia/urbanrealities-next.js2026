@@ -1,10 +1,11 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef,useState,useEffect } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import "./ProjectCarousel.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import SubHero from "../SubHero/SubHero";
+import { FaStar } from "react-icons/fa";
 
 const projectData = [
   {
@@ -52,6 +53,13 @@ const ProjectCarousel = () => {
   const router = useRouter();
   const carouselRef = useRef(null);
   const scrollAmount = 850;
+const [hasMounted, setHasMounted] = useState(false);
+
+ useEffect(() => {
+    setHasMounted(true); // ✅ Mark when mounted
+  }, []);
+
+  if (!hasMounted) return null;
 
   const handleNext = () => {
     if (carouselRef.current) {
@@ -65,7 +73,7 @@ const ProjectCarousel = () => {
     }
   };
 
-  const handleViewProject = (project) => {
+  const handleProject = (project) => {
     const query = new URLSearchParams(project).toString();
     router.push(`/project-details?${query}`);
   };
@@ -93,29 +101,43 @@ const ProjectCarousel = () => {
               <div className="project-card__body">
                 <p className="project-card__location m-0">{project.location}</p>
                 <h3 className="project-card__builder m-0">{project.builder}</h3>
-                <p className="project-card__rera m-0">Rera No: {project.reraNo}</p>
+                <p className="project-card__rera m-0">
+                  Rera No: {project.reraNo}
+                </p>
                 <div className="project-card__rating m-0">
                   {[...Array(5)].map((_, i) => (
-                    <img
-                      key={i}
-                      className="star"
-                      src={i < project.rating ? "/yellowstar.png" : "/graystar.png"}
-                      alt="star"
-                    />
+                    <div key={i} className="star">
+                      <FaStar
+                        className={i < project.rating ? "filled" : "unfilled"}
+                      />
+                    </div>
                   ))}
-                  <span className="project-card__rating-value">({project.rating}.0)</span>
+                  <span className="project-card__rating-value">
+                    ({project.rating}.0)
+                  </span>
                 </div>
-                <p className="project-card__property-type m-0">Property Type: {project.propertyType}</p>
-                <p className="project-card__price m-0">Ongoing Price: {project.ongoingPrice}</p>
-                <p className="project-card__area m-0">Area: {project.areaSqft}</p>
+                <p className="project-card__property-type m-0">
+                  Property Type: {project.propertyType}
+                </p>
+                <p className="project-card__price m-0">
+                  Ongoing Price: {project.ongoingPrice}
+                </p>
+                <p className="project-card__area m-0">
+                  Area: {project.areaSqft}
+                </p>
                 <p className="project-card__bhk m-0">{project.bhk}</p>
-                <p className="project-card__builder-floor m-0">Builder Floor: {project.builderFloor}</p>
+                <p className="project-card__builder-floor m-0">
+                  Builder Floor: {project.builderFloor}
+                </p>
 
                 <div className="d-flex justify-content-between align-items-center m-0 w-100">
                   <p className="project-card__status m-0">
                     Status: <strong>{project.status}</strong>
                   </p>
-                  <button className="project-card__btn-view btn-viewproject m-0" onClick={() => handleViewProject(project)}>
+                  <button
+                    className="project-card__btn-view btn-viewproject m-0"
+                    onClick={() => handleProject(project)}
+                  >
                     View Project
                   </button>
                 </div>
@@ -126,10 +148,16 @@ const ProjectCarousel = () => {
       </div>
 
       <div className="project-carousel__buttons">
-        <button onClick={handlePrev} className="project-carousel__nav-btn project-carousel__nav-btn--prev">
+        <button
+          onClick={handlePrev}
+          className="project-carousel__nav-btn project-carousel__nav-btn--prev"
+        >
           <FaArrowLeft />
         </button>
-        <button onClick={handleNext} className="project-carousel__nav-btn project-carousel__nav-btn--next">
+        <button
+          onClick={handleNext}
+          className="project-carousel__nav-btn project-carousel__nav-btn--next"
+        >
           <FaArrowRight />
         </button>
       </div>

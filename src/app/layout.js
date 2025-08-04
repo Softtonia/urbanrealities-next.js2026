@@ -1,8 +1,10 @@
+
+
 import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/Components/Navebar/Navbar";
 import Footer from "@/Components/Footer/Footer";
-import "bootstrap/dist/css/bootstrap.min.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import BootstrapClient from "@/Components/BootstrapClient";
 import getSiteSettings from "@/utils/getsitedata";
 
@@ -16,53 +18,37 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
+
 export async function generateMetadata() {
-  let settings = {};
-
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/site-setting`,
-      {
-        headers: {
-          "X-Client-ID": process.env.X_CLIENT_ID,
-          "X-Client-Secret": process.env.X_CLIENT_SECRET,
-          Origin: process.env.NEXT_PUBLIC_API_URL,
-        },
-        // cache: 'no-store',
-        next: { revalidate: 3600 },
-      }
-    );
-
-    if (!res.ok) throw new Error("Failed to fetch site settings");
-    const result = await res.json();
-    console.log(result); // Debugging line
-    settings = result.data;
-  } catch (err) {
-    console.error("Error fetching site settings in metadata:", err.message);
-  }
+  const settings = await getSiteSettings();
+// console.log(settings)
 
   return {
-    title: settings?.site_name || "UrbanRealitiess",
-    description: settings?.site_short_description || "We build your dream",
+    title: settings.site_name || 'UrbanRealitiess',
+    description: settings.site_short_description || 'We build your dream',
     icons: {
       icon: [
         {
-          url: settings?.favicon || "/favicon.ico",
-          type: "image/png",
-          sizes: "32x32",
+          url: settings.favicon || '/favicon.ico',
+          type: 'image/png',
+          sizes: '32x32',
         },
       ],
-      shortcut: settings?.favicon || "/favicon.ico",
-      apple: settings?.favicon || "/favicon.ico",
+      shortcut: settings.favicon || '/favicon.ico',
+      apple: settings.favicon || '/favicon.ico',
     },
     other: {
-      "msapplication-TileImage": settings?.favicon || "/favicon.ico",
+      'msapplication-TileImage': settings.favicon || '/favicon.ico',
     },
   };
 }
 
+
+
 export default async function RootLayout({ children }) {
-  return (
+ const serverData = await getSiteSettings();
+   return (
     <html lang="en">
       <head>
         <link
@@ -76,9 +62,13 @@ export default async function RootLayout({ children }) {
 
       <body className={`antialiased`}>
         <BootstrapClient />
-        <Navbar />
+        <Navbar 
+        serverData={serverData} 
+        />
         <main>{children}</main>
-        <Footer />
+        <Footer
+          serverData={serverData}
+        />
       </body>
     </html>
   );
