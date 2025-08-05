@@ -1,6 +1,8 @@
+'use client';
+
 import React from 'react';
 
-const page = () => {
+const Salespage = () => {
   return (
     <div>
       <h1>Sales and Refunds</h1>
@@ -9,4 +11,4 @@ const page = () => {
   );
 }
 
-export default page;
+export default Salespage;

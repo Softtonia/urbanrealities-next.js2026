@@ -1,6 +1,8 @@
+'use client';
+
 import React from 'react';
 
-const page = () => {
+const supportpage = () => {
   return (
     <div>
       help and support
@@ -8,4 +10,4 @@ const page = () => {
   );
 }
 
-export default page;
+export default supportpage;

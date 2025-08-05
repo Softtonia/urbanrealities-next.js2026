@@ -1,3 +1,4 @@
+'use client';
 import React from "react";
 import styles from "./My-Account-Analytics.module.css";
 import format from "date-fns/format";

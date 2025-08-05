@@ -1,6 +1,7 @@
+'use client';
 import React from 'react';
 
-const page = () => {
+const termspage = () => {
   return (
     <div>
       <h1>Terms of Use</h1>
@@ -9,4 +10,4 @@ const page = () => {
   );
 }
 
-export default page;
+export default termspage;

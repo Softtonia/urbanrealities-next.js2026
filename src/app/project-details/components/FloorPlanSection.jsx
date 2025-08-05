@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from "react";
 import styles from "./FloorPlanSection.module.css";
 import { TbZoomScan } from "react-icons/tb";

@@ -1,11 +1,12 @@
+'use client';
 import React from 'react';
 
-const page = () => {
+const insightPage = () => {
   return (
     <div>
       insight page
     </div>
   );
-}
+};
 
-export default page;
+export default insightPage;

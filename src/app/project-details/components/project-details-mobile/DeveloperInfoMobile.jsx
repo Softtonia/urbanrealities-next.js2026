@@ -1,3 +1,5 @@
+'use client';
+
 import styles from "./DeveloperInfoMobile.module.css";
 import { FaMapMarkerAlt } from "react-icons/fa";
 

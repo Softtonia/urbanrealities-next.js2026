@@ -20,30 +20,61 @@ const geistMono = Geist_Mono({
 
 
 
+// export async function generateMetadata() {
+//   const settings = await getSiteSettings();
+// // console.log(settings)
+
+//   return {
+//     title: settings.site_name || 'UrbanRealitiess',
+//     description: settings.site_short_description || 'We build your dream',
+//     icons: {
+//       icon: [
+//         {
+//           url: settings.favicon ,
+//           type: 'image/png',
+//           sizes: '32x32',
+//         },
+//       ],
+//       shortcut: settings.favicon ,
+//       apple: settings.favicon ,
+//     },
+//     other: {
+//       'msapplication-TileImage': settings.favicon ,
+//     },
+//   };
+// }
+
 export async function generateMetadata() {
   const settings = await getSiteSettings();
-// console.log(settings)
 
+  console.log(settings)
+
+  const title = settings?.site_name || 'UrbanRealitiess';
+  const description = settings?.site_short_description || 'We build your dream';
+  const favicon = settings?.favicon?.trim()
+    ? settings.favicon.startsWith('http') || settings.favicon.startsWith('/')
+      ? settings.favicon
+      : `/uploads/${settings.favicon}` // if only filename
+    : '/default-favicon.png'; // fallback
   return {
-    title: settings.site_name || 'UrbanRealitiess',
-    description: settings.site_short_description || 'We build your dream',
+    title,
+    description,
     icons: {
       icon: [
         {
-          url: settings.favicon || '/favicon.ico',
+          url: favicon,
           type: 'image/png',
           sizes: '32x32',
         },
       ],
-      shortcut: settings.favicon || '/favicon.ico',
-      apple: settings.favicon || '/favicon.ico',
+      shortcut: favicon,
+      apple: favicon,
     },
     other: {
-      'msapplication-TileImage': settings.favicon || '/favicon.ico',
+      'msapplication-TileImage': favicon,
     },
   };
 }
-
 
 
 export default async function RootLayout({ children }) {

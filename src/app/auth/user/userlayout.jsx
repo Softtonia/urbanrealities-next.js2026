@@ -6,7 +6,6 @@ import { usePathname, useRouter } from 'next/navigation';
 
 export default function Layout({ children }) {
   const pathname = usePathname();
-  const router = useRouter();
 
   const [isMobile, setIsMobile] = useState(false);
   const [showContent, setShowContent] = useState(false);
@@ -42,6 +41,11 @@ export default function Layout({ children }) {
 
   if (!hasMounted) return null;
 
+const handleSidebarItemClick = () => {
+  console.log("Sidebar item clicked");
+  setShowContent(true);
+};
+
   return (
     <div className={styles.dashboard}>
       <div className={`${styles.mainContainer} container`}>
@@ -53,7 +57,8 @@ export default function Layout({ children }) {
           {/* Sidebar show logic updated here 👇 */}
           {(!isMobile || !showContent) && (
             <div className={styles.Sidebarcol}>
-              <SidebarDashboard onItemClick={() => setShowContent(true)} />
+              {/* <SidebarDashboard onItemClick={() => setShowContent(true)} /> */}
+              <SidebarDashboard onItemClick={handleSidebarItemClick} />
             </div>
           )}
 

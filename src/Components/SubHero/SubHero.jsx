@@ -1,3 +1,5 @@
+"'use client';"
+
 import "../SubHero/SubHero.css"
 const SubHero = ({subHeroHeading,subHeroText}) => {
   

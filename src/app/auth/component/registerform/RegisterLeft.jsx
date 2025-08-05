@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import styles from "../loginform/LoginLeft.module.css"
 const RegisterLeft = () => {

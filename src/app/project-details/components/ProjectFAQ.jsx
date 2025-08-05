@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import styles from './ProjectFAQ.module.css';
 const faqs = [

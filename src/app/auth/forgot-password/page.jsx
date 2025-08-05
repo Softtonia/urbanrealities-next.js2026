@@ -1,12 +1,13 @@
+'use client';
 import React from 'react';
 import AuthLayout from '../component/AuthLayout';
 import ForgotPasswordLeft from '../component/forgot-Form/Forgot-PasswordLeft';
 import ForgotPassword from './../component/forgot-Form/Forgot-Password';
-const page = () => {
+const ForgotPasswordpage = () => {
   return (
     <AuthLayout leftContent={<ForgotPasswordLeft />} rightContent={<ForgotPassword />}>
     </AuthLayout>
   );
 }
 
-export default page;
+export default ForgotPasswordpage;

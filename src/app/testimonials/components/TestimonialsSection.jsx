@@ -1,3 +1,5 @@
+"'use client';"
+
 import TestimonialCard from './TestimonialCard';
 import styles from './TestimonialsSection.module.css'; // Import the CSS module
 

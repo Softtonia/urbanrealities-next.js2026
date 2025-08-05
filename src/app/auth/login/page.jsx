@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import AuthLayout from '../component/AuthLayout';
 import LoginLeft from '../component/loginform/LoginLeft';

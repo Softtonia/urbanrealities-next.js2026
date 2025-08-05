@@ -1,14 +1,14 @@
-"use client";
+'use client';
 import AuthLayout from '../../component/AuthLayout';
 import ResetPassword from './../../component/reset-Form/Reset-Password';
 import ResetPasswordLeft from './../../component/reset-Form/Reset-PasswordLeft';
 
 
-const page = () => {
+const ResetPasswordpage = () => {
   return (
     <AuthLayout leftContent={<ResetPasswordLeft />} rightContent={<ResetPassword />}>
     </AuthLayout>
   );
 }
 
-export default page;
+export default ResetPasswordpage;

@@ -1,7 +1,7 @@
 "use client"
 import React from 'react';
 import PropertyAllDetails from './components/PropertyAllDetails'
-const page = () => {
+const PropertyDetailspage = () => {
   return (
     <div>
       <PropertyAllDetails/>
@@ -9,7 +9,7 @@ const page = () => {
   );
 }
 
-export default page;
+export default PropertyDetailspage;
 
 
 // import React from "react";

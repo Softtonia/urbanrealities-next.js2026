@@ -1,3 +1,5 @@
+"'use client';"
+
 const SellData = [
   {
     heading: "For Owner",

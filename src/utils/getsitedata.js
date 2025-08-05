@@ -18,11 +18,12 @@
 //   }
 // }
 
+
+
 import { get } from "@/lib/api";
 
 let cachedSettings = null;
 let fetchPromise = null;
-// Default export जोड़ें
 export default async function getSiteSettings() {
   if (cachedSettings) return cachedSettings;
   if (fetchPromise) return await fetchPromise;
@@ -31,12 +32,12 @@ export default async function getSiteSettings() {
     const response = await fetchPromise;
     cachedSettings = response.data.data;
 
-    // Default values
     const defaultSettings = {
       site_name: "UrbanRealitiess",
       copyright_text: `© ${new Date().getFullYear()} UrbanRealitiess`,
       site_short_description: "We build your dream",
       favicon: "/default-favicon.png",
+       meta_keywords: [], 
     };
 
     return { ...defaultSettings, ...cachedSettings };
@@ -44,6 +45,6 @@ export default async function getSiteSettings() {
     console.error("Error fetching site settings:", error);
     return {};
   } finally {
-    fetchPromise = null; // Reset the promise after completion
+    fetchPromise = null; 
   }
 }

@@ -1,3 +1,5 @@
+"'use client';"
+
 import React from 'react';
 import './AdviceAndTools.css';
 import '../../app/globals.css';

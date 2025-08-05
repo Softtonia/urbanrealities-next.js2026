@@ -1,3 +1,5 @@
+'use client';
+
 import React from "react";
 import { BsFillCameraVideoFill } from "react-icons/bs";
 import { RiGalleryUploadFill } from "react-icons/ri";

@@ -1,3 +1,5 @@
+'use client';
+
 import React from "react";
 import PostPropertySteps from "./components/PostPropertySteps/PostPropertySteps";
 import PostStats from "./components/PostStats/PostStats";

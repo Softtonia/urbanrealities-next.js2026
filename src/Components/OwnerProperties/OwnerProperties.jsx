@@ -1,3 +1,5 @@
+"'use client';"
+
 import './OwnerProperties.css'
 import '../../app/globals.css'
 

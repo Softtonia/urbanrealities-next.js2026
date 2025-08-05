@@ -1,3 +1,5 @@
+'use client';
+
 import React from "react";
 import "./Projectactive.css";
 import { FaHeart } from "react-icons/fa";

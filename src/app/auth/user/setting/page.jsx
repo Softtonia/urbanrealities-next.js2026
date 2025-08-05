@@ -1,6 +1,7 @@
+'use client';
 import React from 'react';
 
-const page = () => {
+const settingpage = () => {
   return (
     <div>
       account setting
@@ -8,4 +9,4 @@ const page = () => {
   );
 }
 
-export default page;
+export default settingpage;

@@ -1,3 +1,5 @@
+'use client';
+
 import React from "react";
 import "./PropertyHighlights.css";
 import { FaBed, FaBath, FaCar } from "react-icons/fa";

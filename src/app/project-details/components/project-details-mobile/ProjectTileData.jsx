@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from "react";
 import styles from "./ProjectTileData.module.css";
 import ProjectFilter from "./ProjectFilter";

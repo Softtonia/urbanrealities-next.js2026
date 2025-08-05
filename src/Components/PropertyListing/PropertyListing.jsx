@@ -60,8 +60,7 @@ const PropertyCard = ({ property, handleViewProjectlist }) => (
 
     <div
       className="btn-property-detail btn-more-details"
-      // onClick={handleViewProjectlist}
-      onClick={() => handleViewProjectlist(property.id)} 
+      onClick={handleViewProjectlist}
     >
       More Details
     </div>
@@ -74,31 +73,29 @@ const PropertyListing = () => {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-
-  const handleViewProjectlist = () => {
-    router.push("/propertydetails");
+  const handleViewProjectlist = (id) => {
+    router.push(`/propertydetails/${id}`);
   };
 
-useEffect(() => {
-const fetchPropertyList = async () => {
-  try {
-    const response = await fetch('/api/get-all-properties'); // Uses the proxy
-    const data = await response.json();
-    
-    if (!response.ok) throw new Error(data.error || 'Failed to fetch');
-    
-    setPropertyList(data.data); // Adjust based on API response
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  useEffect(() => {
+    const fetchPropertyList = async () => {
+      try {
+        const response = await fetch("/api/get-all-properties"); // Uses the proxy
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.error || "Failed to fetch");
+
+        setPropertyList(data.data); // Adjust based on API response
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchPropertyList();
   }, []);
 
- 
   return (
     <div className="container">
       <div className="property-container">
@@ -109,12 +106,12 @@ const fetchPropertyList = async () => {
 
         <div className="property-listing-scroll">
           <div className="property-listing">
-   {propertyList.length > 0 ? (
+            {propertyList.length > 0 ? (
               propertyList.map((property) => (
                 <PropertyCard
                   key={property.id}
                   property={property}
-                  handleViewProjectlist={handleViewProjectlist}
+                  handleViewProjectlist={() => handleViewProjectlist(property.id)}
                 />
               ))
             ) : (

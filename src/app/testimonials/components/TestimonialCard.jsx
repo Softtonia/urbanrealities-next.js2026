@@ -1,3 +1,5 @@
+"'use client';"
+
 import Image from 'next/image';
 import styles from './TestimonialCard.module.css'; // Import the CSS module
 import {FaStar } from "react-icons/fa";

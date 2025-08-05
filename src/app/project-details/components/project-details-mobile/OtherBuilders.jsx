@@ -1,3 +1,5 @@
+'use client';
+
 import styles from "./OtherBuilders.module.css";
 import Image from "next/image";
 import TextHeading from "./TextHeading";

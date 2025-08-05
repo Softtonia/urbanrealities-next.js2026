@@ -1,6 +1,7 @@
+'use client';
 import React from 'react';
 
-const page = () => {
+const legalpage = () => {
   return (
     <div>
       <h1>Legal</h1>
@@ -9,4 +10,4 @@ const page = () => {
   );
 }
 
-export default page;
+export default legalpage;

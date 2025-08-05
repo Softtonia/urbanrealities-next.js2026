@@ -1,3 +1,5 @@
+'use client';
+
 import styles from './AllProject.module.css';
 
 const AllProjects = () => {

@@ -1,4 +1,4 @@
-// components/Neighbourhood/Neighbourhood.js
+'use client';
 import styles from './Neighbourhood.module.css';
 
 const Neighbourhood = () => {

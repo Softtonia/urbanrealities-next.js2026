@@ -1,3 +1,5 @@
+"'use client';"
+
 import "../SearchPropertySection/SearchPropertySection.css"
 // import PropertySearch from './../PropertySearch/PropertySearch';
 import Searchbar from './../PropertySearch/Searchbar';

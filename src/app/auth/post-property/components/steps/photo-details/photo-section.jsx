@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useRef, useEffect } from "react";
 import { MdDelete } from "react-icons/md";
 import { FaSearchPlus } from "react-icons/fa";

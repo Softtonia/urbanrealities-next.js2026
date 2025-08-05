@@ -1,3 +1,5 @@
+ "'use client';"
+
  const BuyData = [
   {
     heading: "Popular Choices",
