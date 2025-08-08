@@ -1,0 +1,21 @@
+// app/api/register/route.js
+
+import { NextResponse } from 'next/server';
+import { post } from '@/lib/api'; // This should be your axios/fetch wrapper
+
+export async function POST(request) {
+    try {
+        const body = await request.json();
+
+        console.log(body)
+        const response = await post(`/api/register`, body);
+
+        return NextResponse.json(response.data); // return Laravel's response to frontend
+    } catch (error) {
+        console.error("Registration Error:", error?.response?.data || error.message);
+        return NextResponse.json(
+            { error: error?.response?.data?.message || error.message },
+            { status: 500 }
+        );
+    }
+}

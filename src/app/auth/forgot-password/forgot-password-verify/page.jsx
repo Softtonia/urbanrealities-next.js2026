@@ -1,5 +1,5 @@
 "use client";
-import AuthLayout from '../../component/AuthLayout';
+import AuthLayout from '../../AuthLayout';
 import ForgotPasswordVerify from '../../component/forgot-verify/Forgot-Password-Verify';
 import ForgotPasswordVerifyLeft from '../../component/forgot-verify/Forgot-Password-VerifyLeft';
 

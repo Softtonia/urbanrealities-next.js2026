@@ -1,10 +1,28 @@
 'use client';
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Login.module.css";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const {login} = useSiteSettings(); 
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      // Already logged in, redirect to dashboard
+      router.replace("/");
+    }
+  }, []);
+
   const data = {
     heading: "Login your account",
     subText: "Continue your journey with UrbanRealities",
@@ -20,13 +38,50 @@ export default function LoginPage() {
     forgotPasswordText: "Forgot Password",
     knowText: "Know More",
     guideText: "Login Guide?",
+  };
 
+  // ✅ Form submit handler
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Login failed");
+      }
+      console.log("login",result)
+      if (result.token) {
+        // Store token in sessionStorage
+        login(result.token)
+      }
+        // Redirect user or do something else
+
+      // ✅ Success: redirect or store token
+      router.push("/");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div>
-      <h5 className={` formHeading ${styles.formHeading}`}>{data.heading}</h5>
-      <p className={` formSubHeading ${styles.formSubHeading}`}>{data.subText}</p>
+    <form onSubmit={handleLogin}>
+      <h5 className={`formHeading ${styles.formHeading}`}>{data.heading}</h5>
+      <p className={`formSubHeading ${styles.formSubHeading}`}>{data.subText}</p>
+
+      {error && <p className={styles.error}>{error}</p>}
 
       <div className={styles.formGroup}>
         <label htmlFor="email" className={`formLabel ${styles.formLabel}`}>
@@ -37,6 +92,9 @@ export default function LoginPage() {
           id="email"
           className={`formInput ${styles.formInput}`}
           placeholder={data.emailPlaceholder}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
       </div>
 
@@ -49,13 +107,21 @@ export default function LoginPage() {
           id="password"
           className={`formInput ${styles.formInput}`}
           placeholder={data.passwordPlaceholder}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
         />
       </div>
+      {error && <p className={styles.error}>{error}</p>}
 
       <div>
-        <Link href="/auth/user/account" className={`body-text-14 formGroupBtn ${styles.formGroupBtn}`}>
-          {data.loginButton}
-        </Link>
+        <button
+          type="submit"
+          className={`body-text-14 formGroupBtn ${styles.formGroupBtn}`}
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : data.loginButton}
+        </button>
       </div>
 
       <Link href="#" className={`body-text-14 googleBtn ${styles.googleBtn}`}>
@@ -83,6 +149,6 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
-    </div>
+    </form>
   );
 }

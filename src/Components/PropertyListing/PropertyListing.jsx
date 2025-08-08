@@ -76,25 +76,28 @@ const PropertyListing = () => {
   const handleViewProjectlist = (id) => {
     router.push(`/propertydetails/${id}`);
   };
+  // console.log("env",process.env.LARAVEL_API_BASE_URL)
 
   useEffect(() => {
     const fetchPropertyList = async () => {
       try {
-        const response = await fetch("/api/get-all-properties"); // Uses the proxy
+        const response = await fetch("/api/get-all-properties"); // This hits Next.js API route
         const data = await response.json();
-
+  
         if (!response.ok) throw new Error(data.error || "Failed to fetch");
-
-        setPropertyList(data.data); // Adjust based on API response
+  
+        setPropertyList(data.data); // Assuming Laravel returns { data: [...] }
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchPropertyList();
   }, []);
+  
+  console.log("property",propertyList)
 
   return (
     <div className="container">

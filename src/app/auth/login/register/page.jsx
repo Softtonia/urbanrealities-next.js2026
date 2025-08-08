@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import AuthLayout from '../../component/AuthLayout';
+import AuthLayout from '../../AuthLayout';
 import RegisterLeft from '../../component/registerform/RegisterLeft';
 import Register from '../../component/registerform/Register';
 const Registerpage = () => {

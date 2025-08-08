@@ -1,11 +1,15 @@
 'use client';
+import ProtectedRoute from '@/Components/protectedRoute';
 import React from 'react';
 
 const settingpage = () => {
   return (
-    <div>
+    <ProtectedRoute>    
+      <div>
       account setting
     </div>
+    </ProtectedRoute>
+
   );
 }
 

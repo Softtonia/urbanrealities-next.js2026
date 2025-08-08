@@ -19,7 +19,7 @@ import { get } from "@/lib/api";
 export async function GET() {
   try {
     const response = await get(`/api/get-all-properties-listing-no-auth`);
-
+console.log("demoo",response)
     return Response.json(response.data); // ✅ Success response
   } catch (error) {
     console.error("API error:", error.message);

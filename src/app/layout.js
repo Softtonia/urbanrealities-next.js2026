@@ -1,4 +1,4 @@
-
+// app/layout.js
 
 import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -6,7 +6,7 @@ import Navbar from "@/Components/Navebar/Navbar";
 import Footer from "@/Components/Footer/Footer";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import BootstrapClient from "@/Components/BootstrapClient";
-import getSiteSettings from "@/utils/getsitedata";
+import { SiteSettingsProvider } from "@/Components/mycontext/siteSettingContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,44 +18,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
-
-// export async function generateMetadata() {
-//   const settings = await getSiteSettings();
-// // console.log(settings)
-
-//   return {
-//     title: settings.site_name || 'UrbanRealitiess',
-//     description: settings.site_short_description || 'We build your dream',
-//     icons: {
-//       icon: [
-//         {
-//           url: settings.favicon ,
-//           type: 'image/png',
-//           sizes: '32x32',
-//         },
-//       ],
-//       shortcut: settings.favicon ,
-//       apple: settings.favicon ,
-//     },
-//     other: {
-//       'msapplication-TileImage': settings.favicon ,
-//     },
-//   };
-// }
-
 export async function generateMetadata() {
-  const settings = await getSiteSettings();
+  const res = await fetch(`${process.env.LARAVEL_API_BASE_URL}/api/site-setting`, {
+    cache: 'no-store',
+    headers: {
+      "X-Client-ID": process.env.X_CLIENT_ID,
+      "X-Client-Secret": process.env.X_CLIENT_SECRET,
+      "Content-Type": "application/json",
+      Origin: process.env.NEXT_PUBLIC_API_URL,
+    }
+  });
 
-  console.log(settings)
+  const settings = await res.json();
 
   const title = settings?.site_name || 'UrbanRealitiess';
   const description = settings?.site_short_description || 'We build your dream';
   const favicon = settings?.favicon?.trim()
     ? settings.favicon.startsWith('http') || settings.favicon.startsWith('/')
       ? settings.favicon
-      : `/uploads/${settings.favicon}` // if only filename
-    : '/default-favicon.png'; // fallback
+      : `/uploads/${settings.favicon}`
+    : '/default-favicon.png';
+
   return {
     title,
     description,
@@ -76,10 +59,21 @@ export async function generateMetadata() {
   };
 }
 
-
 export default async function RootLayout({ children }) {
- const serverData = await getSiteSettings();
-   return (
+  const res = await fetch(`${process.env.LARAVEL_API_BASE_URL}/api/site-setting`, {
+    cache: 'no-store',
+    headers: {
+      "X-Client-ID": process.env.X_CLIENT_ID,
+      "X-Client-Secret": process.env.X_CLIENT_SECRET,
+      "Content-Type": "application/json",
+      Origin: process.env.NEXT_PUBLIC_API_URL,
+    }
+  });
+  const response = await res.json();
+
+  const settings = response.data
+
+  return (
     <html lang="en">
       <head>
         <link
@@ -90,16 +84,13 @@ export default async function RootLayout({ children }) {
           referrerPolicy="no-referrer"
         />
       </head>
-
-      <body className={`antialiased`}>
-        <BootstrapClient />
-        <Navbar 
-        serverData={serverData} 
-        />
-        <main>{children}</main>
-        <Footer
-          serverData={serverData}
-        />
+      <body className="antialiased">
+        <SiteSettingsProvider initialSettings={settings}>
+          <BootstrapClient />
+          <Navbar  />
+          <main>{children}</main>
+          <Footer  />
+        </SiteSettingsProvider>
       </body>
     </html>
   );

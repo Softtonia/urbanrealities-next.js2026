@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../components/My-Account-Dashboard.module.css';
 import MyAccountAnalytics from './components/My-Account-Analytics';
+import ProtectedRoute from '@/Components/protectedRoute';
 
 const MyAccount = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,6 +45,7 @@ const MyAccount = () => {
   );
 
   return (
+    <ProtectedRoute>
     <>
       {loading ? (
         <div className={styles.loaderWrapper}>
@@ -93,7 +95,7 @@ const MyAccount = () => {
           </nav>
         </>
       )}
-    </>
+    </></ProtectedRoute>
   );
 };
 

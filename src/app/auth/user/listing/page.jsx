@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../components/My-Account-Dashboard.module.css'; // same layout CSS
 import MyAccountListing from './components/My-Account-listing';
+import ProtectedRoute from '@/Components/protectedRoute';
 
 const ListingPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,6 +42,7 @@ const ListingPage = () => {
   );
 
   return (
+    <ProtectedRoute>
     <>
       {loading ? (
         <div className={styles.loaderWrapper}>
@@ -91,6 +93,7 @@ const ListingPage = () => {
         </>
       )}
     </>
+    </ProtectedRoute>
   );
 };
 

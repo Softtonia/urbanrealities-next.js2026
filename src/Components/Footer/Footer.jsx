@@ -6,8 +6,9 @@ import "../../app/globals.css";
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
 import { post } from "@/lib/api";
 import Link from "next/link";
+import { useSiteSettings } from "../mycontext/siteSettingContext";
 
-const Footer = ({ serverData }) => {
+const Footer = () => {
   // const [siteData, setSiteData] = useState(serverData || null); // null for initial state
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -16,8 +17,12 @@ const Footer = ({ serverData }) => {
     message: "",
   });
   const [year, setYear] = useState(null);
+  const {settings} = useSiteSettings()
 
-  const siteData = serverData || {
+
+
+
+  const siteData = settings || {
     site_short_description: "We build your dream",
     address: "Not available",
     mobile_number: "Not available",
@@ -66,17 +71,18 @@ const Footer = ({ serverData }) => {
     setSubmitStatus({ success: false, message: "" });
 
     try {
-      const response = await post(
-        `/api/insert-subscribe-email`,
-        { email },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-          credentials: "include",
-        }
-      );
+      const response = 1
+      // await post(
+      //   `/api/insert-subscribe-email`,
+      //   { email },
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({ email }),
+      //     credentials: "include",
+      //   }
+      // );
 
       if (!response.ok) {
         throw new Error(response.data?.message || "Subscription failed");
@@ -236,9 +242,8 @@ const Footer = ({ serverData }) => {
 
               {submitStatus.message && (
                 <div
-                  className={`mt-2 alert ${
-                    submitStatus.success ? "alert-success" : "alert-danger"
-                  }`}
+                  className={`mt-2 alert ${submitStatus.success ? "alert-success" : "alert-danger"
+                    }`}
                 >
                   {submitStatus.message}
                 </div>

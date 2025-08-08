@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect,useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import "../Navebar/navbar.css";
 import DropdownMegaMenu from "../MegaMenu/DropdownMegaMenu";
 import SellerDropdown from "../MegaMenu/SellerDropdown";
@@ -19,6 +19,7 @@ import LocationDropdown from "../LocationDropdown/LocationDropdown";
 import { GoChevronDown } from "react-icons/go";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { get } from '@/lib/api';
+import { useSiteSettings } from "../mycontext/siteSettingContext";
 
 const cities = {
   nearbyCities: ["New Delhi", "Gurgaon", "Greater Noida"],
@@ -103,6 +104,7 @@ const cities = {
 };
 
 const renderCityGrid = (citiesArray) => {
+  const { token } = useSiteSettings();
   const columnsPerRow = 5;
   const rows = [];
 
@@ -122,7 +124,7 @@ const renderCityGrid = (citiesArray) => {
   return rows;
 };
 
-export default function Navbar({serverData }) {
+export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLocationSlider, setShowLocationSlider] = useState(false);
@@ -131,32 +133,9 @@ export default function Navbar({serverData }) {
   const [showMegaMenu, setShowMegaMenu] = useState(false);
   const [showRentMenu, setShowRentMenu] = useState(false);
   const [showSellMenu, setShowSellMenu] = useState(false);
-  // const [siteData, setSiteData] = useState(serverData || null); 
- const siteData = serverData || {
-    website_logo: "/logo.png",
-    mobile_logo: "/logo.png"
-  };
-  //   const initialData = useMemo(() => serverData || null, [serverData]);
-  //  useEffect(() => {
-  //    if (!initialData) {
-  //      const fetchSiteData = async () => {
-  //        try {
-  //          const res = await fetch("/api/site-setting");
-  //          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-           
-  //          const data = await res.json();
-  //          setSiteData(data.data || {});
-  //        } catch (error) {
-  //          console.error("Fetch error:", error);
-  //          setSiteData({});
-  //        }
-  //      };
-  //      fetchSiteData();
-  //    }
-  //  }, [initialData]); 
-
- 
-
+  const { settings } = useSiteSettings();
+  const [siteData, setSiteData] = useState(settings);
+  const { token, logout } = useSiteSettings();
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -182,6 +161,14 @@ export default function Navbar({serverData }) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleLogout = () => {
+    // Clear token (example for localStorage)
+    localStorage.removeItem("token");
+    // Redirect to home or login page
+    window.location.href = "/auth/login";
+  };
 
   return (
     <>
@@ -291,16 +278,65 @@ export default function Navbar({serverData }) {
               />
               Post Property <span className="badge-property">Free</span>
             </Link>
-            <div className="nav-items-name d-flex align-items-center gap-3">
+            <div className="nav-items-name d-flex align-items-center gap-3 position-relative">
               <a className="text-white text-decoration-none" href="#">
                 Help
               </a>
-              <Link
-                className="text-white text-decoration-none"
-                href="/auth/login"
-              >
-                Sign In
-              </Link>
+
+              {token ? (
+                <div
+                  className="dropdown"
+                  onMouseEnter={() => setIsOpen(true)}
+                  onMouseLeave={() => setIsOpen(false)}
+                  style={{ position: "relative" }}
+                >
+                  <button
+                    className="btn btn-link text-white text-decoration-none dropdown-toggle nav-items-name"
+                    type="button"
+                  >
+                    My Account
+                  </button>
+                  {isOpen && (
+                    <ul
+                      className="dropdown-menu show"
+                      style={{
+                        display: "block",
+                        position: "absolute",
+                        top: "100%",
+                        left: -20,
+                        backgroundColor: "#fff",
+                        padding: "0.5rem 0",
+                        borderRadius: "0.25rem",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                        minWidth: "150px",
+                      }}
+                    >
+                      <li>
+                        <Link className="dropdown-item" href="/" style={{ backgroundColor: "transparent", color: "inherit" }}>
+                          Dashboard
+                        </Link>
+                      </li>
+                      <li>
+                        <Link className="dropdown-item" href="/" style={{ backgroundColor: "transparent", color: "inherit" }}>
+                          My Profile
+                        </Link>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item text-danger"
+                          onClick={logout}
+                        >
+                          Logout
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </div>
+              ) : (
+                <Link className="text-white text-decoration-none" href="/auth/login">
+                  Sign In
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -322,9 +358,59 @@ export default function Navbar({serverData }) {
             <a className="text-decoration-none text-dark" href="#">
               Help
             </a>
-            <Link className="text-decoration-none text-dark" href="/auth/login">
-              Sign In
-            </Link>
+            {token ? (
+              <div
+                className="dropdown"
+                onMouseEnter={() => setIsOpen(true)}
+                onMouseLeave={() => setIsOpen(false)}
+                style={{ position: "relative" }}
+              >
+                <button
+                  className="btn btn-link text-black text-decoration-none dropdown-toggle nav-items-name"
+                  type="button"
+                >
+                  My Account
+                </button>
+                {isOpen && (
+                  <ul
+                    className="dropdown-menu show"
+                    style={{
+                      display: "block",
+                      position: "absolute",
+                      top: "100%",
+                      left: -20,
+                      backgroundColor: "#fff",
+                      padding: "0.5rem 0",
+                      borderRadius: "0.25rem",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                      minWidth: "150px",
+                    }}
+                  >
+                    <li>
+                      <Link className="dropdown-item" href="/" style={{ backgroundColor: "transparent", color: "inherit" }}>
+                        Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <Link className="dropdown-item" href="/" style={{ backgroundColor: "transparent", color: "inherit" }}>
+                        My Profile
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        className="dropdown-item text-danger"
+                        onClick={logout}
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                )}
+              </div>
+            ) : (
+              <Link className="text-decoration-none text-dark" href="/auth/login">
+                Sign In
+              </Link>)}
           </div>
         </div>
 

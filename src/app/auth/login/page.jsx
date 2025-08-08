@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import AuthLayout from '../component/AuthLayout';
+import AuthLayout from '../AuthLayout';
 import LoginLeft from '../component/loginform/LoginLeft';
 import Login from '../component/loginform/Login';
 const LoginPage  = () => {
