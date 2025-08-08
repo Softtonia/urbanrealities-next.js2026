@@ -8,8 +8,11 @@ import { useDebounce } from "@/hooks/useDebounce";
 
 const Register = () => {
   const { formData, updateField } = useRegisterForm();
+  const [formError, setFormError] = useState("");
   const [roles, setRoles] = useState([]);
   const [usernameError, setUsernameError] = useState("");
+  const [emailError, setEmailError] = useState("")
+  const [phoneError, setPhoneError] = useState("")
   const router = useRouter();
   useEffect(() => {
     const token = sessionStorage.getItem("token");
@@ -21,6 +24,8 @@ const Register = () => {
 
   // ✅ debounce userName from context
   const debounceUserName = useDebounce(formData.userName, 500);
+  const debounceEmail = useDebounce(formData.email, 1000)
+  const debouncePhone = useDebounce(formData.phone, 1000)
 
   // --- Fetch roles from Laravel via Next.js API ---
   useEffect(() => {
@@ -71,9 +76,91 @@ const Register = () => {
     checkUsername();
   }, [debounceUserName]);
 
+  // ---email check
+  useEffect(() => {
+    const checkEmail = async () => {
+      if (!debounceEmail) {
+        setEmailError("");
+        return;
+      }
+      try {
+        const res = await fetch('/api/auth/register/checkmail', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email: debounceEmail })
+        });
+
+        const data = await res.json();
+        console.log(data)
+
+        if (!data.email?.exists) {
+          setEmailError(""); // ✅ available
+        } else {
+          setEmailError("email is already taken."); // ❌ not available
+        }
+      } catch (err) {
+        console.error("Error checking email:", err);
+      }
+    };
+
+    checkEmail();
+  }, [debounceEmail]);
+  // -------------phone check
+  useEffect(() => {
+    const checkphone = async () => {
+      if (!debouncePhone) {
+        setPhoneError("");
+        return;
+      }
+      try {
+        const res = await fetch('/api/auth/register/checkphone', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ phone: debouncePhone })
+        });
+
+        const data = await res.json();
+        console.log(data)
+
+        if (!data.phone?.exists) {
+          setPhoneError(""); // ✅ available
+        } else {
+          setPhoneError("phone number is already taken."); // ❌ not available
+        }
+      } catch (err) {
+        console.error("Error checking phone:", err);
+      }
+    };
+
+    checkphone();
+  }, [debouncePhone]);
+
+
   // --- Next button handler ---
   const handleNext = () => {
-    if (usernameError) return; // prevent navigation if username is taken
+    setFormError(""); // clear previous error
+
+    if (usernameError) return; // already handled elsewhere
+    if (emailError) return; //email taken
+    if (phoneError) return; //phone taken
+
+    // ✅ Required field validation
+    if (
+      !formData.firstName?.trim() ||
+      !formData.lastName?.trim() ||
+      !formData.userName?.trim() ||
+      !formData.email?.trim() ||
+      !formData.phone?.trim() ||
+      !formData.role
+    ) {
+      setFormError("Please fill in all required fields.");
+      return;
+    }
+
     const query = new URLSearchParams({
       email: formData.email,
       username: formData.userName,
@@ -85,6 +172,7 @@ const Register = () => {
 
     router.push(`/auth/login/setpassword?${query}`);
   };
+
 
   const data = {
     heading: "Sign Up",
@@ -157,7 +245,7 @@ const Register = () => {
           onChange={(e) => updateField("userName", e.target.value)}
         />
         {usernameError && (
-          <p style={{ color: "red", fontSize: "12px",marginBottom:"5px" }}>{usernameError}</p>
+          <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{usernameError}</p>
         )}
       </div>
 
@@ -175,6 +263,9 @@ const Register = () => {
           onChange={(e) => updateField("email", e.target.value)}
         />
       </div>
+      {emailError && (
+        <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{emailError}</p>
+      )}
 
       {/* Phone */}
       <div className={styles.formGroup}>
@@ -187,9 +278,18 @@ const Register = () => {
           value={formData.phone}
           className={`formInput ${styles.formInput}`}
           placeholder={data.phonePlaceholder}
-          onChange={(e) => updateField("phone", e.target.value)}
+          onChange={(e) => {
+            let value = e.target.value.replace(/\D/g, ""); // Remove all non-digits
+            value = value.replace(/^0+/, ""); // Remove leading zeros
+            if (value.length > 10) value = value.slice(0, 10); // Limit to 10 digits
+            updateField("phone", value);
+          }}
         />
+
       </div>
+      {phoneError && (
+        <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{phoneError}</p>
+      )}
 
       {/* Roles */}
       <div className={styles.formGroup}>
@@ -211,6 +311,12 @@ const Register = () => {
           ))}
         </div>
       </div>
+      {formError && (
+        <p className="formLabel" style={{ color: "red" }}>
+          {formError}
+        </p>
+      )}
+
 
       {/* Next Button */}
       <button

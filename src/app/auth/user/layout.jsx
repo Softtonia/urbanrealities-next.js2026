@@ -55,7 +55,7 @@ const handleSidebarItemClick = () => {
 
         <div className={styles.pagerow}>
           {/* Sidebar show logic updated here 👇 */}
-          {(!isMobile || !showContent) && (
+          {(!isMobile || showContent) && (
             <div className={styles.Sidebarcol}>
               {/* <SidebarDashboard onItemClick={() => setShowContent(true)} /> */}
               <SidebarDashboard onItemClick={handleSidebarItemClick} />

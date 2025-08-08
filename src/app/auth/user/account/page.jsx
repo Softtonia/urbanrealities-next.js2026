@@ -46,56 +46,56 @@ const MyAccount = () => {
 
   return (
     <ProtectedRoute>
-    <>
-      {loading ? (
-        <div className={styles.loaderWrapper}>
-          <div className={styles.spinner}></div>
-        </div>
-      ) : (
-        <>
-          <div className={styles.insightcard}>
+      <>
+        {loading ? (
+          <div className={styles.loaderWrapper}>
+            <div className={styles.spinner}></div>
+          </div>
+        ) : (
+          <>
+            <div className={styles.insightcard}>
               {paginatedData.map((prop) => (
                 <MyAccountAnalytics key={prop.id} data={prop} />
               ))}
-          </div>
+            </div>
 
-          <nav className={styles.pagination}>
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              &lt;
-            </button>
+            <nav className={styles.pagination}>
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                &lt;
+              </button>
 
-            {Array.from({ length: 5 }, (_, index) => {
-              const pageNumber =
-                Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + index;
+              {Array.from({ length: 5 }, (_, index) => {
+                const pageNumber =
+                  Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + index;
 
-              if (pageNumber > totalPages) return null;
+                if (pageNumber > totalPages) return null;
 
-              return (
-                <button
-                  key={pageNumber}
-                  onClick={() => handlePageChange(pageNumber)}
-                  className={
-                    currentPage === pageNumber ? styles.activePage : ""
-                  }
-                >
-                  {pageNumber}
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={pageNumber}
+                    onClick={() => handlePageChange(pageNumber)}
+                    className={
+                      currentPage === pageNumber ? styles.activePage : ""
+                    }
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              })}
 
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              &gt;
-            </button>
-          </nav>
-        </>
-      )}
-    </></ProtectedRoute>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                &gt;
+              </button>
+            </nav>
+          </>
+        )}
+      </></ProtectedRoute>
   );
 };
 

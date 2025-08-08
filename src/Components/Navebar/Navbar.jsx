@@ -312,12 +312,12 @@ export default function Navbar() {
                       }}
                     >
                       <li>
-                        <Link className="dropdown-item" href="/" style={{ backgroundColor: "transparent", color: "inherit" }}>
+                        <Link className="dropdown-item" href="/auth/user/account" style={{ backgroundColor: "transparent", color: "inherit" }}>
                           Dashboard
                         </Link>
                       </li>
                       <li>
-                        <Link className="dropdown-item" href="/" style={{ backgroundColor: "transparent", color: "inherit" }}>
+                        <Link className="dropdown-item" href="/auth/user/setting" style={{ backgroundColor: "transparent", color: "inherit" }}>
                           My Profile
                         </Link>
                       </li>

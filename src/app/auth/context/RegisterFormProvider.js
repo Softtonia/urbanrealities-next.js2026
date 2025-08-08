@@ -22,7 +22,7 @@ export const RegisterFormProvider = ({ children }) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    console.log("formdata",formData)
+    // console.log("formdata",formData)
 
     return (
         <RegisterFormContext.Provider value={{ formData, updateField }}>

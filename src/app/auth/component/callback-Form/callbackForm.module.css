@@ -1,0 +1,75 @@
+.formHeading {
+    margin-bottom: 10px;
+}
+
+.formSubHeading {
+    margin-bottom: 25px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.formLabel {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.formInput {
+    margin-bottom: 15px;
+}
+
+.formGroupBtn {
+    margin-bottom: 15px;
+}
+
+
+.googleBtn {
+    margin-bottom: 30px;
+}
+
+.googleIcon {
+    margin-right: 5px;
+}
+
+.formLinks {
+    text-align: center;
+}
+
+/*---------------- register ----------------*/
+.radioGroup {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.radioOption {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--Eerie-Black);
+}
+
+.nextBtn {
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+    margin-bottom: 30px;
+}
+
+.KnowLink {
+    text-decoration: none !important;
+}
+
+.KnowLinkText {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .KnowLinkText {
+        display: block !important;
+    }
+
+}

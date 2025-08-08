@@ -35,6 +35,7 @@ const VerifyOTP = () => {
       });
 
       const result = await res.json();
+      console.log(result)
 
       if (res.ok) {
         // OTP is correct
@@ -69,7 +70,7 @@ const VerifyOTP = () => {
           />
         </div>
 
-        {error && <p style={{ color: "red", marginBottom: "10px" }}>{error}</p>}
+        {error && <p className="formLabel" style={{ color: "red", marginBottom: "10px" }}>{error}</p>}
 
         <button
           type="submit"

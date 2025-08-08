@@ -1,24 +1,26 @@
 // components/ProtectedRoute.js
+'use client';
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; ;
 import { useSiteSettings } from "./mycontext/siteSettingContext";
 
 export default function ProtectedRoute({ children }) {
-    const {token} = useSiteSettings();
-    const [isChecking, setIsChecking] = useState(true);
-    const router = useRouter();
+    const { token, isLoadingToken } = useSiteSettings()
+    const router = useRouter()
 
     useEffect(() => {
-        if (!token) {
-            router.replace("/auth/login"); // Redirect if no token
-        } else {
-            setIsChecking(false); // Allow rendering
-        }
-    }, [router]);
+        if (isLoadingToken) return // wait until token check is done
 
-    if (isChecking) {
-        return <div>Loading...</div>; // or your loader spinner
+        if (!token) {
+            router.push("/auth/login")
+        }
+    }, [token, isLoadingToken, router])
+
+    if (isLoadingToken || !token) {
+        return <div>Loading...</div> // your spinner or loader
     }
 
-    return children;
+    return children
 }
+

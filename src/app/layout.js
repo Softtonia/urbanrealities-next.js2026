@@ -1,5 +1,5 @@
 // app/layout.js
-
+export const dynamic = 'force-dynamic';
 import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/Components/Navebar/Navbar";
@@ -60,18 +60,28 @@ export async function generateMetadata() {
 }
 
 export default async function RootLayout({ children }) {
-  const res = await fetch(`${process.env.LARAVEL_API_BASE_URL}/api/site-setting`, {
-    cache: 'no-store',
-    headers: {
-      "X-Client-ID": process.env.X_CLIENT_ID,
-      "X-Client-Secret": process.env.X_CLIENT_SECRET,
-      "Content-Type": "application/json",
-      Origin: process.env.NEXT_PUBLIC_API_URL,
-    }
-  });
-  const response = await res.json();
+  let settings = {};
 
-  const settings = response.data
+  try {
+    const res = await fetch(`${process.env.LARAVEL_API_BASE_URL}/api/site-setting`, {
+      cache: "no-store", // Always fetch latest
+      headers: {
+        "X-Client-ID": process.env.X_CLIENT_ID,
+        "X-Client-Secret": process.env.X_CLIENT_SECRET,
+        "Content-Type": "application/json",
+        Origin: process.env.NEXT_PUBLIC_API_URL,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch site settings: ${res.status}`);
+    }
+
+    const response = await res.json();
+    settings = response.data || {};
+  } catch (error) {
+    console.error("Error fetching site settings:", error.message);
+  }
 
   return (
     <html lang="en">
@@ -87,9 +97,9 @@ export default async function RootLayout({ children }) {
       <body className="antialiased">
         <SiteSettingsProvider initialSettings={settings}>
           <BootstrapClient />
-          <Navbar  />
+          <Navbar />
           <main>{children}</main>
-          <Footer  />
+          <Footer />
         </SiteSettingsProvider>
       </body>
     </html>
