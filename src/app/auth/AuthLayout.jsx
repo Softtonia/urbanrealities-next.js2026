@@ -5,6 +5,7 @@ import styles from "./component/AuthLayout.module.css";
 import { CiCircleRemove } from "react-icons/ci";
 import { RegisterFormProvider } from "./context/RegisterFormProvider";
 
+
 const AuthLayout = ({ leftContent, rightContent }) => {
   return (
     <div className={styles.authContainer}>

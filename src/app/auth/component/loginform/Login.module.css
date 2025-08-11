@@ -9,6 +9,8 @@
 .formGroup{
   display: flex;
   flex-direction: column;
+  margin-bottom: 15px;
+  height: 66px;
 }
 
 .formLabel {
@@ -16,9 +18,9 @@
   margin-bottom: 4px;
 }
 
-.formInput {
+/* .formInput {
   margin-bottom: 15px;
-}
+} */
 .formGroupBtn {
   margin-bottom: 15px;
 }

@@ -8,7 +8,7 @@ export async function POST(req) {
         const body = await req.json();
 
         const response = await post('/api/login', body);
-        console.log(response.data)
+        // console.log(response.data)
         return NextResponse.json(response.data);
     } catch (error) {
         return NextResponse.json(

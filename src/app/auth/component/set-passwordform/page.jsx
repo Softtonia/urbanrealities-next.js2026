@@ -63,7 +63,7 @@ const SetPassword = () => {
   const handleSubmit = async () => {
     if (!validatePassword(formData.password)) {
       setError(
-        "Password must be at least 8 characters long, contain uppercase, lowercase, number, and special character."
+        "Password must be 8+ characters with upper, lower, number, and symbol"
       );
       return;
     }
@@ -152,7 +152,7 @@ const SetPassword = () => {
             style={{
               position: "absolute",
               right: "10px",
-              top: "56%",
+              top: "60%",
               transform: "translateY(-50%)",
               cursor: "pointer"
             }}
@@ -178,25 +178,24 @@ const SetPassword = () => {
             style={{
               position: "absolute",
               right: "10px",
-              top: "56%",
+              top: "60%",
               transform: "translateY(-50%)",
               cursor: "pointer"
             }}
           >
             <EyeIcon open={showConfirmPassword} />
           </span>
+          {error && (
+            <p className={`formLabel ${styles.errorText}`} style={{ color: "red", fontSize: "12px" }}>
+              {error}
+            </p>
+          )}
         </div>
-
-        {error && (
-          <p className={`formLabel ${styles.errorText}`} style={{ color: "red", fontSize: "12px" }}>
-            {error}
-          </p>
-        )}
 
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className={`body-text-14 formGroupBtn ${styles.nextBtn}`}
+          className={`body-text-14 mt-5 formGroupBtn ${styles.nextBtn}`}
         >
           {data.nextButton}
         </button>

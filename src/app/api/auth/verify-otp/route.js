@@ -7,7 +7,6 @@ export async function POST(request) {
         
         const token = body.token;
         
-        console.log(token)
         // if (!token || token !== process.env.EXPECTED_TOKEN) {
         //     return new Response("Unauthorized", { status: 401 });
         // }
@@ -18,7 +17,7 @@ export async function POST(request) {
             }
         });
 
-        console.log(response)
+        // console.log(response)
 
         return NextResponse.json(response.data);
     } catch (error) {

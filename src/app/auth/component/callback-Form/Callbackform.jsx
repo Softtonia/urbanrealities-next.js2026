@@ -23,7 +23,7 @@ export default function CallbackForm() {
             if (codeParam) setCode(codeParam);
         }
     }, []);
-    console.log("code", code)
+   
     // ✅ Fetch available roles
     useEffect(() => {
         const fetchRoles = async () => {

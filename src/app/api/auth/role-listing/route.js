@@ -7,7 +7,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
     try {
         const response = await get(`/api/get-default-roles`)
-        console.log(response);
+        // console.log(response);
         return NextResponse.json(response.data);
     } catch (error) {
         console.log(error.response)
