@@ -6,10 +6,6 @@ export async function POST(request) {
         const body = await request.json();
         
         const token = body.token;
-        
-        // if (!token || token !== process.env.EXPECTED_TOKEN) {
-        //     return new Response("Unauthorized", { status: 401 });
-        // }
 
         const response = await post(`/api/verify-email-otp`, body, {
             headers: {

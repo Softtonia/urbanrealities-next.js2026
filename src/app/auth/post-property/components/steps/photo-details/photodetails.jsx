@@ -10,15 +10,28 @@ import PhotoSection from "./photo-section";
 
 import styles from "./photodetails.module.css";
 import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
+import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 const PhotoDetails = () => {
   const { formData, updateFormData } = useContext(PostPropertyContext);
+  const { token } = useSiteSettings();
+
   const router = useRouter();
   const [photos, setPhotos] = useState(formData.photos || []);
   const [video, setVideo] = useState(formData.video || null);
   const photoInputRef = useRef(null);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState(null);
+
+
+  // Helper: Get all media fields from formData.custom_field
+  const getMediaFields = () => {
+    if (!Array.isArray(formData.custom_field)) return [];
+    return formData.custom_field.filter(field => field.field_type === "media");
+  };
+  const mediaField = getMediaFields()
+
+
 
   const optimizeImage = (file) => {
     return new Promise((resolve) => {
@@ -66,19 +79,42 @@ const PhotoDetails = () => {
 
   const handlePhotoUpload = async (e) => {
     const selectedFiles = Array.from(e.target.files);
-    const validImages = selectedFiles.filter((file) =>
-      [
-        "image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif",
-        "image/heic", "image/heif",
-      ].includes(file.type)
+
+    // 1. Get allowed formats from mediaFields (flatten into array)
+    const allowedFormats = mediaField
+      .map(field => field.media_format?.split(",") || [])
+      .flat()
+      .map(fmt => fmt.trim().toLowerCase());
+
+    // 2. Convert formats to MIME types for validation
+    const allowedMimeTypes = allowedFormats.map(fmt => `image/${fmt}`);
+
+    // 3. Filter files by allowed MIME types
+    const validImages = selectedFiles.filter(file =>
+      allowedMimeTypes.includes(file.type.toLowerCase())
     );
 
-    if (validImages.length === 0) return;
+    // 4. Size validation (in MB, based on each field's `media_size`)
+    const maxSizeMB = Math.max(...mediaField.map(f => parseFloat(f.media_size || "5")));
+    const sizeValidatedImages = validImages.filter(file =>
+      file.size <= maxSizeMB * 1024 * 1024
+    );
+
+    if (sizeValidatedImages.length === 0) {
+      alert(`No valid images found. Allowed formats: ${allowedFormats.join(", ")} | Max size: ${maxSizeMB}MB`);
+      return;
+    }
+
+    // 5. Limit validation (max total images from all fields)
+    const maxLimit = Math.max(...mediaField.map(f => parseInt(f.media_limit || "50")));
+    if (photos.length + sizeValidatedImages.length > maxLimit) {
+      alert(`You can only upload up to ${maxLimit} images.`);
+      return;
+    }
 
     setIsProcessingImages(true);
 
-    const optimizedImagesPromises = validImages.map(file => optimizeImage(file));
-    const optimizedFiles = await Promise.all(optimizedImagesPromises);
+    const optimizedFiles = await Promise.all(sizeValidatedImages.map(file => optimizeImage(file)));
 
     setIsProcessingImages(false);
 
@@ -90,7 +126,7 @@ const PhotoDetails = () => {
     }));
 
     setPhotos((prevPhotos) => {
-      const updatedPhotos = [...prevPhotos, ...newPhotos].slice(0, 50);
+      const updatedPhotos = [...prevPhotos, ...newPhotos].slice(0, maxLimit);
       if (updatedPhotos.length > 0 && !updatedPhotos.some((p) => p.isCover)) {
         updatedPhotos[0].isCover = true;
       }
@@ -98,6 +134,7 @@ const PhotoDetails = () => {
       return updatedPhotos;
     });
   };
+
 
   const handleVideoUpload = (e) => {
     const file = e.target.files[0];
@@ -182,22 +219,28 @@ const PhotoDetails = () => {
         <IoArrowBackSharp size={20} onClick={goBack} />
         <p className="m-0">Back</p>
       </div>
-      <VideoSection
+      {/* <VideoSection
         video={video}
         onVideoUpload={handleVideoUpload}
-      />
+      /> */}
 
-      <PhotoSection
-        photos={photos}
-        onPhotoUpload={handlePhotoUpload}
-        onDeletePhoto={handleDeletePhoto}
-        onSetCoverPhoto={handleSetCoverPhoto}
-        onCategoryChange={handleCategoryChange}
-        onZoomClick={handleZoomClick}
-        onAddMorePhotosClick={handleAddMorePhotosClick}
-        photoInputRef={photoInputRef}
-        isProcessingImages={isProcessingImages}
-      />
+      {Array.isArray(mediaField) && mediaField.map((field, index) => (
+        <PhotoSection
+          key={index}
+          title={field.field_label} // Show title from object
+          mediaField={field}
+          photos={photos}
+          onPhotoUpload={handlePhotoUpload}
+          onDeletePhoto={handleDeletePhoto}
+          onSetCoverPhoto={handleSetCoverPhoto}
+          onCategoryChange={handleCategoryChange}
+          onZoomClick={handleZoomClick}
+          onAddMorePhotosClick={handleAddMorePhotosClick}
+          photoInputRef={photoInputRef}
+          isProcessingImages={isProcessingImages}
+        />
+      ))}
+
 
       <button className={` continueBtn ${styles.continueBtn}`} onClick={handleContinue}>
         Continue

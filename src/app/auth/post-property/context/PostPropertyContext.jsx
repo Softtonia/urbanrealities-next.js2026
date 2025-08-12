@@ -1,62 +1,57 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
-// Context object को export करें
 export const PostPropertyContext = createContext();
 
 export function PostPropertyProvider({ children }) {
-  const [formData, setFormData] = useState({
-    basicDetails: {
-      purpose: "",
-      propertyType: "",
-      category: "",
-      subOption: "",
-    },
-    locationDetails: {
-      country: null,
-      state: null,
-      city: null,
-      address: "", // Added address field
-      locality: "", // Added locality field
-      pincode: "", // Added pincode field
-    },
-    propertyProfile: {
-      // These will be dynamically set based on category
-      carpetArea: { value: "", unit: "sq.ft" },
-      superBuiltupArea: { value: "", unit: "sq.ft" },
-      plotArea: { value: "", unit: "sq.ft" },
-      bhk: { value: "", label: "" },
-      furnishing: { value: "", label: "" },
-      floorNo: { value: "", label: "" },
-      totalFloors: "",
-      boundaryWall: "",
-      cornerPlot: "",
-      pantry: "",
-      washroom: "",
-      builtUpArea: { value: "", unit: "sq.ft" },
-      ceilingHeight: "",
-      loadingDock: "",
-    },
-    photos: [],
-    video: null,
-    pricingDetails: {
-      expectedRent: "",
-      pricePerSqFt: "",
-      basedOn: "Carpet Area",
-      electricityWaterExcluded: false,
-      priceNegotiable: false,
-      showMaintenanceBooking: false,
-      maintenanceCharges: "",
-      bookingAmount: "",
-      securityDepositType: "Fixed",
-      securityDepositValue: "",
-      lockInPeriod: "",
-      yearlyRentIncrease: "",
-      propertyUniqueDescription: "",
-    },
-    
+  // Load saved data from localStorage (if any)
+  const [formData, setFormData] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("postPropertyData");
+      return saved
+        ? JSON.parse(saved)
+        : {
+            basicDetails: {
+              purpose: "",
+              property: "",
+              property_type: "",
+              property_status: "",
+            },
+            locationDetails: {
+              country: null,
+              state: null,
+              city: null,
+            },
+            propertyProfile: {},
+            repeater_fields:{},
+            custom_field:{},
+            photos: [],
+            video: null,
+            pricingDetails: {
+              expectedRent: "",
+              pricePerSqFt: "",
+              basedOn: "Carpet Area",
+              electricityWaterExcluded: false,
+              priceNegotiable: false,
+              showMaintenanceBooking: false,
+              maintenanceCharges: "",
+              bookingAmount: "",
+              securityDepositType: "Fixed",
+              securityDepositValue: "",
+              lockInPeriod: "",
+              yearlyRentIncrease: "",
+              propertyUniqueDescription: "",
+            },
+          };
+    }
+    return {};
   });
-console.log("Context Provider rendered"); 
+
+  // Save to localStorage whenever formData changes
+  useEffect(() => {
+    localStorage.setItem("postPropertyData", JSON.stringify(formData));
+  }, [formData]);
+
   const updateFormData = (key, value) => {
     setFormData((prev) => ({
       ...prev,

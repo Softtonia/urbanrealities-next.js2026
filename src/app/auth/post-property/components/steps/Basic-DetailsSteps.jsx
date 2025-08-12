@@ -3,174 +3,261 @@ import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./Basic-DetailsSteps.module.css";
 import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
+import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 export default function StepContent() {
+  const { token } = useSiteSettings();
   const { formData, updateFormData } = useContext(PostPropertyContext);
+
+  const [purposeList, setPurposeList] = useState([])
+  const [propertyListing, setPropertyListing] = useState([])
+  const [propertyType, setPropertyType] = useState([])
+  const [propertyStatus, setPropertyStatus] = useState([])
   const router = useRouter();
 
   // Initialize state from context formData
   const [selectedPurpose, setSelectedPurpose] = useState(formData.basicDetails?.purpose || "");
-  const [selectedPropertyType, setSelectedPropertyType] = useState(formData.basicDetails?.propertyType || "");
-  const [selectedCategory, setSelectedCategory] = useState(formData.basicDetails?.category || "");
-  const [expandedCategory, setExpandedCategory] = useState(formData.basicDetails?.expandedCategory || "");
-  const [selectedSubOption, setSelectedSubOption] = useState(formData.basicDetails?.subOption || "");
+  const [selectedProperty, setSelectedProperty] = useState(formData.basicDetails?.property || "");
+  const [selectedPropertyType, setSelectedPropertyType] = useState(formData.basicDetails?.property_type || "");
+  const [selectedPropertyStatus, setSelectedPropertyStatus] = useState(formData.basicDetails?.property_status || "");
+  console.log("token", token)
+  useEffect(() => {
+    const fetchPurpose = async () => {
+      // console.log(token)
+      try {
+        const res = await fetch('/api/post-property/get-purpose', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setPurposeList(data);
+        } else if (data?.data) {
+          setPurposeList(data.data);
+        }
+      } catch (err) {
+        console.error('Error fetching roles:', err);
+      }
+    };
+    if (token) {
+      fetchPurpose();
+    }
+  }, [token]);
 
-  const purposes = ["Sell", "Rent / Lease", "PG"];
 
-  const residentialCategories = [
-    { label: "Flat/Apartment" },
-    { label: "Independent House / Villa" },
-    { label: "Independent / Builder Floor" },
-    { label: "Plot / Land" },
-    { label: "1 RK/ Studio Apartment" },
-    { label: "Serviced Apartment" },
-    { label: "Farmhouse" },
-    { label: "Other" },
-  ];
+  useEffect(() => {
+    const fetchPurpose = async () => {
+      // console.log(token)
+      try {
+        const res = await fetch('/api/post-property/get-property-listing', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setPropertyListing(data);
+        } else if (data?.data) {
+          setPropertyListing(data.data);
+        }
+      } catch (err) {
+        console.error('Error fetching properties:', err);
+      }
+    };
+    if (token) {
+      fetchPurpose();
+    }
+  }, [token]);
 
-  const commercialCategories = [
-    {
-      label: "Office Space",
-      subtext: ["What kind of office is it?"],
-      subOptions: ["Ready to Move", "Furnished", "Under Construction", "Bare Shell"],
-    },
-    { label: "Shop" },
-    { label: "Showroom" },
-    { label: "Commercial Land" },
-    { label: "Warehouse / Godown" },
-    { label: "Industrial Building" },
-    { label: "Co-working Space" },
-    { label: "Other" },
-  ];
+  useEffect(() => {
+    const fetchPropertyType = async () => {
+      // console.log(token)
+      try {
+        const res = await fetch(`/api/post-property/get-property-type/${selectedProperty}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setPropertyType(data);
+        } else if (data?.data) {
+          setPropertyType(data.data);
+        }
+        setPropertyStatus([])
+      } catch (err) {
+        console.error('Error fetching roles:', err);
+      }
+    };
+    if (token) {
+      fetchPropertyType();
+    }
+  }, [selectedProperty]);
 
-  // Determine categories based on selectedPropertyType
-  const categories =
-    selectedPropertyType === "Residential"
-      ? residentialCategories
-      : commercialCategories;
+  useEffect(() => {
+    const fetchPropertyType = async () => {
+      // console.log(token)
+      try {
+        const res = await fetch(`/api/post-property/get-property-status/${selectedPropertyType}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setPropertyStatus(data);
+        } else if (data?.data) {
+          setPropertyStatus(data.data);
+        }
+      } catch (err) {
+        console.error('Error fetching status:', err);
+      }
+    };
+    if (token) {
+      fetchPropertyType();
+    }
+  }, [selectedPropertyType]);
+
+
+
+
+
+  // Determine categories based on selectedProperty
+  // const categories =
+  //   selectedProperty === "Residential"
+  //     ? residentialCategories
+  //     : commercialCategories;
 
   // Debugging: Log state changes
   useEffect(() => {
     console.log("BasicDetails - Current State:");
     console.log("  Purpose:", selectedPurpose);
-    console.log("  Property Type:", selectedPropertyType);
-    console.log("  Category:", selectedCategory);
-    console.log("  Sub Option:", selectedSubOption);
-  }, [selectedPurpose, selectedPropertyType, selectedCategory, selectedSubOption]);
+    console.log("  Property Type:", selectedProperty);
+    console.log("  Category:", selectedPropertyType);
+    console.log("  Sub Option:", selectedPropertyStatus);
+  }, [selectedPurpose, selectedProperty, selectedPropertyType, selectedPropertyStatus]);
 
+
+  const [error, setError] = useState("");
 
   const handleContinue = () => {
-    // Save current state to context before navigating
+    if (!selectedPurpose || !selectedProperty || !selectedPropertyType || !selectedPropertyStatus) {
+      setError("Please fill all the required fields before continuing.");
+      return;
+    }
+    setError("");
+
     updateFormData("basicDetails", {
       purpose: selectedPurpose,
-      propertyType: selectedPropertyType,
-      category: selectedCategory,
-      expandedCategory: expandedCategory,
-      subOption: selectedSubOption,
+      property: selectedProperty,
+      property_type: selectedPropertyType,
+      // expandedCategory: expandedCategory,
+      property_status: selectedPropertyStatus,
     });
-    console.log("BasicDetails - Data saved to Context:", {
-      purpose: selectedPurpose,
-      propertyType: selectedPropertyType,
-      category: selectedCategory,
-      expandedCategory: expandedCategory,
-      subOption: selectedSubOption,
-    });
+
     router.push("/auth/post-property/location-details");
   };
+  console.log(propertyStatus)
 
   return (
     <div className={styles.content}>
-      <h3>Welcome back Manmeet,</h3>
+      <h3>Welcome back user,</h3>
       <h3>Fill out basic details</h3>
 
       {/* Purpose Selection */}
       <div className={styles.optionGroup}>
         <p className={styles.subPara}>I'm looking to</p>
         <div className={styles.optionButtons}>
-          {purposes.map((p) => (
+          {purposeList.map((p) => (
             <button
-              key={p}
-              className={`${styles.optionBtn} ${selectedPurpose === p ? styles.selected : ""}`}
-              onClick={() => setSelectedPurpose(p)}
+              key={p.id}
+              className={`${styles.optionBtn} ${selectedPurpose === p.id ? styles.selected : ""}`}
+              onClick={() => setSelectedPurpose(p.id)}
             >
-              {p}
+              {p.name}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Property Type Selection */}
+      {/* Property Type Selection */}<p className={`d-block ${styles.subPara}`}>What kind of property do you have?</p>
       <div className={styles.optionGroup}>
-        <p className={styles.subPara}>What kind of property do you have?</p>
-        <div className={styles.radioGroup}>
-          {["Residential", "Commercial"].map((type) => (
-            <label
-              key={type}
-              className={`${styles.radioLabel} ${selectedPropertyType === type ? styles.selected : ""}`}
-            >
-              <input
-                type="radio"
-                name="propertyType"
-                value={type}
-                checked={selectedPropertyType === type}
-                onChange={() => {
-                  setSelectedPropertyType(type);
-                  // Reset category and sub-options when property type changes
-                  setSelectedCategory("");
-                  setExpandedCategory("");
-                  setSelectedSubOption("");
-                }}
-                className={styles.radioInput}
-              />
-              {type}
-            </label>
-          ))}
-        </div>
-      </div>
 
-      {/* Category Buttons */}
+        <div className={styles.radioGroup}>
+          {propertyListing.map((type, index) => {
+            // If no selection yet, select the first one
+            if (index === 0 && !selectedProperty) {
+              setSelectedProperty(type.id);
+            }
+
+            return (
+              <label
+                key={type.id}
+                className={`${styles.radioLabel} ${selectedProperty === type.id ? styles.selected : ""}`}
+              >
+                <input
+                  type="radio"
+                  name="property"
+                  value={type.id}
+                  checked={selectedProperty === type.id}
+                  onChange={() => {
+                    setSelectedProperty(type.id);
+                    setSelectedPropertyType("");
+                    setSelectedPropertyStatus("");
+                  }}
+                  className={styles.radioInput}
+                />
+                {type.name}
+              </label>
+            );
+          })}
+        </div>
+
+      </div>
+      <p className={`d-block w-100 ${styles.subPara}`}>What kind of property-Type do you have?</p>
+      {/* type Buttons */}
       <div className={styles.optionButtons}>
-        {categories.map((cat) => (
+
+        {propertyType.map((cat) => (
           <button
-            key={cat.label}
-            className={`${styles.optionBtn} ${selectedCategory === cat.label ? styles.selected : ""}`}
+            key={cat.id}
+            className={`${styles.optionBtn} ${selectedPropertyType === cat.id ? styles.selected : ""}`}
             onClick={() => {
-              setSelectedCategory(cat.label);
-              if (cat.subOptions) {
-                setExpandedCategory(cat.label);
-              } else {
-                setExpandedCategory("");
-                setSelectedSubOption("");
-              }
+              setSelectedPropertyType(cat.id);
             }}
           >
-            {cat.label}
+            {cat.name}
           </button>
         ))}
       </div>
+      {propertyStatus?.length > 0 &&
+        <div>
+          <p className={styles.subPara}>What is Property status?</p>
+          {/* Sub-options shown separately below */}
+          <div className={styles.optionButtons}>
 
-      {/* Sub-options shown separately below */}
-      {expandedCategory &&
-        categories.find((c) => c.label === expandedCategory)?.subOptions && (
-          <div className={styles.optionGroup}>
-            <p className={styles.subPara}>
-              {categories.find((c) => c.label === expandedCategory)?.subtext?.[0] || "Select an option"}
-            </p>
-            <div className={styles.optionButtons}>
-              {categories
-                .find((c) => c.label === expandedCategory)
-                .subOptions.map((sub) => (
-                  <button
-                    key={sub}
-                    className={`${styles.optionBtn} ${selectedSubOption === sub ? styles.selected : ""}`}
-                    onClick={() => setSelectedSubOption(sub)}
-                  >
-                    {sub}
-                  </button>
-                ))}
-            </div>
+            {propertyStatus.map((cat) => (
+              <button
+                key={cat.id}
+                className={`${styles.optionBtn} ${selectedPropertyStatus === cat.id ? styles.selected : ""}`}
+                onClick={() => {
+                  setSelectedPropertyStatus(cat.id);
+                }}
+              >
+                {cat.name}
+              </button>
+            ))}
           </div>
-        )}
+
+        </div>}
+
+      {error && <p className="text-red-500 " style={{ color: 'red' }}>{error}</p>}
+
 
       {/* Continue Button */}
       <button className={` continueBtn ${styles.continueBtn}`} onClick={handleContinue}>

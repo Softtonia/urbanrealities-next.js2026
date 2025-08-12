@@ -15,6 +15,7 @@ export default function PostPropertyForm() {
   };
 
   return (
+    
     <div className={styles.postFormCard}>
       <img
         src="/Blob-Shape.png"

@@ -5,10 +5,53 @@ import Select from "react-select";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
+import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 export default function PropertyProfileStep() {
   const { formData, updateFormData } = useContext(PostPropertyContext);
+  const { token } = useSiteSettings();
+  const [profileFieldsMap, setProfileFieldsMap] = useState([])
   const router = useRouter();
+
+  const model_fields = Object.entries(formData.basicDetails).map(([key, value]) => ({
+    model: key,
+    condition: [value]
+  }));
+
+  useEffect(() => {
+    const fetchCustomFields = async () => {
+      try {
+        const response = await fetch("/api/post-property/property-profile/custom-field", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            post_type: 'property_list', model_fields
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "custom field fetch failed");
+        }
+        const res = result.data
+        setProfileFieldsMap(res)
+        updateFormData("custom_field",res)
+      } catch (err) {
+        console.log(err)
+        // setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchCustomFields();
+
+  }, [token])
+
+  // console.log(model_fields);
 
   // Initialize local state from context formData.propertyProfile
   const [localFields, setLocalFields] = useState(formData.propertyProfile || {});
@@ -35,11 +78,8 @@ export default function PropertyProfileStep() {
     });
   };
 
-  const handleContinue = () => {
-    console.log("Saved Property Profile Data:", localFields);
-    router.push("/auth/post-property/photodetails");
-  };
 
+  console.log("updated fields", localFields)
   const goBack = () => {
     if (typeof window !== "undefined") {
       if (window.history.length > 1) {
@@ -49,121 +89,36 @@ export default function PropertyProfileStep() {
       }
     }
   };
+  function buildRepeaterFields(localFields, profileFieldsMap) {
+    return profileFieldsMap
+      .filter(field => !["file", "media"].includes(field.field_type)) // skip file & media types
+      .map(field => {
+        const fieldValue = localFields[field.field_name_slug];
 
-  const profileFieldsMap = {
-    "Flat/Apartment": [
-      {
-        label: "Carpet Area (sq.ft.)",
-        name: "carpetArea",
-        type: "text",
-        options: areaUnitOptions(),
-      },
-      {
-        label: "Super Built-up Area (sq.ft.)",
-        name: "superBuiltupArea",
-        type: "text",
-        options: areaUnitOptions(),
-      },
-      {
-        label: "BHK",
-        name: "bhk",
-        type: "select",
-        options: ["1 RK", "1 BHK", "2 BHK", "3 BHK", "4 BHK", "5 BHK+"],
-      },
-      {
-        label: "Furnishing",
-        name: "furnishing",
-        type: "select",
-        options: ["Unfurnished", "Semi-Furnished", "Fully Furnished"],
-      },
-      {
-        label: "Floor No.",
-        name: "floorNo",
-        type: "select",
-        options: generateFloorOptions(),
-      },
-      { label: "Total Floors", name: "totalFloors", type: "text" },
-    ],
-    "Independent House / Villa": [
-      {
-        label: "BHK",
-        name: "bhk",
-        type: "select",
-        options: ["1 BHK", "2 BHK", "3 BHK", "4 BHK", "5 BHK+"],
-      },
-      { label: "Plot Area (sq.ft.)", name: "plotArea", type: "text", options: areaUnitOptions() },
-      {
-        label: "Furnishing",
-        name: "furnishing",
-        type: "select",
-        options: ["Unfurnished", "Semi-Furnished", "Fully Furnished"],
-      },
-      { label: "Floors in House", name: "floors", type: "text" },
-    ],
-    "Plot / Land": [
-      { label: "Plot Area (sq.ft.)", name: "plotArea", type: "text", options: areaUnitOptions() },
-      {
-        label: "Boundary Wall?",
-        name: "boundaryWall",
-        type: "radio",
-        options: ["Yes", "No"],
-      },
-      {
-        label: "Corner Plot?",
-        name: "cornerPlot",
-        type: "radio",
-        options: ["Yes", "No"],
-      },
-    ],
-    "Office Space": [
-      { label: "Carpet Area (sq.ft.)", name: "carpetArea", type: "text", options: areaUnitOptions() },
-      {
-        label: "Furnishing",
-        name: "furnishing",
-        type: "select",
-        options: ["Unfurnished", "Semi-Furnished", "Fully Furnished"],
-      },
-      {
-        label: "Pantry Available?",
-        name: "pantry",
-        type: "radio",
-        options: ["Yes", "No"],
-      },
-      {
-        label: "Washrooms",
-        name: "washroom",
-        type: "radio",
-        options: ["Attached", "Common"],
-      },
-    ],
-    Shop: [
-      { label: "Built-up Area (sq.ft.)", name: "builtUpArea", type: "text", options: areaUnitOptions() },
-      {
-        label: "Furnishing",
-        name: "furnishing",
-        type: "select",
-        options: ["Unfurnished", "Semi-Furnished", "Fully Furnished"],
-      },
-      {
-        label: "Corner Shop?",
-        name: "cornerShop",
-        type: "radio",
-        options: ["Yes", "No"],
-      },
-    ],
-    "Warehouse / Godown": [
-      { label: "Carpet Area (sq.ft.)", name: "carpetArea", type: "text", options: areaUnitOptions() },
-      { label: "Ceiling Height (ft.)", name: "ceilingHeight", type: "text" },
-      {
-        label: "Loading Dock?",
-        name: "loadingDock",
-        type: "radio",
-        options: ["Yes", "No"],
-      },
-    ],
+        return {
+          custom_field_id: field.id,
+          field_type: field.field_type,
+          field_value:
+            typeof fieldValue === "object" && fieldValue !== null
+              ? fieldValue.value || fieldValue.label // handle select objects
+              : fieldValue || ""
+        };
+      })
+      .filter(f => f.field_value !== ""); // remove empty values
+  }
+
+  // Example usage:
+  const repeaterFields = buildRepeaterFields(localFields, profileFieldsMap);
+
+
+  const handleContinue = () => {
+    updateFormData("repeater_fields", repeaterFields)
+    console.log("Saved Property Profile Data:", localFields);
+    router.push("/auth/post-property/photodetails");
   };
+  // const fieldsToRender = profileFieldsMap[selectedCategory] || [];
 
-  const fieldsToRender = profileFieldsMap[selectedCategory] || [];
+  console.log("data", formData.basicDetails)
 
   return (
     <div className={styles.selectedCategory}>
@@ -172,98 +127,134 @@ export default function PropertyProfileStep() {
         <p className="m-0">Back</p>
       </div>
       <h3>Tell us about your property</h3>
+      <div className="row">
 
-      {fieldsToRender.length === 0 ? (
-        <p>No fields available for this category. Please select a property type and category in Basic Details.</p>
-      ) : (
-        fieldsToRender.map((field) => (
-          <div className={styles.formGroup} key={field.name}>
-            <label>{field.label}</label>
+        {profileFieldsMap.length === 0 ? (
+          <p>No fields available for this category. Please select a property type and category in Basic Details.</p>
+        ) : (
+          profileFieldsMap
+            .filter(field => field.field_type !== "file" && field.field_type !== "media") // skip file & media
+            .map((field) => {
+              const fieldKey = field.field_name_slug;
+              const fieldValue = localFields[fieldKey] || "";
 
-            {field.type === "text" && field.options ? (
-              <div className={styles.areaInputWrapper}>
-                <input
-                  type="number"
-                  placeholder="Enter area"
-                  value={localFields[field.name]?.value || ""}
-                  onChange={(e) =>
-                    handleChange(field.name, {
-                      ...localFields[field.name],
-                      value: e.target.value,
-                      unit: localFields[field.name]?.unit || "sq.ft"
-                    })
-                  }
-                  className={styles.areaInput}
-                />
-                <Select
-                  className={styles.unitSelect}
-                  classNamePrefix="unit"
-                  value={field.options.find(
-                    (opt) => opt.value === (localFields[field.name]?.unit || "sq.ft")
-                  )}
-                  onChange={(selected) =>
-                    handleChange(field.name, {
-                      ...localFields[field.name],
-                      value: localFields[field.name]?.value || "",
-                      unit: selected.value,
-                    })
-                  }
-                  options={field.options}
-                  placeholder="sq.ft"
-                />
-              </div>
-            ) : field.type === "text" ? (
-              <input
-                type="text"
-                value={localFields[field.name] || ""}
-                onChange={(e) => handleChange(field.name, e.target.value)}
-                className={styles.input}
-              />
-            ) : null}
-
-            {field.type === "select" && (
-              <Select
-                className={styles.select}
-                classNamePrefix="react-select"
-                value={
-                  field.options.map(opt => ({ label: opt, value: opt })).find(
-                    (opt) => opt.value === localFields[field.name]?.value
-                  ) || null
-                }
-                onChange={(selected) => handleChange(field.name, { value: selected.value, label: selected.label })}
-                options={field.options.map((opt) => ({
-                  label: opt,
-                  value: opt,
-                }))}
-                placeholder="Select"
-              />
-            )}
-
-            {field.type === "radio" && (
-              <div className={styles.radioGroup}>
-                {field.options.map((option) => (
-                  <label key={option} className={styles.radioLabel}>
-                    <input
-                      type="radio"
-                      name={field.name}
-                      value={option}
-                      checked={localFields[field.name] === option}
-                      onChange={() => handleChange(field.name, option)}
-                    />
-                    {option}
+              return (
+                <div className={` col-lg-6 col-md-12 ${styles.formGroup}`} key={field.id}>
+                  <label
+                    style={{
+                      textTransform: "capitalize",
+                      display: "inline-block",
+                      width: "fit-content"
+                    }}
+                  >
+                    {field.field_label}{" "}
+                    <span style={{ color: "red" }}>{field.required ? "*" : ""}</span>
                   </label>
-                ))}
-              </div>
-            )}
-          </div>
-        ))
-      )}
 
-       <button className={` continueBtn ${styles.continueBtn}`} onClick={handleContinue}>
+                  {/* Area Input with Units */}
+                  {field.field_type === "units" && field.options.length > 0 ? (
+                    <div className={`${styles.areaInputWrapper} w-100`}>
+                      <input
+                        type="number"
+                        placeholder="Enter area"
+                        value={fieldValue.value || ""}
+                        onChange={(e) =>
+                          handleChange(fieldKey, {
+                            ...fieldValue,
+                            value: e.target.value,
+                            unit: fieldValue.unit || "sq.ft"
+                          })
+                        }
+                        className={styles.areaInput}
+                      />
+                      <Select
+                        className={styles.unitSelect}
+                        classNamePrefix="unit"
+                        value={field.options
+                          .map(opt => ({ label: opt.value, value: opt.value }))
+                          .find(opt => opt.value === (fieldValue.unit || "sq.ft"))
+                        }
+                        onChange={(selected) =>
+                          handleChange(fieldKey, {
+                            ...fieldValue,
+                            value: fieldValue.value || "",
+                            unit: selected.value
+                          })
+                        }
+                        options={field.options.map(opt => ({
+                          label: opt.value,
+                          value: opt.value
+                        }))}
+                        placeholder="sq.ft"
+                      />
+                    </div>
+                  ) : field.field_type === "text" ? (
+                    <input
+                      type="text"
+                      placeholder={field.field_placeholder}
+                      name={fieldKey}
+                      value={fieldValue}
+                      onChange={(e) => handleChange(fieldKey, e.target.value)}
+                      className={styles.input}
+                    />
+                  ) : null}
+
+                  {/* Select Field */}
+                  {field.field_type === "select" && (
+                    <Select
+                      placeholder={field.field_placeholder}
+                      name={fieldKey}
+                      className={styles.select}
+                      classNamePrefix="react-select"
+                      value={field.options
+                        .map(opt => ({ label: opt.name, value: opt.value }))
+                        .find(opt => opt.value === fieldValue?.value) || null
+                      }
+                      onChange={(selected) =>
+                        handleChange(fieldKey, {
+                          value: selected.value,
+                          label: selected.label
+                        })
+                      }
+                      options={field.options.map(opt => ({
+                        label: opt.name,
+                        value: opt.value
+                      }))}
+                    />
+                  )}
+
+                  {/* Radio Buttons */}
+                  {field.field_type === "radio" && (
+                    <div className={styles.radioGroup}>
+                      {field.options.map((option) => (
+                        <label key={option.value} className={styles.radioLabel}>
+                          <input
+                            type="radio"
+                            name={fieldKey}
+                            value={option.value}
+                            checked={fieldValue === option.value}
+                            onChange={() => handleChange(fieldKey, option.value)}
+                          />
+                          {option.name}
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })
+        )}
+      </div>
+
+      <button
+        className={`continueBtn ${styles.continueBtn}`}
+        onClick={handleContinue}
+      >
         Continue
       </button>
     </div>
   );
+
 }
 
 function areaUnitOptions() {

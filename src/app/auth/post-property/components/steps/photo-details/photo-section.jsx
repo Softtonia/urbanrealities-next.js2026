@@ -3,10 +3,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MdDelete } from "react-icons/md";
 import { FaSearchPlus } from "react-icons/fa";
-import { IoMdArrowDropdown } from "react-icons/io"; // ड्रॉपडाउन तीर के लिए
-import styles from "./photodetails.module.css"; // मुख्य CSS Modules
+import { IoMdArrowDropdown } from "react-icons/io";
+import styles from "./photodetails.module.css";
 
-// कस्टम ड्रॉपडाउन कंपोनेंट (PhotoSection के अंदर परिभाषित)
+
 const CustomDropdown = ({ value, options, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -18,7 +18,7 @@ const CustomDropdown = ({ value, options, onChange }) => {
     setIsOpen(false);
   };
 
-  // बाहर क्लिक करने पर ड्रॉपडाउन बंद करें
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -54,6 +54,8 @@ const CustomDropdown = ({ value, options, onChange }) => {
 };
 
 const PhotoSection = ({
+  title,
+  mediaField,
   photos,
   onPhotoUpload,
   onDeletePhoto,
@@ -76,10 +78,10 @@ const PhotoSection = ({
         A picture is worth a thousand words. 87% of buyers look at photos before
         buying.
       </p>
-      <p className={styles.desktopUploadPrompt}>Upload from desktop</p>
+      <p className={styles.desktopUploadPrompt}>{title}</p>
 
       {photos.length === 0 ? (
-        // शुरुआती फोटो अपलोड सेक्शन
+
         <div className={`${styles.uploadCard} ${styles.photoInitialUploadCard}`}>
           <div className={styles.uploadBody}>
             <label className={styles.uploadLabel}>
@@ -101,7 +103,7 @@ const PhotoSection = ({
                 Drag and drop your photos here
               </p>
               <p className={styles.uploadInfo}>
-                Upto 50 photos · Max size 10 MB · Formats: png, jpg, jpeg, gif,
+                Upto {mediaField.media_limit} photos · Max size 10 MB · Formats: png, jpg, jpeg, gif,
                 webp, heic, heif
               </p>
             </label>
@@ -114,7 +116,7 @@ const PhotoSection = ({
           )}
         </div>
       ) : (
-        // फोटो ग्रिड डिस्प्ले सेक्शन
+
         <>
           <div className={styles.photoGridContainer}>
             {photos.map((photo, i) => (
@@ -201,7 +203,7 @@ const PhotoSection = ({
       )}
 
       {photos.length > 0 && photos.length < 5 && (
-        <div className={`${styles.warningBox} ${styles.photoWarningBox} ${styles.mt-4}`}>
+        <div className={`${styles.warningBox} ${styles.photoWarningBox} ${styles.mt - 4}`}>
           <p className={styles.warningText}>
             Less photos added! Show your complete property by adding other area
             photos too,e.g: Kitchen, balcony, etc{" "}
@@ -215,7 +217,7 @@ const PhotoSection = ({
         </div>
       )}
 
-      {/* मोबाइल अपलोड हेल्प सेक्शन */}
+
       <div className={styles.mobileHelp}>
         <p className={styles.mobileHelpTitle}>
           Now you can also upload photos directly from your phone
