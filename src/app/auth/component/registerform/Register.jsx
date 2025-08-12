@@ -261,11 +261,11 @@ const Register = () => {
           className={`formInput ${styles.formInput}`}
           placeholder={data.emailPlaceholder}
           onChange={(e) => updateField("email", e.target.value)}
-        />
+        />{emailError && (
+          <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{emailError}</p>
+        )}
       </div>
-      {emailError && (
-        <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{emailError}</p>
-      )}
+
 
       {/* Phone */}
       <div className={styles.formGroup}>
@@ -285,11 +285,11 @@ const Register = () => {
             updateField("phone", value);
           }}
         />
-
+        {phoneError && (
+          <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{phoneError}</p>
+        )}
       </div>
-      {phoneError && (
-        <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{phoneError}</p>
-      )}
+
 
       {/* Roles */}
       <div className={styles.formGroup}>

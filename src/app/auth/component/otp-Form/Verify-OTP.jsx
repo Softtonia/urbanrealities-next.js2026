@@ -6,11 +6,11 @@ import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 const VerifyOTP = () => {
   const router = useRouter();
-  const {token} =useSiteSettings();
+  const { token } = useSiteSettings();
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  console.log("tokens",sessionStorage.getItem('token'))
+  console.log("tokens", sessionStorage.getItem('token'))
 
   const data = {
     heading: "Verification",
@@ -31,11 +31,11 @@ const VerifyOTP = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({email_otp:otp,token:token })
+        body: JSON.stringify({ email_otp: otp, token: token })
       });
 
       const result = await res.json();
-      console.log(result)
+      // console.log(result)
 
       if (res.ok) {
         // OTP is correct
@@ -67,10 +67,10 @@ const VerifyOTP = () => {
             onChange={(e) => setOtp(e.target.value)}
             className={`formInput ${styles.formInput}`}
             placeholder={data.otpPlaceholder}
-          />
+          />{error && <p className="formLabel" style={{ color: "red", marginBottom: "10px" }}>{error}</p>}
         </div>
 
-        {error && <p className="formLabel" style={{ color: "red", marginBottom: "10px" }}>{error}</p>}
+
 
         <button
           type="submit"

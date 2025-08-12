@@ -19,9 +19,10 @@ import { get } from "@/lib/api";
 export async function GET() {
   try {
     const response = await get(`/api/get-all-properties-listing-no-auth`);
-    return Response.json(response.data); // ✅ Success response
+ 
+    return Response.json(response.data); 
   } catch (error) {
-    console.error("API error:", error.message);
+
     return new Response(
       JSON.stringify({
         error: "Failed to fetch properties",
