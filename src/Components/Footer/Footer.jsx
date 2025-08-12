@@ -294,11 +294,11 @@ const Footer = () => {
           <hr className="border-secondary" />
           <div className="text-center text-md-end">
             {[
-              { label: "Privacy Policy", href: "/privacy-policy" },
-              { label: "Terms of Use", href: "/terms-of-use" },
-              { label: "Sales and Refunds", href: "/sales-refunds" },
-              { label: "Legal", href: "/legal" },
-              { label: "Testimonials", href: "/testimonials" },
+              { label: "Privacy Policy", href: "/pages/privacy-policy" },
+              { label: "Terms of Use", href: "/pages/terms-of-use" },
+              { label: "Sales and Refunds", href: "/pages/sales-refunds" },
+              { label: "Legal", href: "/pages/legal" },
+              { label: "Testimonials", href: "/pages/testimonials" },
             ].map(({ label, href }) => (
               <Link
                 href={href}

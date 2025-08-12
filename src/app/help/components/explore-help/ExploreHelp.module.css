@@ -1,0 +1,67 @@
+.helpSection {
+  padding: 40px 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+}
+.help-tittle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+.icon {
+  font-size: 1.6rem;
+  color: var(--Orange-Red);
+  margin-bottom: 8px;
+}
+
+.card h3 {
+  font-size: 1.4rem;
+  font-family: var(--font-medium);
+  margin-bottom: 10px;
+}
+
+.card li {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+.explor {
+  font-size: 0.9rem;
+  color: var(--Orange-Red);
+}
+.itemLink:hover {
+  text-decoration: underline;
+  color: var(--Orange-Red);
+}
+.itemLink {
+  text-decoration: none;
+  color: var(--Eerie-Black);
+}
+@media (max-width:992px){
+  .card h3 {
+  font-size: 1.1rem !important;
+}
+}
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+
+}
+@media (max-width: 576px) {
+  .grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

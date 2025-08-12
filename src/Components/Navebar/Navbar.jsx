@@ -18,7 +18,7 @@ import homeLogo from "../../../img/add_home.svg";
 import LocationDropdown from "../LocationDropdown/LocationDropdown";
 import { GoChevronDown } from "react-icons/go";
 import { IoArrowBackSharp } from "react-icons/io5";
-import { get } from '@/lib/api';
+import { get } from "@/lib/api";
 import { useSiteSettings } from "../mycontext/siteSettingContext";
 
 const cities = {
@@ -133,6 +133,7 @@ export default function Navbar() {
   const [showMegaMenu, setShowMegaMenu] = useState(false);
   const [showRentMenu, setShowRentMenu] = useState(false);
   const [showSellMenu, setShowSellMenu] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const { settings } = useSiteSettings();
   const [siteData, setSiteData] = useState(settings);
   const { token, logout } = useSiteSettings();
@@ -185,7 +186,6 @@ export default function Navbar() {
                 width={90}
                 height={30}
               />
-
             </Link>
             <div
               className="position-relative"
@@ -196,8 +196,9 @@ export default function Navbar() {
                 <FaMapMarkerAlt className="icon-nav-loc me-1" />
               </div>
               <div
-                className={`transition-opacity duration-300 ${showDropdown ? "opacity-100 visible" : "opacity-0 invisible"
-                  } position-absolute top-100 start-0`}
+                className={`transition-opacity duration-300 ${
+                  showDropdown ? "opacity-100 visible" : "opacity-0 invisible"
+                } position-absolute top-100 start-0`}
               >
                 <LocationDropdown />
               </div>
@@ -215,8 +216,9 @@ export default function Navbar() {
               </div>
 
               <div
-                className={`dropdown-menu mega-menu p-3 ${showMegaMenu ? "show" : ""
-                  }`}
+                className={`dropdown-menu mega-menu p-3 ${
+                  showMegaMenu ? "show" : ""
+                }`}
                 style={{ width: "50vw" }}
               >
                 <DropdownMegaMenu />
@@ -232,8 +234,9 @@ export default function Navbar() {
                 Rent <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${showRentMenu ? "show" : ""
-                  }`}
+                className={`dropdown-menu mega-menu p-3 ${
+                  showRentMenu ? "show" : ""
+                }`}
                 style={{ width: "50vw" }}
               >
                 <DropdownMegaMenu />
@@ -249,8 +252,9 @@ export default function Navbar() {
                 Sell <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${showSellMenu ? "show" : ""
-                  }`}
+                className={`dropdown-menu mega-menu p-3 ${
+                  showSellMenu ? "show" : ""
+                }`}
                 style={{ width: "60vw" }}
               >
                 <SellerDropdown />
@@ -279,9 +283,64 @@ export default function Navbar() {
               Post Property <span className="badge-property">Free</span>
             </Link>
             <div className="nav-items-name d-flex align-items-center gap-3 position-relative">
-              <a className="text-white text-decoration-none" href="#">
+              {/* <a className="text-white text-decoration-none" href="#">
                 Help
-              </a>
+              </a> */}
+              <div
+                className="dropdown"
+                onMouseEnter={() => setShowHelp(true)}
+                onMouseLeave={() => setShowHelp(false)}
+                style={{ position: "relative" }}
+              >
+                <button
+                  className="btn btn-link text-white text-decoration-none dropdown-toggle nav-items-name"
+                  type="button"
+                >
+                  Help
+                </button>
+                <ul
+                  className={`dropdown-menu  ${
+                  showHelp ? "show" : ""
+                }`}
+                >
+                  <li>
+                    <Link
+                      className="dropdown-item"
+                      href="/help"
+                      style={{
+                        backgroundColor: "transparent",
+                        color: "inherit",
+                      }}
+                    >
+                      Help Center
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="dropdown-item"
+                      href="/"
+                      style={{
+                        backgroundColor: "transparent",
+                        color: "inherit",
+                      }}
+                    >
+                      Sales Enquiry
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="dropdown-item"
+                      href="/"
+                      style={{
+                        backgroundColor: "transparent",
+                        color: "inherit",
+                      }}
+                    >
+                      Chat with Us
+                    </Link>
+                  </li>
+                </ul>
+              </div>
 
               {token ? (
                 <div
@@ -312,12 +371,26 @@ export default function Navbar() {
                       }}
                     >
                       <li>
-                        <Link className="dropdown-item" href="/auth/user/account" style={{ backgroundColor: "transparent", color: "inherit" }}>
+                        <Link
+                          className="dropdown-item"
+                          href="/auth/user/account"
+                          style={{
+                            backgroundColor: "transparent",
+                            color: "inherit",
+                          }}
+                        >
                           Dashboard
                         </Link>
                       </li>
                       <li>
-                        <Link className="dropdown-item" href="/auth/user/setting" style={{ backgroundColor: "transparent", color: "inherit" }}>
+                        <Link
+                          className="dropdown-item"
+                          href="/auth/user/setting"
+                          style={{
+                            backgroundColor: "transparent",
+                            color: "inherit",
+                          }}
+                        >
                           My Profile
                         </Link>
                       </li>
@@ -333,7 +406,10 @@ export default function Navbar() {
                   )}
                 </div>
               ) : (
-                <Link className="text-white text-decoration-none" href="/auth/login">
+                <Link
+                  className="text-white text-decoration-none"
+                  href="/auth/login"
+                >
                   Sign In
                 </Link>
               )}
@@ -387,12 +463,26 @@ export default function Navbar() {
                     }}
                   >
                     <li>
-                      <Link className="dropdown-item" href="/" style={{ backgroundColor: "transparent", color: "inherit" }}>
+                      <Link
+                        className="dropdown-item"
+                        href="/"
+                        style={{
+                          backgroundColor: "transparent",
+                          color: "inherit",
+                        }}
+                      >
                         Dashboard
                       </Link>
                     </li>
                     <li>
-                      <Link className="dropdown-item" href="/" style={{ backgroundColor: "transparent", color: "inherit" }}>
+                      <Link
+                        className="dropdown-item"
+                        href="/"
+                        style={{
+                          backgroundColor: "transparent",
+                          color: "inherit",
+                        }}
+                      >
                         My Profile
                       </Link>
                     </li>
@@ -408,9 +498,13 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <Link className="text-decoration-none text-dark" href="/auth/login">
+              <Link
+                className="text-decoration-none text-dark"
+                href="/auth/login"
+              >
                 Sign In
-              </Link>)}
+              </Link>
+            )}
           </div>
         </div>
 
@@ -435,11 +529,11 @@ export default function Navbar() {
             <div>
               <Image
                 src={
-                  siteData?.website_logo?.startsWith('http')
+                  siteData?.website_logo?.startsWith("http")
                     ? siteData.website_logo
-                    : siteData?.mobile_logo?.startsWith('http')
-                      ? siteData.mobile_logo
-                      : "/logo.png"
+                    : siteData?.mobile_logo?.startsWith("http")
+                    ? siteData.mobile_logo
+                    : "/logo.png"
                 }
                 alt="Urbanrealities"
                 width={100}

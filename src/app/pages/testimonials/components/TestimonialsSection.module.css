@@ -4,18 +4,7 @@
 text-align: center;
 }
 
-.section-header h1 {
-background-image: url('/project_details_hero.png');
-background-position: center;
-background-repeat: no-repeat;
-height: 133px;
-font-size: 32px;
-font-family: var(--font-regular);
-color: var(--White);
-align-items: center;
-display: flex;
-justify-content: center;
-}
+
 
 .section-header h2 {
 font-size: 32px;

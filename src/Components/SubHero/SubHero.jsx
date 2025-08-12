@@ -16,7 +16,7 @@ const SubHero = ({subHeroHeading,subHeroText}) => {
           </div>
       
           <h2 className="featured-title ">{subHeroHeading }</h2>
-      
+          
           <div className="lines one">
             <div className="line longon"></div>
             <div className="line shorton"></div>
