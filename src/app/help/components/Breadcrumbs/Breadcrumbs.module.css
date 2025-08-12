@@ -1,0 +1,9 @@
+.breadcrumb {
+  font-size: 14px;
+  color: #ff6600;
+  margin-bottom: 10px;
+}
+.breadcrumb a {
+  text-decoration: none;
+  color: #ff6600;
+}

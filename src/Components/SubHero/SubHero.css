@@ -75,7 +75,44 @@ margin-right: 0;
     .line {
       height: 3px;
     }
-    /* .long, .short, .thired, .longon, .shorton, .thiredon {
-      width: 120px;
-    } */
+
+  }
+  @media(max-width:768px) {
+    .featured-title {
+      font-size: 20px;
+    }
+    .featured-subtitle {
+      font-size: 14px;
+    }
+    .lines {
+      margin: 5px;
+    }
+    .line {
+      height: 3px;
+    }
+
+  }
+    @media(max-width:576px) {
+   
+  .long {
+    width: 150px;
+  }
+  
+  .short {
+    width: 130px;
+  }
+  .thired {
+    width: 100px;
+  }
+
+  .longon {
+    width: 150px;
+  }
+
+  .shorton {
+    width: 130px;
+  }
+  .thiredon {
+    width: 100px;
+  }
   }

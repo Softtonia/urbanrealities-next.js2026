@@ -2,6 +2,7 @@
 
 import TestimonialCard from './TestimonialCard';
 import styles from './TestimonialsSection.module.css'; // Import the CSS module
+import CompanyBg from '../../components/company-bg/company-bg';
 
 const testimonialsData = [
   // This data remains the same as in the previous example.
@@ -93,9 +94,10 @@ const TestimonialsSection = () => {
   return (
     <section className={styles['testimonials-section']}> {/* Use styles.className */}
       <div className={styles['section-header']}>
-        <h1 className=''>Our wall of love</h1>
+        <CompanyBg/>
         <h2>Customer Stories</h2>
       </div>
+
       <div className={styles['testimonials-content']}>
         <div className={styles['testimonials-grid']}>
           {testimonialsData.map((testimonial) => (

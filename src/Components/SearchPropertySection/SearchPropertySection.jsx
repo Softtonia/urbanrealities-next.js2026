@@ -14,15 +14,6 @@ const SearchPropertySection = () => {
 
           </div>
           <Searchbar/>
-         {/* <PropertySearch/> */}
-
-
-
-
-
-
-
-
 
         </div>
       </div>
