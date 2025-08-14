@@ -5,7 +5,7 @@ const SubHero = ({subHeroHeading,subHeroText}) => {
   
   return (
     <>
-  <div className="container">
+  <div className="container p-0 ">
     <div className="featured-wrapper text-center">
         <div className="d-flex align-items-center justify-content-center featured-header">
           <div className="lines">

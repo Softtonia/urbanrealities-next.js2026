@@ -1,19 +1,83 @@
+
 .sidebar {
-  padding-right: 15px;
+  width: 100%;
 }
-.sidebar ul {
+
+.sidebarTitle {
+  font-size: 1.4rem;
+  font-family: var(--font-medium);
+  margin-top: 10px;
+}
+
+.icon {
+  font-size: 1.6rem;
+  color: var(--Orange-Red);
+}
+.subtopicList{
   list-style: none;
-  padding: 0;
-  margin: 0;
 }
-.sidebar li {
+.topicItem {
   margin-bottom: 8px;
 }
-.sidebar li a {
+.subtopicLink,
+.topicLink {
   text-decoration: none;
-  color: #333;
+  color: var(--Eerie-Black);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
-.active a {
-  font-weight: bold;
-  color: #ff6600;
+.subtopicLink:hover,
+.topicLink:hover {
+  color: var(--Orange-Red); 
+}
+
+.subtopicLink:hover .arrowIcon:hover ,
+.topicLink:hover .arrowIcon:hover {
+  color: var(--Orange-Red);
+}
+
+.topicItem.active .topicLink {
+  /* color: var(--Orange-Red); */
+}
+.subtopicItem.active .subtopicLink .topicTitleText,
+.topicItem.active .topicLink .topicTitleText {
+  color: var(--Orange-Red);
+}
+.subtopicItem.active .arrowIcon,
+.topicItem.active .arrowIcon {
+  color: var(--Orange-Red);
+}
+.subtopicItem.active .icon,
+.topicItem.active .icon {
+  color: var(--Orange-Red); /* सक्रिय होने पर आइकन का रंग बदलें */
+}
+
+.topicTitleText {
+  font-size: 16px;
+  font-family: var(--font-regular);
+  margin: 0;
+  flex-grow: 1; 
+}
+
+.arrowIcon {
+  display: flex;
+  align-items: center;
+  color: #888; /* तीर का डिफ़ॉल्ट रंग */
+  transition: color 0.2s ease;
+}
+
+@media (max-width:576px){
+  .sidebarTitle {
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.icon {
+  font-size: 1.4rem;
+}
+.subtopicList{
+  list-style: none;
+}
+.topicTitleText {
+  font-size: 0.9rem;
+}
 }

@@ -17,7 +17,7 @@ const ExploreHelp = ({ headingText = "Explore Help Topics" }) => {
               <div className={styles.icon}>{topic.icon}</div>
               <h3>{topic.title}</h3>
             </div>
-            <ol>
+            <ol className="m-0">
               {/* यहाँ पर जाँच करें कि topic.topics मौजूद है और एक एरे है */}
               {topic.topics && topic.topics.map((item) => (
                 <li key={item.id}>

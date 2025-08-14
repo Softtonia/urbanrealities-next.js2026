@@ -95,24 +95,27 @@ margin-right: 0;
     @media(max-width:576px) {
    
   .long {
-    width: 150px;
+    width: 67px;
   }
   
   .short {
-    width: 130px;
+    width: 52px;
   }
   .thired {
-    width: 100px;
+    width: 36px;
   }
 
   .longon {
-    width: 150px;
+    width: 67px;
   }
 
   .shorton {
-    width: 130px;
+    width: 52px;
   }
   .thiredon {
-    width: 100px;
+    width: 36px;
   }
+      .featured-title {
+      font-size: 16px;
+    }
   }
