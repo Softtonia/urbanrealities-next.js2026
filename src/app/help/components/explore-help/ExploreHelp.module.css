@@ -31,7 +31,7 @@
 }
 
 .card li {
-  font-size: 0.9rem;
+  font-size: 1rem;
   margin-bottom: 5px;
   cursor: pointer;
 }
@@ -49,10 +49,10 @@
 }
 @media (max-width:992px){
   .card h3 {
-  font-size: 1.1rem !important;
+  font-size: 1.2rem !important;
 }
 }
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
@@ -63,5 +63,16 @@
 @media (max-width: 576px) {
   .grid {
     grid-template-columns: repeat(1, 1fr);
+        gap: 10px;
+
   }
+    .card h3 {
+  font-size: 1rem !important;
+}
+.card li {
+  font-size: 0.9rem;
+}
+.helpSection {
+  padding: 20px 20px;
+}
 }

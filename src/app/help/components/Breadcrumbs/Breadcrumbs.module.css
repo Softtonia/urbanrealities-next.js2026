@@ -1,9 +1,23 @@
-.breadcrumb {
-  font-size: 14px;
-  color: #ff6600;
-  margin-bottom: 10px;
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  /* margin-bottom: 20px; */
 }
-.breadcrumb a {
-  text-decoration: none;
-  color: #ff6600;
+
+.breadcrumbItem {
+  display: flex;
+  align-items: center;
+}
+
+.link {
+  font-size: 0.9rem;
+  color: var(--Orange-Red);
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.separator {
+  margin: 0 8px;
+  color: var(--Orange-Red);
 }

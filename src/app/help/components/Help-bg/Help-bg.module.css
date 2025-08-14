@@ -30,3 +30,12 @@
     align-items: center;
     justify-content: center;
 }
+@media (max-width:576px){
+.hero {
+height: 200px;
+}
+.title {
+  text-align: center;
+font-size: 21px;
+}
+}

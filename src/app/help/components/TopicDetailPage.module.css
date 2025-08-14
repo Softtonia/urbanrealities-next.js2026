@@ -1,5 +1,40 @@
 .contentLayout{
-    /* display: flex; */
-    /* gap: 20px; */
+    gap: 20px 0;
+}
 
+.questionList,
+.subtopicList{
+    list-style: none;
+display: flex;
+flex-direction: column;
+justify-content: center;
+margin-top: 20px;
+}
+
+.questionLink,
+.subtopicLink{
+    text-decoration: none;
+    color: var(--Eerie-Black);
+    max-width: max-content;
+}
+@media (max-width:576px){
+.questionpara{
+font-size: 0.9rem;
+margin: 0;
+} 
+.icon{
+    margin-top: 10px;
+} 
+.subtopicLink{
+font-size: 0.9rem;
+}
+.questionList{
+padding: 0;    
+}
+.questionTitle{
+    font-size: 1rem;
+}
+.questionContent p{
+    font-size: 0.9rem;
+}
 }
