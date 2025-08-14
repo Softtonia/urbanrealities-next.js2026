@@ -6,8 +6,9 @@ import { PostPropertyContext } from "@/app/auth/post-property/context/PostProper
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 export default function StepContent() {
+  const [loading,setLoading] =useState(false);
   const { token } = useSiteSettings();
-  const { formData, updateFormData } = useContext(PostPropertyContext);
+  const { formData, updateFormData, setFormData } = useContext(PostPropertyContext);
 
   const [purposeList, setPurposeList] = useState([])
   const [propertyListing, setPropertyListing] = useState([])
@@ -20,9 +21,19 @@ export default function StepContent() {
   const [selectedProperty, setSelectedProperty] = useState(formData.basicDetails?.property || "");
   const [selectedPropertyType, setSelectedPropertyType] = useState(formData.basicDetails?.property_type || "");
   const [selectedPropertyStatus, setSelectedPropertyStatus] = useState(formData.basicDetails?.property_status || "");
+  
   console.log("token", token)
+
+
+  useEffect(() => {
+    // Clear local storage data when this page is mounted
+    localStorage.removeItem("postPropertyData");
+    setFormData({});
+  }, []);
+
   useEffect(() => {
     const fetchPurpose = async () => {
+      setLoading(true)
       // console.log(token)
       try {
         const res = await fetch('/api/post-property/get-purpose', {
@@ -32,12 +43,14 @@ export default function StepContent() {
           },
         });
         const data = await res.json();
+        setLoading(false)
         if (Array.isArray(data)) {
           setPurposeList(data);
         } else if (data?.data) {
           setPurposeList(data.data);
         }
       } catch (err) {
+        setLoading(false)
         console.error('Error fetching roles:', err);
       }
     };
@@ -173,16 +186,29 @@ export default function StepContent() {
       <div className={styles.optionGroup}>
         <p className={styles.subPara}>I'm looking to</p>
         <div className={styles.optionButtons}>
-          {purposeList.map((p) => (
+        {loading
+          ? (
+            // Skeleton loading state
+            Array.from({ length: 2 }).map((_, i) => (
+              <button
+                key={i}
+                className={`${styles.optionBtn} placeholder col-1`}
+                disabled
+                style={{ height: "38px" }} // match your button height
+              ></button>
+            ))
+          )
+          : purposeList.map((p) => (
             <button
               key={p.id}
-              className={`${styles.optionBtn} ${selectedPurpose === p.id ? styles.selected : ""}`}
+              className={`${styles.optionBtn} ${selectedPurpose === p.id ? styles.selected : ""
+                }`}
               onClick={() => setSelectedPurpose(p.id)}
             >
               {p.name}
             </button>
           ))}
-        </div>
+          </div>
       </div>
 
       {/* Property Type Selection */}<p className={`d-block ${styles.subPara}`}>What kind of property do you have?</p>
@@ -257,7 +283,6 @@ export default function StepContent() {
         </div>}
 
       {error && <p className="text-red-500 " style={{ color: 'red' }}>{error}</p>}
-
 
       {/* Continue Button */}
       <button className={` continueBtn ${styles.continueBtn}`} onClick={handleContinue}>

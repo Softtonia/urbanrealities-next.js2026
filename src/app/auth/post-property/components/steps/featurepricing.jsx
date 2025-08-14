@@ -10,12 +10,20 @@ import { IoArrowBackSharp } from "react-icons/io5";
 const PricingAndOthers = () => {
   const router = useRouter();
   const { formData, updateFormData } = useContext(PostPropertyContext);
+  
 
-  const [pricingData, setPricingData] = useState(formData.pricingDetails || {});
+  const [pricingData, setPricingData] = useState(formData.custom_field || {});
 
   const selectedPurpose = formData.basicDetails?.purpose || "";
   const selectedCategory = formData.basicDetails?.category || "";
 
+  const priceFields = (Array.isArray(formData.custom_field) ? formData.custom_field : []).filter(field => {
+    const label = field.field_label?.toLowerCase() || "";
+    const slug = field.field_name_slug?.toLowerCase() || "";
+
+    return label.includes("price") || slug.includes("price");
+  });
+console.log("fields",priceFields)
   const [rentInWords, setRentInWords] = useState("");
 
   const toWords = new ToWords({
@@ -356,7 +364,7 @@ const PricingAndOthers = () => {
       )}
 
       {/* Render remaining fields dynamically */}
-      {fieldsToRender.filter(f => !primaryPricingFields.includes(f)).map((field) => {
+      {priceFields.filter(f => !primaryPricingFields.includes(f)).map((field) => {
         let shouldShow = true;
         if (field.showIf) {
           try {
@@ -370,7 +378,7 @@ const PricingAndOthers = () => {
 
         if (!shouldShow) return null;
 
-        if (field.type === "checkbox") {
+        if (field.field_type === "checkbox") {
           return (
             <div className={styles.checkboxGroup} key={field.name}>
               <label className={styles.checkboxLabel}>
@@ -384,7 +392,7 @@ const PricingAndOthers = () => {
               </label>
             </div>
           );
-        } else if (field.type === "security-deposit") {
+        } else if (field.field_type === "security-deposit") {
           return (
             <React.Fragment key={field.name}>
               <p className={styles.securityDepositTitle}>
@@ -407,7 +415,7 @@ const PricingAndOthers = () => {
               </div>
             </React.Fragment>
           );
-        } else if (field.type === "textarea") {
+        } else if (field.field_type === "textarea") {
           return (
             <div className={styles.formGroup} key={field.name}>
               <p className={styles.formQuestion}>{field.label}</p>
@@ -427,7 +435,25 @@ const PricingAndOthers = () => {
               </p>
             </div>
           );
-        } else if (field.type === "number" && (field.name !== "expectedRent" && field.name !== "totalPrice" && field.name !== "pricePerSqFt")) {
+        }else if(field.field_type === "text"){
+          return (
+            <div className={styles.formGroup} key={field.name}>
+                <label htmlFor={field.name} className={styles.formLabel}>
+                    {field.field_label}
+                </label>
+                <input
+                    type="text"
+                    id={field.name}
+                    className={styles.formInput}
+                    value={pricingData[field.name] || ""}
+                    onChange={(e) => handleChange(field.name, e.target.value)}
+                    placeholder={field.field_placeholder ||`Enter ${field.field_label}`}
+                />
+            </div>
+        );
+        
+
+        }else if (field.field_type === "number" && (field.name !== "expectedRent" && field.name !== "totalPrice" && field.name !== "pricePerSqFt")) {
             // Render other number fields not part of the primary pricing grid
             return (
                 <div className={styles.formGroup} key={field.name}>

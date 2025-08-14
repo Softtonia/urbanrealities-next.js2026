@@ -22,7 +22,7 @@ export function PostPropertyProvider({ children }) {
               state: null,
               city: null,
             },
-            propertyProfile: {},
+            // propertyProfile: {},
             repeater_fields:{},
             custom_field:{},
             photos: [],
@@ -46,7 +46,9 @@ export function PostPropertyProvider({ children }) {
     }
     return {};
   });
-
+  console.log(formData.repeater_fields)
+  
+// 
   // Save to localStorage whenever formData changes
   useEffect(() => {
     localStorage.setItem("postPropertyData", JSON.stringify(formData));
@@ -60,7 +62,7 @@ export function PostPropertyProvider({ children }) {
   };
 
   return (
-    <PostPropertyContext.Provider value={{ formData, updateFormData }}>
+    <PostPropertyContext.Provider value={{ formData, updateFormData, setFormData }}>
       {children}
     </PostPropertyContext.Provider>
   );

@@ -11,6 +11,7 @@ export default function PropertyProfileStep() {
   const { formData, updateFormData } = useContext(PostPropertyContext);
   const { token } = useSiteSettings();
   const [profileFieldsMap, setProfileFieldsMap] = useState([])
+  const [errors, setErrors] = useState({});
   const router = useRouter();
 
   const model_fields = Object.entries(formData.basicDetails).map(([key, value]) => ({
@@ -39,12 +40,12 @@ export default function PropertyProfileStep() {
         }
         const res = result.data
         setProfileFieldsMap(res)
-        updateFormData("custom_field",res)
+        updateFormData("custom_field", res)
       } catch (err) {
         console.log(err)
         // setError(err.message);
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     }
     fetchCustomFields();
@@ -94,7 +95,6 @@ export default function PropertyProfileStep() {
       .filter(field => !["file", "media"].includes(field.field_type)) // skip file & media types
       .map(field => {
         const fieldValue = localFields[field.field_name_slug];
-
         return {
           custom_field_id: field.id,
           field_type: field.field_type,
@@ -112,10 +112,26 @@ export default function PropertyProfileStep() {
 
 
   const handleContinue = () => {
-    updateFormData("repeater_fields", repeaterFields)
+    // Validation
+    const newErrors = {};
+    profileFieldsMap.forEach((field) => {
+      const value = localFields[field.field_name_slug];
+      if (field.required === "yes" && (!value || value === "")) {
+        newErrors[field.field_name_slug] = `${field.field_label} is required`;
+      }
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return; // Stop here if validation fails
+    }
+
+    const repeaterFields = buildRepeaterFields(localFields, profileFieldsMap);
+    updateFormData("repeater_fields", repeaterFields);
     console.log("Saved Property Profile Data:", localFields);
     router.push("/auth/post-property/photodetails");
   };
+
   // const fieldsToRender = profileFieldsMap[selectedCategory] || [];
 
   console.log("data", formData.basicDetails)
@@ -133,17 +149,22 @@ export default function PropertyProfileStep() {
           <p>No fields available for this category. Please select a property type and category in Basic Details.</p>
         ) : (
           profileFieldsMap
-            .filter(field => field.field_type !== "file" && field.field_type !== "media") // skip file & media
+            .filter(field =>
+              field.field_type !== "file" &&
+              field.field_type !== "media" &&
+              !/price/i.test(field.field_label) &&      // hide if label contains "price"
+              !/price/i.test(field.field_name_slug)     // hide if slug contains "price"
+            )
             .map((field) => {
               const fieldKey = field.field_name_slug;
               const fieldValue = localFields[fieldKey] || "";
 
               return (
-                <div className={` col-lg-6 col-md-12 ${styles.formGroup}`} key={field.id}>
-                  <label
+                <div className={` col-lg-12 col-md-12 ${field.field_type === "select" ? styles.formRadio : styles.formGroup}`} key={field.id}>
+                  <label className={`${field.field_type === "select" ? 'd-flex' : ''}`}
                     style={{
                       textTransform: "capitalize",
-                      display: "inline-block",
+                      // display: "inline-block",
                       width: "fit-content"
                     }}
                   >
@@ -200,11 +221,12 @@ export default function PropertyProfileStep() {
                   ) : null}
 
                   {/* Select Field */}
-                  {field.field_type === "select" && (
+                  {/* {field.field_type === "select" && (
                     <Select
                       placeholder={field.field_placeholder}
                       name={fieldKey}
                       className={styles.select}
+
                       classNamePrefix="react-select"
                       value={field.options
                         .map(opt => ({ label: opt.name, value: opt.value }))
@@ -221,24 +243,26 @@ export default function PropertyProfileStep() {
                         value: opt.value
                       }))}
                     />
-                  )}
+                  )} */}
 
                   {/* Radio Buttons */}
-                  {field.field_type === "radio" && (
-                    <div className={styles.radioGroup}>
+                  {field.field_type === "select" && (
+                    <div className={` ${styles.optionButtons}`}>
                       {field.options.map((option) => (
-                        <label key={option.value} className={styles.radioLabel}>
-                          <input
-                            type="radio"
-                            name={fieldKey}
-                            value={option.value}
-                            checked={fieldValue === option.value}
-                            onChange={() => handleChange(fieldKey, option.value)}
-                          />
+                        <button
+                          key={option.value}
+                          type="button"
+                          className={`${styles.optionBtn} ${fieldValue === option.value ? styles.selected : ""}`}
+                          onClick={() => handleChange(fieldKey, option.value)}
+                        >
                           {option.name}
-                        </label>
+                        </button>
                       ))}
                     </div>
+
+                  )}
+                  {errors[fieldKey] && (
+                    <p className={styles.error}>{errors[fieldKey]}</p>
                   )}
                 </div>
               );

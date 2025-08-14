@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
     "X-Client-ID": process.env.X_CLIENT_ID,
     "X-Client-Secret": process.env.X_CLIENT_SECRET,
     "Content-Type": "application/json",
-    "Origin": process.env.NEXT_PUBLIC_API_URL, // optional
+    "Origin": process.env.NEXT_PUBLIC_API_URL, 
   },
   withCredentials: true, // optional if cookies needed
 });

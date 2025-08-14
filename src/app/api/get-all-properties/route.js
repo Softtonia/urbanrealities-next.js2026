@@ -22,6 +22,7 @@ export async function GET() {
  
     return Response.json(response.data); 
   } catch (error) {
+    console.log(error.response.data)
 
     return new Response(
       JSON.stringify({

@@ -89,7 +89,7 @@ const PhotoSection = ({
                 type="file"
                 accept="image/*"
                 multiple
-                onChange={onPhotoUpload}
+                onChange={(e) => onPhotoUpload(e, mediaField.id)}
                 className={styles.inputFile}
                 ref={photoInputRef}
               />

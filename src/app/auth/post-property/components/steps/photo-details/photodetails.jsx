@@ -13,7 +13,7 @@ import { PostPropertyContext } from "@/app/auth/post-property/context/PostProper
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 const PhotoDetails = () => {
-  const { formData, updateFormData } = useContext(PostPropertyContext);
+  const { formData, updateFormData, setFormData } = useContext(PostPropertyContext);
   const { token } = useSiteSettings();
 
   const router = useRouter();
@@ -77,7 +77,9 @@ const PhotoDetails = () => {
     });
   };
 
-  const handlePhotoUpload = async (e) => {
+  const handlePhotoUpload = async (e, field_id) => {
+    console.log("Uploading for field:", field_id);
+
     const selectedFiles = Array.from(e.target.files);
 
     // 1. Get allowed formats from mediaFields (flatten into array)
@@ -94,7 +96,7 @@ const PhotoDetails = () => {
       allowedMimeTypes.includes(file.type.toLowerCase())
     );
 
-    // 4. Size validation (in MB, based on each field's `media_size`)
+    // 4. Size validation
     const maxSizeMB = Math.max(...mediaField.map(f => parseFloat(f.media_size || "5")));
     const sizeValidatedImages = validImages.filter(file =>
       file.size <= maxSizeMB * 1024 * 1024
@@ -105,35 +107,59 @@ const PhotoDetails = () => {
       return;
     }
 
-    // 5. Limit validation (max total images from all fields)
-    const maxLimit = Math.max(...mediaField.map(f => parseInt(f.media_limit || "50")));
-    if (photos.length + sizeValidatedImages.length > maxLimit) {
+    // 5. Limit validation
+    const maxLimit = Math.max(...mediaField.map(f => parseInt(f.media_limit)));
+    const existingImagesCount = photos.length; // total across all? or per field?
+    if (existingImagesCount + sizeValidatedImages.length > maxLimit) {
       alert(`You can only upload up to ${maxLimit} images.`);
       return;
     }
 
     setIsProcessingImages(true);
-
     const optimizedFiles = await Promise.all(sizeValidatedImages.map(file => optimizeImage(file)));
-
     setIsProcessingImages(false);
 
-    const newPhotos = optimizedFiles.map((file) => ({
+    const newPhotos = optimizedFiles.map(file => ({
       file,
       url: URL.createObjectURL(file),
       isCover: false,
       category: "Interior",
     }));
 
-    setPhotos((prevPhotos) => {
+    // Update local state (for preview in UI)
+    setPhotos(prevPhotos => {
       const updatedPhotos = [...prevPhotos, ...newPhotos].slice(0, maxLimit);
-      if (updatedPhotos.length > 0 && !updatedPhotos.some((p) => p.isCover)) {
+      if (updatedPhotos.length > 0 && !updatedPhotos.some(p => p.isCover)) {
         updatedPhotos[0].isCover = true;
       }
-      updateFormData("photos", updatedPhotos);
       return updatedPhotos;
     });
+
+    // ✅ Update formData.repeater_field with field_id
+    setFormData(prevFormData => {
+      const repeater = [...(prevFormData.repeater_fields || [])];
+      const existingFieldIndex = repeater.findIndex(item => item.custom_field_id === field_id);
+
+      if (existingFieldIndex !== -1) {
+        repeater[existingFieldIndex] = {
+          ...repeater[existingFieldIndex],
+          field_value: [...(repeater[existingFieldIndex].field_value || []), ...newPhotos]
+        };
+      } else {
+        repeater.push({
+          custom_field_id: field_id,
+          field_type: "media",
+          field_value: newPhotos
+        });
+      }
+
+      return { ...prevFormData, repeater_fields: repeater };
+    });
+
   };
+
+  console.log("dmeo", formData.repeater_fields)
+
 
 
   const handleVideoUpload = (e) => {
@@ -155,16 +181,47 @@ const PhotoDetails = () => {
     }
   };
 
-  const handleDeletePhoto = (indexToDelete) => {
-    setPhotos((prevPhotos) => {
+  const handleDeletePhoto = (indexToDelete, field_id) => {
+    setPhotos(prevPhotos => {
+      const photoToDelete = prevPhotos[indexToDelete]; // the actual image object
       const updatedPhotos = prevPhotos.filter((_, i) => i !== indexToDelete);
-      if (prevPhotos[indexToDelete].isCover && updatedPhotos.length > 0) {
+  
+      // Reassign cover photo if needed
+      if (photoToDelete.isCover && updatedPhotos.length > 0) {
         updatedPhotos[0].isCover = true;
       }
+  
+      // Update repeater_fields in formData
+      setFormData(prevFormData => {
+        const repeater = [...(prevFormData.repeater_fields || [])];
+        const fieldIndex = repeater.findIndex(item => item.custom_field_id === field_id);
+  
+        if (fieldIndex !== -1) {
+          const updatedFieldValue = repeater[fieldIndex].field_value.filter(
+            img => img.url !== photoToDelete.url // match by unique property
+          );
+  
+          if (updatedFieldValue.length > 0) {
+            repeater[fieldIndex] = {
+              ...repeater[fieldIndex],
+              field_value: updatedFieldValue
+            };
+          } else {
+            repeater.splice(fieldIndex, 1); // remove entire entry if empty
+          }
+        }
+  
+        return { ...prevFormData, repeater_fields: repeater };
+      });
+  
+      // Update root photos in formData
       updateFormData("photos", updatedPhotos);
+  
       return updatedPhotos;
     });
   };
+  
+
 
   const handleSetCoverPhoto = (indexToSetCover) => {
     setPhotos((prevPhotos) => {
@@ -212,6 +269,7 @@ const PhotoDetails = () => {
       }
     }
   };
+  console.log("added photos", photos)
 
   return (
     <div className={styles.wrapper}>
@@ -230,9 +288,9 @@ const PhotoDetails = () => {
           title={field.field_label} // Show title from object
           mediaField={field}
           photos={photos}
-          onPhotoUpload={handlePhotoUpload}
-          onDeletePhoto={handleDeletePhoto}
-          onSetCoverPhoto={handleSetCoverPhoto}
+          onPhotoUpload={(e) => handlePhotoUpload(e, field.id)}
+          onDeletePhoto={(photoIndex) => handleDeletePhoto(photoIndex, field.id)}
+          onSetCoverPhoto={(photoIndex) => handleSetCoverPhoto(photoIndex, field.id)}
           onCategoryChange={handleCategoryChange}
           onZoomClick={handleZoomClick}
           onAddMorePhotosClick={handleAddMorePhotosClick}

@@ -39,11 +39,15 @@ const Location = () => {
   const [cities, setCities] = useState([])
   const [states, setStates] = useState([])
   const [errors, setErrors] = useState({});
+  const [isFetchingCountry,setIsFetchingCountry] = useState(false)
+  const [isFetchingState,setIsFetchingState] = useState(false)
+  const [isFetchingCity,setIsFetchingCity] = useState(false)
 
   console.log(selectedCountry)
   // fetch country  /api/countries
   useEffect(() => {
     const fetchPurpose = async () => {
+      setIsFetchingCountry(true)
       // console.log(token)
       try {
         const res = await fetch('/api/post-property/location/country', {
@@ -53,12 +57,14 @@ const Location = () => {
           },
         });
         const data = await res.json();
+        setIsFetchingCountry(false)
         if (Array.isArray(data)) {
           setCountries(data);
         } else if (data?.data) {
           setCountries(data.data);
         }
       } catch (err) {
+        setIsFetchingCountry(false)
         console.error('Error fetching properties:', err);
       }
     };
@@ -68,6 +74,7 @@ const Location = () => {
   }, [token]);
   useEffect(() => {
     const fetchPurpose = async () => {
+      setIsFetchingState(true)
       // console.log(token)
       try {
         const res = await fetch(`/api/post-property/location/state/${selectedCountry}`, {
@@ -77,12 +84,14 @@ const Location = () => {
           },
         });
         const data = await res.json();
+        setIsFetchingState(false)
         if (Array.isArray(data)) {
           setStates(data);
         } else if (data?.data) {
           setStates(data.data);
         }
       } catch (err) {
+        setIsFetchingState(false)
         console.error('Error fetching properties:', err);
       }
     };
@@ -92,6 +101,7 @@ const Location = () => {
   }, [selectedCountry]);
   useEffect(() => {
     const fetchPurpose = async () => {
+      setIsFetchingCity(true)
       // console.log(token)
       try {
         const res = await fetch(`/api/post-property/location/city/${selectedState}`, {
@@ -101,12 +111,14 @@ const Location = () => {
           },
         });
         const data = await res.json();
+        setIsFetchingCity(false)
         if (Array.isArray(data)) {
           setCities(data);
         } else if (data?.data) {
           setCities(data.data);
         }
       } catch (err) {
+        setIsFetchingCity(false)
         console.error('Error fetching properties:', err);
       }
     };
@@ -243,6 +255,10 @@ const Location = () => {
           placeholder="Select Country"
           styles={customStyles}
           className="w-20"
+          instanceId="country-select"
+          noOptionsMessage={() =>
+            isFetchingCountry ? "Loading countries..." : "No countries found"
+          }
         />
 
         {errors.country && <p className={styles.error}>{errors.country}</p>}
@@ -255,6 +271,7 @@ const Location = () => {
             value: state.id,
             label: state.name,
           }))}
+          instanceId="state-select"
           value={
             states
               .map((state) => ({
@@ -272,6 +289,9 @@ const Location = () => {
           placeholder="Select state"
           styles={customStyles}
           className="w-20"
+          noOptionsMessage={() =>
+            isFetchingState ? "Loading states..." : "No states found"
+          }
         />
         {errors.state && <p className={styles.error}>{errors.state}</p>}
       </div>
@@ -283,6 +303,7 @@ const Location = () => {
             value: city.id,
             label: city.name,
           }))}
+          instanceId="city-select"
           value={
             cities
               .map((city) => ({
@@ -299,6 +320,9 @@ const Location = () => {
           placeholder="Select City"
           styles={customStyles}
           className="w-20"
+          noOptionsMessage={() =>
+            isFetchingCity ? "Loading cities..." : "No city found"
+          }
         />
         {errors.city && <p className={styles.error}>{errors.city}</p>}
       </div>
