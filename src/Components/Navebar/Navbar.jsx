@@ -260,13 +260,18 @@ export default function Navbar() {
                 <SellerDropdown />
               </div>
             </li>
-            {["Find Agent", "Projects", "Property Services", "Home Loans"].map(
-              (label, i) => (
-                <li key={i} className="nav-item">
-                  <div className="nav-items-name">{label}</div>
-                </li>
-              )
-            )}
+            {[
+              { label: "Find Agent", href: "/find-agent" },
+              { label: "Projects", href: "/projects" },
+              { label: "Property Services", href: "/property-services" },
+              { label: "Home Loans", href: "/home-loans" },
+            ].map((item, i) => (
+              <li key={i} className="nav-item">
+                <Link href={item.href} className="nav-items-name">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
           </ul>
 
           <div className="d-flex align-items-center gap-3">
@@ -298,11 +303,7 @@ export default function Navbar() {
                 >
                   Help
                 </button>
-                <ul
-                  className={`dropdown-menu  ${
-                  showHelp ? "show" : ""
-                }`}
-                >
+                <ul className={`dropdown-menu  ${showHelp ? "show" : ""}`}>
                   <li>
                     <Link
                       className="dropdown-item"

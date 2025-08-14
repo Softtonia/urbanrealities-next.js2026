@@ -195,7 +195,10 @@ export default function StepContent() {
                 className={`${styles.optionBtn} placeholder col-1`}
                 disabled
                 style={{ height: "38px" }} // match your button height
-              ></button>
+                aria-label="Loading"
+              >
+                Loading...
+              </button>
             ))
           )
           : purposeList.map((p) => (
