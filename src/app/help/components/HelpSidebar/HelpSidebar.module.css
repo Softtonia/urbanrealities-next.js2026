@@ -36,7 +36,7 @@
 }
 
 .topicItem.active .topicLink {
-  /* color: var(--Orange-Red); */
+  color: var(--Orange-Red);
 }
 .subtopicItem.active .subtopicLink .topicTitleText,
 .topicItem.active .topicLink .topicTitleText {
@@ -48,7 +48,7 @@
 }
 .subtopicItem.active .icon,
 .topicItem.active .icon {
-  color: var(--Orange-Red); /* सक्रिय होने पर आइकन का रंग बदलें */
+  color: var(--Orange-Red); 
 }
 
 .topicTitleText {
