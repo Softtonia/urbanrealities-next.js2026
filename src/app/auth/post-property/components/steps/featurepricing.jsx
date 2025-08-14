@@ -9,7 +9,7 @@ import { IoArrowBackSharp } from "react-icons/io5";
 
 const PricingAndOthers = () => {
   const router = useRouter();
-  const { formData, updateFormData } = useContext(PostPropertyContext);
+  const { formData, updateFormData, setFormData } = useContext(PostPropertyContext);
   
 
   const [pricingData, setPricingData] = useState(formData.custom_field || {});
@@ -100,8 +100,9 @@ console.log("fields",priceFields)
     console.log("PricingAndOthers - selectedCategory from Context:", selectedCategory);
   }, [formData, selectedPurpose, selectedCategory]);
 
-  const handleChange = (fieldName, value) => {
-    setPricingData((prev) => {
+  const handleChange = (fieldName, value, field_id, field_type) => {
+    // Update pricing data state
+    setPricingData(prev => {
       const updatedFields = {
         ...prev,
         [fieldName]: value,
@@ -109,7 +110,33 @@ console.log("fields",priceFields)
       updateFormData("pricingDetails", updatedFields);
       return updatedFields;
     });
+  
+    // Update repeater_fields inside formData
+    setFormData(prevFormData => {
+      const repeater = [...(prevFormData.repeater_fields || [])];
+      const existingIndex = repeater.findIndex(item => item.custom_field_id === field_id);
+  
+      if (existingIndex !== -1) {
+        // Update existing entry
+        repeater[existingIndex] = {
+          ...repeater[existingIndex],
+          field_value: value
+        };
+      } else {
+        // Add new entry
+        repeater.push({
+          custom_field_id: field_id,
+          field_type: field_type,
+          field_value: value
+        });
+      }
+  
+      return { ...prevFormData, repeater_fields: repeater };
+    });
   };
+  
+
+  
 
   const toggleBoolean = (fieldName) => {
     handleChange(fieldName, !pricingData[fieldName]);
@@ -287,7 +314,7 @@ console.log("fields",priceFields)
         <button className={styles.closeWarningButton}>&times;</button>
       </div>
 
-      {fieldsToRender.length === 0 && (
+      {priceFields.length === 0 && (
         <p className={styles.formQuestion}>
           Please go back to Basic Details and select a Purpose and Property Type/Category to see pricing options.
         </p>
@@ -417,15 +444,15 @@ console.log("fields",priceFields)
           );
         } else if (field.field_type === "textarea") {
           return (
-            <div className={styles.formGroup} key={field.name}>
-              <p className={styles.formQuestion}>{field.label}</p>
+            <div className={styles.formGroup} key={field.field_name_slug}>
+              <p className={styles.formQuestion}>{field.field_label}</p>
               <p className={styles.descriptionHint}>
                 Adding description will increase your listing visibility
               </p>
               <textarea
                 className={styles.formTextarea}
-                value={pricingData[field.name] || ""}
-                onChange={(e) => handleChange(field.name, e.target.value)}
+                value={pricingData[field.field_name_slug] || ""}
+                onChange={(e) => handleChange(field.name, e.target.value,field.id,field.field_type)}
                 placeholder="Share some details about your property like spacious area, nearby markets, metro connectivity and more"
                 rows="5"
               ></textarea>
@@ -437,16 +464,16 @@ console.log("fields",priceFields)
           );
         }else if(field.field_type === "text"){
           return (
-            <div className={styles.formGroup} key={field.name}>
-                <label htmlFor={field.name} className={styles.formLabel}>
+            <div className={styles.formGroup} key={field.field_name_slug}>
+                <label htmlFor={field.field_name_slug} className={styles.formLabel}>
                     {field.field_label}
                 </label>
                 <input
                     type="text"
-                    id={field.name}
+                    id={field.field_name_slug}
                     className={styles.formInput}
-                    value={pricingData[field.name] || ""}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
+                    value={pricingData[field.field_name_slug] || ""}
+                    onChange={(e) => handleChange(field.field_name_slug, e.target.value,field.id,field.field_type)}
                     placeholder={field.field_placeholder ||`Enter ${field.field_label}`}
                 />
             </div>
@@ -456,17 +483,17 @@ console.log("fields",priceFields)
         }else if (field.field_type === "number" && (field.name !== "expectedRent" && field.name !== "totalPrice" && field.name !== "pricePerSqFt")) {
             // Render other number fields not part of the primary pricing grid
             return (
-                <div className={styles.formGroup} key={field.name}>
-                    <label htmlFor={field.name} className={styles.formLabel}>
-                        {field.label}
+                <div className={styles.formGroup} key={field.field_name_slug}>
+                    <label htmlFor={field.field_name_slug} className={styles.formLabel}>
+                        {field.field_label}
                     </label>
                     <input
                         type="number"
-                        id={field.name}
+                        id={field.field_name_slug}
                         className={styles.formInput}
-                        value={pricingData[field.name] || ""}
-                        onChange={(e) => handleChange(field.name, e.target.value)}
-                        placeholder={field.placeholder || field.label}
+                        value={pricingData[field.field_name_slug] || ""}
+                        onChange={(e) => handleChange(field.name, e.target.value,field.id,field.field_type)}
+                        placeholder={field.field_placeholder ||`Enter ${field.field_label}`}
                     />
                 </div>
             );

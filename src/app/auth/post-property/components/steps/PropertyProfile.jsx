@@ -114,27 +114,37 @@ export default function PropertyProfileStep() {
   const handleContinue = () => {
     // Validation
     const newErrors = {};
-    profileFieldsMap.forEach((field) => {
-      const value = localFields[field.field_name_slug];
-      if (field.required === "yes" && (!value || value === "")) {
-        newErrors[field.field_name_slug] = `${field.field_label} is required`;
-      }
-    });
-
+  
+    (profileFieldsMap || [])
+      .filter(field =>
+        field.field_type !== "file" &&
+        field.field_type !== "media" &&
+        !/price/i.test(field.field_label || "") &&  // hide if label contains "price"
+        !/price/i.test(field.field_name_slug || "") // hide if slug contains "price"
+      )
+      .forEach((field) => {
+        const value = localFields[field.field_name_slug];
+        if (field.required === "yes" && (!value || value === "")) {
+          newErrors[field.field_name_slug] = `${field.field_label} is required`;
+        }
+      });
+  
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return; // Stop here if validation fails
     }
-
-    const repeaterFields = buildRepeaterFields(localFields, profileFieldsMap);
+  
+    const repeaterFields = buildRepeaterFields(localFields, profileFieldsMap || []);
     updateFormData("repeater_fields", repeaterFields);
     console.log("Saved Property Profile Data:", localFields);
+  
     router.push("/auth/post-property/photodetails");
   };
+  
 
   // const fieldsToRender = profileFieldsMap[selectedCategory] || [];
 
-  console.log("data", formData.basicDetails)
+  console.log("data", errors)
 
   return (
     <div className={styles.selectedCategory}>
@@ -143,7 +153,8 @@ export default function PropertyProfileStep() {
         <p className="m-0">Back</p>
       </div>
       <h3>Tell us about your property</h3>
-      <div className="row">
+
+      <div className="">
 
         {profileFieldsMap.length === 0 ? (
           <p>No fields available for this category. Please select a property type and category in Basic Details.</p>
@@ -160,68 +171,70 @@ export default function PropertyProfileStep() {
               const fieldValue = localFields[fieldKey] || "";
 
               return (
-                <div className={` col-lg-12 col-md-12 ${field.field_type === "select" ? styles.formRadio : styles.formGroup}`} key={field.id}>
-                  <label className={`${field.field_type === "select" ? 'd-flex' : ''}`}
-                    style={{
-                      textTransform: "capitalize",
-                      // display: "inline-block",
-                      width: "fit-content"
-                    }}
-                  >
-                    {field.field_label}{" "}
-                    <span style={{ color: "red" }}>{field.required ? "*" : ""}</span>
-                  </label>
 
-                  {/* Area Input with Units */}
-                  {field.field_type === "units" && field.options.length > 0 ? (
-                    <div className={`${styles.areaInputWrapper} w-100`}>
+                <div className="">
+                  <div className={`  ${field.field_type === "radio" ? styles.formRadio : styles.formGroup}`} key={field.id}>
+                    <label className={`${field.field_type === "select" ? 'd-flex' : ''}`}
+                      style={{
+                        textTransform: "capitalize",
+                        // display: "inline-block",
+                        width: "fit-content"
+                      }}
+                    >
+                      {field.field_label}{" "}
+                      <span style={{ color: "red" }}>{field.required ? "*" : ""}</span>
+                    </label>
+
+                    {/* Area Input with Units */}
+                    {field.field_type === "units" && field.options.length > 0 ? (
+                      <div className={`${styles.areaInputWrapper} w-100`}>
+                        <input
+                          type="number"
+                          placeholder="Enter area"
+                          value={fieldValue.value || ""}
+                          onChange={(e) =>
+                            handleChange(fieldKey, {
+                              ...fieldValue,
+                              value: e.target.value,
+                              unit: fieldValue.unit || "sq.ft"
+                            })
+                          }
+                          className={styles.areaInput}
+                        />
+                        <Select
+                          className={styles.unitSelect}
+                          classNamePrefix="unit"
+                          value={field.options
+                            .map(opt => ({ label: opt.value, value: opt.value }))
+                            .find(opt => opt.value === (fieldValue.unit || "sq.ft"))
+                          }
+                          onChange={(selected) =>
+                            handleChange(fieldKey, {
+                              ...fieldValue,
+                              value: fieldValue.value || "",
+                              unit: selected.value
+                            })
+                          }
+                          options={field.options.map(opt => ({
+                            label: opt.value,
+                            value: opt.value
+                          }))}
+                          placeholder="sq.ft"
+                        />
+                      </div>
+                    ) : field.field_type === "text" ? (
                       <input
-                        type="number"
-                        placeholder="Enter area"
-                        value={fieldValue.value || ""}
-                        onChange={(e) =>
-                          handleChange(fieldKey, {
-                            ...fieldValue,
-                            value: e.target.value,
-                            unit: fieldValue.unit || "sq.ft"
-                          })
-                        }
-                        className={styles.areaInput}
+                        type="text"
+                        placeholder={field.field_placeholder}
+                        name={fieldKey}
+                        value={fieldValue}
+                        onChange={(e) => handleChange(fieldKey, e.target.value)}
+                        className={styles.input}
                       />
-                      <Select
-                        className={styles.unitSelect}
-                        classNamePrefix="unit"
-                        value={field.options
-                          .map(opt => ({ label: opt.value, value: opt.value }))
-                          .find(opt => opt.value === (fieldValue.unit || "sq.ft"))
-                        }
-                        onChange={(selected) =>
-                          handleChange(fieldKey, {
-                            ...fieldValue,
-                            value: fieldValue.value || "",
-                            unit: selected.value
-                          })
-                        }
-                        options={field.options.map(opt => ({
-                          label: opt.value,
-                          value: opt.value
-                        }))}
-                        placeholder="sq.ft"
-                      />
-                    </div>
-                  ) : field.field_type === "text" ? (
-                    <input
-                      type="text"
-                      placeholder={field.field_placeholder}
-                      name={fieldKey}
-                      value={fieldValue}
-                      onChange={(e) => handleChange(fieldKey, e.target.value)}
-                      className={styles.input}
-                    />
-                  ) : null}
+                    ) : null}
 
-                  {/* Select Field */}
-                  {/* {field.field_type === "select" && (
+                    {/* Select Field */}
+                    {field.field_type === "select" && (
                     <Select
                       placeholder={field.field_placeholder}
                       name={fieldKey}
@@ -243,28 +256,30 @@ export default function PropertyProfileStep() {
                         value: opt.value
                       }))}
                     />
-                  )} */}
-
-                  {/* Radio Buttons */}
-                  {field.field_type === "select" && (
-                    <div className={` ${styles.optionButtons}`}>
-                      {field.options.map((option) => (
-                        <button
-                          key={option.value}
-                          type="button"
-                          className={`${styles.optionBtn} ${fieldValue === option.value ? styles.selected : ""}`}
-                          onClick={() => handleChange(fieldKey, option.value)}
-                        >
-                          {option.name}
-                        </button>
-                      ))}
-                    </div>
-
                   )}
+
+                    {/* Radio Buttons */}
+                    {field.field_type === "radio" && (
+                      <div className={` ${styles.optionButtons}`}>
+                        {field.options.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            className={`${styles.optionBtn} ${fieldValue === option.value ? styles.selected : ""}`}
+                            onClick={() => handleChange(fieldKey, option.value)}
+                          >
+                            {option.name}
+                          </button>
+                        ))}
+                      </div>
+
+                    )}
+                  </div>
                   {errors[fieldKey] && (
-                    <p className={styles.error}>{errors[fieldKey]}</p>
+                    <p className={` ${styles.error}`}>{errors[fieldKey]}</p>
                   )}
                 </div>
+
               );
             })
         )}

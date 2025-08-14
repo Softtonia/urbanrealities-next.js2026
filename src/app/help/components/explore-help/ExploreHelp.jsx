@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./ExploreHelp.module.css";
-import TextHeading from "@/components/TextHeading/TextHeading";
 import Link from "next/link";
 import { helpTopics } from "@/app/help/data/helpData"; 
+import TextHeading from "@/Components/TextHeading/TextHeading.jsx";
 
 const ExploreHelp = ({ headingText = "Explore Help Topics" }) => {
   return (
