@@ -17,8 +17,8 @@ const page = () => {
         <PostStats />
       </div>
       <div className={`${styles["postClient-container"]} `}>
-         <div className={`container ${styles["post-container"]} `}>
-        <PostClientsSay />
+        <div className={`container ${styles["post-container"]} `}>
+          <PostClientsSay />
         </div>
       </div>
       <div className={`container ${styles["post-container"]} `}>

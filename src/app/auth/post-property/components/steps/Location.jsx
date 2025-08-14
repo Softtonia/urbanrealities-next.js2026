@@ -1,10 +1,11 @@
 "use client";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Select from "react-select";
 import styles from "./Location.module.css";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
+import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 const locationData = {
   India: {
@@ -27,12 +28,96 @@ const locationData = {
 
 const Location = () => {
   const { formData, updateFormData } = useContext(PostPropertyContext);
+  const { token } = useSiteSettings()
   const router = useRouter();
 
   const [selectedCountry, setSelectedCountry] = useState(formData.locationDetails?.country || null);
   const [selectedState, setSelectedState] = useState(formData.locationDetails?.state || null);
   const [selectedCity, setSelectedCity] = useState(formData.locationDetails?.city || null);
+
+  const [countries, setCountries] = useState([])
+  const [cities, setCities] = useState([])
+  const [states, setStates] = useState([])
   const [errors, setErrors] = useState({});
+
+  console.log(selectedCountry)
+  // fetch country  /api/countries
+  useEffect(() => {
+    const fetchPurpose = async () => {
+      // console.log(token)
+      try {
+        const res = await fetch('/api/post-property/location/country', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setCountries(data);
+        } else if (data?.data) {
+          setCountries(data.data);
+        }
+      } catch (err) {
+        console.error('Error fetching properties:', err);
+      }
+    };
+    if (token) {
+      fetchPurpose();
+    }
+  }, [token]);
+  useEffect(() => {
+    const fetchPurpose = async () => {
+      // console.log(token)
+      try {
+        const res = await fetch(`/api/post-property/location/state/${selectedCountry}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setStates(data);
+        } else if (data?.data) {
+          setStates(data.data);
+        }
+      } catch (err) {
+        console.error('Error fetching properties:', err);
+      }
+    };
+    if (token) {
+      fetchPurpose();
+    }
+  }, [selectedCountry]);
+  useEffect(() => {
+    const fetchPurpose = async () => {
+      // console.log(token)
+      try {
+        const res = await fetch(`/api/post-property/location/city/${selectedState}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setCities(data);
+        } else if (data?.data) {
+          setCities(data.data);
+        }
+      } catch (err) {
+        console.error('Error fetching properties:', err);
+      }
+    };
+    if (token) {
+      fetchPurpose();
+    }
+  }, [selectedState]);
+
+
+
+
 
   const handleContinue = () => {
     const newErrors = {};
@@ -70,20 +155,20 @@ const Location = () => {
     value: country,
   }));
 
-  const stateOptions =
-    selectedCountry &&
-    Object.keys(locationData[selectedCountry.value]).map((state) => ({
-      label: state,
-      value: state,
-    }));
+  // const stateOptions =
+  //   selectedCountry &&
+  //   Object.keys(locationData[selectedCountry.value]).map((state) => ({
+  //     label: state,
+  //     value: state,
+  //   }));
 
-  const cityOptions =
-    selectedCountry &&
-    selectedState &&
-    locationData[selectedCountry.value][selectedState.value].map((city) => ({
-      label: city,
-      value: city,
-    }));
+  // const cityOptions =
+  //   selectedCountry &&
+  //   selectedState &&
+  //   locationData[selectedCountry.value][selectedState.value].map((city) => ({
+  //     label: city,
+  //     value: city,
+  //   }));
 
   const customStyles = {
     control: (provided, state) => ({
@@ -105,8 +190,8 @@ const Location = () => {
       backgroundColor: state.isSelected
         ? "#fff"
         : state.isFocused
-        ? "#f0f0f0"
-        : "#fff",
+          ? "#f0f0f0"
+          : "#fff",
       color: "#000",
       cursor: "pointer",
 
@@ -137,35 +222,56 @@ const Location = () => {
       <div className={styles.formGroup}>
         <label className={styles.label}>Country</label>
         <Select
-          options={countryOptions}
-          value={selectedCountry}
+          options={countries.map((country) => ({
+            value: country.id,
+            label: country.name,
+          }))}
+          value={
+            countries
+              .map((country) => ({
+                value: country.id,
+                label: country.name,
+              }))
+              .find((opt) => opt.value === selectedCountry) || null
+          }
           onChange={(option) => {
-            setSelectedCountry(option);
+            setSelectedCountry(option?.value || null);
             setSelectedState(null);
             setSelectedCity(null);
             setErrors((prev) => ({ ...prev, country: null }));
           }}
           placeholder="Select Country"
-          error={errors.country}
           styles={customStyles}
           className="w-20"
         />
+
         {errors.country && <p className={styles.error}>{errors.country}</p>}
       </div>
 
       <div className={styles.formGroup}>
         <label className={styles.label}>State</label>
         <Select
-          options={stateOptions}
-          value={selectedState}
+          options={states.map((state) => ({
+            value: state.id,
+            label: state.name,
+          }))}
+          value={
+            states
+              .map((state) => ({
+                value: state.id,
+                label: state.name,
+              }))
+              .find((opt) => opt.value === selectedState) || null
+          }
           onChange={(option) => {
-            setSelectedState(option);
+            setSelectedState(option?.value || null);
+        
             setSelectedCity(null);
             setErrors((prev) => ({ ...prev, state: null }));
           }}
-          placeholder="Select State"
-          error={errors.state}
+          placeholder="Select state"
           styles={customStyles}
+          className="w-20"
         />
         {errors.state && <p className={styles.error}>{errors.state}</p>}
       </div>
@@ -173,15 +279,26 @@ const Location = () => {
       <div className={styles.formGroup}>
         <label className={styles.label}>City</label>
         <Select
-          options={cityOptions}
-          value={selectedCity}
+          options={cities.map((city) => ({
+            value: city.id,
+            label: city.name,
+          }))}
+          value={
+            cities
+              .map((city) => ({
+                value: city.id,
+                label: city.name,
+              }))
+              .find((opt) => opt.value === selectedCity) || null
+          }
           onChange={(option) => {
-            setSelectedCity(option);
+            setSelectedCity(option?.value || null);
+        
             setErrors((prev) => ({ ...prev, city: null }));
           }}
           placeholder="Select City"
-          error={errors.city}
           styles={customStyles}
+          className="w-20"
         />
         {errors.city && <p className={styles.error}>{errors.city}</p>}
       </div>
