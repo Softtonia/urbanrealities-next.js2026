@@ -14,10 +14,23 @@ export default function PropertyProfileStep() {
   const [errors, setErrors] = useState({});
   const router = useRouter();
 
-  const model_fields = Object.entries(formData.basicDetails).map(([key, value]) => ({
-    model: key,
-    condition: [value]
-  }));
+  const model_fields = Object.entries(formData.basicDetails).map(([key, value]) => {
+    let modelName = key;
+  
+    // Special case: if it's purpose_id → make it "purpose"
+    if (key === "purpose_id") {
+      modelName = "purpose";
+    } else if (key.endsWith("_id")) {
+      // Otherwise remove trailing "_id"
+      modelName = key.replace(/_id$/, "");
+    }
+  
+    return {
+      model: modelName,
+      condition: [value]
+    };
+  });
+  
 
   useEffect(() => {
     const fetchCustomFields = async () => {
@@ -68,16 +81,29 @@ export default function PropertyProfileStep() {
 
 
   // Update localFields and save to context
-  const handleChange = (fieldName, value) => {
+  const handleChange = (fieldName, value, isArray = false) => {
     setLocalFields((prev) => {
-      const updatedFields = {
-        ...prev,
-        [fieldName]: value,
-      };
+      let updatedFields;
+  
+      if (isArray) {
+        // Ensure we always store arrays properly
+        updatedFields = {
+          ...prev,
+          [fieldName]: [...value],
+        };
+      } else {
+        updatedFields = {
+          ...prev,
+          [fieldName]: value,
+        };
+      }
+  
       updateFormData("propertyProfile", updatedFields);
       return updatedFields;
     });
   };
+  
+  
 
 
   console.log("updated fields", localFields)
@@ -95,17 +121,32 @@ export default function PropertyProfileStep() {
       .filter(field => !["file", "media"].includes(field.field_type)) // skip file & media types
       .map(field => {
         const fieldValue = localFields[field.field_name_slug];
+  
+        let value;
+  
+        if (field.field_type === "checkbox") {
+          // Keep array of selected values
+          value = Array.isArray(fieldValue) ? fieldValue : [];
+        } else if (typeof fieldValue === "object" && fieldValue !== null) {
+          // Handle select objects like { value, label }
+          value = fieldValue.value || fieldValue.label || "";
+        } else {
+          value = fieldValue || "";
+        }
+  
         return {
           custom_field_id: field.id,
           field_type: field.field_type,
-          field_value:
-            typeof fieldValue === "object" && fieldValue !== null
-              ? fieldValue.value || fieldValue.label // handle select objects
-              : fieldValue || ""
+          field_value: value,
         };
       })
-      .filter(f => f.field_value !== ""); // remove empty values
+      .filter(f => {
+        // keep checkboxes even if empty (to clear server side state if needed)
+        if (f.field_type === "checkbox") return true;
+        return f.field_value !== "";
+      });
   }
+  
 
   // Example usage:
   const repeaterFields = buildRepeaterFields(localFields, profileFieldsMap);
@@ -114,7 +155,7 @@ export default function PropertyProfileStep() {
   const handleContinue = () => {
     // Validation
     const newErrors = {};
-  
+
     (profileFieldsMap || [])
       .filter(field =>
         field.field_type !== "file" &&
@@ -128,19 +169,19 @@ export default function PropertyProfileStep() {
           newErrors[field.field_name_slug] = `${field.field_label} is required`;
         }
       });
-  
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return; // Stop here if validation fails
     }
-  
+
     const repeaterFields = buildRepeaterFields(localFields, profileFieldsMap || []);
     updateFormData("repeater_fields", repeaterFields);
     console.log("Saved Property Profile Data:", localFields);
-  
+
     router.push("/auth/post-property/photodetails");
   };
-  
+
 
   // const fieldsToRender = profileFieldsMap[selectedCategory] || [];
 
@@ -231,32 +272,70 @@ export default function PropertyProfileStep() {
                         onChange={(e) => handleChange(fieldKey, e.target.value)}
                         className={styles.input}
                       />
-                    ) : null}
+                    ) :
+                      field.field_type === "number" ? (
+                        <input
+                          type="number"
+                          placeholder={field.field_placeholder}
+                          name={fieldKey}
+                          value={fieldValue}
+                          onChange={(e) => handleChange(fieldKey, e.target.value)}
+                          className={styles.input}
+                        />
+                      ) : null}
 
                     {/* Select Field */}
                     {field.field_type === "select" && (
-                    <Select
-                      placeholder={field.field_placeholder}
-                      name={fieldKey}
-                      className={styles.select}
+                      <Select
+                        placeholder={field.field_placeholder}
+                        name={fieldKey}
+                        className={styles.select}
 
-                      classNamePrefix="react-select"
-                      value={field.options
-                        .map(opt => ({ label: opt.name, value: opt.value }))
-                        .find(opt => opt.value === fieldValue?.value) || null
-                      }
-                      onChange={(selected) =>
-                        handleChange(fieldKey, {
-                          value: selected.value,
-                          label: selected.label
-                        })
-                      }
-                      options={field.options.map(opt => ({
-                        label: opt.name,
-                        value: opt.value
-                      }))}
-                    />
-                  )}
+                        classNamePrefix="react-select"
+                        value={field.options
+                          .map(opt => ({ label: opt.name, value: opt.value }))
+                          .find(opt => opt.value === fieldValue?.value) || null
+                        }
+                        onChange={(selected) =>
+                          handleChange(fieldKey, {
+                            value: selected.value,
+                            label: selected.label
+                          })
+                        }
+                        options={field.options.map(opt => ({
+                          label: opt.name,
+                          value: opt.value
+                        }))}
+                      />
+                    )}
+                    {field.field_type === "checkbox" && (
+                      <div className={styles.checkboxGroup} key={fieldKey}>
+                        {field.options.map((option) => (
+                          <label key={option.value} className={styles.checkboxLabel}>
+                            <input
+                              type="checkbox"
+                              className={styles.formCheckbox}
+                              checked={Array.isArray(localFields[fieldKey]) && localFields[fieldKey].includes(option.value)}
+                              onChange={(e) => {
+                                const prevValues = Array.isArray(localFields[fieldKey]) ? localFields[fieldKey] : [];
+                                let updatedValues;
+
+                                if (e.target.checked) {
+                                  updatedValues = [...prevValues, option.value];
+                                } else {
+                                  updatedValues = prevValues.filter((val) => val !== option.value);
+                                }
+
+                                handleChange(fieldKey, updatedValues,true);
+                              }}
+                            />
+                            {option.name}
+                          </label>
+                        ))}
+                      </div>
+                    )}
+
+
 
                     {/* Radio Buttons */}
                     {field.field_type === "radio" && (

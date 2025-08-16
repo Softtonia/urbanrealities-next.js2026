@@ -18,7 +18,7 @@ export default function ProtectedRoute({ children }) {
     }, [token, isLoadingToken, router])
 
     if (isLoadingToken || !token) {
-        return <div>Loading...</div> // your spinner or loader
+        return null  // your spinner or loader
     }
 
     return children

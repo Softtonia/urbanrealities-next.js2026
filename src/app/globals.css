@@ -227,6 +227,9 @@ small {
   font-size: 30px !important;
   font-family: var(--font-semibold);
 }
+.borderNone {
+  border: none !important;
+}
 
 /* =============all global btn css========  */
 

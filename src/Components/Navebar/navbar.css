@@ -9,6 +9,9 @@
   font-family: var(--font-regular) !important;
   font-weight: 400 !important;
   letter-spacing: 0.5;
+  text-decoration: none;
+   color: var(--White);
+
 }
 
 .icon-color{

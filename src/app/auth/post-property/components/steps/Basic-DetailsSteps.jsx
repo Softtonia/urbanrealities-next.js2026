@@ -166,11 +166,11 @@ export default function StepContent() {
     setError("");
 
     updateFormData("basicDetails", {
-      purpose: selectedPurpose,
-      property: selectedProperty,
-      property_type: selectedPropertyType,
+      purpose_id: selectedPurpose,
+      property_id: selectedProperty,
+      property_type_id: selectedPropertyType,
       // expandedCategory: expandedCategory,
-      property_status: selectedPropertyStatus,
+      property_status_id: selectedPropertyStatus,
     });
 
     router.push("/auth/post-property/location-details");
@@ -195,7 +195,10 @@ export default function StepContent() {
                 className={`${styles.optionBtn} placeholder col-1`}
                 disabled
                 style={{ height: "38px" }} // match your button height
-              ></button>
+                aria-label="Loading"
+              >
+                Loading...
+              </button>
             ))
           )
           : purposeList.map((p) => (

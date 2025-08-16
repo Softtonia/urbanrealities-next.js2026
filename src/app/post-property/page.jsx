@@ -8,9 +8,10 @@ import ProjectFAQ from "@/Components/FAQAccordion/ProjectFAQ";
 import styles from "./components/Post-property-page.module.css";
 import PostPropertySection from "./components/PostPropertySection/PostPropertySection";
 import PostClientsSay from "./components/PostClientsSay/PostClientsSay";
+import PublicRoute from "@/Components/PublicRoute";
 const page = () => {
   return (
-    <>
+    <PublicRoute redirectTo="/auth/post-property/basic-details"><>
       <div className={`container ${styles["post-container"]} `}>
         <PostPropertySection />
         <PostPropertySteps />
@@ -30,7 +31,7 @@ const page = () => {
         </div>
 
       </div>
-    </>
+    </></PublicRoute>
   );
 };
 
