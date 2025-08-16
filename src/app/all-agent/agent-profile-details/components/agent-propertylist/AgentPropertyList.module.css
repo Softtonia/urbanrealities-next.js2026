@@ -1,0 +1,137 @@
+
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.filters button {
+  background: #f04e23;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.filters select {
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.card {
+  display: flex;
+  border: 1px solid var(--Orange-Red);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  gap: 30px;
+  width: 100%;
+  height: 244px;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 248px;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.propertyimage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--Orange-Red);
+  color: var(--White);
+  padding: 3px 10px;
+  font-size: 12px;
+  border-radius: 5px;
+}
+
+.bookmark {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: var(--White);
+  font-size: 18px;
+  cursor: pointer;
+}
+.propertycontent{
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.detailsContent  {
+  display: flex;
+  flex-direction: column;
+  width: 362px;
+
+}
+.detailsContent  p{
+  border-bottom: 1px solid var(--Bright-Gray);
+}
+.detailsContent p:last-child{
+  border-bottom: none;
+}
+.price {
+  color: var(--Apple);
+font-family: var(--font-bold);
+}
+
+
+.agency {
+  color: var(--Orange-Red);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+.request {
+  border: 1px solid var(--Orange-Red);
+  background: transparent;
+  color: #ff6b00;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-family: var(--font-regular);
+  cursor: pointer;
+}
+
+.visit {
+  background: #ff6b00;
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  font-size: 16px;
+  font-family: var(--font-regular);
+
+  cursor: pointer;
+}
+@media (max-width:1199px){
+.card{
+  height: auto;
+}
+.propertycontent{
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+}
+}
