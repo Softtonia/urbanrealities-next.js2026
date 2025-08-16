@@ -261,7 +261,7 @@ export default function Navbar() {
               </div>
             </li>
             {[
-              { label: "Find Agent", href: "/find-agent" },
+              { label: "Find Agent", href: "/all-agent" },
               { label: "Projects", href: "/projects" },
               { label: "Property Services", href: "/property-services" },
               { label: "Home Loans", href: "/home-loans" },

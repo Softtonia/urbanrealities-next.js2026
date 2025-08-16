@@ -1,0 +1,135 @@
+.profilesection {
+  display: flex;
+  flex-direction: column;
+}
+
+.left {
+  display: flex;
+  gap: 54px;
+}
+
+.agentImage {
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.viewNumber {
+  margin-top: 10px;
+  background: var(--Orange-Red);
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-regular);
+}
+
+
+.company,
+.agentName {
+  font-size: 23px;
+font-family: var(--font-medium);
+}
+.agentName{
+  padding: 10px 0;
+  margin: 0;
+}
+.company {
+  color: var(--Orange-Red);
+  margin-bottom: 10px;
+}
+
+.rating {
+  display: flex;
+  gap: 10px;
+   color: var(--Slimy-Green);
+}
+.starIcon {
+  color: var(--Orange-Red);
+  margin-right: 5px;
+}
+.statsRow {
+  display: flex;
+  margin-top: 24px;
+}
+.statscount{
+border-left: 1px solid ;
+padding: 10px;
+
+}
+.statscount:last-child{
+  border-right: 1px solid;
+}
+
+.rightsection{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.bottomcontent{
+  width: 633px;
+  display: flex;
+  flex-direction: column;
+}
+.operatesIn,
+.dealsIn{
+  padding: 10px 0;
+}
+.operatespara,
+.dealspara{
+  margin: 0;
+  padding-top: 10px;
+}
+.dealstittle,
+.operatestittle{
+  font-size: 19px;
+  font-family: var(--font-medium);
+}
+
+.quickEnquiry {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+}
+
+.quickEnquiry h4 {
+  margin-bottom: 15px;
+}
+
+.quickEnquiry input,
+.quickEnquiry textarea {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.callBackBtn {
+  background: #ff5722;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.reportBtn {
+  margin-top: 15px;
+  background: #fff;
+  border: 1px solid #ff0000;
+  color: #ff0000;
+  padding: 8px;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.icon {
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+

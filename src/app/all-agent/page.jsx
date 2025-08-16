@@ -1,4 +1,4 @@
-import AgentCard from "@/app/find-agent/components/AgentCard/AgentCard";
+import AgentCard from "@/app/all-agent/components/AgentCard/AgentCard";
 import styles from "./components/AllAgents.module.css"
 const agentData = {
   image: "/agent-img.png",
