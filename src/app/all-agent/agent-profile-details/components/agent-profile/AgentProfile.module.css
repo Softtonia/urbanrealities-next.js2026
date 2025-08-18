@@ -1,34 +1,55 @@
 .profilesection {
   display: flex;
-  flex-direction: column;
+  gap: 54px;
+  padding-right: 20px;
 }
 
 .left {
   display: flex;
-  gap: 54px;
+  flex-direction: column;
 }
 
 .agentImage {
-  border-radius: 10px;
-  object-fit: cover;
+  object-fit: contain;
 }
+.groupBtn{
+  display: flex;
+  flex-direction:column;
+align-self:center;
 
+}
 .viewNumber {
   margin-top: 10px;
   background: var(--Orange-Red);
-  color: #fff;
+  color: var(--White);
   border: none;
-  padding: 8px 15px;
+  padding: 8px 4px ;
   border-radius: 6px;
   cursor: pointer;
   font-family: var(--font-regular);
+  font-size: clamp(12px, 1.5vw, 16px);
 }
+  
 
-
+.sendmsg{
+  display: none;
+  margin-top: 10px;
+  background: var(  --off-white);
+  border: none;
+  padding: 8px 4px ;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-regular);
+  font-size: clamp(12px, 1.5vw, 16px);
+}
+.icon {
+  margin-right: 6px;
+  vertical-align: middle;
+}
 .company,
 .agentName {
-  font-size: 23px;
-font-family: var(--font-medium);
+  font-size: clamp(16px, 2.5vw, 23px);
+  font-family: var(--font-medium);
 }
 .agentName{
   padding: 10px 0;
@@ -41,6 +62,7 @@ font-family: var(--font-medium);
 
 .rating {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
    color: var(--Slimy-Green);
 }
@@ -57,18 +79,19 @@ border-left: 1px solid ;
 padding: 10px;
 
 }
-.statscount:last-child{
-  border-right: 1px solid;
+.statscount:first-child{
+  border-left:none;
+}
+.statscount h3{
+ font-size: clamp(16px, 2vw, 19px);}
+.statscount p{
+  font-size: clamp(14px, 1.5vw, 16px);
+  margin: 0;
+
 }
 
-.rightsection{
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-}
 
 .bottomcontent{
-  width: 633px;
   display: flex;
   flex-direction: column;
 }
@@ -80,44 +103,79 @@ padding: 10px;
 .dealspara{
   margin: 0;
   padding-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
 }
 .dealstittle,
 .operatestittle{
-  font-size: 19px;
-  font-family: var(--font-medium);
+ font-size: clamp(16px, 2vw, 19px);
+ font-family: var(--font-medium);
+}
+.dealsmobile{
+  display: none;
 }
 
+@media (max-width:1200px){
+
+.sendmsg{
+  display: block;
+}
+
+}
+@media (max-width:992px){
+
+
+.profilesection {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding-right: 0px;
+}
+  .agentImage{
+    width: 205px;
+    height: 134px;
+  }
+}
+@media (max-width:576px){
+ 
+.bottomcontent{
+  display: none;
+}
+.dealsmobile{
+  display: block;
+}
+
+  .agentImage{
+    width: 112px;
+    height: 109px;
+  }
+  .icon {
+  margin-right: 2px;
+}
+}
+
+
+
+
+
+
+
+
+
 .quickEnquiry {
-  background: #fff;
+  background: var(--White);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
 }
 
-.quickEnquiry h4 {
+.enquiryHeading {
+  font-size: 23px;
+  font-family: var(--font-medium);
   margin-bottom: 15px;
 }
 
-.quickEnquiry input,
-.quickEnquiry textarea {
-  width: 100%;
-  margin-bottom: 12px;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-}
-
-.callBackBtn {
-  background: #ff5722;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  width: 100%;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.reportBtn {
+/* .reportBtn {
   margin-top: 15px;
   background: #fff;
   border: 1px solid #ff0000;
@@ -126,10 +184,7 @@ padding: 10px;
   width: 100%;
   border-radius: 6px;
   cursor: pointer;
-}
-.icon {
-  margin-right: 6px;
-  vertical-align: middle;
-}
+} */
+
 
 

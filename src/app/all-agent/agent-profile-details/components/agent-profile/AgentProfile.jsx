@@ -35,6 +35,7 @@ export default function AgentProfileDetails() {
   };
 
   return (
+    <>
     <div className={styles.profilesection}>
       {/* Left Section */}
       <div className={styles.left}>
@@ -45,45 +46,45 @@ export default function AgentProfileDetails() {
           height={234}
           className={styles.agentImage}
         />
+        <div className={styles.groupBtn}>
+          <button className={styles.viewNumber}>
+            <FaPhoneAlt className={styles.icon} /> View Number
+          </button>
 
-        {/* Middle Section */}
-        <div className={styles.middle}>
-          <h2 className={styles.agentName}>{agent.name}</h2>
-          <div className={styles.rating}>
-            <h2 className={styles.company}>({agent.company})</h2>
-            <span className={styles.ratingText}>
-              {agent.rating}
-              {/* ({agent.reviews} reviews) */}
-            </span>
-            <div className="">
-              {Array.from({ length: 5 }, (_, i) => (
-                <FaStar key={i} className={styles.starIcon} />
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.statsRow}>
-            <div className={styles.statscount}>
-              <h3>{agent.rent}+</h3>
-              <p>Properties for rent</p>
-            </div>
-            <div className={styles.statscount}>
-              <h3>{agent.sale}+</h3>
-              <p>Properties for buy</p>
-            </div>
-            <div className={styles.statscount}>
-              <h3>{agent.deals}+</h3>
-              <p>Deals Closed</p>
-            </div>
-          </div>
-      </div>
+          <button className={styles.sendmsg}>
+            <FaEnvelope className={styles.icon} /> send Message
+          </button>
         </div>
-        <div className={styles.rightsection}>
-      <div>
-        <button className={styles.viewNumber}>
-          <FaPhoneAlt className={styles.icon} /> View Number
-        </button>
       </div>
+
+      {/* Middle Section */}
+      <div className={styles.middle}>
+        <h2 className={styles.agentName}>{agent.name}</h2>
+        <div className={styles.rating}>
+          <h2 className={styles.company}>({agent.company})</h2>
+          <span className={styles.ratingText}>
+            {agent.rating}
+            {/* ({agent.reviews} reviews) */}
+          </span>
+          <div className="">
+            {Array.from({ length: 5 }, (_, i) => (
+              <FaStar key={i} className={styles.starIcon} />
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.statsRow}>
+          <div className={styles.statscount}>
+            <h3>{agent.rent}+</h3>
+            <p>Properties for rent</p>
+          </div>
+          <div className={styles.statscount}>
+            <h3>{agent.sale}+</h3>
+            <p>Properties for buy</p>
+          </div>
+
+        </div>
+
         <div className={styles.bottomcontent}>
           <div className={styles.dealsIn}>
             <div className={styles.dealstittle}>Deals in:</div>
@@ -93,8 +94,22 @@ export default function AgentProfileDetails() {
             <div className={styles.operatestittle}>Operates in:</div>
             <p className={styles.operatespara}>{agent.operatesIn.join(", ")}</p>
           </div>
+        </div>
+      </div>
+    </div>
+
+
+  <div className={styles.dealsmobile}>
+          <div className={styles.dealsIn}>
+            <div className={styles.dealstittle}>Deals in:</div>
+            <p className={styles.dealspara}>{agent.dealsIn.join(", ")}</p>
           </div>
-    </div>
-    </div>
+          <div className={styles.operatesIn}>
+            <div className={styles.operatestittle}>Operates in:</div>
+            <p className={styles.operatespara}>{agent.operatesIn.join(", ")}</p>
+          </div>
+        </div>
+
+    </>  
   );
 }
