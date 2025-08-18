@@ -6,6 +6,7 @@ import AgentReviews from './components/agent-reviews/AgentReviews';
 import AgentPropertyList from "./components/agent-propertylist/AgentPropertyList"
 import ContactInfo from './components/contact-info/ContactInfo';
 import SubHero from '@/Components/SubHero/SubHero';
+import AgentProfileDetails from './components/agent-profile/AgentProfile';
 const data = {
   heading: " Quick Enquiry",
   usernameLabel: "Username",
