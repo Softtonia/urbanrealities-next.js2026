@@ -1,14 +1,16 @@
 .profileContainer {
-display: flex;
 padding: 30px 0 80px 0;
-align-items: flex-start;
+}
+.profilerow{
+  padding: 0 20px;
+  margin: 0;
 }
 .AboutAgentsection{
 background-color: var(--Misty-Rose);
 }
 .AboutPropertyList,
 .aboutAgentWrapper{
-padding: 80px 0;
+padding: 80px 20px;
 }
 .header {
   background: #1c1c1c;
@@ -31,4 +33,23 @@ padding: 80px 0;
   display: flex;
 padding: 30px 0 80px 0;
 
+}
+
+  @media (max-width:1200px){
+.AgentFormcol{
+  display: none;
+}
+  }
+
+@media (max-width:768px){
+.profileContainer {
+padding: 20px 0 40px 0;
+}
+.AboutAgentsection{
+background-color: var(--Misty-Rose);
+}
+.AboutPropertyList,
+.aboutAgentWrapper{
+padding: 80px 0;
+}
 }

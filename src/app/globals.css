@@ -459,6 +459,16 @@ small {
   border-radius: 10px;
   outline: none;
 }
+.enquiryInput {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  font-family: var(--font-regular);
+  border: 1px solid var(--Lavender-Gray);
+  margin-bottom: 15px;
+  border-radius: 6px;
+  outline: none;
+}
 .formGroupBtn {
   display: flex;
   justify-content: center;
@@ -484,6 +494,7 @@ small {
   font-size: 20px !important;
   font-family: var(--font-medium);
 }
+
 .formSubHeading {
   font-size: 16px !important;
   font-family: var(--font-regular);
