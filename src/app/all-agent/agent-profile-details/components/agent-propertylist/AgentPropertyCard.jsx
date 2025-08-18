@@ -14,7 +14,6 @@ const AgentPropertyCard = ({ property }) => {
           className={styles.propertyimage}
         />
         <FaRegBookmark className={styles.bookmark} />
-      </div>
         <div className={styles.propertycontent}>
 
         <div className={styles.detailsContent}>
@@ -25,11 +24,11 @@ const AgentPropertyCard = ({ property }) => {
             <span className={styles.agency}>{property.agency}</span>
           </p>
           <p>
-            Available for <span>{property.availableFor}</span>
+            Available for <span className={styles.area} >{property.availableFor}</span>
           </p>
           <p>
-            Carpet Area <span>{property.carpetArea}</span>
-          </p>
+            Carpet Area <span className={styles.area}>{property.carpetArea}</span>
+          </p>       
         </div>
 
       {/* Right Section (Buttons) */}
@@ -37,8 +36,12 @@ const AgentPropertyCard = ({ property }) => {
         <button className={styles.request}>Request Call-back</button>
         <button className={styles.visit}>Visit Property</button>
       </div>
+      </div>
 
       </div>
+
+
+
     </div>
   );
 };

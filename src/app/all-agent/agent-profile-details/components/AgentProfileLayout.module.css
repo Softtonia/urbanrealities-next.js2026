@@ -12,8 +12,15 @@ background-color: var(--Misty-Rose);
 .aboutAgentWrapper{
 padding: 80px 20px;
 }
-.header {
-  background: #1c1c1c;
+.aboutcontent{
+    margin-top: 60px;
+}
+.aboutpara{
+ font-size: clamp(14px, 1.5vw, 16px);
+
+}
+.contactheader {
+  background: var(  --Eerie-Black);
   color: #fff;
   padding: 48px 30px;
 }
@@ -30,11 +37,15 @@ padding: 80px 20px;
   font-family: var(--font-medium);
 }
 .enquirycontainer{
-  display: flex;
 padding: 30px 0 80px 0;
-
 }
-
+.enquiryrow{
+  margin: 0;
+  padding: 0 20px;
+}
+.enquiryheading{
+  font-size: clamp(16px, 2vw, 19px);
+}
   @media (max-width:1200px){
 .AgentFormcol{
   display: none;
@@ -46,10 +57,22 @@ padding: 30px 0 80px 0;
 padding: 20px 0 40px 0;
 }
 .AboutAgentsection{
-background-color: var(--Misty-Rose);
+background-color: var(--White);
 }
 .AboutPropertyList,
 .aboutAgentWrapper{
-padding: 80px 0;
+padding: 40px 20px;
 }
+.aboutcontent{
+    margin-top: 30px;
+
+}
+.Aboutcol{
+  padding: 0;
+}
+}
+@media (max-width:576px){
+  .enquirycol{
+    display: none;
+  }
 }

@@ -2,6 +2,7 @@
 import React from "react";
 import styles from "./AgentPropertyList.module.css";
 import AgentPropertyCard from "./AgentPropertyCard";
+import { LuSlidersHorizontal } from "react-icons/lu";
 
 const properties = [
   {
@@ -48,10 +49,10 @@ const AboutPropertyList = () => {
         <button className={styles.tabBtn}>Sell</button>
         <button className={styles.tabBtn}>Pg</button>
 
+
+        
         <div className={styles.sortSelect}>
-          <option>Sort by</option>
-          {/* <option>Price Low to High</option>
-          <option>Price High to Low</option> */}
+        <button className={styles.sortBtn}><LuSlidersHorizontal/> Sort by</button>
         </div>
       </div>
 

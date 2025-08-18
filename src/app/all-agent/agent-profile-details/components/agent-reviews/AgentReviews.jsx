@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./AgentReviews.module.css";
 import AgentReviewCard from "./AgentReviewCard";
+import { LuSlidersHorizontal } from "react-icons/lu";
 
 const reviews = [
   {
@@ -27,7 +28,7 @@ const AgentReviews = () => {
       {/* Header */}
       <div className={styles.header}>
         <h3>Reviews</h3>
-        <button className={styles.sortBtn}>Sort by</button>
+        <button className={styles.sortBtn}><LuSlidersHorizontal/> Sort by</button>
       </div>
 
       {/* Review Cards */}

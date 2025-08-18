@@ -1,12 +1,12 @@
 import React from "react";
-import styles from "./AboutAgent.module.css";
+import styles from "../AgentProfileLayout.module.css";
 import SubHero from "@/Components/SubHero/SubHero";
 const AboutAgent = () => {
   return (
 <div >
           <SubHero subHeroHeading={"About Dreams Home Pvt Ltd"}></SubHero>
           <div className={styles.aboutcontent}>
-      <p>
+      <p className={styles.aboutpara}>
         quis sit amet massa. Pellentesque elit est, convallis eu porttitor at,
         porta ut metus. Fusce condimentum hendrerit ex nec viverra. Mauris
         lobortis, libero ac venenatis accumsan, magna nulla egestas turpis, sed
