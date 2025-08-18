@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { post } from '@/lib/api'; // This should be your axios/fetch wrapper
+import { post } from '@/lib/api';
 
 export async function POST(request) {
     try {
@@ -7,19 +7,31 @@ export async function POST(request) {
 
         // Convert FormData into something axios/fetch can handle
         const formDataToSend = new FormData();
+
         for (const [key, value] of formData.entries()) {
-            formDataToSend.append(key, value);
+            if (value instanceof File) {
+                // ✅ If it's a File, append directly
+                formDataToSend.append(key, value);
+            } else if (Array.isArray(value)) {
+                // ✅ If somehow it's an array (File[]), append each one
+                value.forEach((file) => {
+                    formDataToSend.append(key, file);
+                });
+            } else {
+                formDataToSend.append(key, value);
+            }
         }
         // console.log(formDataToSend)
+
         const token = formData.get("token");
 
-        const response = await post(`/api/add-properties-listing`, formData, {
+        const response = await post(`/api/add-properties-listing`, formDataToSend, {
             headers: {
-                'Authorization': `Bearer ${token}`
-            }
+                'Authorization': `Bearer ${token}`,
+                // very important: let axios handle Content-Type for FormData
+                'Content-Type': 'multipart/form-data',
+            },
         });
-
-        // console.log(response)
 
         return NextResponse.json(response.data);
     } catch (error) {

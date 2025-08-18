@@ -11,6 +11,7 @@ import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 const PricingAndOthers = () => {
   const router = useRouter();
   const { formData, updateFormData, setFormData } = useContext(PostPropertyContext);
+  const [errors, setErrors] = useState({})
 
 
   const [pricingData, setPricingData] = useState(formData.custom_field || {});
@@ -25,7 +26,7 @@ const PricingAndOthers = () => {
     return label.includes("price") || slug.includes("price");
   });
   console.log("fields", priceFields)
-  const {token} = useSiteSettings();
+  const { token } = useSiteSettings();
   const [rentInWords, setRentInWords] = useState("");
 
   const toWords = new ToWords({
@@ -284,63 +285,76 @@ const PricingAndOthers = () => {
     e.preventDefault();
 
     try {
+      const newErrors = {};
+
+      // 1. Validate price fields
+      priceFields.forEach(field => {
+        const repeaterField = (formData.repeater_fields || []).find(
+          f => f.custom_field_id === field.id
+        );
+        const value = repeaterField?.field_value;
+
+        if (field.required === "yes" && (!value || value === "")) {
+          newErrors[field.field_name_slug] = `${field.field_label} is required`;
+        }
+      });
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return; // stop submission if errors
+      }
+
+      setErrors({}); // clear errors if validation passes
+
+      // 2. Create FormData for submission
       const formDataToSend = new FormData();
 
-      // 1. Add basicDetails
+      // Add basicDetails
       Object.entries(formData.basicDetails || {}).forEach(([key, value]) => {
         formDataToSend.append(key, value);
       });
 
-      // 2. Add locationDetails
+      // Add locationDetails
       Object.entries(formData.locationDetails || {}).forEach(([key, value]) => {
         formDataToSend.append(key, value);
       });
 
-
-
-
-
-      // 5. Add repeater_fields in special format
+      // Add repeater_fields
       (formData.repeater_fields || []).forEach((field, index) => {
         formDataToSend.append(`repeater_fields[${index}][custom_field_id]`, field.custom_field_id);
         formDataToSend.append(`repeater_fields[${index}][field_type]`, field.field_type);
 
         if (field.field_type === "file" || field.field_type === "media") {
           if (Array.isArray(field.field_value)) {
-            // Multiple files (array of objects with .file)
-            field.field_value.forEach((item, i) => {
+            field.field_value.forEach(item => {
               if (item?.file instanceof File) {
-                formDataToSend.append(`repeater_fields[${index}][field_value][${i}]`, item.file);
+                formDataToSend.append(`repeater_fields[${index}][field_value][]`, item.file);
               }
             });
           } else if (field.field_value?.file instanceof File) {
-            // Single file object
-            formDataToSend.append(`repeater_fields[${index}][field_value]`, field.field_value.file);
+            formDataToSend.append(`repeater_fields[${index}][field_value][]`, field.field_value.file);
           }
-        }
-        else if (Array.isArray(field.field_value)) {
-          // Handle checkbox/multi-select
-          const joinedValues = field.field_value.join(","); 
+        } else if (Array.isArray(field.field_value)) {
           formDataToSend.append(
             `repeater_fields[${index}][field_value]`,
-            joinedValues
+            field.field_value.join(",")
           );
-        }else {
-          // Text, select, textarea etc.
+        } else {
           formDataToSend.append(`repeater_fields[${index}][field_value]`, field.field_value ?? "");
         }
       });
-      formDataToSend.append('token',token)
-      formDataToSend.append('live_status',"Under Review")
-      formDataToSend.append('temporary_status',"Active")
 
+      // Append extra fields
+      formDataToSend.append('token', token);
+      formDataToSend.append('live_status', "Under Review");
+      formDataToSend.append('temporary_status', "Active");
 
       console.log("Final FormData before submit:");
       for (let pair of formDataToSend.entries()) {
         console.log(pair[0], ":", pair[1]);
       }
 
-      // 🚀 Send API request
+      // 3. Send API request
       const response = await fetch("/api/post-property/add-property", {
         method: "POST",
         body: formDataToSend,
@@ -349,16 +363,19 @@ const PricingAndOthers = () => {
       if (!response.ok) throw new Error("Failed to submit");
 
       const result = await response.json();
-      router.push('/')
-      console.log("✅ Submitted successfully:", result);
+      console.log("Submitted successfully:", result);
+
+      router.push('/'); // Navigate after successful submission
 
     } catch (err) {
-      console.error("❌ Submit error:", err);
+      console.error("Submit error:", err);
     }
   };
 
 
-  console.log()
+
+
+  console.log(errors)
 
   const goBack = () => {
     if (typeof window !== "undefined") {
@@ -506,8 +523,8 @@ const PricingAndOthers = () => {
                   <button
                     key={type}
                     className={`${styles.depositButton} ${pricingData.securityDepositType === type
-                        ? styles.selectedDeposit
-                        : ""
+                      ? styles.selectedDeposit
+                      : ""
                       }`}
                     onClick={() => handleChange("securityDepositType", type)}
                   >
@@ -535,13 +552,14 @@ const PricingAndOthers = () => {
                 Minimum 30 characters required{" "}
                 {pricingData[field.name]?.length || 0}/5000
               </p>
+
             </div>
           );
         } else if (field.field_type === "text") {
           return (
             <div className={styles.formGroup} key={field.field_name_slug}>
               <label htmlFor={field.field_name_slug} className={styles.formLabel}>
-                {field.field_label}
+                {field.field_label}{" "} <span style={{ color: "red" }}>{field.required ? "*" : ""}</span>
               </label>
               <input
                 type="text"
@@ -551,6 +569,9 @@ const PricingAndOthers = () => {
                 onChange={(e) => handleChange(field.field_name_slug, e.target.value, field.id, field.field_type)}
                 placeholder={field.field_placeholder || `Enter ${field.field_label}`}
               />
+              {errors[field.field_name_slug] && (
+                <p className={styles.error}>{errors[field.field_name_slug]}</p>
+              )}
             </div>
           );
 
@@ -559,7 +580,7 @@ const PricingAndOthers = () => {
           return (
             <div className={styles.formGroup} key={field.field_name_slug}>
               <label htmlFor={field.field_name_slug} className={styles.formLabel}>
-                {field.field_label}
+                {field.field_label}{" "} <span style={{ color: "red" }}>{field.required ? "*" : ""}</span>
               </label>
               <input
                 type="number"
@@ -569,6 +590,9 @@ const PricingAndOthers = () => {
                 onChange={(e) => handleChange(field.field_name_slug, e.target.value, field.id, field.field_type)}
                 placeholder={field.field_placeholder || `Enter ${field.field_label}`}
               />
+               {errors[field.field_name_slug] && (
+                    <p className={styles.error}>{errors[field.field_name_slug]}</p>
+                  )}
             </div>
           );
 

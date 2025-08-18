@@ -276,7 +276,7 @@ export default function Navbar() {
 
           <div className="d-flex align-items-center gap-3">
             <Link
-              href="/post-property"
+              href={!token?`/post-property`:'/auth/post-property/basic-details'}
               className="btn-property d-flex align-items-center gap-2 rounded-pill"
             >
               <Image

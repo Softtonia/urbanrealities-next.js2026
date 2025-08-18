@@ -132,6 +132,13 @@
   color: #333;
   cursor: pointer;
 }
+.error {
+  color: var(--KU-Crimson);
+  font-size: 13px;
+  font-family: var(--font-regular);
+  margin-top: 4px;
+
+}
 
 .formCheckbox {
   margin-right: 8px;

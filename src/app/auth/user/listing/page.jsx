@@ -3,11 +3,43 @@ import React, { useState, useEffect } from 'react';
 import styles from '../components/My-Account-Dashboard.module.css'; // same layout CSS
 import MyAccountListing from './components/My-Account-listing';
 import ProtectedRoute from '@/Components/protectedRoute';
+import { SiteSettingsProvider, useSiteSettings } from '@/Components/mycontext/siteSettingContext';
 
 const ListingPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [properties,setProperties] = useState([])
   const itemsPerPage = 6;
+  const {token } = useSiteSettings()
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      // setLoading(true)
+      // console.log(token)
+      try {
+        const res = await fetch('/api/auth/property-listing', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        // setLoading(false)
+        if (Array.isArray(data)) {
+          setProperties(data);
+        } else if (data?.data) {
+          setProperties(data.data);
+        }
+      } catch (err) {
+        // setLoading(false)
+        console.error('Error fetching roles:', err);
+      }
+    };
+    if (token) {
+      fetchProperties();
+    }
+  }, [token]);
+  console.log(properties)
 
   const dummyListings = Array.from({ length: 30 }, (_, i) => ({
     id: `listing-${i}`,
@@ -22,7 +54,7 @@ const ListingPage = () => {
     carpetArea: `${1200 + i * 5} sqft`,
   }));
 
-  const totalPages = Math.ceil(dummyListings.length / itemsPerPage);
+  const totalPages = Math.ceil(properties.length / itemsPerPage);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 600);
@@ -36,7 +68,7 @@ const ListingPage = () => {
     }
   };
 
-  const paginatedListings = dummyListings.slice(
+  const paginatedListings = properties && properties.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );

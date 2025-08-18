@@ -5,13 +5,13 @@ import styles from './components/about-agent/AboutAgent.module.css'
 import AgentProfileLayout from './AgentProfileLayout';
 const agentdetailspage = () => {
   return (
-//     <div className={` ${styles.container} container `}>
-// <AgentProfileDetails/>
-// <AboutAgent/>
-//     </div>
-<>
-<AgentProfileLayout/>
-</>
+    //     <div className={` ${styles.container} container `}>
+    // <AgentProfileDetails/>
+    // <AboutAgent/>
+    //     </div>
+    <>
+      <AgentProfileLayout />
+    </>
   );
 }
 
