@@ -14,7 +14,6 @@ export async function POST(req) {
                 'Authorization': authHeader
             }
         });
-        console.log(response.data)
         return NextResponse.json(response.data);
     } catch (error) {
         console.log(error.response.data)

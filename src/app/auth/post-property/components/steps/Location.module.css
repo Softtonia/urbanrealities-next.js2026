@@ -2,8 +2,29 @@
   background-color: var(--White);
   border-radius: 12px;
 }
+.inputField {
+  border: 1px solid #9E9E9E;
+  background-color: #fff;
+  border-radius: 8px;
+  padding-left: 4px;
+  min-height: 42px;
+  box-shadow: none;
+  outline: none;
+  width: 100%; /* keep it responsive */
+  font-size: 14px;
+  padding-left:10px ;
+  color: #000;
+}
 
+.inputField:focus,
+.inputField:hover {
+  border: 1px solid #9E9E9E;
+}
 
+.inputField:active {
+  background-color: #f0f0f0;
+  color: #000;
+}
 
 .title {
   margin-bottom: 6px;

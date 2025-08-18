@@ -14,10 +14,23 @@ export default function PropertyProfileStep() {
   const [errors, setErrors] = useState({});
   const router = useRouter();
 
-  const model_fields = Object.entries(formData.basicDetails).map(([key, value]) => ({
-    model: key,
-    condition: [value]
-  }));
+  const model_fields = Object.entries(formData.basicDetails).map(([key, value]) => {
+    let modelName = key;
+  
+    // Special case: if it's purpose_id → make it "purpose"
+    if (key === "purpose_id") {
+      modelName = "purpose";
+    } else if (key.endsWith("_id")) {
+      // Otherwise remove trailing "_id"
+      modelName = key.replace(/_id$/, "");
+    }
+  
+    return {
+      model: modelName,
+      condition: [value]
+    };
+  });
+  
 
   useEffect(() => {
     const fetchCustomFields = async () => {
@@ -68,16 +81,29 @@ export default function PropertyProfileStep() {
 
 
   // Update localFields and save to context
-  const handleChange = (fieldName, value) => {
+  const handleChange = (fieldName, value, isArray = false) => {
     setLocalFields((prev) => {
-      const updatedFields = {
-        ...prev,
-        [fieldName]: value,
-      };
+      let updatedFields;
+  
+      if (isArray) {
+        // Ensure we always store arrays properly
+        updatedFields = {
+          ...prev,
+          [fieldName]: [...value],
+        };
+      } else {
+        updatedFields = {
+          ...prev,
+          [fieldName]: value,
+        };
+      }
+  
       updateFormData("propertyProfile", updatedFields);
       return updatedFields;
     });
   };
+  
+  
 
 
   console.log("updated fields", localFields)
@@ -95,17 +121,32 @@ export default function PropertyProfileStep() {
       .filter(field => !["file", "media"].includes(field.field_type)) // skip file & media types
       .map(field => {
         const fieldValue = localFields[field.field_name_slug];
+  
+        let value;
+  
+        if (field.field_type === "checkbox") {
+          // Keep array of selected values
+          value = Array.isArray(fieldValue) ? fieldValue : [];
+        } else if (typeof fieldValue === "object" && fieldValue !== null) {
+          // Handle select objects like { value, label }
+          value = fieldValue.value || fieldValue.label || "";
+        } else {
+          value = fieldValue || "";
+        }
+  
         return {
           custom_field_id: field.id,
           field_type: field.field_type,
-          field_value:
-            typeof fieldValue === "object" && fieldValue !== null
-              ? fieldValue.value || fieldValue.label // handle select objects
-              : fieldValue || ""
+          field_value: value,
         };
       })
-      .filter(f => f.field_value !== ""); // remove empty values
+      .filter(f => {
+        // keep checkboxes even if empty (to clear server side state if needed)
+        if (f.field_type === "checkbox") return true;
+        return f.field_value !== "";
+      });
   }
+  
 
   // Example usage:
   const repeaterFields = buildRepeaterFields(localFields, profileFieldsMap);
@@ -114,27 +155,37 @@ export default function PropertyProfileStep() {
   const handleContinue = () => {
     // Validation
     const newErrors = {};
-    profileFieldsMap.forEach((field) => {
-      const value = localFields[field.field_name_slug];
-      if (field.required === "yes" && (!value || value === "")) {
-        newErrors[field.field_name_slug] = `${field.field_label} is required`;
-      }
-    });
+
+    (profileFieldsMap || [])
+      .filter(field =>
+        field.field_type !== "file" &&
+        field.field_type !== "media" &&
+        !/price/i.test(field.field_label || "") &&  // hide if label contains "price"
+        !/price/i.test(field.field_name_slug || "") // hide if slug contains "price"
+      )
+      .forEach((field) => {
+        const value = localFields[field.field_name_slug];
+        if (field.required === "yes" && (!value || value === "")) {
+          newErrors[field.field_name_slug] = `${field.field_label} is required`;
+        }
+      });
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return; // Stop here if validation fails
     }
 
-    const repeaterFields = buildRepeaterFields(localFields, profileFieldsMap);
+    const repeaterFields = buildRepeaterFields(localFields, profileFieldsMap || []);
     updateFormData("repeater_fields", repeaterFields);
     console.log("Saved Property Profile Data:", localFields);
+
     router.push("/auth/post-property/photodetails");
   };
 
+
   // const fieldsToRender = profileFieldsMap[selectedCategory] || [];
 
-  console.log("data", formData.basicDetails)
+  console.log("data", errors)
 
   return (
     <div className={styles.selectedCategory}>
@@ -143,7 +194,8 @@ export default function PropertyProfileStep() {
         <p className="m-0">Back</p>
       </div>
       <h3>Tell us about your property</h3>
-      <div className="row">
+
+      <div className="">
 
         {profileFieldsMap.length === 0 ? (
           <p>No fields available for this category. Please select a property type and category in Basic Details.</p>
@@ -160,111 +212,153 @@ export default function PropertyProfileStep() {
               const fieldValue = localFields[fieldKey] || "";
 
               return (
-                <div className={` col-lg-12 col-md-12 ${field.field_type === "select" ? styles.formRadio : styles.formGroup}`} key={field.id}>
-                  <label className={`${field.field_type === "select" ? 'd-flex' : ''}`}
-                    style={{
-                      textTransform: "capitalize",
-                      // display: "inline-block",
-                      width: "fit-content"
-                    }}
-                  >
-                    {field.field_label}{" "}
-                    <span style={{ color: "red" }}>{field.required ? "*" : ""}</span>
-                  </label>
 
-                  {/* Area Input with Units */}
-                  {field.field_type === "units" && field.options.length > 0 ? (
-                    <div className={`${styles.areaInputWrapper} w-100`}>
+                <div className="">
+                  <div className={`  ${field.field_type === "radio" ? styles.formRadio : styles.formGroup}`} key={field.id}>
+                    <label className={`${field.field_type === "select" ? 'd-flex' : ''}`}
+                      style={{
+                        textTransform: "capitalize",
+                        // display: "inline-block",
+                        width: "fit-content"
+                      }}
+                    >
+                      {field.field_label}{" "}
+                      <span style={{ color: "red" }}>{field.required ? "*" : ""}</span>
+                    </label>
+
+                    {/* Area Input with Units */}
+                    {field.field_type === "units" && field.options.length > 0 ? (
+                      <div className={`${styles.areaInputWrapper} w-100`}>
+                        <input
+                          type="number"
+                          placeholder="Enter area"
+                          value={fieldValue.value || ""}
+                          onChange={(e) =>
+                            handleChange(fieldKey, {
+                              ...fieldValue,
+                              value: e.target.value,
+                              unit: fieldValue.unit || "sq.ft"
+                            })
+                          }
+                          className={styles.areaInput}
+                        />
+                        <Select
+                          className={styles.unitSelect}
+                          classNamePrefix="unit"
+                          value={field.options
+                            .map(opt => ({ label: opt.value, value: opt.value }))
+                            .find(opt => opt.value === (fieldValue.unit || "sq.ft"))
+                          }
+                          onChange={(selected) =>
+                            handleChange(fieldKey, {
+                              ...fieldValue,
+                              value: fieldValue.value || "",
+                              unit: selected.value
+                            })
+                          }
+                          options={field.options.map(opt => ({
+                            label: opt.value,
+                            value: opt.value
+                          }))}
+                          placeholder="sq.ft"
+                        />
+                      </div>
+                    ) : field.field_type === "text" ? (
                       <input
-                        type="number"
-                        placeholder="Enter area"
-                        value={fieldValue.value || ""}
-                        onChange={(e) =>
-                          handleChange(fieldKey, {
-                            ...fieldValue,
-                            value: e.target.value,
-                            unit: fieldValue.unit || "sq.ft"
-                          })
-                        }
-                        className={styles.areaInput}
+                        type="text"
+                        placeholder={field.field_placeholder}
+                        name={fieldKey}
+                        value={fieldValue}
+                        onChange={(e) => handleChange(fieldKey, e.target.value)}
+                        className={styles.input}
                       />
+                    ) :
+                      field.field_type === "number" ? (
+                        <input
+                          type="number"
+                          placeholder={field.field_placeholder}
+                          name={fieldKey}
+                          value={fieldValue}
+                          onChange={(e) => handleChange(fieldKey, e.target.value)}
+                          className={styles.input}
+                        />
+                      ) : null}
+
+                    {/* Select Field */}
+                    {field.field_type === "select" && (
                       <Select
-                        className={styles.unitSelect}
-                        classNamePrefix="unit"
+                        placeholder={field.field_placeholder}
+                        name={fieldKey}
+                        className={styles.select}
+
+                        classNamePrefix="react-select"
                         value={field.options
-                          .map(opt => ({ label: opt.value, value: opt.value }))
-                          .find(opt => opt.value === (fieldValue.unit || "sq.ft"))
+                          .map(opt => ({ label: opt.name, value: opt.value }))
+                          .find(opt => opt.value === fieldValue?.value) || null
                         }
                         onChange={(selected) =>
                           handleChange(fieldKey, {
-                            ...fieldValue,
-                            value: fieldValue.value || "",
-                            unit: selected.value
+                            value: selected.value,
+                            label: selected.label
                           })
                         }
                         options={field.options.map(opt => ({
-                          label: opt.value,
+                          label: opt.name,
                           value: opt.value
                         }))}
-                        placeholder="sq.ft"
                       />
-                    </div>
-                  ) : field.field_type === "text" ? (
-                    <input
-                      type="text"
-                      placeholder={field.field_placeholder}
-                      name={fieldKey}
-                      value={fieldValue}
-                      onChange={(e) => handleChange(fieldKey, e.target.value)}
-                      className={styles.input}
-                    />
-                  ) : null}
+                    )}
+                    {field.field_type === "checkbox" && (
+                      <div className={styles.checkboxGroup} key={fieldKey}>
+                        {field.options.map((option) => (
+                          <label key={option.value} className={styles.checkboxLabel}>
+                            <input
+                              type="checkbox"
+                              className={styles.formCheckbox}
+                              checked={Array.isArray(localFields[fieldKey]) && localFields[fieldKey].includes(option.value)}
+                              onChange={(e) => {
+                                const prevValues = Array.isArray(localFields[fieldKey]) ? localFields[fieldKey] : [];
+                                let updatedValues;
 
-                  {/* Select Field */}
-                  {/* {field.field_type === "select" && (
-                    <Select
-                      placeholder={field.field_placeholder}
-                      name={fieldKey}
-                      className={styles.select}
+                                if (e.target.checked) {
+                                  updatedValues = [...prevValues, option.value];
+                                } else {
+                                  updatedValues = prevValues.filter((val) => val !== option.value);
+                                }
 
-                      classNamePrefix="react-select"
-                      value={field.options
-                        .map(opt => ({ label: opt.name, value: opt.value }))
-                        .find(opt => opt.value === fieldValue?.value) || null
-                      }
-                      onChange={(selected) =>
-                        handleChange(fieldKey, {
-                          value: selected.value,
-                          label: selected.label
-                        })
-                      }
-                      options={field.options.map(opt => ({
-                        label: opt.name,
-                        value: opt.value
-                      }))}
-                    />
-                  )} */}
+                                handleChange(fieldKey, updatedValues,true);
+                              }}
+                            />
+                            {option.name}
+                          </label>
+                        ))}
+                      </div>
+                    )}
 
-                  {/* Radio Buttons */}
-                  {field.field_type === "select" && (
-                    <div className={` ${styles.optionButtons}`}>
-                      {field.options.map((option) => (
-                        <button
-                          key={option.value}
-                          type="button"
-                          className={`${styles.optionBtn} ${fieldValue === option.value ? styles.selected : ""}`}
-                          onClick={() => handleChange(fieldKey, option.value)}
-                        >
-                          {option.name}
-                        </button>
-                      ))}
-                    </div>
 
-                  )}
+
+                    {/* Radio Buttons */}
+                    {field.field_type === "radio" && (
+                      <div className={` ${styles.optionButtons}`}>
+                        {field.options.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            className={`${styles.optionBtn} ${fieldValue === option.value ? styles.selected : ""}`}
+                            onClick={() => handleChange(fieldKey, option.value)}
+                          >
+                            {option.name}
+                          </button>
+                        ))}
+                      </div>
+
+                    )}
+                  </div>
                   {errors[fieldKey] && (
-                    <p className={styles.error}>{errors[fieldKey]}</p>
+                    <p className={` ${styles.error}`}>{errors[fieldKey]}</p>
                   )}
                 </div>
+
               );
             })
         )}

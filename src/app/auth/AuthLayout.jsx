@@ -23,7 +23,7 @@ const AuthLayout = ({ leftContent, rightContent }) => {
             <div className={styles.formWrapper}>
 
               {rightContent}
-
+            
             </div>
           </div>
         </div>

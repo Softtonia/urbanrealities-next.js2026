@@ -6,11 +6,12 @@ import styles from "./featurepricing.module.css"; // Ensure this path is correct
 import { ToWords } from "to-words";
 import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
 import { IoArrowBackSharp } from "react-icons/io5";
+import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 const PricingAndOthers = () => {
   const router = useRouter();
-  const { formData, updateFormData } = useContext(PostPropertyContext);
-  
+  const { formData, updateFormData, setFormData } = useContext(PostPropertyContext);
+
 
   const [pricingData, setPricingData] = useState(formData.custom_field || {});
 
@@ -23,7 +24,8 @@ const PricingAndOthers = () => {
 
     return label.includes("price") || slug.includes("price");
   });
-console.log("fields",priceFields)
+  console.log("fields", priceFields)
+  const {token} = useSiteSettings();
   const [rentInWords, setRentInWords] = useState("");
 
   const toWords = new ToWords({
@@ -52,7 +54,7 @@ console.log("fields",priceFields)
 
     let areaValue = 0;
     let calculatedPrice = "";
-    
+
     if (pricingData.basedOn === "Carpet Area" && propertyProfile.carpetArea?.value) {
       areaValue = parseFloat(propertyProfile.carpetArea.value);
     } else if (pricingData.basedOn === "Built-up Area" && propertyProfile.builtUpArea?.value) {
@@ -100,8 +102,9 @@ console.log("fields",priceFields)
     console.log("PricingAndOthers - selectedCategory from Context:", selectedCategory);
   }, [formData, selectedPurpose, selectedCategory]);
 
-  const handleChange = (fieldName, value) => {
-    setPricingData((prev) => {
+  const handleChange = (fieldName, value, field_id, field_type) => {
+    // Update pricing data state
+    setPricingData(prev => {
       const updatedFields = {
         ...prev,
         [fieldName]: value,
@@ -109,7 +112,33 @@ console.log("fields",priceFields)
       updateFormData("pricingDetails", updatedFields);
       return updatedFields;
     });
+
+    // Update repeater_fields inside formData
+    setFormData(prevFormData => {
+      const repeater = [...(prevFormData.repeater_fields || [])];
+      const existingIndex = repeater.findIndex(item => item.custom_field_id === field_id);
+
+      if (existingIndex !== -1) {
+        // Update existing entry
+        repeater[existingIndex] = {
+          ...repeater[existingIndex],
+          field_value: value
+        };
+      } else {
+        // Add new entry
+        repeater.push({
+          custom_field_id: field_id,
+          field_type: field_type,
+          field_value: value
+        });
+      }
+
+      return { ...prevFormData, repeater_fields: repeater };
+    });
   };
+
+
+
 
   const toggleBoolean = (fieldName) => {
     handleChange(fieldName, !pricingData[fieldName]);
@@ -251,11 +280,85 @@ console.log("fields",priceFields)
 
   const fieldsToRender = (dynamicFieldsMap[selectedPurpose] && dynamicFieldsMap[selectedPurpose][selectedCategory]) || [];
 
-  const handleContinue = () => {
-    updateFormData("pricingDetails", pricingData);
-    console.log("Saved Pricing Details:", pricingData);
-    router.push("/auth/post-property/summary");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const formDataToSend = new FormData();
+
+      // 1. Add basicDetails
+      Object.entries(formData.basicDetails || {}).forEach(([key, value]) => {
+        formDataToSend.append(key, value);
+      });
+
+      // 2. Add locationDetails
+      Object.entries(formData.locationDetails || {}).forEach(([key, value]) => {
+        formDataToSend.append(key, value);
+      });
+
+
+
+
+
+      // 5. Add repeater_fields in special format
+      (formData.repeater_fields || []).forEach((field, index) => {
+        formDataToSend.append(`repeater_fields[${index}][custom_field_id]`, field.custom_field_id);
+        formDataToSend.append(`repeater_fields[${index}][field_type]`, field.field_type);
+
+        if (field.field_type === "file" || field.field_type === "media") {
+          if (Array.isArray(field.field_value)) {
+            // Multiple files (array of objects with .file)
+            field.field_value.forEach((item, i) => {
+              if (item?.file instanceof File) {
+                formDataToSend.append(`repeater_fields[${index}][field_value][${i}]`, item.file);
+              }
+            });
+          } else if (field.field_value?.file instanceof File) {
+            // Single file object
+            formDataToSend.append(`repeater_fields[${index}][field_value]`, field.field_value.file);
+          }
+        }
+        else if (Array.isArray(field.field_value)) {
+          // Handle checkbox/multi-select
+          const joinedValues = field.field_value.join(","); 
+          formDataToSend.append(
+            `repeater_fields[${index}][field_value]`,
+            joinedValues
+          );
+        }else {
+          // Text, select, textarea etc.
+          formDataToSend.append(`repeater_fields[${index}][field_value]`, field.field_value ?? "");
+        }
+      });
+      formDataToSend.append('token',token)
+      formDataToSend.append('live_status',"Under Review")
+      formDataToSend.append('temporary_status',"Active")
+
+
+      console.log("Final FormData before submit:");
+      for (let pair of formDataToSend.entries()) {
+        console.log(pair[0], ":", pair[1]);
+      }
+
+      // 🚀 Send API request
+      const response = await fetch("/api/post-property/add-property", {
+        method: "POST",
+        body: formDataToSend,
+      });
+
+      if (!response.ok) throw new Error("Failed to submit");
+
+      const result = await response.json();
+      router.push('/')
+      console.log("✅ Submitted successfully:", result);
+
+    } catch (err) {
+      console.error("❌ Submit error:", err);
+    }
   };
+
+
+  console.log()
 
   const goBack = () => {
     if (typeof window !== "undefined") {
@@ -287,7 +390,7 @@ console.log("fields",priceFields)
         <button className={styles.closeWarningButton}>&times;</button>
       </div>
 
-      {fieldsToRender.length === 0 && (
+      {priceFields.length === 0 && (
         <p className={styles.formQuestion}>
           Please go back to Basic Details and select a Purpose and Property Type/Category to see pricing options.
         </p>
@@ -402,11 +505,10 @@ console.log("fields",priceFields)
                 {["Fixed", "Multiple of Rent", "None"].map((type) => (
                   <button
                     key={type}
-                    className={`${styles.depositButton} ${
-                      pricingData.securityDepositType === type
+                    className={`${styles.depositButton} ${pricingData.securityDepositType === type
                         ? styles.selectedDeposit
                         : ""
-                    }`}
+                      }`}
                     onClick={() => handleChange("securityDepositType", type)}
                   >
                     {type}
@@ -417,15 +519,15 @@ console.log("fields",priceFields)
           );
         } else if (field.field_type === "textarea") {
           return (
-            <div className={styles.formGroup} key={field.name}>
-              <p className={styles.formQuestion}>{field.label}</p>
+            <div className={styles.formGroup} key={field.field_name_slug}>
+              <p className={styles.formQuestion}>{field.field_label}</p>
               <p className={styles.descriptionHint}>
                 Adding description will increase your listing visibility
               </p>
               <textarea
                 className={styles.formTextarea}
-                value={pricingData[field.name] || ""}
-                onChange={(e) => handleChange(field.name, e.target.value)}
+                value={pricingData[field.field_name_slug] || ""}
+                onChange={(e) => handleChange(field.name, e.target.value, field.id, field.field_type)}
                 placeholder="Share some details about your property like spacious area, nearby markets, metro connectivity and more"
                 rows="5"
               ></textarea>
@@ -435,41 +537,59 @@ console.log("fields",priceFields)
               </p>
             </div>
           );
-        }else if(field.field_type === "text"){
+        } else if (field.field_type === "text") {
           return (
-            <div className={styles.formGroup} key={field.name}>
-                <label htmlFor={field.name} className={styles.formLabel}>
-                    {field.field_label}
-                </label>
-                <input
-                    type="text"
-                    id={field.name}
-                    className={styles.formInput}
-                    value={pricingData[field.name] || ""}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
-                    placeholder={field.field_placeholder ||`Enter ${field.field_label}`}
-                />
+            <div className={styles.formGroup} key={field.field_name_slug}>
+              <label htmlFor={field.field_name_slug} className={styles.formLabel}>
+                {field.field_label}
+              </label>
+              <input
+                type="text"
+                id={field.field_name_slug}
+                className={styles.formInput}
+                value={pricingData[field.field_name_slug] || ""}
+                onChange={(e) => handleChange(field.field_name_slug, e.target.value, field.id, field.field_type)}
+                placeholder={field.field_placeholder || `Enter ${field.field_label}`}
+              />
             </div>
-        );
-        
+          );
 
-        }else if (field.field_type === "number" && (field.name !== "expectedRent" && field.name !== "totalPrice" && field.name !== "pricePerSqFt")) {
-            // Render other number fields not part of the primary pricing grid
-            return (
-                <div className={styles.formGroup} key={field.name}>
-                    <label htmlFor={field.name} className={styles.formLabel}>
-                        {field.label}
-                    </label>
-                    <input
-                        type="number"
-                        id={field.name}
-                        className={styles.formInput}
-                        value={pricingData[field.name] || ""}
-                        onChange={(e) => handleChange(field.name, e.target.value)}
-                        placeholder={field.placeholder || field.label}
-                    />
-                </div>
-            );
+
+        } else if (field.field_type === "number") {
+          return (
+            <div className={styles.formGroup} key={field.field_name_slug}>
+              <label htmlFor={field.field_name_slug} className={styles.formLabel}>
+                {field.field_label}
+              </label>
+              <input
+                type="number"
+                id={field.field_name_slug}
+                className={styles.formInput}
+                value={pricingData[field.field_name_slug] || ""}
+                onChange={(e) => handleChange(field.field_name_slug, e.target.value, field.id, field.field_type)}
+                placeholder={field.field_placeholder || `Enter ${field.field_label}`}
+              />
+            </div>
+          );
+
+
+        } else if (field.field_type === "number" && (field.name !== "expectedRent" && field.name !== "totalPrice" && field.name !== "pricePerSqFt")) {
+          // Render other number fields not part of the primary pricing grid
+          return (
+            <div className={styles.formGroup} key={field.field_name_slug}>
+              <label htmlFor={field.field_name_slug} className={styles.formLabel}>
+                {field.field_label}
+              </label>
+              <input
+                type="number"
+                id={field.field_name_slug}
+                className={styles.formInput}
+                value={pricingData[field.field_name_slug] || ""}
+                onChange={(e) => handleChange(field.name, e.target.value, field.id, field.field_type)}
+                placeholder={field.field_placeholder || `Enter ${field.field_label}`}
+              />
+            </div>
+          );
         }
         return null;
       })}
@@ -513,7 +633,7 @@ console.log("fields",priceFields)
       <div className={styles.navigationButtons}>
         <button
           className={`${styles.continueBtn} continueBtn`} // Added direct class "continueBtn"
-          onClick={handleContinue}
+          onClick={handleSubmit}
         >
           Continue
         </button>

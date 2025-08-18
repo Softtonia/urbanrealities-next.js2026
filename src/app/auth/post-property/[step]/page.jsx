@@ -12,6 +12,13 @@ export async function generateStaticParams() {
 }
 
 export default async function Page({ params }) {
+
   const { step } = await params;
+
+  let serverData = {};
+  if (step === "basic-details") {
+    
+
+  }
   return <StepComponent step={step} />;
 }

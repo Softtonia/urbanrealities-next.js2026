@@ -8,7 +8,8 @@
     flex-direction: column;
     margin-bottom: 20px;
 }
-.formRadio{
+
+.formRadio {
     display: flex;
     flex-direction: row;
 
@@ -84,17 +85,46 @@
     border-radius: 4px;
     resize: vertical;
 }
+
 .error {
-    color: var( --KU-Crimson);
+    color: var(--KU-Crimson);
     font-size: 13px;
     font-family: var(--font-regular);
     margin-top: 4px;
-  
+
+}
+
+.checkboxGroup {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    /* Allow wrapping on smaller screens */
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+}
+.formCheckbox {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+    accent-color: #007bff; /* Custom color for checkbox */
   }
+
 @media (max-width: 768px) {
-    .formRadio{
+    .formRadio {
         gap: 0;
         align-items: start;
         flex-direction: column;
+    }
+
+    .checkboxGroup {
+        flex-direction: column;
+        /* Stack checkboxes on small screens */
     }
 }

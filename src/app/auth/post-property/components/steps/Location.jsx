@@ -34,14 +34,16 @@ const Location = () => {
   const [selectedCountry, setSelectedCountry] = useState(formData.locationDetails?.country || null);
   const [selectedState, setSelectedState] = useState(formData.locationDetails?.state || null);
   const [selectedCity, setSelectedCity] = useState(formData.locationDetails?.city || null);
+  const [selectedPinCode, setSelectedPinCode] = useState(formData.locationDetails?.pin_code || null);
+
 
   const [countries, setCountries] = useState([])
   const [cities, setCities] = useState([])
   const [states, setStates] = useState([])
   const [errors, setErrors] = useState({});
-  const [isFetchingCountry,setIsFetchingCountry] = useState(false)
-  const [isFetchingState,setIsFetchingState] = useState(false)
-  const [isFetchingCity,setIsFetchingCity] = useState(false)
+  const [isFetchingCountry, setIsFetchingCountry] = useState(false)
+  const [isFetchingState, setIsFetchingState] = useState(false)
+  const [isFetchingCity, setIsFetchingCity] = useState(false)
 
   console.log(selectedCountry)
   // fetch country  /api/countries
@@ -137,6 +139,8 @@ const Location = () => {
     if (!selectedCountry) newErrors.country = "Country is required";
     if (!selectedState) newErrors.state = "State is required";
     if (!selectedCity) newErrors.city = "City is required";
+    if (!selectedPinCode) newErrors.pin_code = "Pin Code is required";
+
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -144,9 +148,10 @@ const Location = () => {
     }
 
     updateFormData("locationDetails", {
-      country: selectedCountry,
-      state: selectedState,
-      city: selectedCity,
+      country_id: selectedCountry,
+      state_id: selectedState,
+      city_id: selectedCity,
+      pin_code: selectedPinCode
     });
 
     router.push("/auth/post-property/property-profile");
@@ -192,6 +197,7 @@ const Location = () => {
       minHeight: "42px",
       boxShadow: "none",
       outline: "none",
+      fontSize: "14px",
       "&:hover": {
         border: "1px solid #9E9E9E",
       },
@@ -282,7 +288,7 @@ const Location = () => {
           }
           onChange={(option) => {
             setSelectedState(option?.value || null);
-        
+
             setSelectedCity(null);
             setErrors((prev) => ({ ...prev, state: null }));
           }}
@@ -314,7 +320,7 @@ const Location = () => {
           }
           onChange={(option) => {
             setSelectedCity(option?.value || null);
-        
+
             setErrors((prev) => ({ ...prev, city: null }));
           }}
           placeholder="Select City"
@@ -326,6 +332,21 @@ const Location = () => {
         />
         {errors.city && <p className={styles.error}>{errors.city}</p>}
       </div>
+      <div className={styles.formGroup}>
+        <label className={styles.label}>Price</label>
+        <input
+          type="number"
+          value={selectedPinCode}
+          onChange={(e) => {
+            setSelectedPinCode(e.target.value);
+            setErrors((prev) => ({ ...prev, pin_code: null }));
+          }}
+          placeholder="Enter PIN code"
+          className={`${styles.inputField} w-20`} // keep consistent with Select styling
+        />
+        {errors.pin_code && <p className={styles.error}>{errors.pin_code}</p>}
+      </div>
+
 
       <button className={` continueBtn ${styles.continueBtn}`} onClick={handleContinue}>
         Continue

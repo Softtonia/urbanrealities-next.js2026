@@ -12,15 +12,16 @@ export function PostPropertyProvider({ children }) {
         ? JSON.parse(saved)
         : {
             basicDetails: {
-              purpose: "",
-              property: "",
-              property_type: "",
-              property_status: "",
+              purpose_id: "",
+              property_id: "",
+              property_type_id: "",
+              property_status_id: "",
             },
             locationDetails: {
-              country: null,
-              state: null,
-              city: null,
+              country_id: null,
+              state_id: null,
+              city_id: null,
+              pin_code:null
             },
             // propertyProfile: {},
             repeater_fields:{},

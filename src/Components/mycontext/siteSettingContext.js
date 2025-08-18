@@ -1,5 +1,6 @@
 'use client'
 
+// import { cookies } from 'next/headers'
 import { createContext, useContext, useState, useEffect } from 'react'
 
 const AuthContext = createContext(null)
@@ -20,13 +21,19 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
 
     // Save to sessionStorage and state
     const login = (newToken) => {
+        // cookies().set('token', data.token, {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === 'production',
+        //     sameSite: 'strict',
+        //     path: '/',
+        // });
         sessionStorage.setItem('token', newToken)
         setToken(newToken)
     }
 
     const logout = async () => {
         const token = sessionStorage.getItem('token');
-        console.log("token",token)
+        console.log("token", token)
 
         try {
             const res = await fetch('/api/auth/logout', {
@@ -34,7 +41,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body:JSON.stringify({ token }),
+                body: JSON.stringify({ token }),
             });
 
             if (res) {
@@ -49,7 +56,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     };
 
     return (
-        <AuthContext.Provider 
+        <AuthContext.Provider
             value={{ token, login, logout, settings, isLoadingToken }} // pass isLoadingToken
         >
             {children}

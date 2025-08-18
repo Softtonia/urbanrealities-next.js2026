@@ -15,7 +15,7 @@ export async function GET(req) {
 
         return NextResponse.json(response.data);
     } catch (error) {
-        // console.error(error?.response || error);
+        console.error(error?.response || error);
         return NextResponse.json(
             { error: 'Failed to fetch purpose' },
             { status: 500 }
