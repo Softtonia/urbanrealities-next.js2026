@@ -18,8 +18,18 @@
 }
 
 .subimages img {
-  flex: 1;
+  width: 50%;
   height: 277px;   /* dono images ek hi height me rahenge */
   object-fit: cover;
   border-radius: 8px;
+}
+@media (max-width:1198.98px){
+  .subimages {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.subimages img {
+  width: 47%;
+}
 }

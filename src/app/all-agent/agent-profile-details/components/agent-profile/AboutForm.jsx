@@ -3,17 +3,9 @@ import styles from "./AgentProfile.module.css";
 import { FaPhoneAlt } from "react-icons/fa";
 import Link from "next/link";
 
-const data = {
-  heading: " Quick Enquiry",
-  usernameLabel: "Username",
-  usernamePlaceholder: "Enter Username",
-  emailLabel: "Email",
-  emailPlaceholder: "Enter email",
-  phoneLabel: "Phone Number",
-  phonePlaceholder: "Enter Phone Number",
-  nextButton: "Request Call-back",
-};
-const AboutForm = () => {
+
+const AboutForm = ({data}) => {
+  // console.log(data);
   return (
     <div>
       <div className={styles.right}>
