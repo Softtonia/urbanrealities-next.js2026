@@ -17,7 +17,7 @@ export default function MyAccountlisting({ data }) {
       {/* Details Section */}
       <div className={` ${styles.details} `}>
         <div className={styles.statusRow}>
-          <span className={styles.approved}>Approve</span>
+          <span className={styles.approved}>{data.live_status}</span>
           <FaBell className={styles.bellIcon} />
         </div>
 

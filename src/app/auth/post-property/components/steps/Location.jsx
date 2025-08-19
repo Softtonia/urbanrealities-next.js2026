@@ -31,10 +31,10 @@ const Location = () => {
   const { token } = useSiteSettings()
   const router = useRouter();
 
-  const [selectedCountry, setSelectedCountry] = useState(formData.locationDetails?.country || null);
-  const [selectedState, setSelectedState] = useState(formData.locationDetails?.state || null);
-  const [selectedCity, setSelectedCity] = useState(formData.locationDetails?.city || null);
-  const [selectedPinCode, setSelectedPinCode] = useState(formData.locationDetails?.pin_code || null);
+  const [selectedCountry, setSelectedCountry] = useState(formData.locationDetails?.country || '');
+  const [selectedState, setSelectedState] = useState(formData.locationDetails?.state || '');
+  const [selectedCity, setSelectedCity] = useState(formData.locationDetails?.city || '');
+  const [selectedPinCode, setSelectedPinCode] = useState(formData.locationDetails?.pin_code || '');
 
 
   const [countries, setCountries] = useState([])
@@ -333,7 +333,7 @@ const Location = () => {
         {errors.city && <p className={styles.error}>{errors.city}</p>}
       </div>
       <div className={styles.formGroup}>
-        <label className={styles.label}>Price</label>
+        <label className={styles.label}>PIN Code</label>
         <input
           type="number"
           value={selectedPinCode}

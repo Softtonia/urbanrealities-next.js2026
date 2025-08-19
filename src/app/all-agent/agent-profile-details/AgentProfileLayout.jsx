@@ -1,6 +1,5 @@
 import React from 'react';
 import styles from './components/AgentProfileLayout.module.css'
-import AgentProfileDetails from './components/agent-profile/AgentProfile';
 import AgentForm from './components/agent-profile/AboutForm';
 import AboutAgent from './components/about-agent/AboutAgent';
 import AgentReviews from './components/agent-reviews/AgentReviews';
@@ -13,6 +12,7 @@ import Breadcrumbs from '@/Components/All-Breadcrumbs/Breadcrumbs';
 
 
 
+import AgentProfileDetails from './components/agent-profile/AgentProfile';
 const data = {
   heading: " Quick Enquiry",
   usernameLabel: "Username",

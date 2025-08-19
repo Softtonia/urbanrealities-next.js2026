@@ -16,7 +16,7 @@ export default function PropertyProfileStep() {
 
   const model_fields = Object.entries(formData.basicDetails).map(([key, value]) => {
     let modelName = key;
-  
+
     // Special case: if it's purpose_id → make it "purpose"
     if (key === "purpose_id") {
       modelName = "purpose";
@@ -24,13 +24,13 @@ export default function PropertyProfileStep() {
       // Otherwise remove trailing "_id"
       modelName = key.replace(/_id$/, "");
     }
-  
+
     return {
       model: modelName,
       condition: [value]
     };
   });
-  
+
 
   useEffect(() => {
     const fetchCustomFields = async () => {
@@ -84,7 +84,7 @@ export default function PropertyProfileStep() {
   const handleChange = (fieldName, value, isArray = false) => {
     setLocalFields((prev) => {
       let updatedFields;
-  
+
       if (isArray) {
         // Ensure we always store arrays properly
         updatedFields = {
@@ -97,13 +97,13 @@ export default function PropertyProfileStep() {
           [fieldName]: value,
         };
       }
-  
+
       updateFormData("propertyProfile", updatedFields);
       return updatedFields;
     });
   };
-  
-  
+
+
 
 
   console.log("updated fields", localFields)
@@ -121,9 +121,9 @@ export default function PropertyProfileStep() {
       .filter(field => !["file", "media"].includes(field.field_type)) // skip file & media types
       .map(field => {
         const fieldValue = localFields[field.field_name_slug];
-  
+
         let value;
-  
+
         if (field.field_type === "checkbox") {
           // Keep array of selected values
           value = Array.isArray(fieldValue) ? fieldValue : [];
@@ -133,7 +133,7 @@ export default function PropertyProfileStep() {
         } else {
           value = fieldValue || "";
         }
-  
+
         return {
           custom_field_id: field.id,
           field_type: field.field_type,
@@ -146,7 +146,7 @@ export default function PropertyProfileStep() {
         return f.field_value !== "";
       });
   }
-  
+
 
   // Example usage:
   const repeaterFields = buildRepeaterFields(localFields, profileFieldsMap);
@@ -204,21 +204,20 @@ export default function PropertyProfileStep() {
             .filter(field =>
               field.field_type !== "file" &&
               field.field_type !== "media" &&
-              !/price/i.test(field.field_label) &&      // hide if label contains "price"
-              !/price/i.test(field.field_name_slug)     // hide if slug contains "price"
+              !/price/i.test(field.field_label) &&
+              !/price/i.test(field.field_name_slug)
             )
             .map((field) => {
               const fieldKey = field.field_name_slug;
               const fieldValue = localFields[fieldKey] || "";
 
               return (
-
-                <div className="">
-                  <div className={`  ${field.field_type === "radio" ? styles.formRadio : styles.formGroup}`} key={field.id}>
-                    <label className={`${field.field_type === "select" ? 'd-flex' : ''}`}
+                <div key={field.id || fieldKey} className="">
+                  <div className={`${field.field_type === "radio" ? styles.formRadio : styles.formGroup}`}>
+                    <label
+                      className={`${field.field_type === "select" ? "d-flex" : ""}`}
                       style={{
                         textTransform: "capitalize",
-                        // display: "inline-block",
                         width: "fit-content"
                       }}
                     >
@@ -226,7 +225,7 @@ export default function PropertyProfileStep() {
                       <span style={{ color: "red" }}>{field.required ? "*" : ""}</span>
                     </label>
 
-                    {/* Area Input with Units */}
+                    {/* Units field */}
                     {field.field_type === "units" && field.options.length > 0 ? (
                       <div className={`${styles.areaInputWrapper} w-100`}>
                         <input
@@ -237,7 +236,7 @@ export default function PropertyProfileStep() {
                             handleChange(fieldKey, {
                               ...fieldValue,
                               value: e.target.value,
-                              unit: fieldValue.unit || "sq.ft"
+                              unit: fieldValue.unit || "sq.ft",
                             })
                           }
                           className={styles.areaInput}
@@ -246,19 +245,19 @@ export default function PropertyProfileStep() {
                           className={styles.unitSelect}
                           classNamePrefix="unit"
                           value={field.options
-                            .map(opt => ({ label: opt.value, value: opt.value }))
-                            .find(opt => opt.value === (fieldValue.unit || "sq.ft"))
+                            .map((opt) => ({ label: opt.value, value: opt.value }))
+                            .find((opt) => opt.value === (fieldValue.unit || "sq.ft"))
                           }
                           onChange={(selected) =>
                             handleChange(fieldKey, {
                               ...fieldValue,
                               value: fieldValue.value || "",
-                              unit: selected.value
+                              unit: selected.value,
                             })
                           }
-                          options={field.options.map(opt => ({
+                          options={field.options.map((opt) => ({
                             label: opt.value,
-                            value: opt.value
+                            value: opt.value,
                           }))}
                           placeholder="sq.ft"
                         />
@@ -272,17 +271,16 @@ export default function PropertyProfileStep() {
                         onChange={(e) => handleChange(fieldKey, e.target.value)}
                         className={styles.input}
                       />
-                    ) :
-                      field.field_type === "number" ? (
-                        <input
-                          type="number"
-                          placeholder={field.field_placeholder}
-                          name={fieldKey}
-                          value={fieldValue}
-                          onChange={(e) => handleChange(fieldKey, e.target.value)}
-                          className={styles.input}
-                        />
-                      ) : null}
+                    ) : field.field_type === "number" ? (
+                      <input
+                        type="number"
+                        placeholder={field.field_placeholder}
+                        name={fieldKey}
+                        value={fieldValue}
+                        onChange={(e) => handleChange(fieldKey, e.target.value)}
+                        className={styles.input}
+                      />
+                    ) : null}
 
                     {/* Select Field */}
                     {field.field_type === "select" && (
@@ -290,34 +288,41 @@ export default function PropertyProfileStep() {
                         placeholder={field.field_placeholder}
                         name={fieldKey}
                         className={styles.select}
-
                         classNamePrefix="react-select"
-                        value={field.options
-                          .map(opt => ({ label: opt.name, value: opt.value }))
-                          .find(opt => opt.value === fieldValue?.value) || null
+                        value={
+                          field.options
+                            .map((opt) => ({ label: opt.name, value: opt.value }))
+                            .find((opt) => opt.value === fieldValue?.value) || null
                         }
                         onChange={(selected) =>
                           handleChange(fieldKey, {
                             value: selected.value,
-                            label: selected.label
+                            label: selected.label,
                           })
                         }
-                        options={field.options.map(opt => ({
+                        options={field.options.map((opt) => ({
                           label: opt.name,
-                          value: opt.value
+                          value: opt.value,
                         }))}
                       />
                     )}
+
+                    {/* Checkbox Field */}
                     {field.field_type === "checkbox" && (
-                      <div className={styles.checkboxGroup} key={fieldKey}>
+                      <div className={styles.checkboxGroup}>
                         {field.options.map((option) => (
-                          <label key={option.value} className={styles.checkboxLabel}>
+                          <label key={`${fieldKey}-${option.value}`} className={styles.checkboxLabel}>
                             <input
                               type="checkbox"
                               className={styles.formCheckbox}
-                              checked={Array.isArray(localFields[fieldKey]) && localFields[fieldKey].includes(option.value)}
+                              checked={
+                                Array.isArray(localFields[fieldKey]) &&
+                                localFields[fieldKey].includes(option.value)
+                              }
                               onChange={(e) => {
-                                const prevValues = Array.isArray(localFields[fieldKey]) ? localFields[fieldKey] : [];
+                                const prevValues = Array.isArray(localFields[fieldKey])
+                                  ? localFields[fieldKey]
+                                  : [];
                                 let updatedValues;
 
                                 if (e.target.checked) {
@@ -326,7 +331,7 @@ export default function PropertyProfileStep() {
                                   updatedValues = prevValues.filter((val) => val !== option.value);
                                 }
 
-                                handleChange(fieldKey, updatedValues,true);
+                                handleChange(fieldKey, updatedValues, true);
                               }}
                             />
                             {option.name}
@@ -335,33 +340,32 @@ export default function PropertyProfileStep() {
                       </div>
                     )}
 
-
-
-                    {/* Radio Buttons */}
+                    {/* Radio Field */}
                     {field.field_type === "radio" && (
-                      <div className={` ${styles.optionButtons}`}>
+                      <div className={styles.optionButtons}>
                         {field.options.map((option) => (
                           <button
-                            key={option.value}
+                            key={`${fieldKey}-${option.value}`}
                             type="button"
-                            className={`${styles.optionBtn} ${fieldValue === option.value ? styles.selected : ""}`}
+                            className={`${styles.optionBtn} ${fieldValue === option.value ? styles.selected : ""
+                              }`}
                             onClick={() => handleChange(fieldKey, option.value)}
                           >
                             {option.name}
                           </button>
                         ))}
                       </div>
-
                     )}
                   </div>
+
                   {errors[fieldKey] && (
-                    <p className={` ${styles.error}`}>{errors[fieldKey]}</p>
+                    <p className={styles.error}>{errors[fieldKey]}</p>
                   )}
                 </div>
-
               );
             })
         )}
+
       </div>
 
       <button

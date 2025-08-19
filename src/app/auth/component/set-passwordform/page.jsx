@@ -21,8 +21,8 @@ const SetPassword = () => {
   const username = searchParams.get("username");
   const phone = searchParams.get("phone");
   const role = searchParams.get("role");
-  const lastName = searchParams.get("firstname");
-  const firstName = searchParams.get("lastname");
+  const firstName = searchParams.get("firstname");
+  const lastName = searchParams.get("lastname");
 
   useEffect(() => {
     if (email) updateField("email", email);
