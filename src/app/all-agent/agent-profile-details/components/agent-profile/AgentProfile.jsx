@@ -1,12 +1,16 @@
 "use client";
-import React from "react";
+import React, {useState} from "react";
 import Image from "next/image";
 import styles from "./AgentProfile.module.css";
-
+import ModalPopup from "@/Components/Modal-Popup/ModalPopup";
 // react-icons import
 import { FaPhoneAlt, FaStar, FaFlag, FaEnvelope } from "react-icons/fa";
 
 export default function AgentProfileDetails() {
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
   const agent = {
     name: "Kairav Anand",
     company: "Dreams home pvt. ltd.",
@@ -34,6 +38,17 @@ export default function AgentProfileDetails() {
     ],
   };
 
+
+  const contactAgentData = {
+    heading: "Contact",
+    usernameLabel: "Your Name",
+    usernamePlaceholder: "Enter your name",
+    phoneLabel: "Phone Number",
+    emailPlaceholder: "Enter email",
+    phonePlaceholder: "Enter your phone",
+    usermessage: "Type your message",
+    nextButton: "Contact Agent",
+  };
   return (
     <>
     <div className={styles.profilesection}>
@@ -51,9 +66,9 @@ export default function AgentProfileDetails() {
             <FaPhoneAlt className={styles.icon} /> View Number
           </button>
 
-          <button className={styles.sendmsg}>
+          <button className={styles.sendmsg} onClick={handleShowModal}>
             <FaEnvelope className={styles.icon} /> send Message
-          </button>
+                 </button>
         </div>
       </div>
 
@@ -109,6 +124,12 @@ export default function AgentProfileDetails() {
             <p className={styles.operatespara}>{agent.operatesIn.join(", ")}</p>
           </div>
         </div>
+             <ModalPopup
+        show={showModal}
+        handleClose={handleCloseModal}
+        popupData={contactAgentData}
+        agentName={agent.name}
+      />
 
     </>  
   );

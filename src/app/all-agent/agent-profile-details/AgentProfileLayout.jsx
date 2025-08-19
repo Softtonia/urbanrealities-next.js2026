@@ -7,6 +7,12 @@ import AgentReviews from './components/agent-reviews/AgentReviews';
 import AgentPropertyList from "./components/agent-propertylist/AgentPropertyList"
 import ContactInfo from './components/contact-info/ContactInfo';
 import SubHero from '@/Components/SubHero/SubHero';
+import Breadcrumbs from '@/Components/All-Breadcrumbs/Breadcrumbs';
+
+
+
+
+
 const data = {
   heading: " Quick Enquiry",
   usernameLabel: "Username",
@@ -26,9 +32,21 @@ const agentdata = {
   phonePlaceholder: "Enter Phone Number",
   nextButton: "Request Call-back",
 };
+//  const breadcrumbPaths = [
+//     { label: 'Home', href: '/' },
+//     { label: 'Properties', href: '/properties' },
+//     { label: 'Delhi', href: '/properties/delhi' },
+//     { label: 'Green Park Villa', href: '/properties/delhi/green-park-villa' },
+//   ];
 const AgentProfileLayout = () => {
   return (
     <>
+    <div className={` ${styles.Breadcrumbs}  `}>
+      <div className={` ${styles.container} container `}>
+    {/* <Breadcrumbs paths={breadcrumbPaths}/> */}
+    <Breadcrumbs/>
+    </div>
+    </div>
     <div className={` ${styles.profileContainer} container `}>
         <div className={` ${styles.profilerow} row `}>
         <div className={` ${styles.agentprofilecol} col-12 col-xl-8 p-0 `}><AgentProfileDetails/> </div>
@@ -65,7 +83,6 @@ const AgentProfileLayout = () => {
              </div>
         </div>
     </div>
-
   
    </>   
   );

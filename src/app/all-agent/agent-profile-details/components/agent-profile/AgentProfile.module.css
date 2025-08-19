@@ -23,7 +23,7 @@ align-self:center;
   background: var(--Orange-Red);
   color: var(--White);
   border: none;
-  padding: 8px 4px ;
+  padding: 8px 15px ;
   border-radius: 6px;
   cursor: pointer;
   font-family: var(--font-regular);
@@ -151,6 +151,9 @@ padding: 10px;
   }
   .icon {
   margin-right: 2px;
+}
+.viewNumber {
+  padding: 8px 4px;
 }
 }
 
