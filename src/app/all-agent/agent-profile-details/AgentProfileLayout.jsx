@@ -7,6 +7,12 @@ import AgentReviews from './components/agent-reviews/AgentReviews';
 import AgentPropertyList from "./components/agent-propertylist/AgentPropertyList"
 import ContactInfo from './components/contact-info/ContactInfo';
 import SubHero from '@/Components/SubHero/SubHero';
+import Breadcrumbs from '@/Components/All-Breadcrumbs/Breadcrumbs';
+
+
+
+
+
 import AgentProfileDetails from './components/agent-profile/AgentProfile';
 import { PropertyCard } from '@/Components/PropertyListing/PropertyListing';
 import { useParams, useRouter } from 'next/navigation';
@@ -29,6 +35,12 @@ const data = [{
   phonePlaceholder: "Enter Phone Number",
   nextButton: "Request Call-back",
 }];
+//  const breadcrumbPaths = [
+//     { label: 'Home', href: '/' },
+//     { label: 'Properties', href: '/properties' },
+//     { label: 'Delhi', href: '/properties/delhi' },
+//     { label: 'Green Park Villa', href: '/properties/delhi/green-park-villa' },
+//   ];
 const AgentProfileLayout = () => {
   const { id } = useParams()
   const router = useRouter()
@@ -105,7 +117,13 @@ const AgentProfileLayout = () => {
 
   return (
     <>
-      <div className={` ${styles.profileContainer} container `}>
+    <div className={` ${styles.Breadcrumbs}  `}>
+      <div className={` ${styles.container} container `}>
+    {/* <Breadcrumbs paths={breadcrumbPaths}/> */}
+    <Breadcrumbs/>
+    </div>
+    </div>
+    <div className={` ${styles.profileContainer} container `}>
         <div className={` ${styles.profilerow} row `}>
           <div className={` ${styles.agentprofilecol} col-12 col-xl-8 p-0 `}><AgentProfileDetails /> </div>
           <div className={` ${styles.AgentFormcol} col-12  col-xl-4 p-0`}> <AgentForm data={data[0]} /> </div>

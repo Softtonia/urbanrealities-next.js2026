@@ -2,16 +2,46 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import styles from "./AgentProfile.module.css";
-import { FaPhoneAlt, FaStar, FaEnvelope } from "react-icons/fa";
+import ModalPopup from "@/Components/Modal-Popup/ModalPopup";
+import { FaPhoneAlt, FaStar, FaFlag, FaEnvelope } from "react-icons/fa";
 import { useParams } from "next/navigation";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 export default function AgentProfileDetails() {
-  const { isLogeIn } = useSiteSettings()
+  const [showModal, setShowModal] = useState(false);
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+  // const agent = {
+  //   name: "Kairav Anand",
+  //   company: "Dreams home pvt. ltd.",
+  //   rating: 9.8,
+  //   reviews: 5,
+  //   image: "/agent-profile.png",
+  //   rent: 145,
+  //   sale: 45,
+  //   deals: 400,
+  //   dealsIn: [
+  //     "Rent/Lease",
+  //     "Pre-launch",
+  //     "Original Booking",
+  //     "Resale",
+  //     "Others",
+  //   ],
+  //   operatesIn: [
+  //     "Amar Colony",
+  //     "Lajpat Nagar 4",
+  //     "Greater Kailash 1",
+  //     "Lajpat Nagar 1",
+  //     "Defence Colony",
+  //     "Dayanand Colony",
+  //     "East Of Kailash",
+  //   ],
+  // };
+
   const { id } = useParams();
   const [agent, setAgent] = useState(null); // renamed to singular for clarity
   const [loading, setLoading] = useState(true);
-  console.log(isLogeIn)
+  
 
   useEffect(() => {
     const fetchAgent = async () => {
@@ -32,6 +62,17 @@ export default function AgentProfileDetails() {
 
   if (loading) return <p>Loading...</p>;
 
+
+  const contactAgentData = {
+    heading: "Contact",
+    usernameLabel: "Your Name",
+    usernamePlaceholder: "Enter your name",
+    phoneLabel: "Phone Number",
+    emailPlaceholder: "Enter email",
+    phonePlaceholder: "Enter your phone",
+    usermessage: "Type your message",
+    nextButton: "Contact Agent",
+  };
   return (
     <>
       <div className={styles.profilesection}>
@@ -49,12 +90,13 @@ export default function AgentProfileDetails() {
             className={styles.agentImage}
           />
 
+
           <div className={styles.groupBtn}>
             <button className={styles.viewNumber}>
               <FaPhoneAlt className={styles.icon} /> View Number
             </button>
 
-            <button className={styles.sendmsg}>
+            <button className={styles.sendmsg} onClick={handleShowModal}>
               <FaEnvelope className={styles.icon} /> Send Message
             </button>
           </div>
@@ -128,6 +170,16 @@ export default function AgentProfileDetails() {
             </p>
           </div>)}
       </div>
+    {/* End of main profile section */}
+
+
+             <ModalPopup
+        show={showModal}
+        handleClose={handleCloseModal}
+        popupData={contactAgentData}
+        agentName={agent.name}
+      />
+
     </>
   );
 }

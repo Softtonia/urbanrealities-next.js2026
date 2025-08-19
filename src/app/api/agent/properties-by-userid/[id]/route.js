@@ -11,7 +11,7 @@ export async function GET(req, { params }) {
         const response = await get(
             `/api/get-property-by-user-id-filter-by-purpose/${id}?purpose_id=${purpose_id}`
         );
-        console.log(response)
+        // console.log(response)
         return NextResponse.json(response.data);
     } catch (error) {
         console.error("Error in Next.js API route:", error?.response?.data || error.message);
