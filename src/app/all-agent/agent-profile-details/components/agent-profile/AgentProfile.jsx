@@ -4,11 +4,14 @@ import Image from "next/image";
 import styles from "./AgentProfile.module.css";
 import { FaPhoneAlt, FaStar, FaEnvelope } from "react-icons/fa";
 import { useParams } from "next/navigation";
+import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 export default function AgentProfileDetails() {
+  const { isLogeIn } = useSiteSettings()
   const { id } = useParams();
   const [agent, setAgent] = useState(null); // renamed to singular for clarity
   const [loading, setLoading] = useState(true);
+  console.log(isLogeIn)
 
   useEffect(() => {
     const fetchAgent = async () => {
@@ -62,14 +65,17 @@ export default function AgentProfileDetails() {
           <h2 className={styles.agentName}>{`${agent.first_name} ${agent.last_name}`}</h2>
           <div className={styles.rating}>
             <h2 className={styles.company}>({agent.role_name})</h2>
-            <span className={styles.ratingText}>
-              {agent.rating || "-"}
-            </span>
-            <div>
-              {Array.from({ length: 5 }, (_, i) => (
-                <FaStar key={i} className={styles.starIcon} />
-              ))}
-            </div>
+            {agent.rating ? (
+              <>
+                <span className={styles.ratingText}>
+                  {agent.rating || "-"}
+                </span>
+                <div>
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <FaStar key={i} className={styles.starIcon} />
+                  ))}
+                </div>
+              </>) : ''}
           </div>
 
           <div className={styles.statsRow}>
@@ -84,32 +90,43 @@ export default function AgentProfileDetails() {
           </div>
 
           <div className={styles.bottomcontent}>
-            <div className={styles.dealsIn}>
-              <div className={styles.dealstittle}>Operated In:</div>
-              <p className={styles.dealspara}>
-                {agent.area_locality === "N/A" ? 'Not Assigned' : agent.area_locality}
-              </p>
-            </div>
-            <div className={styles.operatesIn}>
-              <div className={styles.operatestittle}>About Me:</div>
-              <p className={styles.operatespara}>
-              {!agent.about ? 'Not Assigned' : agent.about}
-              </p>
-            </div>
+            {agent.area_locality === "N/A" ? '' : (
+              <div className={styles.dealsIn}>
+                <div className={styles.dealstittle}>Operated In:</div>
+                <p className={styles.dealspara}>
+                  {agent.area_locality === "N/A" ? 'Not Assigned' : agent.area_locality}
+                </p>
+              </div>
+            )}
+            {!agent.about ? '' : (
+              <div className={styles.operatesIn}>
+                <div className={styles.operatestittle}>About Me:</div>
+                <p className={styles.operatespara}>
+                  {!agent.about ? 'Not Assigned' : agent.about}
+                </p>
+              </div>)
+            }
           </div>
         </div>
       </div>
 
       {/* Mobile Deals Section */}
       <div className={styles.dealsmobile}>
-        <div className={styles.dealsIn}>
-          <div className={styles.dealstittle}>Deals in:</div>
-          <p className={styles.dealspara}>{(agent.dealsIn || []).join(", ")}</p>
-        </div>
-        <div className={styles.operatesIn}>
-          <div className={styles.operatestittle}>Operates in:</div>
-          <p className={styles.operatespara}>{(agent.operatesIn || []).join(", ")}</p>
-        </div>
+        {agent.area_locality === "N/A" ? '' : (
+          <div className={styles.dealsIn}>
+            <div className={styles.dealstittle}>Operated In:</div>
+            <p className={styles.dealspara}>
+              {agent.area_locality === "N/A" ? 'Not Assigned' : agent.area_locality}
+            </p>
+          </div>)}
+        {!agent.about ? '' : (
+          <div className={styles.operatesIn}>
+            <div className={styles.operatestittle}>About Me:</div>
+            <p className={styles.operatespara}>
+              {!agent.about ? 'Not Assigned' : agent.about}
+
+            </p>
+          </div>)}
       </div>
     </>
   );

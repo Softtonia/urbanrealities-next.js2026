@@ -1,66 +1,118 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./AgentPropertyList.module.css";
 import AgentPropertyCard from "./AgentPropertyCard";
 import { LuSlidersHorizontal } from "react-icons/lu";
-
-const properties = [
-  {
-    id: 1,
-    image: "/projectcarouselimage.png", 
-    title: "2 BHK Builder Floor 750 Sq.ft",
-    location: "Bangalore, Karnataka",
-    price: "₹75 Lac",
-    status: "Featured",
-    agency: "Ganesh Property",
-    availableFor: "Family",
-    carpetArea: "720 sqft",
-  },
-  {
-    id: 2,
-    image: "/projectcarouselimage.png", 
-    title: "3 BHK Apartment 1200 Sq.ft",
-    location: "Delhi, India",
-    price: "₹1.25 Cr",
-    status: "Premium",
-    agency: "Sharma Realtors",
-    availableFor: "Bachelors / Family",
-    carpetArea: "1150 sqft",
-  },
-  {
-    id: 3,
-    image: "/projectcarouselimage.png", 
-    title: "3 BHK Builder Floor 1700 Sq.ft",
-    location: "Ernakulam, Kerala",
-    price: "₹3 Cr",
-    status: "Featured",
-    agency: "Ganesh Property",
-    availableFor: "Family",
-    carpetArea: "1720 sqft",
-  },
-];
+import { useParams } from "next/navigation";
+import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 const AboutPropertyList = () => {
+  const { token } = useSiteSettings();
+  const { id } = useParams();
+  const [properties, setProperties] = useState([]);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const [filter, setFilter] = useState(""); // "", "rent", "sell", "pg"
+  const [loading, setLoading] = useState(false);
+  const [purposeList, setPurposeList] = useState([])
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(
+          `/api/agent/properties-by-userid/${id}?purpose_id=${filter}`
+        );
+        const data = await res.json();
+
+        if (!data.status) {
+          setIsEmpty(true);
+          setProperties([]);
+        } else {
+          setIsEmpty(false);
+          setProperties(data?.data?.properties);
+        }
+      } catch (err) {
+        console.error("Error fetching Properties:", err);
+        setIsEmpty(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchProperties();
+    }
+  }, [id, filter]);
+  console.log(properties)
+  // run again if id or filter changes
+  useEffect(() => {
+    const fetchPurpose = async () => {
+
+      // console.log(token)
+      try {
+        const res = await fetch('/api/post-property/get-purpose', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+          setPurposeList(data);
+        } else if (data?.data) {
+          setPurposeList(data.data);
+        }
+      } catch (err) {
+
+        console.error('Error fetching roles:', err);
+      }
+    };
+    if (token) {
+      fetchPurpose();
+    }
+  }, [token]);
+  console.log(purposeList)
+
   return (
     <div className={styles.listWrapper}>
       {/* Top Filter Buttons */}
       <div className={styles.filters}>
-        <button className={styles.tabBtn}>Rent</button>
-        <button className={styles.tabBtn}>Sell</button>
-        <button className={styles.tabBtn}>Pg</button>
+        {purposeList.map((purpose) => (
+          <div key={purpose.id}>
+            < button
+              className={`${styles.tabBtn} ${filter === "rent" ? styles.activeTab : ""}`}
+              onClick={() => setFilter(purpose.id)}
+            >
+              {purpose.name}
+            </button>
+          </div>
+        ))
+
+        }
 
 
-        
         <div className={styles.sortSelect}>
-        <button className={styles.sortBtn}><LuSlidersHorizontal/> Sort by</button>
+          <button className={styles.sortBtn}>
+            <LuSlidersHorizontal /> Sort by
+          </button>
         </div>
       </div>
 
       {/* Property Cards */}
-      {properties.map((property) => (
-        <AgentPropertyCard key={property.id} property={property} />
-      ))}
-    </div>
+      {
+        loading ? (
+          <p>Loading...</p>
+        ) : properties && properties.length > 0 ? (
+          properties.map((property) => (
+            <AgentPropertyCard key={property.id} property={property} />
+          ))
+        ) : (
+          <p>Properties not found</p>
+        )
+      }
+
+    </div >
   );
 };
 

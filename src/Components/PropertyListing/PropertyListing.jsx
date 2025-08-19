@@ -16,7 +16,7 @@ import SubHero from "./../SubHero/SubHero";
 //   imageUrl: '/propertylistingimage.png',
 // }));
 
-const PropertyCard = ({ property, handleViewProjectlist }) => (
+export const PropertyCard = ({ property, handleViewProjectlist }) => (
   <div className="property-card">
     <img
       src={
@@ -32,7 +32,7 @@ const PropertyCard = ({ property, handleViewProjectlist }) => (
 
         <span >
           <span >
-            {property&&
+            {property &&
               property.custom_field_values?.find(
                 (field) => field.field_label === "Bedrooms"
               )?.field_value || "Not specified"
@@ -46,7 +46,7 @@ const PropertyCard = ({ property, handleViewProjectlist }) => (
           </span>
           <span className="pipe-divider"> | </span>
           <span >
-            {property&&
+            {property &&
               property.custom_field_values?.find(
                 (field) => field.field_label === "Area Sq Ft"
               )?.field_value || "Not specified"
@@ -87,6 +87,7 @@ const PropertyCard = ({ property, handleViewProjectlist }) => (
     </div>
   </div>
 );
+
 
 const PropertyListing = () => {
   const [propertyList, setPropertyList] = useState([]);

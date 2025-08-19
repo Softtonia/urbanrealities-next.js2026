@@ -9,6 +9,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     const [settings, setSettings] = useState(initialSettings)
     const [token, setToken] = useState(null)
     const [isLoadingToken, setIsLoadingToken] = useState(true) // NEW
+    const [isLogeIn, setIsLogeIn] = useState(false)
 
     // On load, read token from sessionStorage
     useEffect(() => {
@@ -20,7 +21,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     }, [])
 
     // Save to sessionStorage and state
-    const login = (newToken) => {
+    const login = (newToken,) => {
         // cookies().set('token', data.token, {
         //     httpOnly: true,
         //     secure: process.env.NODE_ENV === 'production',
@@ -30,6 +31,10 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
         sessionStorage.setItem('token', newToken)
         setToken(newToken)
     }
+    useEffect(() => {
+        setIsLogeIn(token ? true : false)
+    }, [token]);
+
 
     const logout = async () => {
         const token = sessionStorage.getItem('token');
@@ -57,7 +62,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ token, login, logout, settings, isLoadingToken }} // pass isLoadingToken
+            value={{ token, login, logout, settings, isLoadingToken, isLogeIn }} // pass isLoadingToken
         >
             {children}
         </AuthContext.Provider>

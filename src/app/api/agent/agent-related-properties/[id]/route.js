@@ -6,17 +6,14 @@ import { NextResponse } from 'next/server';
 
 export async function GET(req,{params}) {
     const {id} = await params;
-
+    // console.log(id)
 
     try {
-        const response = await get(`/api/get-user-details-by-id?id=${id}`)
+        const response = await get(`/api/get-related-properties-id/${id}`)
         // console.log(response);
         return NextResponse.json(response.data);
     } catch (error) {
-        console.log(error.response)
-        return NextResponse.json(
-            { error: 'Failed to fetch settings' },
-            { status: 500 }
-        );
+        // console.log(error.response)
+        return NextResponse.json();
     }
 }
