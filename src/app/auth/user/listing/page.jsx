@@ -72,6 +72,7 @@ const ListingPage = () => {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+  console.log("==>",paginatedListings)
 
   return (
     <ProtectedRoute>
@@ -83,9 +84,9 @@ const ListingPage = () => {
       ) : (
         <>
             <section className={styles.listingcard}>
-              {paginatedListings.map((listing) => (
+              {paginatedListings.length > 0 ? paginatedListings.map((listing) => (
                 <MyAccountListing key={listing.id} data={listing} />
-              ))}
+              )):<p>Properties not Found</p>}
             </section>
 
           <nav className={styles.pagination}>

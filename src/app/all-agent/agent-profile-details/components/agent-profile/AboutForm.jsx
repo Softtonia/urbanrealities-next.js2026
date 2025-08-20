@@ -7,15 +7,9 @@ import { Modal, Form } from "react-bootstrap";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { useParams, useRouter } from "next/navigation";
 
-const data = {
-  heading: " Quick Enquiry",
-  usernamePlaceholder: "Enter Username",
-  emailPlaceholder: "Enter email",
-  phonePlaceholder: "Enter Phone Number",
-  nextButton: "Request Call-back",
-};
 
-const AboutForm = () => {
+
+const AboutForm = ({data}) => {
   const { token } = useSiteSettings();
   const router = useRouter();
   const params = useParams(); // get id from URL

@@ -7,9 +7,9 @@ const AgentPropertyCard = ({ property }) => {
     <div className={styles.card}>
       {/* Left Section (Image + Tag) */}
       <div className={styles.imageWrapper}>
-        <span className={styles.tag}>{property.status}</span>
+        <span className={styles.tag}>{property.property_status_name}</span>
         <img
-          src={property.image}
+          src={property.featured_image}
           alt={property.title}
           className={styles.propertyimage}
         />
