@@ -1,0 +1,62 @@
+.Breadcrumbs{
+    background-color: var(--Misty-Rose);
+    padding:20px;
+}
+.agentsSection {
+  padding: 40px 20px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #eee;
+  display: inline-block;
+  padding-bottom: 5px;
+  position: relative;
+}
+
+.title::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: var(--Orange-Red);
+}
+
+.agentsWrapper {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.agentCard {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1 0 auto;
+}
+
+.agentImg {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.agentInfo div {
+  /* margin: 0; */
+  font-size: 19px;
+  font-family: var(--font-regular);
+}
+
+.agentInfo p {
+  margin: 0;
+  font-size: 21px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+}

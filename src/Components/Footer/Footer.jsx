@@ -4,7 +4,6 @@ import React, { useEffect, useState, useMemo } from "react";
 import "../Footer/Footer.css";
 import "../../app/globals.css";
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
-import { post } from "@/lib/api";
 import Link from "next/link";
 import { useSiteSettings } from "../mycontext/siteSettingContext";
 
@@ -17,10 +16,7 @@ const Footer = () => {
     message: "",
   });
   const [year, setYear] = useState(null);
-  const {settings} = useSiteSettings()
-
-
-
+  const { settings } = useSiteSettings();
 
   const siteData = settings || {
     site_short_description: "We build your dream",
@@ -71,7 +67,7 @@ const Footer = () => {
     setSubmitStatus({ success: false, message: "" });
 
     try {
-      const response = 1
+      const response = 1;
       // await post(
       //   `/api/insert-subscribe-email`,
       //   { email },
@@ -189,16 +185,21 @@ const Footer = () => {
               </div>
               <ul className="list-color footer-list-none">
                 {[
-                  "About Us",
-                  "Careers",
-                  "FAQs",
-                  "Contact Us",
-                  "Privacy Policy",
-                  "Terms of Use",
-                  "Legal",
-                ].map((item) => (
-                  <li key={item}>
-                    <a href="#">{item}</a>
+                  { label: "About Us", href: "/about-us" },
+                  { label: "Careers", href: "/careers" },
+                  { label: "FAQs", href: "/faqs" },
+                  { label: "Contact Us", href: "/contact-us" },
+                  { label: "Privacy Policy", href: "/privacy-policy" },
+                  { label: "Terms of Use", href: "/terms-of-use" },
+                  { label: "Legal", href: "/legal" },
+                ].map(({ label, href }) => (
+                  <li key={label}>
+                    <Link
+                      href={href}
+                      className="  "
+                    >
+                      {label}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -242,8 +243,9 @@ const Footer = () => {
 
               {submitStatus.message && (
                 <div
-                  className={`mt-2 alert ${submitStatus.success ? "alert-success" : "alert-danger"
-                    }`}
+                  className={`mt-2 alert ${
+                    submitStatus.success ? "alert-success" : "alert-danger"
+                  }`}
                 >
                   {submitStatus.message}
                 </div>
@@ -294,11 +296,11 @@ const Footer = () => {
           <hr className="border-secondary" />
           <div className="text-center text-md-end">
             {[
-              { label: "Privacy Policy", href: "/pages/privacy-policy" },
-              { label: "Terms of Use", href: "/pages/terms-of-use" },
-              { label: "Sales and Refunds", href: "/pages/sales-refunds" },
-              { label: "Legal", href: "/pages/legal" },
-              { label: "Testimonials", href: "/pages/testimonials" },
+              { label: "Privacy Policy", href: "/privacy-policy" },
+              { label: "Terms of Use", href: "/terms-of-use" },
+              { label: "Sales and Refunds", href: "/sales-refunds" },
+              { label: "Legal", href: "/legal" },
+              { label: "Testimonials", href: "/testimonials" },
             ].map(({ label, href }) => (
               <Link
                 href={href}

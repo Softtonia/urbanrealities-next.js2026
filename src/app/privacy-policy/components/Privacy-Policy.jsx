@@ -1,6 +1,32 @@
-import React from 'react';
+'use client'
+import React,{useState,useEffect} from 'react';
 import styles from './Privacy-Policy.module.css'
+import { useParams } from "next/navigation";
+
 const PrivacyPolicy = () => {
+    const { slug } = useParams();
+    const [policy, setPolicy] = useState(null); 
+  
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+      const fetchPolicy  = async () => {
+        try {
+          const res = await fetch(`/api/privacypolicy/${slug}`);
+          const data = await res.json();
+          if (data) {
+            setPolicy(data.user);
+          }
+        } catch (err) {
+          console.error("Error fetching agent:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchPolicy();
+    }, [slug]);
+  
+    if (loading) return <p>Loading...</p>;
   return (
 
 <div className={` ${styles.privacySection} container `}>
