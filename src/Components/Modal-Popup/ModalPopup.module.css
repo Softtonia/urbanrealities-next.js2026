@@ -29,3 +29,37 @@
   right: 10px;
   z-index: 1000; /* Ensure it's on top of other content */
 }
+
+
+.topBox {
+  font-size: 12px;
+  width: 100%;
+}
+
+.topBoxRow {
+  display: flex;
+  align-items: stretch;   /* Make children equal height */
+  border: 1px solid black; /* full row border */
+  width: 95%;
+}
+
+.topBoxColView {
+  flex: 0 0 40%; /* Label takes 40% */
+  border-right: 1px solid black; /* separator */
+  padding: 8px 12px;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;  /* Allow wrapping */
+  display: flex;
+  align-items: center;   /* Vertically center text if needed */
+}
+
+.topBoxValue {
+  flex: 0 0 60%; /* Value takes 60% */
+  padding: 8px 12px;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;  /* Allow wrapping */
+  display: flex;
+  align-items: center;   /* Optional: vertical align */
+}

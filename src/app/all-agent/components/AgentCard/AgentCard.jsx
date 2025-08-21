@@ -76,7 +76,7 @@ export default function AgentCard({ agent }) {
 
       <div className="w-100">
         <h3 className={styles.name}>
-          {agent.last_name} <span className={styles.company}>({agent.role_name})</span>
+          {agent.first_name} <span className={styles.company}>({agent.role_name})</span>
         </h3>
 
         <div className={` ${styles.middlesection} d-flex justify-content-between`}>
@@ -95,7 +95,7 @@ export default function AgentCard({ agent }) {
             <button onClick={handleShow} className={styles.callBtn}>
               Request a Call Back
             </button>
-            <Link href={`/all-agent/agent-profile-details/${agent.id}`} className={styles.visitBtn}>
+            <Link href={`/all-agent/${agent.id}`} className={styles.visitBtn}>
               Visit Property
             </Link>
           </div>

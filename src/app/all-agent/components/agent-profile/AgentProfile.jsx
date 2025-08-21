@@ -4,13 +4,28 @@ import Image from "next/image";
 import styles from "./AgentProfile.module.css";
 import ModalPopup from "@/Components/Modal-Popup/ModalPopup";
 import { FaPhoneAlt, FaStar, FaFlag, FaEnvelope } from "react-icons/fa";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
+import ViewPopup from "@/Components/Modal-Popup/ViewPopup";
 
 export default function AgentProfileDetails() {
+  const router = useRouter();
+  const { token } = useSiteSettings();
   const [showModal, setShowModal] = useState(false);
-  const handleShowModal = () => setShowModal(true);
+  const [viewShowModal, setViewShowModal] = useState(false);
+  const handleShowModal = async () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
+  const handleViewShowModal = async () => {
+    console.log("==>,", token)
+    if (id && token) {
+      await fetchAgent();
+      setViewShowModal(true);
+    } else {
+      router.push('/auth/login')
+    }
+
+  }
+  const handleViewCloseModal = () => setViewShowModal(false);
   // const agent = {
   //   name: "Kairav Anand",
   //   company: "Dreams home pvt. ltd.",
@@ -41,24 +56,43 @@ export default function AgentProfileDetails() {
   const { id } = useParams();
   const [agent, setAgent] = useState(null); // renamed to singular for clarity
   const [loading, setLoading] = useState(true);
-  
+  console.log(token)
 
-  useEffect(() => {
-    const fetchAgent = async () => {
-      try {
-        const res = await fetch(`/api/agent/agent-profile/${id}`);
-        const data = await res.json();
-        if (data) {
-          setAgent(data.user);
-        }
-      } catch (err) {
-        console.error("Error fetching agent:", err);
-      } finally {
-        setLoading(false);
+
+
+  const fetchAgent = async () => {
+    try {
+      let res;
+  
+      if (token) {
+        res = await fetch(`/api/agent/agent-profile/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        res = await fetch(`/api/agent/agent-profile/${id}`);
       }
-    };
-    fetchAgent();
-  }, [id]);
+  
+      const data = await res.json();
+  
+      if (data) {
+        setAgent(data.user);
+      }
+    } catch (err) {
+      console.error("Error fetching agent:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+
+    if (id) fetchAgent();
+    
+  }, [id, token]);
+
 
   if (loading) return <p>Loading...</p>;
 
@@ -73,6 +107,27 @@ export default function AgentProfileDetails() {
     usermessage: "Type your message",
     nextButton: "Contact Agent",
   };
+  const contactDetails = {
+    heading: "Contact Detail",
+    nameLabel: "Name",
+    phoneLabel: "Number",
+    emailLabel: "Email",
+  };
+
+
+  // ✅ Function to check if object is empty
+  const isEmpty = (obj) =>
+    obj == null || (Object.keys(obj).length === 0 && obj.constructor === Object);
+
+  // ✅ Safely add agent details
+  if (!isEmpty(agent)) {
+    contactDetails.name = agent.first_name + ' ' + agent.last_name || "N/A";
+    contactDetails.phone = agent.phone || "N/A";
+    contactDetails.email = agent.email || "N/A";
+  }
+
+  console.log(contactDetails);
+
   return (
     <>
       <div className={styles.profilesection}>
@@ -92,7 +147,7 @@ export default function AgentProfileDetails() {
 
 
           <div className={styles.groupBtn}>
-            <button className={styles.viewNumber}>
+            <button className={styles.viewNumber} onClick={handleViewShowModal}>
               <FaPhoneAlt className={styles.icon} /> View Number
             </button>
 
@@ -170,13 +225,19 @@ export default function AgentProfileDetails() {
             </p>
           </div>)}
       </div>
-    {/* End of main profile section */}
+      {/* End of main profile section */}
 
 
-             <ModalPopup
+      <ModalPopup
         show={showModal}
         handleClose={handleCloseModal}
         popupData={contactAgentData}
+        agentName={agent.name}
+      />
+      <ViewPopup
+        show={viewShowModal}
+        handleClose={handleViewCloseModal}
+        popupData={contactDetails}
         agentName={agent.name}
       />
 

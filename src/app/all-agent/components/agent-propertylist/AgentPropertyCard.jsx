@@ -1,8 +1,10 @@
 import React from "react";
 import styles from "./AgentPropertyList.module.css";
 import { FaRegBookmark } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 const AgentPropertyCard = ({ property }) => {
+  const router = useRouter();
   return (
     <div className={styles.card}>
       {/* Left Section (Image + Tag) */}
@@ -10,17 +12,17 @@ const AgentPropertyCard = ({ property }) => {
         <span className={styles.tag}>{property.property_status_name}</span>
         <img
           src={property.featured_image}
-          alt={property.title}
+          alt={property.name}
           className={styles.propertyimage}
         />
         <FaRegBookmark className={styles.bookmark} />
         <div className={styles.propertycontent}>
 
         <div className={styles.detailsContent}>
-          <p className={styles.price}>{property.price}</p>
-          <p className={styles.title}>{property.title}</p>
+          <p className={styles.price}>{property.price ||20000}</p>
+          <p className={styles.title}>{property.name||"title"}</p>
           <p className={styles.location}>
-            {property.location}
+            {property.state_name+', '+property.city_name}
             <span className={styles.agency}>{property.agency}</span>
           </p>
           <p>
@@ -34,13 +36,11 @@ const AgentPropertyCard = ({ property }) => {
       {/* Right Section (Buttons) */}
       <div className={styles.actions}>
         <button className={styles.request}>Request Call-back</button>
-        <button className={styles.visit}>Visit Property</button>
+        <button className={styles.visit}onClick={()=>router.push(`/propertydetails/${property.id}`)} >Visit Property</button>
       </div>
       </div>
 
       </div>
-
-
 
     </div>
   );

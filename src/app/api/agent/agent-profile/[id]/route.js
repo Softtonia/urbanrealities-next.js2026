@@ -1,22 +1,26 @@
-
-
 import { get } from '@/lib/api';
 import { NextResponse } from 'next/server';
 
+export async function GET(req, { params }) {
+  const { id } = params;
 
-export async function GET(req,{params}) {
-    const {id} = await params;
+  try {
+    // Get token from headers
+    const authHeader = req.headers.get('authorization');//get token from header
+    console.log("token",authHeader)
+    // Forward token if available
+    const response = await get(`/api/get-user-details-by-id?id=${id}`, {
+        headers: {
+            'Authorization': authHeader,
+        },
+    });
 
-
-    try {
-        const response = await get(`/api/get-user-details-by-id?id=${id}`)
-        // console.log(response);
-        return NextResponse.json(response.data);
-    } catch (error) {
-        console.log(error.response)
-        return NextResponse.json(
-            { error: 'Failed to fetch settings' },
-            { status: 500 }
-        );
-    }
+    return NextResponse.json(response.data);
+  } catch (error) {
+    console.error("API error:", error?.response || error);
+    return NextResponse.json(
+      { error: 'Failed to fetch user details' },
+      { status: 500 }
+    );
+  }
 }

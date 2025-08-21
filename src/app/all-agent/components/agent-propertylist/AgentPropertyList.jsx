@@ -43,7 +43,7 @@ const AboutPropertyList = () => {
       fetchProperties();
     }
   }, [id, filter]);
-  console.log(properties)
+  console.log("==>",properties)
   // run again if id or filter changes
   useEffect(() => {
     const fetchPurpose = async () => {
@@ -72,7 +72,7 @@ const AboutPropertyList = () => {
       fetchPurpose();
     }
   }, [token]);
-  console.log(purposeList)
+  console.log("==,>",properties)
 
   return (
     <div className={styles.listWrapper}>

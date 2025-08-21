@@ -18,32 +18,30 @@ import PropertyAmenities from "./PropertyAmenities";
 
 const PropertyDetails = () => {
 
-  
+
   return (
     <div>
       <PropertydetailsBreadcrum />
       <PropertygalleryBreadcrum />
+      <div className="project-highlight-background">
+        <div className="container">
+          <div className="row background-row">
+            <div className="col-8 large-col">
+              <PropertyHighlights />
+              <ProjectDescription />
+              <Propertyareadata />
+              <Propertyprice />
+              <PropertyAmenities />
+            </div>
+            <div className="col-4 small-col">
+              <Projectactive />
+              <Projectagent />
+              <PropertyEnquiryFrom />
+            </div>
 
-
-<div className="project-highlight-background">
-      <div className="container">
-        <div className="row background-row">
-          <div className="col-8 large-col">
-            <PropertyHighlights/>
-            <ProjectDescription/>
-            <Propertyareadata/>
-            <Propertyprice/>
-            <PropertyAmenities/>
           </div>
-          <div className="col-4 small-col">
-            <Projectactive/>
-            <Projectagent/>
-            <PropertyEnquiryFrom/>
-          </div>
-
         </div>
       </div>
-    </div>
     </div>
   );
 };

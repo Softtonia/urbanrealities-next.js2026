@@ -1,9 +1,25 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./About-Us.module.css";
 
 
 export default function AboutUs() {
+  const [data,setData] = useState({})
+
+  useEffect(() => {
+    const fetchAboutUs = async () => {
+      try {
+        const res = await fetch(`api/pages/about-us`);
+        const data = await res.json();
+        if (data) {
+          setData(data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching page:", err);
+      }
+    };
+    fetchAboutUs();
+  }, []);
   return (
     <div className={`{styles.container} container `}>
         <div className={styles.aboutSection}>
