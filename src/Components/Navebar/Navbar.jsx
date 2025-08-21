@@ -199,8 +199,7 @@ export default function Navbar() {
                 className={`transition-opacity duration-300 ${
                   showDropdown ? "opacity-100 visible" : "opacity-0 invisible"
                 } position-absolute top-100 start-0`}
-                      style={{marginTop: "15px" }}
-
+                style={{ marginTop: "15px" }}
               >
                 <LocationDropdown />
               </div>
@@ -210,9 +209,9 @@ export default function Navbar() {
           <ul className="navbar-nav d-flex flex-row align-items-center gap-3 mb-0">
             <li
               className="nav-item dropdown position-static"
-              //  onClick={() => setShowMegaMenu(!showMegaMenu)}
-              onMouseEnter={() => setShowMegaMenu(true)}
-              onMouseLeave={() => setShowMegaMenu(false)}
+              onClick={() => setShowMegaMenu(!showMegaMenu)}
+              // onMouseEnter={() => setShowMegaMenu(true)}
+              // onMouseLeave={() => setShowMegaMenu(false)}
             >
               <div className="nav-items-name">
                 Buy <GoChevronDown />
@@ -222,15 +221,17 @@ export default function Navbar() {
                 className={`dropdown-menu mega-menu p-3 ${
                   showMegaMenu ? "show" : ""
                 }`}
-                style={{ width: "50vw",marginTop: "15px" }}
+                style={{ width: "50vw", marginTop: "15px" }}
               >
                 <DropdownMegaMenu />
               </div>
             </li>
             <li
               className="nav-item dropdown position-static"
-              onMouseEnter={() => setShowRentMenu(true)}
-              onMouseLeave={() => setShowRentMenu(false)}
+              onClick={() => setShowRentMenu(!showRentMenu)}
+
+              // onMouseEnter={() => setShowRentMenu(true)}
+              // onMouseLeave={() => setShowRentMenu(false)}
             >
               {" "}
               <div className="nav-items-name">
@@ -240,7 +241,7 @@ export default function Navbar() {
                 className={`dropdown-menu mega-menu p-3 ${
                   showRentMenu ? "show" : ""
                 }`}
-                style={{ width: "50vw",marginTop: "15px" }}
+                style={{ width: "50vw", marginTop: "15px" }}
               >
                 <DropdownMegaMenu />
               </div>
@@ -258,7 +259,7 @@ export default function Navbar() {
                 className={`dropdown-menu mega-menu p-3 ${
                   showSellMenu ? "show" : ""
                 }`}
-                style={{ width: "60vw",marginTop: "15px" }}
+                style={{ width: "60vw", marginTop: "15px" }}
               >
                 <SellerDropdown />
               </div>
@@ -267,7 +268,7 @@ export default function Navbar() {
               { label: "Find Agent", href: "/all-agent" },
               { label: "Projects", href: "/projects" },
               { label: "Property Services", href: "/property-services" },
-              { label: "Home Loans", href: "/home-loans" },
+              { label: "Home Loans", href: "/home-loan" },
             ].map((item, i) => (
               <li key={i} className="nav-item">
                 <Link href={item.href} className="nav-items-name">
@@ -279,7 +280,9 @@ export default function Navbar() {
 
           <div className="d-flex align-items-center gap-3">
             <Link
-              href={!token?`/post-property`:'/auth/post-property/basic-details'}
+              href={
+                !token ? `/post-property` : "/auth/post-property/basic-details"
+              }
               className="btn-property d-flex align-items-center gap-2 rounded-pill"
             >
               <Image
