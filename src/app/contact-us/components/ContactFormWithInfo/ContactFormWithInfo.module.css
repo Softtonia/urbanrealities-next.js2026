@@ -7,13 +7,19 @@
 
 .formWrapper {
   flex: 1;
+  min-width: 300px; /* prevent shrink */
+}
+
+.infoWrapper {
+  flex: 1;
+  min-width: 300px;
 }
 
 .title {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 20px;
-  border-bottom: 2px solid #eee;
+  border-bottom: 2px solid var( --Bright-Gray);
   display: inline-block;
   padding-bottom: 5px;
   position: relative;
@@ -29,18 +35,22 @@
   background: var(--Orange-Red);
 }
 
-.formGroup {
+.form {
   display: flex;
+  flex-direction: column;
   gap: 15px;
 }
 
+.formGroup {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
 .formInput {
   flex: 1;
-  border: 1px solid #ddd;
-}
-
-.infoWrapper {
-  flex: 1;
+  border: 1px solid var( --Lavender-Gray);
+  padding: 10px;
+  border-radius: 5px;
 }
 
 .infoItem {
@@ -48,13 +58,31 @@
   gap: 15px;
   margin: 15px 0;
 }
-.icon{
-    font-size: 35px;
-    color: var(--Tart-Orange);
 
+.icon {
+  font-size: 35px;
+  color: var(--Orange-Red);
 }
+
 .infoItem p {
   display: flex;
   flex-direction: column;
   font-size: 19px;
+}
+
+/* ✅ Responsive Fix */
+@media (max-width: 768px) {
+  .contactSection {
+    flex-direction: column;
+  }
+
+  .formWrapper,
+  .infoWrapper {
+    width: 100%;
+  }
+
+  .formGroup {
+    flex-direction: column;
+    gap: 0;
+  }
 }

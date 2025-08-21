@@ -25,9 +25,7 @@ export default function ContactFormWithInfo() {
               className={`enquiryInput ${styles.formInput}`}
               placeholder={data.usernamePlaceholder}
             />
-            {/* </div>
-
-            <div className={styles.formGroup}> */}
+       
             <input
               type="email"
               name="email"

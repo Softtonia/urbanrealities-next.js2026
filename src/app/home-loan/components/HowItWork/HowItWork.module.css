@@ -1,0 +1,70 @@
+.howItWorks {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  margin: 0 auto;
+  margin-top: 60px;
+  padding: 0;
+}
+
+.stepCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.icon {
+  font-size: 3.8rem;
+  color: var(--Orange-Red);
+  margin-bottom: 24px;
+}
+.stepNumber,
+.stepCard p {
+  max-width: 337px;
+  margin: 0;
+  font-family: var(--font-bold);
+ font-size: clamp(14px, 1.5vw, 16px);
+
+}
+@media (max-width: 1080px) {
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 1080px) {
+  .steps {
+    margin-top: 35px;
+  }
+  .howItWorks {
+    padding: 40px 20px;
+}
+  .icon {
+    font-size: 2.9rem;
+  }
+
+}
+
+@media (max-width: 576px) {
+  .steps {
+    grid-template-columns: repeat(1, 1fr);
+    margin-top: 15px;
+    gap: 5px;
+}
+.howItWorks {
+    padding: 20px 20px;
+}
+
+.stepCard {
+      padding: 18px 22px;
+  }
+  .icon {
+    font-size: 2.5rem;
+margin-bottom: 14px;
+  }
+}
