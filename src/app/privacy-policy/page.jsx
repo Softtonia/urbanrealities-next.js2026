@@ -1,30 +1,25 @@
-// 'use client';
-
 // import React from 'react';
 // import CompanyBg from '../components/company-bg/company-bg';
-// import SalesRefund from './components/SalesRefund';
-
-// const Salespage = () => {
+// import PrivacyPolicy from './components/Privacy-Policy';
+// const Privacypage = () => {
 //   return (
 //     <div>
 //       <CompanyBg/>
-//       <SalesRefund/>
+//       <PrivacyPolicy />
 //     </div>
 //   );
 // }
 
-// export default Salespage;
-
-
+// export default Privacypage;
 
 import React from 'react';
 import CompanyBg from '../components/company-bg/company-bg';
-import SalesRefund from './components/SalesRefund';
+import PrivacyPolicy from './components/Privacy-Policy';
 import { get } from '@/lib/api';
 
-async function getSalesRefundData() {
+async function getPrivacyPolicyData() {
   try {
-    const response = await get(`/api/get-pages-by-id?slug=sales-and-refunds`);
+    const response = await get(`/api/get-pages-by-id?slug=privacy-policy`);
     return response.data; // Axios response format
     
   } catch (error) {
@@ -33,10 +28,10 @@ async function getSalesRefundData() {
   }
 }
 
-export default async function SalesRefundpage() {
-  const SaleData = await getSalesRefundData();
+export default async function Privacypage() {
+  const policyData = await getPrivacyPolicyData();
 
-  if (!SaleData) {
+  if (!policyData) {
     return (
       <div className="text-red-500 text-center mt-10">
         Data could not be loaded. Please try again later.
@@ -47,7 +42,7 @@ export default async function SalesRefundpage() {
   return (
     <div>
       <CompanyBg />
-      <SalesRefund salerefund={SaleData.data} />
+      <PrivacyPolicy policy={policyData.data} />
     </div>
   );
 }

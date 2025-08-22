@@ -1,0 +1,143 @@
+.pageWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+.pageTitle {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 40px;
+  color: #222;
+}
+
+.termsContainer {
+  display: flex;
+  gap: 40px;
+}
+
+.termList {
+  flex: 1;
+  position: sticky;
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.termNumber {
+  font-weight: bold;
+  padding: 10px 15px;
+  border-left: 4px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.termNumber.active {
+  color: var(--Orange-Red);
+  border-left-color: var(--Orange-Red);
+  background-color: var(--Misty-Rose);
+  border-radius: 4px;
+}
+
+.termContent {
+  flex: 3;
+}
+
+.termItem {
+  margin-bottom: 50px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.termItem h2 {
+  font-size: 22px;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.termItem p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #555;
+}
+
+/* ===================== Media Queries ===================== */
+
+/* Tablets: width <= 1024px */
+@media (max-width: 1024px) {
+  .termsContainer {
+    flex-direction: column;
+  }
+
+  .termList {
+    position: relative;
+    top: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .termNumber {
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    padding: 8px 12px;
+    border-radius: 4px;
+  }
+
+  .termNumber.active {
+    border-bottom-color: var(--Orange-Red);
+    background-color: var(--Misty-Rose);
+  }
+}
+
+/* Mobile: width <= 768px */
+@media (max-width: 768px) {
+  .pageTitle {
+    font-size: 28px;
+  }
+
+  .termItem h2 {
+    font-size: 20px;
+  }
+
+  .termItem p {
+    font-size: 15px;
+  }
+
+  .termsContainer {
+    gap: 20px;
+  }
+
+  .termList {
+    gap: 8px;
+  }
+}
+
+/* Small mobile: width <= 480px */
+@media (max-width: 480px) {
+  .pageWrapper {
+    padding: 15px;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .termItem h2 {
+    font-size: 18px;
+  }
+
+  .termItem p {
+    font-size: 14px;
+  }
+
+  .termsContainer {
+    gap: 15px;
+  }
+}

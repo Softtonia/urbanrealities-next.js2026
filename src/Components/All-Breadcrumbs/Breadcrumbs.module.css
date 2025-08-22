@@ -5,7 +5,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  color: var(--Eerie-Black); 
+  /* color: var(--Eerie-Black);  */
 }
 
 .item {
@@ -15,7 +15,7 @@
 
 .homeLink,
 .link {
-  color: var(--Eerie-Black); 
+  /* color: var(--Eerie-Black);  */
   text-decoration: none;
 }
 

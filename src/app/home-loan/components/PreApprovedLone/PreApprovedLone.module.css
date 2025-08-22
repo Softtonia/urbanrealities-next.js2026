@@ -1,0 +1,63 @@
+.preApprovedLoan {
+  background: #fff7f2;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1c1c1c;
+  margin-bottom: 15px;
+}
+
+.description {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+  max-width: 500px;
+}
+
+.benefitsBox h5 {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.benefitsBox ul {
+  list-style: none;
+  padding: 0;
+}
+
+.benefitsBox li {
+  font-size: 16px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.checkIcon {
+  color: #ff6600;
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+.exploreBtn {
+  background-color: #ff6600;
+  color: #fff;
+  padding: 10px 24px;
+  border: none;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: 0.3s ease-in-out;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.exploreBtn:hover {
+  background-color: #e85b00;
+}
+
+.image {
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: auto;
+}
