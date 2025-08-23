@@ -345,6 +345,7 @@ const PricingAndOthers = () => {
       });
 
       // Append extra fields
+      formDataToSend.append('featured_image',formData.featured_image.file)
       formDataToSend.append('token', token);
       formDataToSend.append('live_status', "Under Review");
       formDataToSend.append('temporary_status', "Active");

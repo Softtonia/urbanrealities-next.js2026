@@ -11,6 +11,7 @@ import PhotoSection from "./photo-section";
 import styles from "./photodetails.module.css";
 import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
+import SinglePhotoUpload from "./SinglePhotoUpload";
 
 const PhotoDetails = () => {
   const { formData, updateFormData, setFormData } = useContext(PostPropertyContext);
@@ -18,29 +19,28 @@ const PhotoDetails = () => {
 
   const router = useRouter();
   const [photos, setPhotos] = useState(formData.photos || []);
+  const [singlePhoto, setSinglePhoto] = useState(formData.singlePhoto || null); // ✅ For single upload
   const [video, setVideo] = useState(formData.video || null);
   const photoInputRef = useRef(null);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState(null);
 
-
-  // Helper: Get all media fields from formData.custom_field
+  // === Existing helper ===
   const getMediaFields = () => {
     if (!Array.isArray(formData.custom_field)) return [];
     return formData.custom_field.filter(field => field.field_type === "media");
   };
-  const mediaField = getMediaFields()
+  const mediaField = getMediaFields();
 
-
-
+  // === Existing image optimization (reuse) ===
   const optimizeImage = (file) => {
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = (event) => {
         const img = new Image();
         img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
 
           const MAX_WIDTH = 1200;
           const MAX_HEIGHT = 900;
@@ -65,17 +65,59 @@ const PhotoDetails = () => {
 
           canvas.toBlob((blob) => {
             const optimizedFile = new File([blob], file.name, {
-              type: 'image/jpeg',
+              type: "image/jpeg",
               lastModified: Date.now(),
             });
             resolve(optimizedFile);
-          }, 'image/jpeg', 0.8);
+          }, "image/jpeg", 0.8);
         };
         img.src = event.target.result;
       };
       reader.readAsDataURL(file);
     });
   };
+
+  // === Existing multi photo upload ===
+ 
+
+  // === ✅ Single photo upload handler ===
+  const handleSinglePhotoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsProcessingImages(true);
+    const optimizedFile = await optimizeImage(file);
+    setIsProcessingImages(false);
+
+    const newPhoto = {
+      file: optimizedFile,
+      url: URL.createObjectURL(optimizedFile),
+      isCover: true,
+      category: "Main",
+    };
+
+    setSinglePhoto(newPhoto);
+    updateFormData("featured_image", newPhoto);
+  };
+
+  const handleDeleteSinglePhoto = () => {
+    setSinglePhoto(null);
+    updateFormData("featured_image", null);
+  };
+
+  const handleSetSingleCoverPhoto = () => {
+    if (singlePhoto) {
+      setSinglePhoto({ ...singlePhoto, isCover: true });
+      updateFormData("featured_image", { ...singlePhoto, isCover: true });
+    }
+  };
+  console.log("==>",formData)
+
+  // === Existing handlers (unchanged) ===
+
+  
+
+  
 
   const handlePhotoUpload = async (e, field_id) => {
     console.log("Uploading for field:", field_id);
@@ -244,17 +286,9 @@ const PhotoDetails = () => {
     });
   };
 
-  const handleAddMorePhotosClick = () => {
-    photoInputRef.current.click();
-  };
-
-  const handleZoomClick = (imageUrl) => {
-    setFullScreenImage(imageUrl);
-  };
-
-  const handleCloseFullScreen = () => {
-    setFullScreenImage(null);
-  };
+  const handleAddMorePhotosClick = () => { photoInputRef.current.click(); };
+  const handleZoomClick = (imageUrl) => { setFullScreenImage(imageUrl); };
+  const handleCloseFullScreen = () => { setFullScreenImage(null); };
 
   const handleContinue = () => {
     router.push("/auth/post-property/featurepricing");
@@ -269,7 +303,6 @@ const PhotoDetails = () => {
       }
     }
   };
-  console.log("added photos", photos)
 
   return (
     <div className={styles.wrapper}>
@@ -277,15 +310,32 @@ const PhotoDetails = () => {
         <IoArrowBackSharp size={20} onClick={goBack} />
         <p className="m-0">Back</p>
       </div>
-      {/* <VideoSection
-        video={video}
-        onVideoUpload={handleVideoUpload}
-      /> */}
+      <h3 className={styles.sectionTitle}>
+        Add photos of your property{" "}
+        <span className={styles.optionalText}>(Optional)</span>
+      </h3>
+      <p className={styles.sectionSubText}>
+        A picture is worth a thousand words. 87% of buyers look at photos before
+        buying.
+      </p>
 
+      {/* === New Single Upload Section === */}
+      <SinglePhotoUpload
+        // title="Upload Main Property Photo"
+        photo={singlePhoto}
+        onPhotoUpload={handleSinglePhotoUpload}
+        onDeletePhoto={handleDeleteSinglePhoto}
+        onSetCoverPhoto={handleSetSingleCoverPhoto}
+        onZoomClick={handleZoomClick}
+        photoInputRef={photoInputRef}
+        isProcessingImage={isProcessingImages}
+      />
+
+      {/* === Existing multi-upload PhotoSection === */}
       {Array.isArray(mediaField) && mediaField.map((field, index) => (
         <PhotoSection
           key={index}
-          title={field.field_label} // Show title from object
+          title={field.field_label}
           mediaField={field}
           photos={photos}
           onPhotoUpload={(e) => handlePhotoUpload(e, field.id)}
@@ -298,7 +348,6 @@ const PhotoDetails = () => {
           isProcessingImages={isProcessingImages}
         />
       ))}
-
 
       <button className={` continueBtn ${styles.continueBtn}`} onClick={handleContinue}>
         Continue

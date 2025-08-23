@@ -5,24 +5,29 @@ import styles from "./Basic-DetailsSteps.module.css";
 import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
-export default function StepContent() {
+export default function StepContent({purposeList,propertyListing}) {
   const [loading,setLoading] =useState(false);
   const { token } = useSiteSettings();
   const { formData, updateFormData, setFormData } = useContext(PostPropertyContext);
 
-  const [purposeList, setPurposeList] = useState([])
-  const [propertyListing, setPropertyListing] = useState([])
+  // const [purposeList, setPurposeList] = useState([])
+  // const [propertyListing, setPropertyListing] = useState([])
   const [propertyType, setPropertyType] = useState([])
   const [propertyStatus, setPropertyStatus] = useState([])
   const router = useRouter();
 
   // Initialize state from context formData
   const [selectedPurpose, setSelectedPurpose] = useState(formData.basicDetails?.purpose || "");
-  const [selectedProperty, setSelectedProperty] = useState(formData.basicDetails?.property || "");
+  const [selectedProperty, setSelectedProperty] = useState('');
   const [selectedPropertyType, setSelectedPropertyType] = useState(formData.basicDetails?.property_type || "");
   const [selectedPropertyStatus, setSelectedPropertyStatus] = useState(formData.basicDetails?.property_status || "");
   
   console.log("token", token)
+  useEffect(() => {
+    if (propertyListing?.length > 0 && !selectedProperty) {
+      setSelectedProperty(propertyListing[0].id);
+    }
+  }, [propertyListing, selectedProperty])
 
 
   useEffect(() => {
@@ -31,60 +36,7 @@ export default function StepContent() {
     setFormData({});
   }, []);
 
-  useEffect(() => {
-    const fetchPurpose = async () => {
-      setLoading(true)
-      // console.log(token)
-      try {
-        const res = await fetch('/api/post-property/get-purpose', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
-        setLoading(false)
-        if (Array.isArray(data)) {
-          setPurposeList(data);
-        } else if (data?.data) {
-          setPurposeList(data.data);
-        }
-      } catch (err) {
-        setLoading(false)
-        console.error('Error fetching roles:', err);
-      }
-    };
-    if (token) {
-      fetchPurpose();
-    }
-  }, [token]);
-
-
-  useEffect(() => {
-    const fetchPurpose = async () => {
-      // console.log(token)
-      try {
-        const res = await fetch('/api/post-property/get-property-listing', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setPropertyListing(data);
-        } else if (data?.data) {
-          setPropertyListing(data.data);
-        }
-      } catch (err) {
-        console.error('Error fetching properties:', err);
-      }
-    };
-    if (token) {
-      fetchPurpose();
-    }
-  }, [token]);
-
+ 
   useEffect(() => {
     const fetchPropertyType = async () => {
       // console.log(token)
@@ -248,6 +200,8 @@ export default function StepContent() {
         </div>
 
       </div>
+      {propertyType?.length > 0 &&
+      <div>
       <p className={`d-block w-100 ${styles.subPara}`}>What kind of property-Type do you have?</p>
       {/* type Buttons */}
       <div className={styles.optionButtons}>
@@ -264,6 +218,7 @@ export default function StepContent() {
           </button>
         ))}
       </div>
+      </div>}
       {propertyStatus?.length > 0 &&
         <div>
           <p className={styles.subPara}>What is Property status?</p>

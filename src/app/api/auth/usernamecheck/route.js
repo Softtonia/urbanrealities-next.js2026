@@ -6,7 +6,7 @@ export async function POST(request) {
     try {
         const body = await request.json(); // { user_name: "..." }
 
-        const response = await post("/api/check-username-unique", body);
+        const response = await post("/api/check-unique", body);
 
         return NextResponse.json(response.data); // Send Laravel response to frontend
     } catch (error) {

@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { useRegisterForm } from "../../context/RegisterFormProvider";
 import { useDebounce } from "@/hooks/useDebounce";
 
-const Register = () => {
+const Register = ({roles=[]}) => {
   const { formData, updateField } = useRegisterForm();
   const [formError, setFormError] = useState("");
-  const [roles, setRoles] = useState([]);
+  // const [roles, setRoles] = useState(roles);
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("")
   const [phoneError, setPhoneError] = useState("")
@@ -28,22 +28,22 @@ const Register = () => {
   const debouncePhone = useDebounce(formData.phone, 1000)
 
   // --- Fetch roles from Laravel via Next.js API ---
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const res = await fetch('/api/auth/role-listing');
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setRoles(data);
-        } else if (data?.data) {
-          setRoles(data.data);
-        }
-      } catch (err) {
-        console.error('Error fetching roles:', err);
-      }
-    };
-    fetchRoles();
-  }, []);
+  // useEffect(() => {
+  //   const fetchRoles = async () => {
+  //     try {
+  //       const res = await fetch('/api/auth/role-listing');
+  //       const data = await res.json();
+  //       if (Array.isArray(data)) {
+  //         setRoles(data);
+  //       } else if (data?.data) {
+  //         setRoles(data.data);
+  //       }
+  //     } catch (err) {
+  //       console.error('Error fetching roles:', err);
+  //     }
+  //   };
+  //   fetchRoles();
+  // }, []);
 
   // --- Username availability check ---
   useEffect(() => {
@@ -62,8 +62,9 @@ const Register = () => {
         });
 
         const data = await res.json();
+        console.log(data.user_name)
 
-        if (res.status && data?.data?.available) {
+        if (!data?.user_name?.exists) {
           setUsernameError(""); // ✅ available
         } else {
           setUsernameError("Username is already taken."); // ❌ not available

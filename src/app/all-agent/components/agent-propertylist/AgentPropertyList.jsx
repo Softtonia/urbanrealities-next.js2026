@@ -6,44 +6,18 @@ import { LuSlidersHorizontal } from "react-icons/lu";
 import { useParams } from "next/navigation";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
-const AboutPropertyList = () => {
+const AboutPropertyList = ({ userProperties }) => {
   const { token } = useSiteSettings();
   const { id } = useParams();
-  const [properties, setProperties] = useState([]);
+  const properties = userProperties;
   const [isEmpty, setIsEmpty] = useState(false);
   const [filter, setFilter] = useState(""); // "", "rent", "sell", "pg"
   const [loading, setLoading] = useState(false);
   const [purposeList, setPurposeList] = useState([])
 
-  useEffect(() => {
-    const fetchProperties = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `/api/agent/properties-by-userid/${id}?purpose_id=${filter}`
-        );
-        const data = await res.json();
 
-        if (!data.status) {
-          setIsEmpty(true);
-          setProperties([]);
-        } else {
-          setIsEmpty(false);
-          setProperties(data?.data?.properties);
-        }
-      } catch (err) {
-        console.error("Error fetching Properties:", err);
-        setIsEmpty(true);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    if (id) {
-      fetchProperties();
-    }
-  }, [id, filter]);
-  console.log("==>",properties)
+
   // run again if id or filter changes
   useEffect(() => {
     const fetchPurpose = async () => {
@@ -72,7 +46,7 @@ const AboutPropertyList = () => {
       fetchPurpose();
     }
   }, [token]);
-  console.log("==,>",properties)
+  console.log("==,>", properties)
 
   return (
     <div className={styles.listWrapper}>
@@ -87,10 +61,7 @@ const AboutPropertyList = () => {
               {purpose.name}
             </button>
           </div>
-        ))
-
-        }
-
+        ))}
 
         <div className={styles.sortSelect}>
           <button className={styles.sortBtn}>

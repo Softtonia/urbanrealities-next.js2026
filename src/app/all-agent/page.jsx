@@ -1,27 +1,26 @@
-"use client"
 
+import { get } from "@/lib/api";
 import AgentCard from "./components/AgentCard/AgentCard";
 import styles from "./components/AllAgents.module.css";
-import { useEffect, useState } from "react";
 
-export default function FindAgentPage() {
-  const [agents, setAgents] = useState([]); // <-- initialize as array
 
-  useEffect(() => {
-    const fetchAgent = async () => {
-      try {
-        const res = await fetch('/api/agent/agent-listing');
-        const data = await res.json();
-        if (data) {
-          setAgents(data?.users.data);
-        } 
-      } catch (err) {
-        console.error('Error fetching agent:', err);
-      }
-    };
-    fetchAgent();
-  }, []);
+async function getAgent() {
+  try {
+    // ✅ Directly call backend API, not your Next.js API route
+    const response = await get(`/api/get-all-users-by-role?role_id=3&per_page&page`);
+    const data = response?.data?.users?.data;
+    // console.log("==>",data)
+    if (Array.isArray(data)) return data;
+    if (data?.data) return data.data;
+    return [];
+  } catch (err) {
+    console.error("Error fetching agents:", err);
+    return [];
+  }
+}
 
+export default async function FindAgentPage() {
+  const agents =await getAgent() // <-- initialize as array
   console.log(agents)
 
   return (
