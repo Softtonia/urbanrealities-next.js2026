@@ -122,7 +122,7 @@ const AgentProfileLayout = ({agentProfile,relatedProperties,userProperties}) => 
     <div className={` ${styles.Breadcrumbs}  `}>
       <div className={` ${styles.container} container `}>
     {/* <Breadcrumbs paths={breadcrumbPaths}/> */}
-    <Breadcrumbs/>
+    <Breadcrumbs color="black"   fontSize="1.1rem"  fontFamily="poppins-medium" />
     </div>
     </div>
     <div className={` ${styles.profileContainer} container `}>
