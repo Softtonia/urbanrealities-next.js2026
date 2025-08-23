@@ -41,7 +41,7 @@ export default async function Privacypage() {
 
   return (
     <div>
-      <CompanyBg />
+      <CompanyBg imageUrl={policyData.data?.featured_image_url} />
       <PrivacyPolicy policy={policyData.data} />
     </div>
   );

@@ -46,7 +46,7 @@ export default async function SalesRefundpage() {
 
   return (
     <div>
-      <CompanyBg />
+      <CompanyBg imageUrl={SaleData.data?.featured_image_url} />
       <SalesRefund salerefund={SaleData.data} />
     </div>
   );

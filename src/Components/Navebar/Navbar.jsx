@@ -130,13 +130,26 @@ export default function Navbar() {
   const [showLocationSlider, setShowLocationSlider] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const [showMegaMenu, setShowMegaMenu] = useState(false);
-  const [showRentMenu, setShowRentMenu] = useState(false);
-  const [showSellMenu, setShowSellMenu] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const { settings } = useSiteSettings();
   const [siteData, setSiteData] = useState(settings);
   const { token, logout } = useSiteSettings();
+  const [activeDropdown, setActiveDropdown] = useState(null); // "buy" | "rent" | "sell" | null
+
+  const toggleDropdown = (menu) => {
+    setActiveDropdown((prev) => (prev === menu ? null : menu));
+  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Agar click kisi dropdown ke andar nahi hua
+      if (!event.target.closest(".nav-item.dropdown")) {
+        setActiveDropdown(null);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -209,29 +222,24 @@ export default function Navbar() {
           <ul className="navbar-nav d-flex flex-row align-items-center gap-3 mb-0">
             <li
               className="nav-item dropdown position-static"
-              onClick={() => setShowMegaMenu(!showMegaMenu)}
-              // onMouseEnter={() => setShowMegaMenu(true)}
-              // onMouseLeave={() => setShowMegaMenu(false)}
+              onClick={() => toggleDropdown("buy")}
             >
               <div className="nav-items-name">
                 Buy <GoChevronDown />
               </div>
-
               <div
                 className={`dropdown-menu mega-menu p-3 ${
-                  showMegaMenu ? "show" : ""
+                  activeDropdown === "buy" ? "show" : ""
                 }`}
                 style={{ width: "50vw", marginTop: "15px" }}
               >
                 <DropdownMegaMenu />
               </div>
             </li>
+
             <li
               className="nav-item dropdown position-static"
-              onClick={() => setShowRentMenu(!showRentMenu)}
-
-              // onMouseEnter={() => setShowRentMenu(true)}
-              // onMouseLeave={() => setShowRentMenu(false)}
+              onClick={() => toggleDropdown("rent")}
             >
               {" "}
               <div className="nav-items-name">
@@ -239,7 +247,7 @@ export default function Navbar() {
               </div>
               <div
                 className={`dropdown-menu mega-menu p-3 ${
-                  showRentMenu ? "show" : ""
+                  activeDropdown === "rent" ? "show" : ""
                 }`}
                 style={{ width: "50vw", marginTop: "15px" }}
               >
@@ -248,8 +256,7 @@ export default function Navbar() {
             </li>
             <li
               className="nav-item dropdown position-static"
-              onMouseEnter={() => setShowSellMenu(true)}
-              onMouseLeave={() => setShowSellMenu(false)}
+              onClick={() => toggleDropdown("sell")}
             >
               {" "}
               <div className="nav-items-name">
@@ -257,7 +264,7 @@ export default function Navbar() {
               </div>
               <div
                 className={`dropdown-menu mega-menu p-3 ${
-                  showSellMenu ? "show" : ""
+                  activeDropdown === "sell" ? "show" : ""
                 }`}
                 style={{ width: "60vw", marginTop: "15px" }}
               >

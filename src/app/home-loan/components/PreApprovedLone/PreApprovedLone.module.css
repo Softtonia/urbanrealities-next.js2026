@@ -1,63 +1,89 @@
 .preApprovedLoan {
-  background: #fff7f2;
+  background: var(--Misty-Rose);
+  padding: 91px 20px;
 }
 
 .title {
-  font-size: 32px;
+  font-size: clamp(24px, 2.4vw, 32px);
   font-weight: 700;
-  color: #1c1c1c;
   margin-bottom: 15px;
 }
 
 .description {
-  font-size: 16px;
-  color: #555;
-  margin-bottom: 20px;
-  max-width: 500px;
+  font-size: clamp(12px, 1.4vw, 16px);
+  margin-bottom: 30px;
+  max-width: 461px;
+  justify-self: center;
 }
 
 .benefitsBox h5 {
-  font-weight: 600;
-  margin-bottom: 12px;
+  font-size: clamp(14px, 1.4vw, 16px);
+  font-family: var(--font-semibold);
+  margin-bottom: 24px;
 }
 
-.benefitsBox ul {
-  list-style: none;
-  padding: 0;
+.benefitsList p {
+  font-size: clamp(14px, 1.4vw, 16px);
+  margin-bottom: 10px;
+}
+.row {
+  margin: 0;
 }
 
-.benefitsBox li {
-  font-size: 16px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
+.col {
+  text-align: center;
 }
 
 .checkIcon {
-  color: #ff6600;
+  color: var(--Orange-Red);
   margin-right: 8px;
   font-size: 18px;
 }
 
 .exploreBtn {
-  background-color: #ff6600;
-  color: #fff;
-  padding: 10px 24px;
+  background-color: var(--Orange-Red);
+  color: var(--White);
+  padding: 10px 67px;
   border: none;
-  font-weight: 600;
+  font-size: clamp(14px, 1.4vw, 16px);
+  font-family: var(--font-regular);
   border-radius: 6px;
   transition: 0.3s ease-in-out;
   cursor: pointer;
-  margin-top: 15px;
-}
-
-.exploreBtn:hover {
-  background-color: #e85b00;
+  margin-top: 24px;
 }
 
 .image {
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
-  height: auto;
+  height: 402px;
+}
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column-reverse;
+    gap: 15px;
+    margin: 0;
+  }
+  .col {
+    padding: 0;
+  }
+  .preApprovedLoan {
+    padding: 20px;
+  }
+
+  .exploreBtn {
+    margin-top: 15px;
+  }
+  
+.benefitsBox h5 {
+  margin-bottom: 15px;
+}
+.title {
+  margin-bottom: 10px;
+}
+.description {
+  margin-bottom: 15px;
+}
+
 }

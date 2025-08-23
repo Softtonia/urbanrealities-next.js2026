@@ -27,12 +27,14 @@ export default function BankPartners() {
               <img src={bank.logo} alt={bank.name} className={styles.bankLogo} />
               <span className={styles.bankName}>{bank.name}</span>
             </div>
+            <div className={styles.bankDetails}>
             <div className={styles.middle}>
               <span>{bank.rate}</span>
               <span>{bank.tenure}</span>
             </div>
             <div className={styles.right}>
               <button className={styles.knowMore}>Know More</button>
+            </div>
             </div>
           </div>
         ))}

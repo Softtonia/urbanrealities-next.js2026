@@ -1,11 +1,10 @@
 "use client";
-import React, { useRef,useState,useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import "./ProjectCarousel.css";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import SubHero from "../SubHero/SubHero";
-import { FaStar } from "react-icons/fa";
+import ProjectCard from "./ProjectCard";
 
 const projectData = [
   {
@@ -53,10 +52,10 @@ const ProjectCarousel = () => {
   const router = useRouter();
   const carouselRef = useRef(null);
   const scrollAmount = 850;
-const [hasMounted, setHasMounted] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
 
- useEffect(() => {
-    setHasMounted(true); // ✅ Mark when mounted
+  useEffect(() => {
+    setHasMounted(true);
   }, []);
 
   if (!hasMounted) return null;
@@ -86,64 +85,7 @@ const [hasMounted, setHasMounted] = useState(false);
 
       <div className="project-carousel" ref={carouselRef}>
         {projectData.map((project, index) => (
-          <div key={index} className="project-card">
-            <div className="project-card__image-wrapper">
-              <Image
-                src={project.image}
-                alt="project-img"
-                width={300}
-                height={280}
-                className="project-card__image"
-              />
-            </div>
-
-            <div className="project-carousel__content">
-              <div className="project-card__body">
-                <p className="project-card__location m-0">{project.location}</p>
-                <h3 className="project-card__builder m-0">{project.builder}</h3>
-                <p className="project-card__rera m-0">
-                  Rera No: {project.reraNo}
-                </p>
-                <div className="project-card__rating m-0">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="star">
-                      <FaStar
-                        className={i < project.rating ? "filled" : "unfilled"}
-                      />
-                    </div>
-                  ))}
-                  <span className="project-card__rating-value">
-                    ({project.rating}.0)
-                  </span>
-                </div>
-                <p className="project-card__property-type m-0">
-                  Property Type: {project.propertyType}
-                </p>
-                <p className="project-card__price m-0">
-                  Ongoing Price: {project.ongoingPrice}
-                </p>
-                <p className="project-card__area m-0">
-                  Area: {project.areaSqft}
-                </p>
-                <p className="project-card__bhk m-0">{project.bhk}</p>
-                <p className="project-card__builder-floor m-0">
-                  Builder Floor: {project.builderFloor}
-                </p>
-
-                <div className="d-flex justify-content-between align-items-center m-0 w-100">
-                  <p className="project-card__status m-0">
-                    Status: <strong>{project.status}</strong>
-                  </p>
-                  <button
-                    className="project-card__btn-view btn-viewproject m-0"
-                    onClick={() => handleProject(project)}
-                  >
-                    View Project
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ProjectCard key={index} project={project} onViewProject={handleProject} />
         ))}
       </div>
 
