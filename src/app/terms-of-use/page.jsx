@@ -45,7 +45,7 @@ export default async function Privacypage() {
 
   return (
     <div>
-      <CompanyBg />
+      <CompanyBg imageUrl={UseTermData.data?.featured_image_url} />
       <TermsOfUse useterms={UseTermData.data} />
     </div>
   );

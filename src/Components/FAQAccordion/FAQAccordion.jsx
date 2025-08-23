@@ -13,7 +13,7 @@ const faqData = [
   "How can I sell my property faster?",
 ];
 
-const FAQAccordion = () => {
+const FAQAccordion = ({ heading, faqData = [] }) => {
   const [activeIndex, setActiveIndex] = useState(null);
 
   const toggleFAQ = (index) => {
@@ -22,7 +22,7 @@ const FAQAccordion = () => {
 
   return (
     <div className={styles.faqSection}>
-      <h2 className={styles.title}>FAQ</h2>
+      <h2 className={styles.title}>{heading}</h2>
       {faqData.map((question, index) => (
         <div
           key={index}

@@ -1,0 +1,69 @@
+.nextSection {
+  padding: 80px 0;
+  background: #fff;
+}
+
+.sectionContent {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.imageWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.image {
+  max-width: 460px;
+  height: auto;
+}
+
+.faqWrapper {
+  width: 100%;
+}
+
+/* ✅ Media Queries */
+@media (max-width: 1024px) {
+  .sectionContent {
+    gap: 20px;
+  }
+
+  .image {
+    max-width: 380px;
+  }
+}
+
+@media (max-width: 992px) {
+  .sectionContent {
+    flex-direction: column; /* Stack vertically */
+    align-items: center;
+    text-align: center;
+  }
+
+  .imageWrapper {
+    margin-bottom: 20px;
+  }
+
+  .faqWrapper {
+    width: 100%;
+    text-align: left;
+  }
+}
+
+@media (max-width: 576px) {
+    .sectionContent{
+        gap: 15px;
+    }
+  .nextSection {
+    padding: 20px 0;
+  }
+
+  .image {
+    max-width: 100%;
+  }
+
+  .faqWrapper {
+    padding: 0 10px;
+  }
+}

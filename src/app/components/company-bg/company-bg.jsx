@@ -3,21 +3,19 @@ import styles from "./company-bg.module.css"; // Import the CSS module
 import Link from "next/link";
 import Breadcrumbs from "@/Components/All-Breadcrumbs/Breadcrumbs";
 
-const companybg = () => {
+const CompanyBg = ({ imageUrl }) => {
+  const defaultImage = "/project_details_hero.png"; // Default image path
+  const bgImage = imageUrl && imageUrl.trim() !== "" ? imageUrl : defaultImage;
+  
   return (
-    <div className={styles["section-header"]}>
+    <div className={styles["section-header"]}
+    style={{ backgroundImage: `url(${bgImage})` }}>
       {/* <h1 className=''>Our wall of love</h1> */}
       <div className="">
-        {/* <Link href="" className={` ${styles["company-link"]}`}>
-          Home
-        </Link>
-        <Link href="" className={` ${styles["company-link"]}`}>
-          /PrivacyPolicy
-        </Link> */}
         <Breadcrumbs color="white"   fontSize="1.1rem"  fontFamily="poppins-medium"  />
       </div>
     </div>
   );
 };
 
-export default companybg;
+export default CompanyBg;

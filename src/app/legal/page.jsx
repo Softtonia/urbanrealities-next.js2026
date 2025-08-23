@@ -47,7 +47,7 @@ export default async function legalpage() {
 
   return (
     <div>
-      <CompanyBg />
+      <CompanyBg imageUrl={legalData.data?.featured_image_url} />
       <LegalPage legal={legalData.data} />
     </div>
   );
