@@ -1,0 +1,71 @@
+.userReviews {
+padding: clamp(20px, 4vw, 80px)20px;
+  text-align: center;
+}
+
+.heading {
+  margin-bottom:clamp(15px, 3vw, 50px);
+}
+
+.scrollWrapper {
+  display: flex;
+  overflow-x: auto;
+  gap: clamp(15px, 3vw, 30px);
+  padding: 10px;
+scroll-snap-type: x mandatory;
+}
+
+.scrollWrapper::-webkit-scrollbar {
+ display: none;
+}
+
+
+
+.card {
+  flex: 0 0 auto;
+  /* width: clamp(228px, 25vw, 355px);
+  height: clamp(189px, 16vw, 230px); */
+  width: 355px;
+  height: 230px;
+  scroll-snap-align: start;
+  padding: 20px;
+  background: #fff6f0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.text {
+font-size: clamp(12px, 1.5vw, 16px);
+  margin-bottom: clamp(10px, 1.4vw, 20px);
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user img {
+  width: clamp(39px,2.7vw,50px);
+  height: clamp(39px,2.7vw,50px);
+  border-radius: 50%;
+}
+
+.user span {
+ font-family: var(--font-semibold);
+  font-size:  clamp(14px, 1.4vw, 19px);
+}
+@media (max-width: 768px) {
+.card{
+  width: clamp(228px, 25vw, 355px);
+  height: clamp(189px, 16vw, 230px);
+
+}
+
+}
+@media (max-width: 576px) {
+}
