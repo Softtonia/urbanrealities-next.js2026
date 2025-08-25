@@ -59,6 +59,7 @@ const res = await fetch(`/api/contact-us-leads`, {
           phone: "",
           message: "",
         });
+        window.location.reload();
       } else {
         setStatus("Something went wrong. Please try again.");
       }
@@ -76,7 +77,6 @@ const res = await fetch(`/api/contact-us-leads`, {
         <h2 className={styles.title}>{data.heading}</h2>
         <p>Your email address will not be published. Required fields are marked *</p>
 
-        {status && <p className={styles.status}>{status}</p>}
 
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
@@ -132,6 +132,8 @@ const res = await fetch(`/api/contact-us-leads`, {
               required
             />
           </div>
+
+        {status && <p className={styles.status}>{status}</p>}
 
           <button
             type="submit"

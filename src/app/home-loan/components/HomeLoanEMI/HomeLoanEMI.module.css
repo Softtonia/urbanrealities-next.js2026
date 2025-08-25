@@ -1,0 +1,113 @@
+.container {
+  display: flex;
+  margin: 0 auto;
+  padding: 80px 0px;
+  gap: 30px;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 33%;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar li {
+  padding: 20px 0 20px 20px;
+  font-size: clamp(12px, 1.8vw, 24px);
+  color: #333;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-family: var(--font-semibold);
+}
+
+.sidebar li:hover {
+  color: var(--Orange-Red);
+}
+
+.sidebar li.active {
+  color: var(--Orange-Red);
+  font-family: var(--font-semibold);
+}
+
+/* Content */
+.content {
+  width: 67%;
+}
+
+.content h1 {
+  font-size: clamp(16px, 2.2vw, 27px);
+  font-family: var(--font-semibold);
+
+margin-bottom: clamp(12px, 1.5vw, 20px);
+}
+
+.content h2 {
+  font-size: clamp(16px, 2.2vw, 27px);
+  font-family: var(--font-semibold);
+margin-bottom: clamp(12px, 1.5vw, 20px);
+}
+
+.content p {
+font-size: clamp(12px, 1.2vw, 16px);
+  line-height: 1.6;
+margin-bottom: clamp(12px, 1.5vw, 20px);
+}
+
+.calculater-List {
+  list-style-type: disc;
+  padding-left: 20px;
+margin-bottom: clamp(12px, 1.5vw, 20px);
+}
+.calculater-List li {
+  margin-bottom: 10px;
+font-size: clamp(12px, 1.2vw, 16px);
+  line-height: 1.6;
+}
+.formula-List {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+.formula-List li {
+margin-bottom: clamp(12px, 1.5vw, 20px);
+font-size: clamp(12px, 1.2vw, 16px);
+  line-height: 1.6;
+}
+@media (max-width: 1440px) {
+  .container {
+    padding: clamp(20px, 4vw, 80px) 20px;
+  }
+}
+/* ✅ Responsive Design */
+@media (max-width: 992px) {
+  .container {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    margin-bottom: 20px;
+  }
+
+  .sidebar ul {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .sidebar li {
+    white-space: nowrap;
+    padding: 10px;
+  }
+
+  .content {
+    width: 100%;
+  }
+}

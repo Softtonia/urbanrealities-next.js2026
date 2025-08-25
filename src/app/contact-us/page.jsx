@@ -8,7 +8,7 @@ import { get } from '@/lib/api';
 async function getContactUsData() {
   try {
     const response = await get(`/api/site-setting`);
-    console.log(response.data);
+    // console.log(response.data);
     return response.data; // Axios response format
     
   } catch (error) {
