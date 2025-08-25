@@ -1,10 +1,31 @@
-"use client"
+
 import React from 'react';
 import PropertyAllDetails from './components/PropertyAllDetails'
-const PropertyDetailspage = () => {
+import { get } from '@/lib/api';
+
+async function fetchProperty(id) {
+  try {
+    // ✅ Directly call backend API, not your Next.js API route
+    const response = await get(`/api/get-data-properties-no-auth/${id}`);
+    const data = response?.data;
+    console.log("=>", data)
+
+    if (data) return data;
+    return [];
+  } catch (err) {
+    console.log(err.response)
+    console.error("Error fetching related properties:", err);
+    return [];
+  }
+}
+
+const PropertyDetailspage =async ({params}) => {
+  const id = params.id;
+  const property =await fetchProperty(id)
+ 
   return (
     <div>
-      <PropertyAllDetails/>
+      <PropertyAllDetails property={property}/>
     </div>
   );
 }

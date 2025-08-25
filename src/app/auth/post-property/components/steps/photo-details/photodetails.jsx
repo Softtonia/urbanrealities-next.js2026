@@ -28,7 +28,9 @@ const PhotoDetails = () => {
   // === Existing helper ===
   const getMediaFields = () => {
     if (!Array.isArray(formData.custom_field)) return [];
-    return formData.custom_field.filter(field => field.field_type === "media");
+    return formData.custom_field.filter(field => field.field_type === "media"
+      //  || field.template.name ==='property.gallery'
+    );
   };
   const mediaField = getMediaFields();
 
@@ -78,7 +80,7 @@ const PhotoDetails = () => {
   };
 
   // === Existing multi photo upload ===
- 
+
 
   // === ✅ Single photo upload handler ===
   const handleSinglePhotoUpload = async (e) => {
@@ -111,13 +113,13 @@ const PhotoDetails = () => {
       updateFormData("featured_image", { ...singlePhoto, isCover: true });
     }
   };
-  console.log("==>",formData)
+  console.log("==>", formData)
 
   // === Existing handlers (unchanged) ===
 
-  
 
-  
+
+
 
   const handlePhotoUpload = async (e, field_id) => {
     console.log("Uploading for field:", field_id);
@@ -227,22 +229,22 @@ const PhotoDetails = () => {
     setPhotos(prevPhotos => {
       const photoToDelete = prevPhotos[indexToDelete]; // the actual image object
       const updatedPhotos = prevPhotos.filter((_, i) => i !== indexToDelete);
-  
+
       // Reassign cover photo if needed
       if (photoToDelete.isCover && updatedPhotos.length > 0) {
         updatedPhotos[0].isCover = true;
       }
-  
+
       // Update repeater_fields in formData
       setFormData(prevFormData => {
         const repeater = [...(prevFormData.repeater_fields || [])];
         const fieldIndex = repeater.findIndex(item => item.custom_field_id === field_id);
-  
+
         if (fieldIndex !== -1) {
           const updatedFieldValue = repeater[fieldIndex].field_value.filter(
             img => img.url !== photoToDelete.url // match by unique property
           );
-  
+
           if (updatedFieldValue.length > 0) {
             repeater[fieldIndex] = {
               ...repeater[fieldIndex],
@@ -252,17 +254,17 @@ const PhotoDetails = () => {
             repeater.splice(fieldIndex, 1); // remove entire entry if empty
           }
         }
-  
+
         return { ...prevFormData, repeater_fields: repeater };
       });
-  
+
       // Update root photos in formData
       updateFormData("photos", updatedPhotos);
-  
+
       return updatedPhotos;
     });
   };
-  
+
 
 
   const handleSetCoverPhoto = (indexToSetCover) => {

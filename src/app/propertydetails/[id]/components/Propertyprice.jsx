@@ -2,32 +2,86 @@
 import { useState } from "react";
 import "./Propertyprice.css";
 
-const Propertyprice = () => {
+const Propertyprice = ({ property }) => {
   const [showAll, setShowAll] = useState(false);
-  const priceData = Array(12).fill({ price: "₹ 1.3 Cr.", booking: "₹ 1,00,000" });
+
+  // list of template labels you gave
+  const templates = [
+    "property.booking.amount",
+    "property.price.per.sq.ft",
+    "property.basic.price",
+    "property.corpus.fund",
+    "property.high.rise.charges",
+    "property.corner.charges",
+    "property.parking.space.charges",
+    "property.amenities.charges",
+    "property.preferential.location.charge",
+    "property.rental.value",
+    "property.maintanace.charges",
+    "property.stamp.duty",
+    "property.registration.charges",
+    "property.goods.and.service.tax",
+    "property.legal.expenses",
+    "property.documentaion.charges",
+    "property.katha.bifurcation.liaison",
+    "property.one.time.clubhouse.membership",
+    "proeperty.society.formation.charges",
+    "property.electric.connection.charges",
+    "property.water.charges",
+    "property.infrastructure.development.charges",
+    "property.pipeline.gas.connection",
+    "property.brokerge.fee",
+    "property.interior.design.cost",
+    "property.additional.parking.charges",
+  ];
+
+  // get matched fields from property
+  const fieldData = templates.map((templateLabel) => {
+    const field = property?.repeater_fields?.find(
+      (f) => f.template.name === templateLabel
+    );
+    if (!field) return null;
+
+    return {
+      label: templateLabel.replace(/\./g, " "), // pretty label
+      value: Array.isArray(field.field_value)
+        ? field.field_value.join(", ")
+        : field.field_value,
+    };
+  }).filter(Boolean);
+
+  // slice for view more/less
+  const visibleFields = showAll ? fieldData : fieldData.slice(0, 12);
 
   return (
     <div className="property-price-details-box">
       <h4 className="property-section-title">Price Details</h4>
+  
       <div className="property-price-grid">
-        {(showAll ? priceData : priceData.slice(0, 6)).map((item, index) => (
-          <div key={index} className="property-price-column">
-            <div className="d-flex justify-content-between">
-              <p className="property-label">Price Breakup</p>
-              <p className="property-value">{item.price}</p>
+        {visibleFields
+          .filter(item => item.value) // only keep items with value
+          .map((item, index) => (
+            <div key={index} className="property-price-column">
+              <div className="d-flex justify-content-between">
+                <p className="property-label">{item.label}</p>
+                <p className="property-value">{item.value}</p>
+              </div>
+              
             </div>
-            <div className="d-flex justify-content-between">
-              <p className="property-label">Booking Amount</p>
-              <p className="property-value">{item.booking}</p>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
-      <button className="property-view-more" onClick={() => setShowAll(!showAll)}>
-        {showAll ? "View less Details" : "View all Details"}
-      </button>
+  
+      {fieldData.filter(item => item.value).length > 12 && ( // check only items with value
+        <button
+          className="property-view-more"
+          onClick={() => setShowAll(!showAll)}
+        >
+          {showAll ? "View less Details" : "View all Details"}
+        </button>
+      )}
     </div>
   );
+  
 };
 
 export default Propertyprice;
