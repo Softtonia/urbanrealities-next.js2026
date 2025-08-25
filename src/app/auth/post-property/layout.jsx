@@ -7,7 +7,7 @@ export default function PostPropertyLayout({ children }) {
   return (
 
     <PostPropertyProvider>
-      <ProtectedRoute>
+      <ProtectedRoute>/
         {children}
       </ProtectedRoute>
     </PostPropertyProvider>

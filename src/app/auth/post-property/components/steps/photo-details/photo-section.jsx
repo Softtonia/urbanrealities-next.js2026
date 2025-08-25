@@ -70,15 +70,8 @@ const PhotoSection = ({
 
   return (
     <>
-      <h3 className={styles.sectionTitle}>
-        Add photos of your property{" "}
-        <span className={styles.optionalText}>(Optional)</span>
-      </h3>
-      <p className={styles.sectionSubText}>
-        A picture is worth a thousand words. 87% of buyers look at photos before
-        buying.
-      </p>
-      <p className={styles.desktopUploadPrompt}>{title}</p>
+    
+    <p className={`${styles.desktopUploadPrompt} mt-4`}>{title}</p>
 
       {photos.length === 0 ? (
 

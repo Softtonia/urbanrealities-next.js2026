@@ -139,7 +139,12 @@ const Location = () => {
     if (!selectedCountry) newErrors.country = "Country is required";
     if (!selectedState) newErrors.state = "State is required";
     if (!selectedCity) newErrors.city = "City is required";
-    if (!selectedPinCode) newErrors.pin_code = "Pin Code is required";
+    if (!selectedPinCode) {
+      newErrors.pin_code = "Pin Code is required";
+    } else if (selectedPinCode.length !== 6) {
+      newErrors.pin_code = "Pin Code must be 6 digits";
+    }
+    
 
 
     if (Object.keys(newErrors).length > 0) {

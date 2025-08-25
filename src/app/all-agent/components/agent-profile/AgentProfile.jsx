@@ -8,7 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import ViewPopup from "@/Components/Modal-Popup/ViewPopup";
 
-export default function AgentProfileDetails() {
+export default function AgentProfileDetails({agentProfile}) {
   const router = useRouter();
   const { token } = useSiteSettings();
   const [showModal, setShowModal] = useState(false);
@@ -18,7 +18,7 @@ export default function AgentProfileDetails() {
   const handleViewShowModal = async () => {
     console.log("==>,", token)
     if (id && token) {
-      await fetchAgent();
+      // await fetchAgent();
       setViewShowModal(true);
     } else {
       router.push('/auth/login')
@@ -54,47 +54,14 @@ export default function AgentProfileDetails() {
   // };
 
   const { id } = useParams();
-  const [agent, setAgent] = useState(null); // renamed to singular for clarity
-  const [loading, setLoading] = useState(true);
-  console.log(token)
+  const agent = agentProfile;
+  // const [agent, setAgent] = useState(null); // renamed to singular for clarity
+  const [loading, setLoading] = useState(false);
 
 
 
-  const fetchAgent = async () => {
-    try {
-      let res;
+
   
-      if (token) {
-        res = await fetch(`/api/agent/agent-profile/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-      } else {
-        res = await fetch(`/api/agent/agent-profile/${id}`);
-      }
-  
-      const data = await res.json();
-  
-      if (data) {
-        setAgent(data.user);
-      }
-    } catch (err) {
-      console.error("Error fetching agent:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  useEffect(() => {
-
-    if (id) fetchAgent();
-    
-  }, [id, token]);
-
-
-  if (loading) return <p>Loading...</p>;
 
 
   const contactAgentData = {

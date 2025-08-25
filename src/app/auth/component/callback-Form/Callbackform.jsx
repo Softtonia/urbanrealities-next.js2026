@@ -5,7 +5,7 @@ import styles from "../loginform/Login.module.css"; // ✅ Using existing module
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { useRouter } from "next/navigation";
 
-export default function CallbackForm() {
+export default function CallbackForm({roles=[]}) {
     const router = useRouter();
     const { login } = useSiteSettings();
     const [roleId, setRoleId] = useState("");
@@ -13,7 +13,7 @@ export default function CallbackForm() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-    const [roles, setRoles] = useState([]);
+    // const [roles, setRoles] = useState([]);
 
     // ✅ Get `code` from URL on client
     useEffect(() => {
@@ -25,22 +25,6 @@ export default function CallbackForm() {
     }, []);
    
     // ✅ Fetch available roles
-    useEffect(() => {
-        const fetchRoles = async () => {
-            try {
-                const res = await fetch("/api/auth/role-listing");
-                const data = await res.json();
-                if (Array.isArray(data)) {
-                    setRoles(data);
-                } else if (data?.data) {
-                    setRoles(data.data);
-                }
-            } catch (err) {
-                console.error("Error fetching roles:", err);
-            }
-        };
-        fetchRoles();
-    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

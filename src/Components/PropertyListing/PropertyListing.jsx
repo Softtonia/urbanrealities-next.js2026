@@ -20,7 +20,7 @@ export const PropertyCard = ({ property, handleViewProjectlist }) => (
   <div className="property-card">
     <img
       src={
-        // property.featured_image ||
+        property.featured_image ||
         "https://api.urbanrealities.com/public/uploads/properties/1754920384_pexels-binyaminmellish-106399.jpg"
       }
       alt="Property"

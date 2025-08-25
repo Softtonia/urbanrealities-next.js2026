@@ -41,30 +41,32 @@ const data = [{
 //     { label: 'Delhi', href: '/properties/delhi' },
 //     { label: 'Green Park Villa', href: '/properties/delhi/green-park-villa' },
 //   ];
-const AgentProfileLayout = () => {
+const AgentProfileLayout = ({agentProfile,relatedProperties,userProperties}) => {
   const { id } = useParams()
   const router = useRouter()
-  const [relatedProperties, setRelatedProperties] = useState([])
+  // const [relatedProperties, setRelatedProperties] = useState([])
   const [isEmpty, setIsEmpty] = useState(false)
   const handleViewProjectlist = (id) => {
     router.push(`/propertydetails/${id}`);
   };
 
-  useEffect(() => {
-    const fetchRelatedProperties = async () => {
-      try {
-        const res = await fetch(`/api/agent/agent-related-properties/${id}`);
-        const data = await res.json();
-        if (!data.status) {
-          setIsEmpty(data.status)
-        }
-        setRelatedProperties(data.user);
-      } catch (err) {
-        console.error("Error fetching agent:", err);
-      }
-    };
-    fetchRelatedProperties();
-  }, [id]);
+  console.log("agent=>",relatedProperties)
+
+  // useEffect(() => {
+  //   const fetchRelatedProperties = async () => {
+  //     try {
+  //       const res = await fetch(`/api/agent/agent-related-properties/${id}`);
+  //       const data = await res.json();
+  //       if (!data.status) {
+  //         setIsEmpty(data.status)
+  //       }
+  //       setRelatedProperties(data.user);
+  //     } catch (err) {
+  //       console.error("Error fetching agent:", err);
+  //     }
+  //   };
+  //   fetchRelatedProperties();
+  // }, [id]);
 
   console.log("==>", relatedProperties)
   // const demoProperties = [
@@ -120,12 +122,12 @@ const AgentProfileLayout = () => {
     <div className={` ${styles.Breadcrumbs}  `}>
       <div className={` ${styles.container} container `}>
     {/* <Breadcrumbs paths={breadcrumbPaths}/> */}
-    <Breadcrumbs/>
+    <Breadcrumbs color="black"   fontSize="1.1rem"  fontFamily="poppins-medium" />
     </div>
     </div>
     <div className={` ${styles.profileContainer} container `}>
         <div className={` ${styles.profilerow} row `}>
-          <div className={` ${styles.agentprofilecol} col-12 col-xl-8 p-0 `}><AgentProfileDetails /> </div>
+          <div className={` ${styles.agentprofilecol} col-12 col-xl-8 p-0 `}><AgentProfileDetails agentProfile={agentProfile} /> </div>
           <div className={` ${styles.AgentFormcol} col-12  col-xl-4 p-0`}> <AgentForm data={data[0]} /> </div>
         </div>
       </div>
@@ -138,7 +140,7 @@ const AgentProfileLayout = () => {
 
       <div className={` ${styles.Container} container `}>
         <div className={` ${styles.AboutPropertyList} row `}>
-          <div className={` ${styles.Aboutcol} col-12 col-lg-8 `}><AgentPropertyList /> </div>
+          <div className={` ${styles.Aboutcol} col-12 col-lg-8 `}><AgentPropertyList userProperties={userProperties} /> </div>
           <div className={` ${styles.Aboutcol} col-12  col-lg-4 `}> <AgentReviews /> </div>
         </div>
       </div>

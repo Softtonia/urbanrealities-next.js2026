@@ -21,13 +21,9 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     }, [])
 
     // Save to sessionStorage and state
-    const login = (newToken,) => {
-        // cookies().set('token', data.token, {
-        //     httpOnly: true,
-        //     secure: process.env.NODE_ENV === 'production',
-        //     sameSite: 'strict',
-        //     path: '/',
-        // });
+    const login = (newToken) => {
+        
+        
         sessionStorage.setItem('token', newToken)
         setToken(newToken)
     }

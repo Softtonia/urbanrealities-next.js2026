@@ -42,7 +42,7 @@ style={style}>
                   {capitalize(value.replace(/-/g, " "))}
                 </span>
               ) : (
-                <Link href={href} className={styles.link}>
+                <Link href={href} className={styles.link} style={style}>
                   {capitalize(value.replace(/-/g, " "))}
                 </Link>
               )}
