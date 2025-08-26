@@ -7,13 +7,14 @@ import Step5 from "../components/steps/featurepricing";
 import StepSidebar from "../components/StepperSidebar/StepperSidebar";
 import styles from "../components/post-property.module.css";
 import { get } from "@/lib/api";
+import AmenitiesSection from "../components/steps/AmenitiesSection";
 
 async function fetchPurpose() {
   try {
     // ✅ Directly call backend API, not your Next.js API route
     const response = await get(`/api/purpose-listing`);
     const data = response;
-    console.log("==>",data)
+    console.log("==>", data)
     if (data?.data) return data.data;
     return [];
   } catch (err) {
@@ -46,7 +47,7 @@ export default async function StepComponent({ step }) {
   const renderStepContent = () => {
     switch (currentStep) {
       case "basic-details":
-        return <Step1 purposeList={purposeList} propertyListing={propertyListing}/>;
+        return <Step1 purposeList={purposeList} propertyListing={propertyListing} />;
       case "location-details":
         return <Step2 />;
       case "property-profile":
@@ -55,6 +56,8 @@ export default async function StepComponent({ step }) {
         return <Step4 />;
       case "featurepricing":
         return <Step5 />;
+      case "amenities":
+        return <AmenitiesSection />;
       default:
         return <div>Step not found</div>;
     }

@@ -13,12 +13,14 @@
     justify-content: space-between;
 }
 
-.logosection{
-    width: 152px;
-    /* height: 119px; */
-    background-image: url('/salford_logo.png');
-    background-repeat: no-repeat;
+.logosection {
+  width: 152px;
+  height: 119px;
+  background-repeat: no-repeat;
+  background-size: contain;   /* Scale image to fit */
+  background-position: center; /* Center image */
 }
+
 
 .info1,
 .info{

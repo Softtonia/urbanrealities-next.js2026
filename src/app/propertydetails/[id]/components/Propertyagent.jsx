@@ -2,7 +2,7 @@
 
 import React from "react";
 import "./Propertyagent.css";
-const Propertyagent = () => {
+const Propertyagent = ({property}) => {
   const rating = 5;
   const stars = Array(rating).fill("");
 
@@ -16,7 +16,7 @@ const Propertyagent = () => {
           className="agent-image"
           style={{ width: "161px", height: "131px" }}
         />
-        <div className="agent-name body-text-md18">Akash Sharma</div>
+        <div className="agent-name body-text-md18">{property.created_by.name}</div>
         <div className="agent-rating body-text-14">
           {stars.map((_, index) => (
             <img key={index}
@@ -25,7 +25,7 @@ const Propertyagent = () => {
           ))}
           {""} 9.8 Rating
         </div>
-        <button className="agent-contact">📞 Akash Sharma</button>
+        <button className="agent-contact">📞 {property.created_by.name}</button>
       </div>
     </div>
   );

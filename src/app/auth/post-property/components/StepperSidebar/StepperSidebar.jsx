@@ -8,7 +8,8 @@ const steps = [
   { title: "Location Details", step: 2, path: 'location-details' },
   { title: "Property Profile", step: 3, path: 'property-profile' },
   { title: "Photos, Videos & Voice-over", step: 4, path: 'photodetails' },
-  { title: "Amenities section", step: 5, path: 'featurepricing' },
+  { title: "Property Price ", step: 5, path: 'featurepricing' },
+  { title: "Amenities section", step: 6, path: 'amenities' },
 ];
 
 export default function StepperSidebar({ currentStep = "basic-details"  }) {

@@ -16,81 +16,90 @@ import SubHero from "./../SubHero/SubHero";
 //   imageUrl: '/propertylistingimage.png',
 // }));
 
-export const PropertyCard = ({ property, handleViewProjectlist }) => (
-  <div className="property-card">
-    <img
-      src={
-        property.featured_image ||
-        "https://api.urbanrealities.com/public/uploads/properties/1754920384_pexels-binyaminmellish-106399.jpg"
-      }
-      alt="Property"
-      className="property-image"
-    />
+export const PropertyCard = ({ property, handleViewProjectlist }) => {
 
-    <div className="property-content">
-      <div className="property-title body-text-14 bord-bottom ">
+  const bedroom = property.custom_field_values?.find(
+    (field) => field.field_label === "Bedrooms"
+  )?.field_value;
+  const areasqft = property.custom_field_values?.find(
+    (field) => field.field_label === "Area Sq Ft"
+  )?.field_value;
+const furnishStatus =  property.custom_field_values?.find(
+  (field) => field.field_label === "Furnishing Status"
+)?.field_value;
+  return (
+    <div className="property-card">
+      <img
+        src={
+          property.featured_image ||
+          "https://api.urbanrealities.com/public/uploads/properties/1754920384_pexels-binyaminmellish-106399.jpg"
+        }
+        alt="Property"
+        className="property-image"
+      />
 
-        <span >
+      <div className="property-content">
+        <div className="property-title body-text-14 bord-bottom ">
+
           <span >
-            {property &&
-              property.custom_field_values?.find(
-                (field) => field.field_label === "Bedrooms"
-              )?.field_value || "Not specified"
-            } BHK
-          </span>
-          <span className="pipe-divider"> | </span>
-          <span >
-            {property &&
-              property.property_type_id_name
+            {bedroom && <>
+              <span >
+                {bedroom}
+              </span>
+              <span className="pipe-divider"> | </span>
+            </>
             }
+            {property.property_type_id_name && <>
+              <span >
+                {property &&
+                  property.property_type_id_name
+                }
+              </span>
+              <span className="pipe-divider"> | </span>
+            </>
+            }{areasqft &&
+              <span >
+                {areasqft}sq.ft
+              </span>
+            }
+
           </span>
-          <span className="pipe-divider"> | </span>
-          <span >
-            {property &&
-              property.custom_field_values?.find(
-                (field) => field.field_label === "Area Sq Ft"
-              )?.field_value || "Not specified"
-            } sq.ft
-          </span>
 
-        </span>
-
-      </div>
-
-      <div className="property-details body-text-14 bord-bottom">
-        <div className="">
-          {` ${property.state.name}` || "Ernakulam, Kerala"}
         </div>
+        {property.state.name &&
+          <div className="property-details body-text-14 bord-bottom">
+            <div className="">
+              {` ${property.state.name}`}
+            </div>
 
+          </div>}
+
+
+        <div className="property-details body-text-14 bord-bottom">
+          {property.property_status_id_name && 
+          <span className="property-status-1">
+            {property.property_status_id_name}
+          </span>}
+          {furnishStatus &&
+          <span className="property-carpet-area">
+            {furnishStatus}
+          </span>}
+        </div>
       </div>
 
-      <div className="property-details body-text-14 bord-bottom">
-        <span className="property-status-1">
-          {property.property_status_id_name || "Ready To Move"}
-        </span>
-        <span className="property-carpet-area">
-          {property &&
-            property.custom_field_values?.find(
-              (field) => field.field_label === "Furnishing Status"
-            )?.field_value || "Not specified"
-          }
-
-        </span>
+      <div
+        className="btn-property-detail btn-more-details"
+        onClick={handleViewProjectlist}
+      >
+        More Details
       </div>
     </div>
-
-    <div
-      className="btn-property-detail btn-more-details"
-      onClick={handleViewProjectlist}
-    >
-      More Details
-    </div>
-  </div>
-);
+  )
+};
 
 
-const PropertyListing = () => {
-  const [propertyList, setPropertyList] = useState([]);
+const PropertyListing = ({ propertyList }) => {
+  // const [propertyList, setPropertyList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -100,24 +109,24 @@ const PropertyListing = () => {
   };
   // console.log("env",process.env.LARAVEL_API_BASE_URL)
 
-  useEffect(() => {
-    const fetchPropertyList = async () => {
-      try {
-        const response = await fetch("/api/get-all-properties"); // This hits Next.js API route
-        const data = await response.json();
+  // useEffect(() => {
+  //   const fetchPropertyList = async () => {
+  //     try {
+  //       const response = await fetch("/api/get-all-properties"); // This hits Next.js API route
+  //       const data = await response.json();
 
-        if (!response.ok) throw new Error(data.error || "Failed to fetch");
+  //       if (!response.ok) throw new Error(data.error || "Failed to fetch");
 
-        setPropertyList(data.data); // Assuming Laravel returns { data: [...] }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       setPropertyList(data.data); // Assuming Laravel returns { data: [...] }
+  //     } catch (err) {
+  //       setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchPropertyList();
-  }, []);
+  //   fetchPropertyList();
+  // }, []);
 
   console.log("property", propertyList)
 

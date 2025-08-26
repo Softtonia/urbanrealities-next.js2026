@@ -18,14 +18,30 @@ async function fetchProperty(id) {
     return [];
   }
 }
+async function fetchLeadType() {
+  try {
+    // ✅ Directly call backend API, not your Next.js API route
+    const response = await get(`/api/lead-types`);
+    const data = response?.data;
+    console.log("=>", data)
+
+    if (data.success) return data.data;
+    return [];
+  } catch (err) {
+    console.log(err.response)
+    console.error("Error fetching Lead Type:", err);
+    return [];
+  }
+}
 
 const PropertyDetailspage =async ({params}) => {
   const id = params.id;
   const property =await fetchProperty(id)
+  const leadTypes =await fetchLeadType()
  
   return (
     <div>
-      <PropertyAllDetails property={property}/>
+      <PropertyAllDetails property={property} leadTypes={leadTypes}/>
     </div>
   );
 }

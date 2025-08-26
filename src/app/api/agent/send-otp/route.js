@@ -12,6 +12,7 @@ export async function POST(req) {
         // console.log(response.data)
         return NextResponse.json(response.data);
     } catch (error) {
+        console.log(error)
         return NextResponse.json(
             { message: error?.response?.data?.message || "otp request failed" },
             { status: error?.response?.status || 500 }

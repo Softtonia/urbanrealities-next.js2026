@@ -40,18 +40,23 @@ const Propertyprice = ({ property }) => {
     const field = property?.repeater_fields?.find(
       (f) => f.template.name === templateLabel
     );
-    if (!field) return null;
+    
+    if (!field.value) return null;
 
     return {
-      label: templateLabel.replace(/\./g, " "), // pretty label
+      label: field.field_label, // pretty label
       value: Array.isArray(field.field_value)
         ? field.field_value.join(", ")
         : field.field_value,
     };
   }).filter(Boolean);
 
+
   // slice for view more/less
   const visibleFields = showAll ? fieldData : fieldData.slice(0, 12);
+
+  console.log("==>>",visibleFields)
+  if (!visibleFields.length ) return null;
 
   return (
     <div className="property-price-details-box">

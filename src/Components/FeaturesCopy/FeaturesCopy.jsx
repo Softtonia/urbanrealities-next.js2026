@@ -5,35 +5,37 @@ import "./FeaturesCopy.css";
 import "../../app/globals.css";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import SubHero from "../SubHero/SubHero";
+import slides from "../../../public/slides";
 
-const FeaturesCopy = () => {
+const FeaturesCopy = ({ projects }) => {
   const [current, setCurrent] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const scrollRef = useRef(null);
+  const slides = projects
 
-  const slides = [
-    {
-      image:
-        "https://images.unsplash.com/photo-1666846795617-5a79453e6f6c?q=80&w=3402&auto=format&fit=crop",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1642878542442-46f76aaae355?q=80&w=1999&auto=format&fit=crop",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1662236337008-e546a2359f45?q=80&w=3687&auto=format&fit=crop",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1642878542442-46f76aaae355?q=80&w=1999&auto=format&fit=crop",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1662236337008-e546a2359f45?q=80&w=3687&auto=format&fit=crop",
-    },
-  ];
+  // const slides = [
+  //   {
+  //     image:
+  //       "https://images.unsplash.com/photo-1666846795617-5a79453e6f6c?q=80&w=3402&auto=format&fit=crop",
+  //   },
+  //   {
+  //     image:
+  //       "https://images.unsplash.com/photo-1642878542442-46f76aaae355?q=80&w=1999&auto=format&fit=crop",
+  //   },
+  //   {
+  //     image:
+  //       "https://images.unsplash.com/photo-1662236337008-e546a2359f45?q=80&w=3687&auto=format&fit=crop",
+  //   },
+  //   {
+  //     image:
+  //       "https://images.unsplash.com/photo-1642878542442-46f76aaae355?q=80&w=1999&auto=format&fit=crop",
+  //   },
+  //   {
+  //     image:
+  //       "https://images.unsplash.com/photo-1662236337008-e546a2359f45?q=80&w=3687&auto=format&fit=crop",
+  //   },
+  // ];
 
   useEffect(() => {
     const checkMobile = () => {
@@ -52,7 +54,7 @@ const FeaturesCopy = () => {
 
   if (!hasMounted) return null;
 
-  
+
   const handlePrev = () => {
     // if (isMobile) {
     //   scrollRef.current.scrollBy({ left: -scrollRef.current.offsetWidth, behavior: "smooth" });
@@ -142,26 +144,29 @@ const FeaturesCopy = () => {
           >
             {slides.map((slide, i) => (
               <div
-                className={`slide-card ${
-                  isMobile ? "mobile-slide-card" : getSlideClass(i)
-                }`}
+                className={`slide-card ${isMobile ? "mobile-slide-card" : getSlideClass(i)
+                  }`}
                 key={i}
               >
                 <img
-                  src={slide.image}
+                  src={slide.featured_image ? slide.featured_image : "https://images.unsplash.com/photo-1666846795617-5a79453e6f6c?q=80&w=3402&auto=format&fit=crop"}
                   alt={`Property ${i + 1}`}
                   className="slide-image"
                 />
                 <div className="property-overlay">
                   <div className="property-info">
-                    <span className="property-count">999+</span>
-                    <span className="property-status">Ready To Move in</span>
+                    <span className="property-count">{slide.total_view}+</span>
+                    <span className="property-status">{slide.property_status_id_name}</span>
                   </div>
                   <div className="property-action">
-                    <a href="#" className="explore-btn">
-                      Explore All
+                    <a
+                      href={`/project-details?name=${slide.name}&property-name=${slide.property_id_name}&id=${slide.id}`}
+                      className="explore-btn"
+                    >
+                      {slide.name}
                     </a>
                   </div>
+
                 </div>
               </div>
             ))}
