@@ -147,13 +147,13 @@ const PhotoSection = ({
                     Make Cover Photo
                   </label>
                 )}
-                <div className={styles.photoActions}>
+                {/* <div className={styles.photoActions}>
                   <CustomDropdown
                     value={photo.category}
                     options={categoryOptions}
                     onChange={(newCategory) => onCategoryChange(i, newCategory)}
-                  />
-                </div>
+                  /> */}
+                {/* </div> */}
               </div>
             ))}
             {photos.length < 50 && (

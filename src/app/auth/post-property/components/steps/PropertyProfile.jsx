@@ -222,7 +222,7 @@ export default function PropertyProfileStep() {
                       }}
                     >
                       {field.field_label}{" "}
-                      <span style={{ color: "red" }}>{field.required ? "*" : ""}</span>
+                      <span style={{ color: "red" }}>{field.required ==="yes" ? "*" : ""}</span>
                     </label>
 
                     {/* Units field */}

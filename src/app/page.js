@@ -10,15 +10,47 @@ import PopularCities from "@/Components/PopularCities/PopularCities";
 import Testimonials from "@/Components/Testimonials/Testimonials";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
+import { get } from "@/lib/api";
+
+const fetchProject = async ()=> {
+  try {
+    // ✅ Directly call backend API, not your Next.js API route
+    const response = await get(`/api/get-all-project-listing-no-auth?per_page=10`);
+    const data = response?.data;
+
+    if (data) return data.data;
+    return [];
+  } catch (err) {
+    console.log(err.response)
+    console.error("Error fetching Projects", err);
+    return [];
+  }
+}
+const fetchProperties = async ()=> {
+  try {
+    // ✅ Directly call backend API, not your Next.js API route
+    const response = await get(`/api/get-all-properties-listing-no-auth?per_page=10`);
+    const data = response?.data;
+    console.log("=>", data)
+
+    if (data) return data.data;
+    return [];
+  } catch (err) {
+    console.log(err.response)
+    console.error("Error fetching properties", err);
+    return [];
+  }
+}
 
 
-
-export default function Home() {
+export default async function Home() {
+  const projects =await fetchProject()
+  const propertyList = await fetchProperties()
   return (
     <>
       <SearchPropertySection />
-      <FeaturesCopy />
-      <PropertyListing />
+      <FeaturesCopy projects={projects}/>
+      <PropertyListing propertyList={propertyList}/>
       <SponsoredProperty />
       <ProjectCarousel />
       <AdviceAndTools />

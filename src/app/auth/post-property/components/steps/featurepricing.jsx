@@ -281,96 +281,8 @@ const PricingAndOthers = () => {
 
   const fieldsToRender = (dynamicFieldsMap[selectedPurpose] && dynamicFieldsMap[selectedPurpose][selectedCategory]) || [];
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const newErrors = {};
-
-      // 1. Validate price fields
-      priceFields.forEach(field => {
-        const repeaterField = (formData.repeater_fields || []).find(
-          f => f.custom_field_id === field.id
-        );
-        const value = repeaterField?.field_value;
-
-        if (field.required === "yes" && (!value || value === "")) {
-          newErrors[field.field_name_slug] = `${field.field_label} is required`;
-        }
-      });
-
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        return; // stop submission if errors
-      }
-
-      setErrors({}); // clear errors if validation passes
-
-      // 2. Create FormData for submission
-      const formDataToSend = new FormData();
-
-      // Add basicDetails
-      Object.entries(formData.basicDetails || {}).forEach(([key, value]) => {
-        formDataToSend.append(key, value);
-      });
-
-      // Add locationDetails
-      Object.entries(formData.locationDetails || {}).forEach(([key, value]) => {
-        formDataToSend.append(key, value);
-      });
-
-      // Add repeater_fields
-      (formData.repeater_fields || []).forEach((field, index) => {
-        formDataToSend.append(`repeater_fields[${index}][custom_field_id]`, field.custom_field_id);
-        formDataToSend.append(`repeater_fields[${index}][field_type]`, field.field_type);
-
-        if (field.field_type === "file" || field.field_type === "media") {
-          if (Array.isArray(field.field_value)) {
-            field.field_value.forEach(item => {
-              if (item?.file instanceof File) {
-                formDataToSend.append(`repeater_fields[${index}][field_value][]`, item.file);
-              }
-            });
-          } else if (field.field_value?.file instanceof File) {
-            formDataToSend.append(`repeater_fields[${index}][field_value][]`, field.field_value.file);
-          }
-        } else if (Array.isArray(field.field_value)) {
-          formDataToSend.append(
-            `repeater_fields[${index}][field_value]`,
-            field.field_value.join(",")
-          );
-        } else {
-          formDataToSend.append(`repeater_fields[${index}][field_value]`, field.field_value ?? "");
-        }
-      });
-
-      // Append extra fields
-      formDataToSend.append('featured_image',formData.featured_image.file)
-      formDataToSend.append('token', token);
-      formDataToSend.append('live_status', "Under Review");
-      formDataToSend.append('temporary_status', "Active");
-
-      console.log("Final FormData before submit:");
-      for (let pair of formDataToSend.entries()) {
-        console.log(pair[0], ":", pair[1]);
-      }
-
-      // 3. Send API request
-      const response = await fetch("/api/post-property/add-property", {
-        method: "POST",
-        body: formDataToSend,
-      });
-
-      if (!response.ok) throw new Error("Failed to submit");
-
-      const result = await response.json();
-      console.log("Submitted successfully:", result);
-
-      router.push('/'); // Navigate after successful submission
-
-    } catch (err) {
-      console.error("Submit error:", err);
-    }
+  const handleContinue = () => {
+    router.push("/auth/post-property/amenities");
   };
 
 
@@ -560,7 +472,7 @@ const PricingAndOthers = () => {
           return (
             <div className={styles.formGroup} key={field.field_name_slug}>
               <label htmlFor={field.field_name_slug} className={styles.formLabel}>
-                {field.field_label}{" "} <span style={{ color: "red" }}>{field.required ? "*" : ""}</span>
+                {field.field_label}{" "} <span style={{ color: "red" }}>{field.required==="yes" ? "*" : ""}</span>
               </label>
               <input
                 type="text"
@@ -581,7 +493,7 @@ const PricingAndOthers = () => {
           return (
             <div className={styles.formGroup} key={field.field_name_slug}>
               <label htmlFor={field.field_name_slug} className={styles.formLabel}>
-                {field.field_label}{" "} <span style={{ color: "red" }}>{field.required ? "*" : ""}</span>
+                {field.field_label}{" "} <span style={{ color: "red" }}>{field.required ==="yes" ? "*" : ""}</span>
               </label>
               <input
                 type="number"
@@ -658,7 +570,7 @@ const PricingAndOthers = () => {
       <div className={styles.navigationButtons}>
         <button
           className={`${styles.continueBtn} continueBtn`} // Added direct class "continueBtn"
-          onClick={handleSubmit}
+          onClick={handleContinue}
         >
           Continue
         </button>

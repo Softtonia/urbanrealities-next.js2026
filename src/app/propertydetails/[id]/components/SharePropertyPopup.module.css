@@ -1,0 +1,78 @@
+.quickEnquiry {
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* :global(.modal-title) {
+    font-size: 23px;
+    font-family: var(--font-medium);
+    margin-bottom: 15px;
+  }
+  :global(.modal-content) {
+    background-color: var(--White); 
+   box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+  
+  } */
+.customCloseBtn {
+    background-color: var(--Orange-Red);
+    /* Your desired orange color */
+    color: var(--White);
+    /* Your desired white color for the icon */
+    border: none;
+    border-radius: 50%;
+    /* Make it a circular button */
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    /* Ensure it's on top of other content */
+}
+
+
+.topBox {
+    font-size: 12px;
+    width: 100%;
+}
+
+.topBoxRow {
+    display: flex;
+    align-items: stretch;
+    /* Make children equal height */
+    border: 1px solid black;
+    /* full row border */
+    width: 95%;
+}
+
+.topBoxColView {
+    flex: 0 0 40%;
+    /* Label takes 40% */
+    border-right: 1px solid black;
+    /* separator */
+    padding: 8px 12px;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+    /* Allow wrapping */
+    display: flex;
+    align-items: center;
+    /* Vertically center text if needed */
+}
+
+.topBoxValue {
+    flex: 0 0 60%;
+    /* Value takes 60% */
+    padding: 8px 12px;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+    /* Allow wrapping */
+    display: flex;
+    align-items: center;
+    /* Optional: vertical align */
+}

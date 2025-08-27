@@ -15,9 +15,10 @@ border-bottom: 4px solid var(--Cultured);
 }
 
 .property-price-grid {
+  text-transform: capitalize;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  row-gap: 20px;
+  row-gap: 10px;
   column-gap: 32px;
   padding: 41px 20px 0px 20px;
 

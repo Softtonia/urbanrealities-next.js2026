@@ -1,4 +1,3 @@
-'use client';
 
 import React from "react";
 import "./PropertyAllDetails.css";
@@ -7,7 +6,7 @@ import PropertygalleryBreadcrum from "./PropertygalleryBreadcrum";
 import PropertyHighlights from "./PropertyHighlights";
 import Projectactive from "./Projectactive";
 import Projectagent from "./Propertyagent";
-import ProjectDescription from "./PropertyDescription";
+import PropertyDescription from "./PropertyDescription";
 import PropertyEnquiryFrom from "./PropertyEnquiryFrom";
 import Propertyareadata from "./Propertyareadata";
 import Propertyprice from "./Propertyprice";
@@ -16,27 +15,26 @@ import PropertyAmenities from "./PropertyAmenities";
 
 
 
-const PropertyDetails = () => {
-
+const PropertyDetails = ({property,leadTypes}) => {
 
   return (
     <div>
       <PropertydetailsBreadcrum />
-      <PropertygalleryBreadcrum />
+      <PropertygalleryBreadcrum property={property} />
       <div className="project-highlight-background">
         <div className="container">
           <div className="row background-row">
             <div className="col-8 large-col">
-              <PropertyHighlights />
-              <ProjectDescription />
+              <PropertyHighlights  property={property} />
+              <PropertyDescription property={property}/>
               <Propertyareadata />
-              <Propertyprice />
+              <Propertyprice property={property}/>
               <PropertyAmenities />
             </div>
             <div className="col-4 small-col">
               <Projectactive />
-              <Projectagent />
-              <PropertyEnquiryFrom />
+              <Projectagent property={property}/>
+              <PropertyEnquiryFrom  property={property} leadTypes={leadTypes}/>
             </div>
 
           </div>
