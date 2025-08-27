@@ -1,11 +1,11 @@
 import React from 'react';
-
-const page = () => {
+import PropertyFilters from '@/Components/PropertyFilters/PropertyFilters';
+const Projectpage = () => {
   return (
     <div>
-      
+      <PropertyFilters />
     </div>
   );
 }
 
-export default page;
+export default Projectpage;

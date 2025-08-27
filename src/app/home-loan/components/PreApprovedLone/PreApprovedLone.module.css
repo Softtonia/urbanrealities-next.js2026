@@ -87,3 +87,8 @@
 }
 
 }
+@media (max-width: 576px) {
+  .image {
+    height: 259px;
+  }
+}

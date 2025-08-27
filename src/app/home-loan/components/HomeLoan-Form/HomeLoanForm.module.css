@@ -10,16 +10,16 @@
   justify-content: space-between;
   align-items: center;
   height: 356px;
+  gap: 30px;
 }
 .loanInfo {
     display: flex;
     flex-direction: column;
-  color: white;
-  max-width: 45%;
+  color:var(--White);
 }
 
 .loanInfo h1 {
-  font-size: 2.5rem;
+font-size: clamp(16px, 3.2vw, 47px);
   margin-bottom: 20px;
 }
 .icon{
@@ -31,17 +31,18 @@
     margin-bottom: 15px;
     display: grid;
     grid-template-columns: repeat(2 ,1fr);
+    gap: 30px ;
 }
 
 .loanInfo ul li {
-  margin: 8px 0;
-  font-size: 1.1rem;
+font-size: clamp(12px, 1.5vw, 19px);
 }
 
 .loanInfo a {
-  color: #ff6600;
+  color: var(--Orange-Red);
   text-decoration: none;
-  font-weight: bold;
+font-size: clamp(12px, 1vw, 16px);
+font-family: var(--font-bold);
 }
 .ApplyBtn{
     display: none;
@@ -59,24 +60,27 @@
   margin-top: 9px;
 }
 .loanForm {
-  background: white;
+  background: var(--White);
   padding: 20px;
   border-radius: 10px;
-  width: 460px;
+  width: clamp(280px, 40vw, 460px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
+
 .loanForm-input {
   width: 100%;
-  padding: 10px 11px;
+  padding: 11px 10px;
   margin-bottom: 15px ;
-  border: 1px solid #ddd;
+  border: 1px solid var(  --Lavender-Gray);
   border-radius: 8px;
+  font-size: 12px;
 }
 
 .propertyCheck {
   display: block;
-  font-weight: 600;
+font-size: 12px;
+font-family: var(--font-bold);
 }
 
 .radioOptions {
@@ -84,14 +88,16 @@
   gap: 20px;
   margin: 10px 0 20px 0;
 }
-
+.radio-input{
+  margin-right: 7px;
+}
 .submitBtn {
   width: 100%;
   padding: 10px;
-  background: #ff6600;
+  background: var(--Orange-Red);
   border: none;
   border-radius: 8px;
-  color: white;
+  color: var(--White);
   font-weight: bold;
   cursor: pointer;
 }
@@ -101,6 +107,51 @@
   font-size: 0.8rem;
   margin-top: 10px;
   margin-bottom: 0;
-  color: #555;
   text-align: center;
+}
+@media (max-width: 1200px) {
+  .homeLoanContainer {
+    height: 450px;
+  }
+  .homeContainer {
+    gap: 20px;
+  }
+      .loanInfo ul {
+    gap: 15px;
+  }
+}
+@media (max-width: 992px) {
+  .homeLoanContainer {
+    padding: 20px 0;
+    gap: 20px;
+  }
+  .homeContainer {
+    width: 100%;
+  }
+  .ApplyBtn{
+    display: inline-block;
+  }
+  .loanInfo{
+    width: auto;
+  }
+.loanForm{
+  display: none;
+}
+
+}
+@media (max-width: 576px) {
+  .loanForm {
+    width: 100%;
+    max-width: 100%;
+  }
+    .loanInfo ul {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .homeLoanContainer {
+height: 254px !important;
+  }
+  .homeContainer{
+    height: 100%;
+  }
 }

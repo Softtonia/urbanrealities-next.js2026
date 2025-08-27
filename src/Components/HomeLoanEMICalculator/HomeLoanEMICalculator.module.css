@@ -1,0 +1,240 @@
+.innerContainer {
+  border: 1px solid var(--Bright-Gray);
+  border-radius: 20px;
+padding: clamp(10px, 2.08vw, 30px);
+}
+.calculatorWrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  padding: 20px 18px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  flex-wrap: wrap;
+  border: 1px solid var(--Bright-Gray);
+}
+
+.inputContainer {
+  width: 47%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+.numberInput:focus,
+.rangeInput:focus {
+  outline: none;
+  box-shadow: none;
+}
+.loanAmountGroup {
+  margin-bottom: clamp(12px, 1.69vw, 30px);
+;
+}
+.inputLabel {
+  font-size: clamp(12px, 1.2vw, 16px);
+  font-family: var(--font-regular);
+}
+
+.inputRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.numberInput {
+  padding: 8px;
+  border: none;
+  border-bottom: 1px solid var(--Bright-Gray);
+  font-size: clamp(12px, 1.2vw, 16px);
+  font-family: var(--font-regular);
+
+}
+
+.calcBtn {
+
+  background: var(--Orange-Red);
+  color: var(--White);
+  padding: 15px 102px;
+  border: none;
+  border-radius: 10px;
+  font-size: clamp(14px, 1.5vw, 18px);
+  font-family: var(--font-regular);
+  cursor: pointer;
+}
+
+.rangeInput {
+  /* flex-grow: 1; */
+  -webkit-appearance: none;
+  appearance: none;
+  background: #e0e0e0;
+  border-radius: 5px;
+  height: 8px;
+  outline: none;
+  transition: background 0.2s ease;
+}
+.rangeInput::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #0f9d58;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--Bright-Gray);
+}
+
+.rangeInput::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #0f9d58;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(  --Bright-Gray);
+}
+
+
+.resultContainer {
+  width: 50%;
+  background-color: var(--Misty-Rose);
+  padding: 20px;
+  border-radius: 20px;
+}
+.resultContainer h3 {
+  font-size: clamp(16px, 2vw, 27px);
+}
+
+.emiAmount {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-top:  clamp(12px, 2.7vw, 40px);
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+.chartBox {
+  width: 167px;
+}
+
+.emiBreakup {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 10px;
+  align-items: center;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.legendText p {
+  font-size: clamp(12px, 1.2vw, 16px);
+  text-align: left;
+  margin: 0;
+}
+.principalBox {
+  width: 24px;
+  height: 24px;
+  background-color: #0f9d58;
+  border-radius: 3px;
+}
+
+.interestBox {
+  width: 24px;
+  height: 24px;
+  background-color: var(--Orange-Red);
+  border-radius: 3px;
+}
+
+.whyUs {
+  margin-top: 15px;
+  width: 100%;
+}
+
+.whyUs h4 {
+  font-size: clamp(18px, 2vw, 27px);
+  margin-bottom: clamp(12px, 2.08vw, 30px);
+}
+.whyUsPoints {
+  display: flex;
+  gap: 30px;
+  margin-top: 10px;
+}
+.pointItem span,
+.pointItem  {
+  display: flex;
+  align-items: center;
+  font-size:clamp(12px, 1.2vw, 16px);
+  gap: 8px;
+  color: #333;
+}
+
+.checkmark {
+  color: var(--Orange-Red);
+  margin-right: 6px;
+  font-size: 18px;
+  vertical-align: middle;
+}
+@media (max-width: 1440px) {
+  .ArcElement {
+    padding: 20px;
+  }
+  .resultContainer{
+    width: 45%;
+  }
+}
+@media (max-width: 992px) {
+
+  .emiAmount {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .whyUsPoints {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+} 
+
+@media (max-width: 768px) {
+  .calculatorWrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .inputContainer,
+  .resultContainer {
+    width: 100%;
+  }
+    .calcBtn {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .whyUs h4 {
+    font-size: 20px;
+  }
+
+  .chartBox {
+    width: 180px;
+  }
+
+  .legendItem {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .innerContainer {
+    padding: 15px;
+  }
+
+  .calcBtn {
+    width: 100%;
+  }
+
+  .emiBreakup {
+    align-items: flex-start;
+  }
+}

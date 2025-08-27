@@ -35,7 +35,7 @@
 }
 
 .bankName {
-  font-family: var(--font-semibold);
+  font-family: var(--font-medium);
   font-size: clamp(14px, 1.4vw, 16px);
 }
 .bankDetails {
@@ -57,7 +57,7 @@
   border: 1px solid var(--Orange-Red);
   color: var(--Orange-Red);
   background: var(--White);
-  padding: clamp(6px, 1vw, 8px) clamp(40px, 5vw, 63px);
+  padding: clamp(6px, 1vw, 8px) clamp(20px, 5vw, 63px);
   border-radius: 20px;
   font-size: clamp(12px, 1.4vw, 16px);
   font-family: var(--font-regular);
@@ -120,7 +120,7 @@ margin-top: clamp(15px, 4vw, 48px);
   }
 }
 
-@media (max-width: 654px) {
+@media (max-width: 576px) {
   .bankDetails {
     flex-direction: column;
     gap: 10px;
@@ -129,5 +129,9 @@ margin-top: clamp(15px, 4vw, 48px);
   .bankLogo {
     width: 94px;
     height: 32px;
+  }
+  .bankCard{
+   padding: 5px;
+   gap: 5px;
   }
 }

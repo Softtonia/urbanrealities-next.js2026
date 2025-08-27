@@ -9,6 +9,7 @@ import HomeLoanEMI from './components/HomeLoanEMI/HomeLoanEMI';
 import ContactUs from './components/ContactUs/ContactUs';
 import UserReviews from './components/UserReviews/UserReviews';
 import HomeLoanArticles from './components/HomeLoanArticles/HomeLoanArticles';
+import HomeLoanCalculator from '@/Components/HomeLoanEMICalculator/HomeLoanEMICalculator';
 const page = () => {
   return (
     <div>
@@ -22,6 +23,7 @@ const page = () => {
         <ContactUs/>
         <UserReviews/>
         <HomeLoanArticles/>
+        <HomeLoanCalculator/>
     </div>
   );
 }

@@ -27,7 +27,7 @@ export default function HomeLoan() {
         {/* Left Content */}
         <div className={styles.loanInfo}>
           <h1>
-            Apply Home Loan Online <br /> at UrbanRealities
+            Apply Home Loan Online at UrbanRealities
           </h1>
           <ul>
             <li><IoIosCheckmarkCircleOutline className={styles.icon} /> Loan Offers from 34+ Banks</li>
