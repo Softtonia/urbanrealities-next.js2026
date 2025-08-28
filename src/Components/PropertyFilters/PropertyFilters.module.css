@@ -1,13 +1,18 @@
-.filterContainer{
+.filterContainer {
   background-color: var(--Orange-Red);
-
+  position: relative;
+  overflow: visible; 
 }
+
 .filterBar {
   display: flex;
   align-items: center;
-  padding: clamp(8px, 2vw, 12px) clamp(12px, 4vw, 40px);
+  padding: clamp(8px, 2vw, 12px) clamp(20px, 2vw, 20px);
   gap: 10px;
-  flex-wrap: wrap;
+  /* overflow-x: auto;  
+  overflow-y: visible;  */
+  white-space: nowrap;
+  /* -webkit-overflow-scrolling: touch; */
 }
 
 .searchGroup {
@@ -16,46 +21,29 @@
   border: 1px solid #ccc;
   border-radius: 20px;
   background-color: var(--White);
-   position: relative;
+  position: relative;
 }
 
-.searchDivider{
+.searchDivider {
   height: 21px;
   width: 1px;
   background-color: #ccc;
-  
 }
 .searchInput {
   padding: 8px 14px;
   font-size: clamp(12px, 1vw, 14px);
   outline: none;
- border-radius: 20px;
- border: none;
+  border-radius: 20px;
+  border: none;
 }
 
 .filtersWrapper {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
-}
-
-
-
-
-
-.dropdownIcon {
-  font-size: 14px;
-  color: var(--Orange-Red);
-}
-
-.icon {
-  font-size: 14px;
-  color: #333;
 }
 
 .filterDropdownWrapper {
-  position: relative; /* ✅ This makes the dropdown align under the button */
-  display: inline-block;
+  position: relative;
 }
 
 .filterButton {
@@ -68,18 +56,17 @@
   border-radius: 20px;
   cursor: pointer;
   font-size: clamp(12px, 1vw, 14px);
-  position: relative;
 }
+
 .dropdown {
   position: absolute;
   top: 100%;
   left: 0;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   padding: 8px 0;
-  z-index: 100;
-  width: max-content;
+  z-index: 9999;
   min-width: 250px;
 }
 
@@ -87,149 +74,77 @@
   padding: 8px 12px;
   cursor: pointer;
   font-size: 14px;
-  transition: background 0.2s ease;
 }
-
 .dropdownItem:hover {
   background: #f5f5f5;
 }
-.dropdown-postedBy,
-.dropdown-propertyType{
+
+
+.dropdownIcon {
+  font-size: 14px;
+  color: var(--Orange-Red);
+}
+
+.icon {
+  font-size: 14px;
+  color: #333;
+}
+
+.dropdown-budget,
+.dropdown-bhk ,
+.dropdown-propertyType {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  padding: 8px 12px;
+  width: 435px;
 }
-.dropdown-budget,
-.dropdown-bhk{
-    display: flex;
-    gap: 15px;
+
+.dropdown-postedBy,
+.dropdown-topLocalities {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 8px 12px;
 }
+.dropdown-topLocalities .dropdownItem,
 .dropdown-budget .dropdownItem,
 .dropdown-propertyType .dropdownItem,
 .dropdown-bhk .dropdownItem,
-.dropdown-postedBy .dropdownItem{
-    border: 1px solid #e0e0e0;
-    border-radius: 20px;
-    background-color: #fff;
-    padding: 8px 15px;
-    text-align: center;
-    width: auto;
-    display: inline-block;
+.dropdown-postedBy .dropdownItem {
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  background-color: #fff;
+  padding: 8px 15px;
+  text-align: center;
+  width: auto;
+  display: inline-block;
 }
 
 .dropdown-propertyType .dropdownItem:hover,
 .dropdown-bhk .dropdownItem:hover,
 .dropdown-topLocalities .dropdownItem:hover {
-    background-color: #f5f5f5;
+  background-color: #f5f5f5;
 }
 .groupWrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .groupWrapper strong {
-    font-size: 14px;
-    color: #555;
-    font-weight: 600;
+  font-size: 14px;
+  color: #555;
+  font-weight: 600;
 }
 
 .groupWrapper ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-/* आपके पिछले सभी CSS कोड के नीचे यह जोड़ें */
 
-/* More Filters Panel Styling */
-.moreFiltersPanel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 600px; /* अपनी पसंद की चौड़ाई */
-    height: 100%;
-    background-color: #fff;
-    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 2000;
-    overflow-y: auto;
-    transition: transform 0.3s ease-in-out;
-}
-
-.moreFiltersPanel.hidden {
-    transform: translateX(100%);
-}
-
-.closeButton {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-}
-
-.panelContent {
-    display: flex;
-    height: 100%;
-}
-
-.leftPanel {
-    width: 200px;
-    background-color: #f8f8f8;
-    padding: 20px;
-}
-
-.leftPanel .filterList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.leftPanel .filterList li {
-    padding: 10px 0;
-    cursor: pointer;
-    font-size: 14px;
-    color: #555;
-    border-bottom: 1px solid #eee;
-}
-
-.rightPanel {
-    flex-grow: 1;
-    padding: 20px;
-}
-
-.filterSection {
-    margin-bottom: 20px;
-}
-
-.filterSection h3 {
-    font-size: 16px;
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.optionsWrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.filterOption {
-    padding: 8px 15px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    background-color: #fff;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.filterOption.active {
-    background-color: var(--Orange-Red);
-    color: #fff;
-    border-color: var(--Orange-Red);
-}

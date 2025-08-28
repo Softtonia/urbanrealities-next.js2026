@@ -1,0 +1,170 @@
+/* 🔹 More Filters panel */
+.moreFiltersPanel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 968px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+  overflow-y: auto;
+  transition: transform 0.3s ease-in-out;
+  margin-top: 12px;
+  border-radius: 12px;
+}
+
+.moreFiltersPanel.hidden {
+  transform: translateX(100%);
+}
+
+.closeButton {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.panelContent {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.leftPanel {
+  width: 372px;
+  background: #f8f8f8;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+.leftPanel .filterList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.leftPanel .filterList li {
+  padding: 18px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+  border-bottom: 1px solid #eee;
+}
+
+.leftPanel .filterList li.active {
+  color: var(--Orange-Red);
+  font-weight: 600;
+  position: relative;
+  background: #fff;
+}
+
+.leftPanel .filterList li.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: var(--Orange-Red);
+  border-radius: 0 12px 12px 0;
+  box-shadow: 0 0 10px rgba(251, 106, 24, 0.5);
+}
+
+.rightPanel {
+  flex-grow: 1;
+  padding: 24px 30px;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+/* 🔹 Filter section */
+.filterSection h3 {
+  font-size: 15px;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+/* 🔹 Options */
+.optionsWrapper,
+.optionsgroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filterOption {
+  padding: 8px 15px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.filterOption.active {
+  background: var(--Orange-Red);
+  color: #fff;
+  border-color: var(--Orange-Red);
+}
+
+/* 🔹 Min/Max budget dropdowns */
+.budgetDropdowns {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.rangeDropdown {
+  position: relative;
+  width: 160px;
+}
+
+.customSelect {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.customSelect:hover {
+  border-color: var(--Orange-Red);
+}
+
+.dropdownMenuCustom {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.menuList {
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.menuList:hover {
+  background: #f8f8f8;
+  color: var(--Orange-Red);
+}
+

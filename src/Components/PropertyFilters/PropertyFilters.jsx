@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { FaSlidersH } from "react-icons/fa";
 import { BiSolidDownArrow } from "react-icons/bi";
 import styles from "./PropertyFilters.module.css";
-import MoreFiltersPanel from "./MoreFiltersPanel"; // ✅ नया कॉम्पोनेंट इंपोर्ट करें
+import MoreFiltersPanel from "./MoreFiltersPanel";
 
 export default function PropertyFilters() {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -13,7 +13,7 @@ export default function PropertyFilters() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredCities, setFilteredCities] = useState([]);
-  const [showMoreFilters, setShowMoreFilters] = useState(false); // ✅ नया स्टेट
+  const [showMoreFilters, setShowMoreFilters] = useState(false);
 
   const allCities = [
     "Mumbai",
@@ -45,29 +45,27 @@ export default function PropertyFilters() {
   };
 
   const filters = [
-    {
-      key: "buy",
-      label: "Buy",
-      options: ["Buy", "Rent"],
-    },
+    { key: "buy", label: "Buy", options: ["Buy", "Rent"] },
     {
       key: "topLocalities",
       label: "Top Localities",
-      options: ["Sobat", "Rajiv Chowk"],
+      options: [{ group: "Top Localities", items: ["Sobat", "Rajiv Chowk"] }],
     },
     {
       key: "budget",
       label: "Budget",
-      options: ["< ₹10 L", "₹10 L - ₹20 L", "₹20 L - ₹50 L", "> ₹50 L"],
+      options: [
+        {
+          group: "Budget",
+          items: ["< ₹10 L", "₹10 L - ₹20 L", "₹20 L - ₹50 L", "> ₹50 L"],
+        },
+      ],
     },
     {
       key: "propertyType",
       label: "Property Type",
       options: [
-        {
-          group: "Residential",
-          items: ["Flat", "House/ Villas", "Plot/Land"],
-        },
+        { group: "Residential", items: ["Flat", "House/ Villas", "Plot/Land"] },
         {
           group: "Commercial",
           items: [
@@ -78,22 +76,15 @@ export default function PropertyFilters() {
             "Commercial",
           ],
         },
-        {
-          group: "Others",
-          items: ["Farm Houses"],
-        },
+        { group: "Others", items: ["Farm Houses"] },
       ],
     },
     {
       key: "bhk",
       label: "BHK",
-      options: ["1 bhk", "2 bhk", "3 bhk", "4 bhk", "5 bhk"],
+      options: [{ group: "BHK", items: ["1 Bhk", "2 Bhk", "3 Bhk", "4 Bhk"] }],
     },
-    {
-      key: "postedBy",
-      label: "Posted By",
-      options: ["Owner", "Broker", "Developer"],
-    },
+    { key: "postedBy", label: "Posted By", options: ["Owner", "Broker", "Developer"] },
   ];
 
   const [selectedValues, setSelectedValues] = useState({
@@ -107,7 +98,7 @@ export default function PropertyFilters() {
 
   const toggleDropdown = (key) => {
     setActiveDropdown(activeDropdown === key ? null : key);
-    setShowMoreFilters(false); // ✅ बाकी फ़िल्टर पर क्लिक करने पर 'More Filters' बंद हो जाएगा
+    setShowMoreFilters(false);
   };
 
   const handleSelect = (filterKey, value) => {
@@ -115,13 +106,11 @@ export default function PropertyFilters() {
     setActiveDropdown(null);
   };
 
-  // ✅ 'More Filters' पैनल को दिखाने/छिपाने का फंक्शन
   const toggleMoreFilters = () => {
     setShowMoreFilters(!showMoreFilters);
-    setActiveDropdown(null); // बाकी ड्रॉपडाउन बंद हो जाएंगे
+    setActiveDropdown(null);
   };
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -137,7 +126,6 @@ export default function PropertyFilters() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close city dropdown on outside click
   useEffect(() => {
     const handleClickOutsideSearch = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -150,7 +138,7 @@ export default function PropertyFilters() {
   }, []);
 
   return (
-    <div className={`${styles.filterContainer}`}>
+    <div className={styles.filterContainer}>
       <div className={`${styles.filterBar} container`} ref={filterRef}>
         {/* Buy and Search Group */}
         <div className={styles.searchGroup}>
@@ -158,10 +146,11 @@ export default function PropertyFilters() {
             className={styles.filterButton}
             onClick={() => toggleDropdown("buy")}
           >
-            {selectedValues.buy} <BiSolidDownArrow className={styles.dropdownIcon} />
+            {selectedValues.buy}{" "}
+            <BiSolidDownArrow className={styles.dropdownIcon} />
           </button>
           {activeDropdown === "buy" && (
-            <ul className={`${styles.dropdown} ${styles['dropdown-buy']}`}>
+            <ul className={`${styles.dropdown} ${styles["dropdown-buy"]}`}>
               {filters[0].options.map((option) => (
                 <li
                   key={option}
@@ -183,7 +172,7 @@ export default function PropertyFilters() {
               onChange={handleSearchChange}
             />
             {filteredCities.length > 0 && (
-              <ul className={`${styles.dropdown} ${styles['dropdown-city']}`}>
+              <ul className={`${styles.dropdown} ${styles["dropdown-city"]}`}>
                 {filteredCities.map((city) => (
                   <li
                     key={city}
@@ -244,15 +233,15 @@ export default function PropertyFilters() {
             </div>
           ))}
 
-          {/* More Filters Button */}
+          {/* More Filters */}
           <div className={styles.filterDropdownWrapper} ref={moreFiltersRef}>
-            <button
-              className={styles.filterButton}
-              onClick={toggleMoreFilters}
-            >
-              <FaSlidersH className={styles.icon} /> More Filters <BiSolidDownArrow className={styles.dropdownIcon} />
+            <button className={styles.filterButton} onClick={toggleMoreFilters}>
+              <FaSlidersH className={styles.icon} /> More Filters{" "}
+              <BiSolidDownArrow className={styles.dropdownIcon} />
             </button>
-            {showMoreFilters && <MoreFiltersPanel onClose={() => setShowMoreFilters(false)} />}
+            {showMoreFilters && (
+              <MoreFiltersPanel onClose={() => setShowMoreFilters(false)} />
+            )}
           </div>
         </div>
       </div>
