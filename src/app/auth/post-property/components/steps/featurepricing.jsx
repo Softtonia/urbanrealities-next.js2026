@@ -472,7 +472,7 @@ const PricingAndOthers = () => {
           return (
             <div className={styles.formGroup} key={field.field_name_slug}>
               <label htmlFor={field.field_name_slug} className={styles.formLabel}>
-                {field.field_label}{" "} <span style={{ color: "red" }}>{field.required==="yes" ? "*" : ""}</span>
+                {field.field_label}{" "} <span style={{ color: "red" }}>{field.required === "yes" ? "*" : ""}</span>
               </label>
               <input
                 type="text"
@@ -493,19 +493,26 @@ const PricingAndOthers = () => {
           return (
             <div className={styles.formGroup} key={field.field_name_slug}>
               <label htmlFor={field.field_name_slug} className={styles.formLabel}>
-                {field.field_label}{" "} <span style={{ color: "red" }}>{field.required ==="yes" ? "*" : ""}</span>
+                {field.field_label}{" "} <span style={{ color: "red" }}>{field.required === "yes" ? "*" : ""}</span>
               </label>
               <input
                 type="number"
                 id={field.field_name_slug}
+                min={0}
+                onKeyDown={(e) => {
+                  // prevent typing 'e', '+', '-', or '.'
+                  if (["e", "E", "+", "-"].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 className={styles.formInput}
                 value={pricingData[field.field_name_slug] || ""}
                 onChange={(e) => handleChange(field.field_name_slug, e.target.value, field.id, field.field_type)}
                 placeholder={field.field_placeholder || `Enter ${field.field_label}`}
               />
-               {errors[field.field_name_slug] && (
-                    <p className={styles.error}>{errors[field.field_name_slug]}</p>
-                  )}
+              {errors[field.field_name_slug] && (
+                <p className={styles.error}>{errors[field.field_name_slug]}</p>
+              )}
             </div>
           );
 
@@ -519,6 +526,13 @@ const PricingAndOthers = () => {
               </label>
               <input
                 type="number"
+                min={0}
+                onKeyDown={(e) => {
+                  // prevent typing 'e', '+', '-', or '.'
+                  if (["e", "E", "+", "-"].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 id={field.field_name_slug}
                 className={styles.formInput}
                 value={pricingData[field.field_name_slug] || ""}
