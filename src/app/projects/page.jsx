@@ -1,13 +1,14 @@
 import React from 'react';
 import PropertyFilters from '@/Components/PropertyFilters/PropertyFilters';
-import ProjectCard from '../project-details/components/ProjectCard';
+import Projectviewcards from './components/Project-viewcards/Projects-viewcards';
 const Projectpage = () => {
   return (
     <div>
       <PropertyFilters />
-      {/* <ProjectCard /> */}
+      <Projectviewcards />
     </div>
   );
 }
 
 export default Projectpage;
+

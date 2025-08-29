@@ -3,30 +3,83 @@ import { useState, useRef, useEffect } from "react";
 import { FaSlidersH } from "react-icons/fa";
 import { BiSolidDownArrow } from "react-icons/bi";
 import styles from "./PropertyFilters.module.css";
-import MoreFiltersPanel from "./MoreFiltersPanel"; // ✅ नया कॉम्पोनेंट इंपोर्ट करें
+import MoreFiltersPanel from "./MoreFiltersPanel";
+import Portal from "./Portal";
 
 export default function PropertyFilters() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const filterRef = useRef(null);
-  const searchRef = useRef(null);
   const moreFiltersRef = useRef(null);
+  const searchRef = useRef(null);
+  const filterButtonsRef = useRef({});
+  const [dropdownStyle, setDropdownStyle] = useState({});
+  const [searchDropdownStyle, setSearchDropdownStyle] = useState({});
+  const [showMoreFilters, setShowMoreFilters] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredCities, setFilteredCities] = useState([]);
-  const [showMoreFilters, setShowMoreFilters] = useState(false); // ✅ नया स्टेट
 
   const allCities = [
-    "Mumbai",
-    "Delhi",
-    "Bangalore",
-    "Pune",
-    "Hyderabad",
-    "Ahmedabad",
-    "Chennai",
-    "Kolkata",
-    "Jaipur",
+    "Mumbai", "Delhi", "Bangalore", "Pune", "Hyderabad",
+    "Ahmedabad", "Chennai", "Kolkata", "Jaipur",
   ];
 
+ const filters = [
+    { key: "buy", label: "Buy", options: ["Buy", "Rent"] },
+    { key: "topLocalities", label: "Top Localities", options: [{ group: "Top Localities", items: ["Sobat", "Rajiv Chowk"] }] },
+    { key: "budget", label: "Budget", options: [{ group: "Budget", items: ["< ₹10 L", "₹10 L - ₹20 L", "₹20 L - ₹50 L", "> ₹50 L"] }] },
+    { key: "propertyType", label: "Property Type", options: [
+      { group: "Residential", items: ["Flat", "House/ Villas", "Plot/Land"] },
+      { group: "Commercial", items: ["Office", "Shop", "Industrials Shed/Land", "Godown", "Commercial"] },
+      { group: "Others", items: ["Farm Houses"] }
+    ]},
+    { key: "bhk", label: "BHK", options: [{ group: "BHK", items: ["1 Bhk", "2 Bhk", "3 Bhk", "4 Bhk", "5 Bhk"] }] },
+    { key: "postedBy", label: "Posted By", options: ["Owner", "Broker", "Developer"] },
+  ];
+  const [selectedValues, setSelectedValues] = useState({
+    buy: "Buy",
+    budget: "",
+    propertyType: "",
+    bhk: "",
+    postedBy: "",
+  });
+
+  // Helper: position clamp
+  const getDropdownStyle = (rect, dropdownWidth = 300) => {
+    const viewportWidth = window.innerWidth;
+    let left = rect.left + window.scrollX;
+    let top = rect.bottom + window.scrollY + 8;
+
+    if (left < 10) left = 10;
+    if (left + dropdownWidth > viewportWidth - 10) {
+      left = viewportWidth - dropdownWidth - 10;
+    }
+
+    return {
+      position: "absolute",
+      top,
+      left,
+      // width: Math.min(dropdownWidth, viewportWidth - 20),
+    };
+  };
+
+  // Toggle filter dropdowns
+  const toggleDropdown = (key) => {
+    if (filterButtonsRef.current[key]) {
+      const rect = filterButtonsRef.current[key].getBoundingClientRect();
+      const style = getDropdownStyle(rect, 300);
+      setDropdownStyle(style);
+    }
+    setActiveDropdown(activeDropdown === key ? null : key);
+    setShowMoreFilters(false);
+  };
+
+  const handleSelect = (filterKey, value) => {
+    setSelectedValues({ ...selectedValues, [filterKey]: value });
+    setActiveDropdown(null);
+  };
+
+  // Search input handling
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -44,151 +97,89 @@ export default function PropertyFilters() {
     setFilteredCities([]);
   };
 
-  const filters = [
-    {
-      key: "buy",
-      label: "Buy",
-      options: ["Buy", "Rent"],
-    },
-    {
-      key: "topLocalities",
-      label: "Top Localities",
-      options: [
-        {
-          group: "Top Localities",
-          items: ["Sobat", "Rajiv Chowk"],
-        },
-      ],
-    },
-    {
-      key: "budget",
-      label: "Budget",
-      options: [
-        {
-          group: "Budget",
-          items: ["< ₹10 L", "₹10 L - ₹20 L", "₹20 L - ₹50 L", "> ₹50 L"],
-        },
-      ],
-    },
-    {
-      key: "propertyType",
-      label: "Property Type",
-      options: [
-        {
-          group: "Residential",
-          items: ["Flat", "House/ Villas", "Plot/Land"],
-        },
-        {
-          group: "Commercial",
-          items: [
-            "Office",
-            "Shop",
-            "Industrials Shed/Land",
-            "Godown",
-            "Commercial",
-          ],
-        },
-        {
-          group: "Others",
-          items: ["Farm Houses"],
-        },
-      ],
-    },
-    {
-      key: "bhk",
-      label: "BHK",
-      options: [
-        {
-          group: "BHK",
-          items: ["1 Bhk", "2 Bhk", "3 Bhk", "4 Bhk", "5 Bhk"],
-        },
-      ],
-    },
-    {
-      key: "postedBy",
-      label: "Posted By",
-      options: ["Owner", "Broker", "Developer"],
-    },
-  ];
+  // Position search dropdown
+  useEffect(() => {
+    if (filteredCities.length > 0 && searchRef.current) {
+      const rect = searchRef.current.getBoundingClientRect();
+      const style = getDropdownStyle(rect, 300);
+      setSearchDropdownStyle(style);
+    }
+  }, [filteredCities]);
 
-  const [selectedValues, setSelectedValues] = useState({
-    buy: "Buy",
-    topLocalities: "",
-    budget: "",
-    propertyType: "",
-    bhk: "",
-    postedBy: "",
-  });
-
-  const toggleDropdown = (key) => {
-    setActiveDropdown(activeDropdown === key ? null : key);
-    setShowMoreFilters(false); // ✅ बाकी फ़िल्टर पर क्लिक करने पर 'More Filters' बंद हो जाएगा
-  };
-
-  const handleSelect = (filterKey, value) => {
-    setSelectedValues({ ...selectedValues, [filterKey]: value });
-    setActiveDropdown(null);
-  };
-
-  // ✅ 'More Filters' पैनल को दिखाने/छिपाने का फंक्शन
-  const toggleMoreFilters = () => {
-    setShowMoreFilters(!showMoreFilters);
-    setActiveDropdown(null); // बाकी ड्रॉपडाउन बंद हो जाएंगे
-  };
-
-  // Close dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         filterRef.current &&
         !filterRef.current.contains(event.target) &&
-        !moreFiltersRef.current?.contains(event.target)
+        !moreFiltersRef.current?.contains(event.target) &&
+        !searchRef.current?.contains(event.target)
       ) {
         setActiveDropdown(null);
         setShowMoreFilters(false);
+        setFilteredCities([]);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close city dropdown on outside click
-  useEffect(() => {
-    const handleClickOutsideSearch = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setFilteredCities([]);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutsideSearch);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutsideSearch);
-  }, []);
+  function renderDropdownContent(key) {
+    const filter = filters.find(f => f.key === key);
+    if (!filter) return null;
+
+    return (
+      <div className={`${styles.dropdown} ${styles[`dropdown-${key}`]}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <ul>
+          {filter.options.map((option, index) =>
+            typeof option === "string" ? (
+              <li
+                key={option + index}
+                onClick={() => handleSelect(filter.key, option)}
+                className={styles.dropdownItem}
+              >
+                {option}
+              </li>
+            ) : (
+              <li key={index} className={styles.groupWrapper}>
+                <strong>{option.group}</strong>
+                <ul>
+                  {option.items.map((item) => (
+                    <li
+                      key={item}
+                      onClick={() => handleSelect(filter.key, item)}
+                      className={styles.dropdownItem}
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            )
+          )}
+        </ul>
+      </div>
+    );
+  }
 
   return (
-    <div className={`${styles.filterContainer}`}>
+    <div className={styles.filterContainer}>
       <div className={`${styles.filterBar} container`} ref={filterRef}>
-        {/* Buy and Search Group */}
+
+        {/* Search + Buy */}
         <div className={styles.searchGroup}>
           <button
             className={styles.filterButton}
             onClick={() => toggleDropdown("buy")}
+            ref={el => filterButtonsRef.current["buy"] = el}
           >
             {selectedValues.buy} <BiSolidDownArrow className={styles.dropdownIcon} />
           </button>
-          {activeDropdown === "buy" && (
-            <ul className={`${styles.dropdown} ${styles['dropdown-buy']}`}>
-              {filters[0].options.map((option) => (
-                <li
-                  key={option}
-                  onClick={() => handleSelect("buy", option)}
-                  className={styles.dropdownItem}
-                >
-                  {option}
-                </li>
-              ))}
-            </ul>
-          )}
+
           <div className={styles.searchDivider}></div>
+
           <div className={styles.searchWrapper} ref={searchRef}>
             <input
               type="text"
@@ -198,79 +189,73 @@ export default function PropertyFilters() {
               onChange={handleSearchChange}
             />
             {filteredCities.length > 0 && (
-              <ul className={`${styles.dropdown} ${styles['dropdown-city']}`}>
-                {filteredCities.map((city) => (
-                  <li
-                    key={city}
-                    onClick={() => handleCitySelect(city)}
-                    className={styles.dropdownItem}
-                  >
-                    {city}
-                  </li>
-                ))}
-              </ul>
+              <Portal>
+                <div className={styles.portalDropdown} style={searchDropdownStyle}>
+                  <ul className={styles.dropdown}>
+                    {filteredCities.map((city) => (
+                      <li
+                        key={city}
+                        onClick={() => handleCitySelect(city)}
+                        className={styles.dropdownItem}
+                      >
+                        {city}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Portal>
             )}
           </div>
         </div>
 
-        {/* Other Regular Filters */}
+        {/* Other Filters */}
         <div className={styles.filtersWrapper}>
           {filters.slice(1).map((filter) => (
             <div key={filter.key} className={styles.filterDropdownWrapper}>
               <button
                 className={styles.filterButton}
                 onClick={() => toggleDropdown(filter.key)}
+                ref={el => filterButtonsRef.current[filter.key] = el}
               >
                 {selectedValues[filter.key] || filter.label}{" "}
                 <BiSolidDownArrow className={styles.dropdownIcon} />
               </button>
-              {activeDropdown === filter.key && (
-                <ul
-                  className={`${styles.dropdown} ${styles[`dropdown-${filter.key}`]}`}
-                >
-                  {filter.options.map((option, index) =>
-                    typeof option === "string" ? (
-                      <li
-                        key={option + index}
-                        onClick={() => handleSelect(filter.key, option)}
-                        className={styles.dropdownItem}
-                      >
-                        {option}
-                      </li>
-                    ) : (
-                      <li key={index} className={styles.groupWrapper}>
-                        <strong>{option.group}</strong>
-                        <ul>
-                          {option.items.map((item) => (
-                            <li
-                              key={item}
-                              onClick={() => handleSelect(filter.key, item)}
-                              className={styles.dropdownItem}
-                            >
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </li>
-                    )
-                  )}
-                </ul>
-              )}
             </div>
           ))}
 
-          {/* More Filters Button */}
+          {/* More Filters */}
           <div className={styles.filterDropdownWrapper} ref={moreFiltersRef}>
-            <button
-              className={styles.filterButton}
-              onClick={toggleMoreFilters}
-            >
-              <FaSlidersH className={styles.icon} /> More Filters <BiSolidDownArrow className={styles.dropdownIcon} />
+            <button className={styles.filterButton} onClick={() => setShowMoreFilters(!showMoreFilters)}>
+              <FaSlidersH className={styles.icon} /> More Filters{" "}
+              <BiSolidDownArrow className={styles.dropdownIcon} />
             </button>
-            {showMoreFilters && <MoreFiltersPanel onClose={() => setShowMoreFilters(false)} />}
           </div>
         </div>
       </div>
+
+      {/* Portal: Normal dropdowns */}
+      {activeDropdown && (
+        <Portal>
+          <div className={styles.portalDropdown} style={dropdownStyle}>
+            {renderDropdownContent(activeDropdown)}
+          </div>
+        </Portal>
+      )}
+
+      {/* Portal: More Filters */}
+      {showMoreFilters && (
+        <Portal>
+          <div style={{
+            position: 'absolute',
+            top: '75%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 10000
+          }}>
+            <MoreFiltersPanel onClose={() => setShowMoreFilters(false)} />
+          </div>
+        </Portal>
+      )}
     </div>
   );
 }

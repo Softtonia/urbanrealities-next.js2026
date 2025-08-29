@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import styles from "./PropertyFilters.module.css";
-import { FaTimes } from "react-icons/fa";
+import styles from "./MoreFiltersPanel.module.css";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import {  IoMdArrowDropdown } from "react-icons/io";
@@ -68,14 +67,14 @@ const MoreFiltersPanel = ({ onClose }) => {
     } else {
       setBudgetRange([budgetRange[0], value]);
     }
-    setOpenDropdown(null); // close dropdown after selection
+    setOpenDropdown(null); 
   };
 
   return (
-    <div className={`${styles.moreFiltersPanel} ${styles.show}`}>
-      {/* <button className={styles.closeButton} onClick={onClose}>
-        <FaTimes />
-      </button> */}
+    <div className={`${styles.moreFiltersPanel} ${styles.show}`}
+     onClick={(e) => e.stopPropagation()}
+    >
+ 
 
       <div className={styles.panelContent}>
         {/* Left Menu */}

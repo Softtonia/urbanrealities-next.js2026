@@ -1,21 +1,15 @@
-/* 🔹 More Filters panel */
 .moreFiltersPanel {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  width: 968px;
-  height: 100vh;
-  background: #fff;
-  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.15);
-  z-index: 2000;
+  width: 968px;           
+  max-width: 95vw;        
+  height: auto;
+  max-height: 85vh;        
+  background-color: #fff;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   transition: transform 0.3s ease-in-out;
-  margin-top: 12px;
-  border-radius: 12px;
-}
-
-.moreFiltersPanel.hidden {
-  transform: translateX(100%);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
 }
 
 .closeButton {
@@ -31,30 +25,27 @@
 .panelContent {
   display: flex;
   height: 100%;
-  overflow: hidden;
+  overflow: hidden; 
 }
-
 .leftPanel {
   width: 372px;
-  background: #f8f8f8;
-  overflow-y: auto;
-  max-height: 100vh;
+  background-color: #f8f8f8;
+  overflow-y: auto; 
 }
 
 .leftPanel .filterList {
   list-style: none;
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
 
 .leftPanel .filterList li {
-  padding: 18px 20px;
+  padding: 20px;
   cursor: pointer;
   font-size: 14px;
   color: #555;
   border-bottom: 1px solid #eee;
 }
-
 .leftPanel .filterList li.active {
   color: var(--Orange-Red);
   font-weight: 600;
@@ -68,29 +59,30 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 6px;
+  width: 5px;
   background: var(--Orange-Red);
-  border-radius: 0 12px 12px 0;
-  box-shadow: 0 0 10px rgba(251, 106, 24, 0.5);
+  border-radius: 0 12px 12px 0; 
+  box-shadow: 0 0 12px rgba(251, 106, 24, 0.5);
 }
 
 .rightPanel {
   flex-grow: 1;
-  padding: 24px 30px;
-  overflow-y: auto;
-  max-height: 100vh;
+  padding: 21px 30px;
+  overflow-y: auto; 
+
 }
 
-/* 🔹 Filter section */
+.filterSection {
+  margin-bottom: 20px;
+}
+
 .filterSection h3 {
-  font-size: 15px;
-  margin-bottom: 12px;
+  font-size: 16px;
+  margin-bottom: 15px;
   color: #333;
 }
 
-/* 🔹 Options */
-.optionsWrapper,
-.optionsgroup {
+.optionsWrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -100,28 +92,34 @@
   padding: 8px 15px;
   border: 1px solid #ccc;
   border-radius: 20px;
-  background: #fff;
+  background-color: #fff;
   cursor: pointer;
   font-size: 14px;
 }
 
 .filterOption.active {
-  background: var(--Orange-Red);
+  background-color: var(--Orange-Red);
   color: #fff;
   border-color: var(--Orange-Red);
 }
+.optionsgroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
-/* 🔹 Min/Max budget dropdowns */
+
 .budgetDropdowns {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
+  font-family: 'Inter', sans-serif;
 }
 
 .rangeDropdown {
   position: relative;
-  width: 160px;
+  width: 150px;
 }
 
 .customSelect {
@@ -132,12 +130,14 @@
   font-size: 14px;
   font-weight: 500;
   color: #333;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+  background-color: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
+
 
 .customSelect:hover {
   border-color: var(--Orange-Red);
@@ -148,23 +148,35 @@
   top: 110%;
   left: 0;
   width: 100%;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  max-height: 200px;
+  background-color: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  max-height: 9999px;
   overflow-y: auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   z-index: 1000;
 }
 
 .menuList {
-  padding: 10px 14px;
+  padding: 12px 14px;
   font-size: 14px;
+  color: #333;
   cursor: pointer;
+  list-style: none;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .menuList:hover {
-  background: #f8f8f8;
+  background-color: #f8f8f8;
   color: var(--Orange-Red);
 }
 
+@media (max-width: 768px) {
+
+  .leftPanel {
+    display: none;
+  }
+  .rightPanel {
+    width: 100%;
+  }
+}
