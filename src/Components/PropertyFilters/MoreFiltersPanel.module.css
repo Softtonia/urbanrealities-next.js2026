@@ -1,4 +1,9 @@
-.moreFiltersPanel {
+/* .moreFiltersPanel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
   width: 968px;           
   max-width: 95vw;        
   height: auto;
@@ -10,7 +15,7 @@
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-}
+} */
 
 .closeButton {
   position: absolute;
@@ -69,6 +74,7 @@
   flex-grow: 1;
   padding: 21px 30px;
   overflow-y: auto; 
+  background-color: #f8f8f8;
 
 }
 

@@ -1,17 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./MoreFiltersPanel.module.css";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
-import {  IoMdArrowDropdown } from "react-icons/io";
+import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 
 const MoreFiltersPanel = ({ onClose }) => {
   const [activeFilter, setActiveFilter] = useState("Covered Area");
+  const [expandedSections, setExpandedSections] = useState({});
+  const [isMobile, setIsMobile] = useState(false); // mobile check
   const [selectedPossessionStatus, setSelectedPossessionStatus] = useState([]);
   const [selectedSubPropertyType, setSelectedSubPropertyType] = useState([]);
   const [selectedPostedBy, setSelectedPostedBy] = useState([]);
   const [selectedSaleType, setSelectedSaleType] = useState([]);
-  const [budgetRange, setBudgetRange] = useState([5, 2000]); // ₹5L to ₹20Cr
-  const [openDropdown, setOpenDropdown] = useState(null); // 'min' or 'max'
+  const [budgetRange, setBudgetRange] = useState([5, 2000]);
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  // Detect mobile screen
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const filtersMenu = [
     "Covered Area",
@@ -49,33 +59,124 @@ const MoreFiltersPanel = ({ onClose }) => {
   const handleToggle = (state, setState, value) => {
     setState(
       state.includes(value)
-        ? state.filter((item) => item !== value)
+        ? state.filter((i) => i !== value)
         : [...state, value]
     );
   };
+
   const budgetOptions = [
     5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250, 300,
     400, 500, 600, 700, 800, 900, 1000, 1500, 2000,
   ];
-  const formatBudget = (value) => {
-    return value >= 100 ? `₹${value / 100} Cr` : `₹${value} L`;
-  };
+  const formatBudget = (value) =>
+    value >= 100 ? `₹${value / 100} Cr` : `₹${value} L`;
 
   const handleSelect = (type, value) => {
-    if (type === "min") {
-      setBudgetRange([value, budgetRange[1]]);
-    } else {
-      setBudgetRange([budgetRange[0], value]);
-    }
-    setOpenDropdown(null); 
+    if (type === "min") setBudgetRange([value, budgetRange[1]]);
+    else setBudgetRange([budgetRange[0], value]);
+    setOpenDropdown(null);
   };
 
-  return (
-    <div className={`${styles.moreFiltersPanel} ${styles.show}`}
-     onClick={(e) => e.stopPropagation()}
-    >
- 
+  const toggleAccordion = (section) => {
+    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
 
+  const renderAccordionSection = (title, content) => (
+    <div className={styles.accordionSection} key={title}>
+      <div
+        className={styles.accordionHeader}
+        onClick={() => toggleAccordion(title)}
+      >
+        {title}
+        {expandedSections[title] ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
+      </div>
+      {expandedSections[title] && (
+        <div className={styles.accordionContent}>{content}</div>
+      )}
+    </div>
+  );
+
+  // Content for each section
+  const coveredAreaContent = (
+    <div className={styles.filterSection}>
+      <h3>Covered Area (sqft)</h3>
+      <div className={styles.budgetDropdowns}>
+        <div className={styles.rangeDropdown}>
+          <div
+            className={styles.customSelect}
+            onClick={() =>
+              setOpenDropdown(openDropdown === "min" ? null : "min")
+            }
+          >
+            {formatBudget(budgetRange[0])} <IoMdArrowDropdown />
+          </div>
+          {openDropdown === "min" && (
+            <ul className={styles.dropdownMenuCustom}>
+              {budgetOptions.map((val) => (
+                <li
+                  key={val}
+                  className={styles.menuList}
+                  onClick={() => handleSelect("min", val)}
+                >
+                  {formatBudget(val)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <span>to</span>
+        <div className={styles.rangeDropdown}>
+          <div
+            className={styles.customSelect}
+            onClick={() =>
+              setOpenDropdown(openDropdown === "max" ? null : "max")
+            }
+          >
+            {formatBudget(budgetRange[1])} <IoMdArrowDropdown />
+          </div>
+          {openDropdown === "max" && (
+            <ul className={styles.dropdownMenuCustom}>
+              {budgetOptions.map((val) => (
+                <li
+                  key={val}
+                  className={styles.menuList}
+                  onClick={() => handleSelect("max", val)}
+                >
+                  {formatBudget(val)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+      <Slider
+        range
+        min={5}
+        max={2000}
+        step={5}
+        value={budgetRange}
+        onChange={(value) => setBudgetRange(value)}
+        trackStyle={[{ backgroundColor: "var(--Orange-Red)" }]}
+        handleStyle={[
+          {
+            border: "4px solid var(--Orange-Red)",
+            backgroundColor: "var(--White)",
+          },
+          {
+            border: "4px solid var(--Orange-Red)",
+            backgroundColor: "var(--White)",
+          },
+        ]}
+        railStyle={{ backgroundColor: "var(--Gray)" }}
+      />
+    </div>
+  );
+
+  return (
+    <div
+      className={`${styles.moreFiltersPanel} ${styles.show}`}
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className={styles.panelContent}>
         {/* Left Menu */}
         <div className={styles.leftPanel}>
@@ -92,105 +193,114 @@ const MoreFiltersPanel = ({ onClose }) => {
           </ul>
         </div>
 
-        {/* Right Content */}
+        {/* Right Panel */}
         <div className={styles.rightPanel}>
-          {activeFilter === "Covered Area" && (
-            <div className={styles.filterSection}>
-              <h3>Covered Area (sqft)</h3>
-
-              <div className={styles.budgetDropdowns}>
-                {/* Min Budget */}
-                <div className={styles.rangeDropdown}>
-                  <div
-                    className={styles.customSelect}
-                    onClick={() =>
-                      setOpenDropdown(openDropdown === "min" ? null : "min")
-                    }
-                  >
-                    {formatBudget(budgetRange[0])}
-                    <IoMdArrowDropdown />
-                  </div>
-                  {openDropdown === "min" && (
-                    <ul className={styles.dropdownMenuCustom}>
-                      {budgetOptions.map((val) => (
-                        <li
-                          className={styles.menuList}
-                          key={val}
-                          onClick={() => handleSelect("min", val)}
-                        >
-                          {formatBudget(val)}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+          {isMobile ? (
+            <>
+              {renderAccordionSection("Covered Area", coveredAreaContent)}
+              {renderAccordionSection(
+                "Possession Status",
+                <div className={styles.filterSection}>
+                  {data.possessionStatus.map((item) => (
+                    <button
+                      key={item}
+                      className={`${styles.filterOption} ${
+                        selectedPossessionStatus.includes(item)
+                          ? styles.active
+                          : ""
+                      }`}
+                      onClick={() =>
+                        handleToggle(
+                          selectedPossessionStatus,
+                          setSelectedPossessionStatus,
+                          item
+                        )
+                      }
+                    >
+                      + {item}
+                    </button>
+                  ))}
                 </div>
-
-                <span>to</span>
-
-                {/* Max Budget */}
-                <div className={styles.rangeDropdown}>
-                  <div
-                    className={styles.customSelect}
-                    onClick={() =>
-                      setOpenDropdown(openDropdown === "max" ? null : "max")
-                    }
-                  >
-                    {formatBudget(budgetRange[1])}
-                    <IoMdArrowDropdown />
-                  </div>
-                  {openDropdown === "max" && (
-                    <ul className={styles.dropdownMenuCustom}>
-                      {budgetOptions.map((val) => (
-                        <li
-                          className={styles.menuList}
-                          key={val}
-                          onClick={() => handleSelect("max", val)}
+              )}
+              {renderAccordionSection(
+                "Sub Property Type",
+                <div className={styles.filterSection}>
+                  {data.subPropertyType.map((group, i) => (
+                    <div key={i} className={styles.optionsWrapper}>
+                      {group.items.map((item) => (
+                        <button
+                          key={item}
+                          className={`${styles.filterOption} ${
+                            selectedSubPropertyType.includes(item)
+                              ? styles.active
+                              : ""
+                          }`}
+                          onClick={() =>
+                            handleToggle(
+                              selectedSubPropertyType,
+                              setSelectedSubPropertyType,
+                              item
+                            )
+                          }
                         >
-                          {formatBudget(val)}
-                        </li>
+                          + {item}
+                        </button>
                       ))}
-                    </ul>
-                  )}
+                    </div>
+                  ))}
                 </div>
-              </div>
-
-              {/* Add range slider here */}
-              <div
-                style={{
-                  display: "flex",
-                  gap: "10px",
-                  marginBottom: "15px",
-                  width: "50%",
-                }}
-              >
-                <Slider
-                  range
-                  min={5}
-                  max={2000}
-                  step={5}
-                  value={budgetRange}
-                  onChange={(value) => setBudgetRange(value)}
-                  trackStyle={[{ backgroundColor: "var(--Orange-Red)" }]}
-                  handleStyle={[
-                    {
-                      border: "4px solid var(--Orange-Red)",
-                      backgroundColor: "var(--White)",
-                    },
-                    {
-                      border: "4px solid var(--Orange-Red)",
-                      backgroundColor: "var(--White)",
-                    },
-                  ]}
-                  railStyle={{ backgroundColor: "var(--Gray)" }}
-                />
-              </div>
-            </div>
-          )}
-
-          {activeFilter === "Covered Area" && (
-            <div className={styles.filterSection}>
-              <h3>Possession Status</h3>
-              <div className={styles.optionsWrapper}>
+              )}
+              {renderAccordionSection(
+                "Sale Type",
+                <div className={styles.filterSection}>
+                  {data.saleType.map((item) => (
+                    <button
+                      key={item}
+                      className={`${styles.filterOption} ${
+                        selectedSaleType.includes(item) ? styles.active : ""
+                      }`}
+                      onClick={() =>
+                        handleToggle(
+                          selectedSaleType,
+                          setSelectedSaleType,
+                          item
+                        )
+                      }
+                    >
+                      + {item}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {renderAccordionSection(
+                "Posted By",
+                <div className={styles.filterSection}>
+                  {data.postedBy.map((item) => (
+                    <button
+                      key={item}
+                      className={`${styles.filterOption} ${
+                        selectedPostedBy.includes(item) ? styles.active : ""
+                      }`}
+                      onClick={() =>
+                        handleToggle(
+                          selectedPostedBy,
+                          setSelectedPostedBy,
+                          item
+                        )
+                      }
+                    >
+                      + {item}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              {/* Desktop view: normal panel */}
+              {coveredAreaContent}
+              <div className={styles.filterSection}>
+                <h3>Possession Status</h3>
                 {data.possessionStatus.map((item) => (
                   <button
                     key={item}
@@ -211,14 +321,10 @@ const MoreFiltersPanel = ({ onClose }) => {
                   </button>
                 ))}
               </div>
-            </div>
-          )}
-          {activeFilter === "Covered Area" && (
-            <div className={styles.filterSection}>
-              <h3>Sub Property Type</h3>
-              <div className={styles.optionsgroup}>
-                {data.subPropertyType.map((group) => (
-                  <div key={group.group} className={styles.optionsWrapper}>
+              <div className={styles.filterSection}>
+                <h3>Sub Property Type</h3>
+                {data.subPropertyType.map((group, i) => (
+                  <div key={i} className={styles.optionsWrapper}>
                     {group.items.map((item) => (
                       <button
                         key={item}
@@ -241,13 +347,8 @@ const MoreFiltersPanel = ({ onClose }) => {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-
-          {activeFilter === "Covered Area" && (
-            <div className={styles.filterSection}>
-              <h3>Sale Type</h3>
-              <div className={styles.optionsWrapper}>
+              <div className={styles.filterSection}>
+                <h3>Sale Type</h3>
                 {data.saleType.map((item) => (
                   <button
                     key={item}
@@ -262,12 +363,8 @@ const MoreFiltersPanel = ({ onClose }) => {
                   </button>
                 ))}
               </div>
-            </div>
-          )}
-          {activeFilter === "Covered Area" && (
-            <div className={styles.filterSection}>
-              <h3>Posted By</h3>
-              <div className={styles.optionsWrapper}>
+              <div className={styles.filterSection}>
+                <h3>Posted By</h3>
                 {data.postedBy.map((item) => (
                   <button
                     key={item}
@@ -282,7 +379,7 @@ const MoreFiltersPanel = ({ onClose }) => {
                   </button>
                 ))}
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>
