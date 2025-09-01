@@ -4,7 +4,6 @@ import { FaSlidersH } from "react-icons/fa";
 import { BiSolidDownArrow } from "react-icons/bi";
 import styles from "./PropertyFilters.module.css";
 import MoreFiltersPanel from "./MoreFiltersPanel";
-import Portal from "./Portal";
 
 export default function PropertyFilters() {
   const [activeDropdown, setActiveDropdown] = useState(null);

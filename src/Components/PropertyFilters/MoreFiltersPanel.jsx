@@ -201,6 +201,7 @@ const MoreFiltersPanel = ({ onClose }) => {
               {renderAccordionSection(
                 "Possession Status",
                 <div className={styles.filterSection}>
+
                   {data.possessionStatus.map((item) => (
                     <button
                       key={item}

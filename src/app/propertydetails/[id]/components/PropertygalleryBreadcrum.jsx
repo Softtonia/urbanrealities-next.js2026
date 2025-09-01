@@ -72,6 +72,7 @@ const PropertygalleryBreadcrum = ({ property }) => {
             <img src="/Heart.svg" alt="" />
             <button
               onClick={handleShowModal}
+              aria-label="Share property"
               style={{
                 background: "none",
                 border: "none",
@@ -80,7 +81,7 @@ const PropertygalleryBreadcrum = ({ property }) => {
                 cursor: "pointer",
               }}
             >
-              <img src="/Share.svg" alt="" />
+              <img src="/Share.svg" alt="Share" />
             </button>
             <img src="/Print.svg" alt="" />
           </div>

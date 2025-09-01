@@ -25,36 +25,64 @@ export default function PropertyFilters() {
   ];
 
   const filters = [
-    { key: "buy", label: "Buy", options: ["Buy", "Rent"] },
+    {
+      key: "buy",
+      label: "Buy",
+      type: "select",
+      heading: "Select Buy Option",
+      className: "dropdown-buy",
+      options: ["Buy", "Rent"],
+    },
     {
       key: "topLocalities",
       label: "Top Localities",
+      heading: "Select Locality",
+      type: "list",
+      className: "dropdown-toplocalities",
       options: ["Sobat", "Rajiv Chowk"],
     },
     {
       key: "budget",
       label: "Budget",
-      options: ["< ₹10 L", "₹10 L - ₹20 L", "₹20 L - ₹50 L", "> ₹50 L"],
+      heading: "Select Budget Range",
+      type: "slider",
+      className: "dropdown-budget",
+      min: 0,
+      max: 20000000,
+      step: 50000,
     },
     {
       key: "propertyType",
       label: "Property Type",
-      options: ["Flat", "House/Villas", "Plot/Land", "Office", "Shop"],
+      type: "grouped",
+      heading: "Select Property Type",
+      className: "dropdown-propertytype",
+      options: {
+        Residential: ["Flat", "House/Villas", "Plot/Land"],
+        Commercial: ["Office", "Shop", "Industrial Shed/Land"],
+        Others: ["Farm Houses"],
+      },
     },
     {
       key: "bhk",
       label: "BHK",
-      options: ["1 Bhk", "2 Bhk", "3 Bhk", "4 Bhk", "5 Bhk"],
+      heading: "Select BHK",
+      type: "pills",
+      className: "dropdown-bhk",
+      options: ["1 BHK", "2 BHK", "3 BHK", "4 BHK", "5 BHK"],
     },
     {
       key: "postedBy",
       label: "Posted By",
-      options: ["Owner", "Broker", "Developer"],
+      heading: "Select Posted By",
+      type: "list",
+      className: "dropdown-postedby",
+      options: ["Owner", "Broker", "Builder/Developer"],
     },
   ];
 
   const [selectedValues, setSelectedValues] = useState({
-    buy: "Buy",
+    buy: "",
     topLocalities: "",
     budget: "",
     propertyType: "",
@@ -64,6 +92,7 @@ export default function PropertyFilters() {
 
   // Toggle dropdown
   const toggleDropdown = (key) => {
+    console.log("Toggling dropdown:", key);
     if (activeDropdown === key) {
       setActiveDropdown(null);
     } else {
@@ -78,7 +107,11 @@ export default function PropertyFilters() {
   };
 
   const handleSelect = (key, value) => {
-    setSelectedValues({ ...selectedValues, [key]: value });
+    setSelectedValues((prev) => {
+      const updated = { ...prev, [key]: value };
+      console.log("selected:", updated);
+      return updated;
+    });
     setActiveDropdown(null);
   };
 
@@ -100,9 +133,13 @@ export default function PropertyFilters() {
   // Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
+      // Check if click is outside ALL filter buttons
       const isFilterButton = Object.values(filterButtonsRef.current).some(
         (btn) => btn && btn.contains(e.target)
       );
+
+      console.log("Clicked outside:", !isFilterButton);
+
       if (!isFilterButton) {
         setActiveDropdown(null);
         setShowMoreFilters(false);
@@ -118,14 +155,17 @@ export default function PropertyFilters() {
       <div className={`${styles.filterBar} container`}>
         {/* Search + Buy */}
         <div className={styles.searchGroup}>
-          {/* Buy Dropdown Button */}
+          {/* Buy Dropdown */}
           <div className={styles.buyWrapper}>
             <button
               className={`${styles.filterButton} ${styles.buyButton}`}
               ref={(el) => (filterButtonsRef.current["buy"] = el)}
-              onClick={() => toggleDropdown("buy")}
+              onClick={(e) => {
+                e.stopPropagation(); // Important: event bubble stop karo
+                toggleDropdown("buy");
+              }}
             >
-              {selectedValues.buy}{" "}
+              {selectedValues.buy || "Buy"}
               <BiSolidDownArrow className={styles.dropdownIcon} />
             </button>
 
@@ -135,7 +175,10 @@ export default function PropertyFilters() {
                   <div
                     key={option}
                     className={styles.option}
-                    onClick={() => handleSelect("buy", option)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelect("buy", option);
+                    }}
                   >
                     {option}
                   </div>
@@ -157,7 +200,7 @@ export default function PropertyFilters() {
               onFocus={() => setFilteredCities(allCities)}
             />
             {filteredCities.length > 0 && (
-              <div className={styles.searchDropdown}>
+              <div className={`${styles.dropdownPanel} ${styles.searchDropdown}`}>
                 <ul>
                   {filteredCities.map((city) => (
                     <li key={city} onClick={() => handleCitySelect(city)}>
@@ -179,9 +222,17 @@ export default function PropertyFilters() {
                 ${styles.filterWrapper} 
                 ${filter.key === "postedBy" ? styles.postedByWrapper : ""}
                 ${filter.key === "bhk" ? styles.bhkWrapper : ""}
-                ${filter.key === "propertyType" ? styles.propertyTypeWrapper : ""}
+                ${
+                  filter.key === "propertyType"
+                    ? styles.propertyTypeWrapper
+                    : ""
+                }
                 ${filter.key === "budget" ? styles.budgetWrapper : ""}
-                ${filter.key === "topLocalities" ? styles.topLocalitiesWrapper : ""}
+                ${
+                  filter.key === "topLocalities"
+                    ? styles.topLocalitiesWrapper
+                    : ""
+                }
               `}
             >
               <button
@@ -197,28 +248,71 @@ export default function PropertyFilters() {
 
               {activeDropdown === filter.key && (
                 <div
-                  className={`${styles.dropdownPanel} ${styles[`${filter.key}Dropdown`]}`}
+                  className={`${styles.dropdownPanel} ${
+                    styles[filter.className]
+                  }`}
                 >
-                  {filter.options.map((option) => (
-                    <div
-                      key={option}
-                      className={`
-                        ${styles.option} 
-                        ${filter.key === "bhk" ? styles.bhkOption : ""} 
-                        ${filter.key === "propertyType" ? styles.propertyTypeOption : ""} 
-                        ${filter.key === "budget" ? styles.budgetOption : ""} 
-                        ${filter.key === "topLocalities" ? styles.topLocalitiesOption : ""} 
-                        ${filter.key === "postedBy" ? styles.postedByOption : ""}
-                      `}
-                      onClick={() => handleSelect(filter.key, option)}
-                    >
-                      {option}
+                  {/* Heading */}
+                  <div className={styles.dropdownHeading}>{filter.heading}</div>
+
+                  {filter.type === "pills" &&
+                    filter.options.map((opt) => (
+                      <div
+                        key={opt}
+                        className={styles.pillOption}
+                        onClick={() => handleSelect(filter.key, opt)}
+                      >
+                        {opt}
+                      </div>
+                    ))}
+
+                  {filter.type === "list" &&
+                    filter.options.map((opt) => (
+                      <div
+                        key={opt}
+                        className={styles.listOption}
+                        onClick={() => handleSelect(filter.key, opt)}
+                      >
+                        {opt}
+                      </div>
+                    ))}
+
+                  {filter.type === "grouped" &&
+                    Object.entries(filter.options).map(([group, opts]) => (
+                      <div key={group} className={styles.groupSection}>
+                        <div className={styles.groupHeading}>{group}</div>
+                        <div className={styles.groupOptions}>
+                          {opts.map((opt) => (
+                            <div
+                              key={opt}
+                              className={styles.pillOption}
+                              onClick={() => handleSelect(filter.key, opt)}
+                            >
+                              + {opt}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+
+                  {filter.type === "slider" && (
+                    <div className={styles.sliderWrapper}>
+                      <input
+                        type="range"
+                        min={filter.min}
+                        max={filter.max}
+                        step={filter.step}
+                        onChange={(e) =>
+                          handleSelect(filter.key, e.target.value)
+                        }
+                      />
+                      {/* <div>{selectedValues.budget}</div>  */}
                     </div>
-                  ))}
+                  )}
                 </div>
               )}
             </div>
-          ))} 
+          ))}
 
           {/* More Filters */}
           <div className={styles.filterWrapper}>
