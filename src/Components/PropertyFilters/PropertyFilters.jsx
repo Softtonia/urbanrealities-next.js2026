@@ -5,6 +5,7 @@ import { BiSolidDownArrow } from "react-icons/bi";
 import styles from "./PropertyFilters.module.css";
 import MoreFiltersPanel from "./MoreFiltersPanel";
 
+
 export default function PropertyFilters() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showMoreFilters, setShowMoreFilters] = useState(false);
@@ -164,7 +165,6 @@ export default function PropertyFilters() {
               onChange={handleSearchChange}
             />
             {filteredCities.length > 0 && (
-              <Portal>
                 <div className={styles.portalDropdown} style={searchDropdownStyle}>
                   <ul className={styles.dropdown}>
                     {filteredCities.map(city => (
@@ -174,7 +174,6 @@ export default function PropertyFilters() {
                     ))}
                   </ul>
                 </div>
-              </Portal>
             )}
           </div>
         </div>
@@ -204,20 +203,16 @@ export default function PropertyFilters() {
 
       {/* Normal Dropdown Portal */}
       {activeDropdown && (
-        <Portal>
           <div ref={dropdownRef} className={styles.portalDropdown} style={dropdownStyle}>
             {renderDropdownContent(activeDropdown)}
           </div>
-        </Portal>
       )}
 
       {/* More Filters Portal */}
       {showMoreFilters && (
-        <Portal>
           <div className={styles.moreFiltersPanel} ref={dropdownRef}>
             <MoreFiltersPanel onClose={() => setShowMoreFilters(false)} />
           </div>
-        </Portal>
       )}
     </div>
   );

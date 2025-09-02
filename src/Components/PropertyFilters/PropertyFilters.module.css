@@ -185,9 +185,8 @@
 
 .moreFiltersPanel {
   position: absolute;
-  top: 109%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%);
   z-index: 10000;
   width: 968px;
   max-width: 95vw;
