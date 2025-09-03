@@ -157,7 +157,7 @@ export default function PropertyFilters() {
               className={`${styles.filterButton} ${styles.buyButton}`}
               onClick={() => toggleDropdown("buy")}
             >
-              {selectedValues.buy || "Buy"}
+             <small>{selectedValues.buy || "Buy"} </small> 
               <BiSolidDownArrow className={styles.dropdownIcon} />
             </button>
             {activeDropdown === "buy" && (
@@ -228,7 +228,7 @@ export default function PropertyFilters() {
                 }`}
                 onClick={() => toggleDropdown(filter.key)}
               >
-                {selectedValues[filter.key] || filter.label}
+                <small>{selectedValues[filter.key] || filter.label}</small>
                 <BiSolidDownArrow className={styles.dropdownIcon} />
               </button>
 
@@ -258,7 +258,7 @@ export default function PropertyFilters() {
                         className={styles.listOption}
                         onClick={() => handleSelect(filter.key, opt)}
                       >
-                        {opt}
+                       <small>{opt}</small>
                       </div>
                     ))}
 
@@ -309,7 +309,7 @@ export default function PropertyFilters() {
               }`}
               onClick={toggleMoreFilters}
             >
-              <FaSlidersH className={styles.icon} /> More Filters
+              <small><FaSlidersH className={styles.icon} /> More Filters</small>
               <BiSolidDownArrow className={styles.dropdownIcon} />
             </button>
           </div>

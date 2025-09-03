@@ -1,219 +1,326 @@
-"use client";
-import { useState, useRef, useEffect } from "react";
-import { FaSlidersH } from "react-icons/fa";
-import { BiSolidDownArrow } from "react-icons/bi";
-import styles from "./PropertyFilters.module.css";
-import MoreFiltersPanel from "./MoreFiltersPanel";
+// "use client";
+// import { useState, useRef, useEffect } from "react";
+// import { FaSlidersH } from "react-icons/fa";
+// import { BiSolidDownArrow } from "react-icons/bi";
+// import styles from "./filtertabs.module.css";
+// import MoreFiltersPanel from "./MoreFiltersPanel";
 
+// export default function PropertyFilters() {
+//   const [activeDropdown, setActiveDropdown] = useState(null);
+//   const [showMoreFilters, setShowMoreFilters] = useState(false);
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [filteredCities, setFilteredCities] = useState([]);
+//   const filterRefs = useRef({}); // all dropdown refs
 
-export default function PropertyFilters() {
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const [showMoreFilters, setShowMoreFilters] = useState(false);
-  const filterButtonsRef = useRef({});
-  const filterRef = useRef(null);
-  const moreFiltersRef = useRef(null);
-  const [dropdownStyle, setDropdownStyle] = useState({});
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredCities, setFilteredCities] = useState([]);
-  const searchRef = useRef(null);
-  const [searchDropdownStyle, setSearchDropdownStyle] = useState({});
+//   const allCities = [
+//     "Mumbai",
+//     "Delhi",
+//     "Bangalore",
+//     "Pune",
+//     "Hyderabad",
+//     "Ahmedabad",
+//     "Chennai",
+//     "Kolkata",
+//     "Jaipur",
+//   ];
 
-  const allCities = [
-    "Mumbai", "Delhi", "Bangalore", "Pune", "Hyderabad",
-    "Ahmedabad", "Chennai", "Kolkata", "Jaipur"
-  ];
+//   const filters = [
+//     {
+//       key: "buy",
+//       label: "Buy",
+//       type: "select",
+//       heading: "Select Buy Option",
+//       className: "dropdown-buy",
+//       options: ["Buy", "Rent"],
+//     },
+//     {
+//       key: "topLocalities",
+//       label: "Top Localities",
+//       type: "list",
+//       heading: "Select Locality",
+//       className: "dropdown-toplocalities",
+//       options: ["Sobat", "Rajiv Chowk"],
+//     },
+//     {
+//       key: "budget",
+//       label: "Budget",
+//       type: "slider",
+//       heading: "Select Budget Range",
+//       className: "dropdown-budget",
+//       min: 0,
+//       max: 20000000,
+//       step: 50000,
+//     },
+//     {
+//       key: "propertyType",
+//       label: "Property Type",
+//       type: "grouped",
+//       heading: "Select Property Type",
+//       className: "dropdown-propertytype",
+//       options: {
+//         Residential: ["Flat", "House/Villas", "Plot/Land"],
+//         Commercial: ["Office", "Shop", "Industrial Shed/Land"],
+//         Others: ["Farm Houses"],
+//       },
+//     },
+//     {
+//       key: "bhk",
+//       label: "BHK",
+//       type: "pills",
+//       heading: "Select BHK",
+//       className: "dropdown-bhk",
+//       options: ["1 BHK", "2 BHK", "3 BHK", "4 BHK", "5 BHK"],
+//     },
+//     {
+//       key: "postedBy",
+//       label: "Posted By",
+//       type: "list",
+//       heading: "Select Posted By",
+//       className: "dropdown-postedby",
+//       options: ["Owner", "Broker", "Builder/Developer"],
+//     },
+//   ];
 
-  const filters = [
-    { key: "buy", label: "Buy", options: ["Buy", "Rent"] },
-    { key: "topLocalities", label: "Top Localities", options: [{ group: "Top Localities", items: ["Sobat", "Rajiv Chowk"] }] },
-    { key: "budget", label: "Budget", options: [{ group: "Budget", items: ["< ₹10 L", "₹10 L - ₹20 L", "₹20 L - ₹50 L", "> ₹50 L"] }] },
-    { key: "propertyType", label: "Property Type", options: [
-        { group: "Residential", items: ["Flat", "House/ Villas", "Plot/Land"] },
-        { group: "Commercial", items: ["Office","Shop","Industrials Shed/Land","Godown","Commercial"] },
-        { group: "Others", items: ["Farm Houses"] }
-      ] 
-    },
-    { key: "bhk", label: "BHK", options: [{ group: "BHK", items: ["1 Bhk","2 Bhk","3 Bhk","4 Bhk","5 Bhk"] }] },
-    { key: "postedBy", label: "Posted By", options: ["Owner","Broker","Developer"] }
-  ];
+//   const [selectedValues, setSelectedValues] = useState({
+//     buy: "",
+//     topLocalities: "",
+//     budget: "",
+//     propertyType: "",
+//     bhk: "",
+//     postedBy: "",
+//   });
 
-  const [selectedValues, setSelectedValues] = useState({
-    buy: "Buy", budget: "", propertyType: "", bhk: "", postedBy: ""
-  });
+//   // Toggle dropdown
+//   const toggleDropdown = (key) => {
+//     setActiveDropdown((prev) => (prev === key ? null : key));
+//     setShowMoreFilters(false);
+//   };
 
-  // Dropdown position helper
-  const getDropdownStyle = (rect, width = 300) => {
-    const viewportWidth = window.innerWidth;
-    let left = rect.left + window.scrollX;
-    let top = rect.bottom + window.scrollY + 8;
-    if (left + width > viewportWidth - 10) left = viewportWidth - width - 10;
-    if (left < 10) left = 10;
-    return { position: "absolute", top, left };
-  };
+//   const toggleMoreFilters = () => {
+//     setShowMoreFilters((prev) => !prev);
+//     setActiveDropdown(null);
+//   };
 
-  // Toggle normal dropdown
-  const toggleDropdown = (key) => {
-    if (activeDropdown === key) {
-      setActiveDropdown(null);
-    } else {
-      if (filterButtonsRef.current[key]) {
-        const rect = filterButtonsRef.current[key].getBoundingClientRect();
-        setDropdownStyle(getDropdownStyle(rect));
-      }
-      setActiveDropdown(key);
-      setShowMoreFilters(false); // close MoreFilters
-    }
-  };
+//   const handleSelect = (key, value) => {
+//     setSelectedValues((prev) => ({ ...prev, [key]: value }));
+//     setActiveDropdown(null);
+//   };
 
-  const toggleMoreFilters = () => {
-    setShowMoreFilters(!showMoreFilters);
-    setActiveDropdown(null);
-  };
+//   const handleSearchChange = (e) => {
+//     const val = e.target.value;
+//     setSearchTerm(val);
+//     setFilteredCities(
+//       val
+//         ? allCities.filter((c) => c.toLowerCase().includes(val.toLowerCase()))
+//         : []
+//     );
+//   };
 
-  const handleSelect = (key, value) => {
-    setSelectedValues({ ...selectedValues, [key]: value });
-  };
+//   const handleCitySelect = (city) => {
+//     setSearchTerm(city);
+//     setFilteredCities([]);
+//   };
 
-  const handleSearchChange = (e) => {
-    const val = e.target.value;
-    setSearchTerm(val);
-    setFilteredCities(val ? allCities.filter(c => c.toLowerCase().includes(val.toLowerCase())) : []);
-  };
+//   // Close dropdowns on outside click
+//   const moreFiltersRef = useRef(null);
 
-  const handleCitySelect = (city) => {
-    setSearchTerm(city);
-    setFilteredCities([]);
-  };
+//   // In useEffect
+//   useEffect(() => {
+//     const handleClickOutside = (e) => {
+//       const clickedInside =
+//         Object.values(filterRefs.current).some(
+//           (ref) => ref && ref.contains(e.target)
+//         ) ||
+//         (moreFiltersRef.current && moreFiltersRef.current.contains(e.target));
 
-  // Search dropdown position
-  useEffect(() => {
-    if (filteredCities.length && searchRef.current) {
-      const rect = searchRef.current.getBoundingClientRect();
-      setSearchDropdownStyle(getDropdownStyle(rect));
-    }
-  }, [filteredCities]);
+//       if (!clickedInside) {
+//         setActiveDropdown(null);
+//         setShowMoreFilters(false);
+//       }
+//     };
 
-  const dropdownRef = useRef(null);
+//     document.addEventListener("mousedown", handleClickOutside);
+//     return () => document.removeEventListener("mousedown", handleClickOutside);
+//   }, []);
 
-  // Close dropdowns on outside click
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      const clickedInsideDropdown = dropdownRef.current?.contains(e.target);
-      const clickedInsideButton = Object.values(filterButtonsRef.current).some(btn => btn?.contains(e.target));
-      const clickedInsideMoreFilters = moreFiltersRef.current?.contains(e.target);
+//   return (
+//     <div className={styles.filterContainer}>
+//       <div className={`${styles.filterBar} container`}>
+//         {/* Search + Buy */}
+//         <div className={styles.searchGroup}>
+//           {/* Buy Dropdown */}
+//           <div
+//             className={styles.buyWrapper}
+//             ref={(el) => (filterRefs.current["buy"] = el)}
+//           >
+//             <button
+//               className={`${styles.filterButton} ${styles.buyButton}`}
+//               onClick={() => toggleDropdown("buy")}
+//             >
+//              <small>{selectedValues.buy || "Buy"} </small> 
+//               <BiSolidDownArrow className={styles.dropdownIcon} />
+//             </button>
+//             {activeDropdown === "buy" && (
+//               <div className={`${styles.dropdownPanel} ${styles.buyDropdown}`}>
+//                 {filters[0].options.map((option) => (
+//                   <div
+//                     key={option}
+//                     className={styles.option}
+//                     onClick={() => handleSelect("buy", option)}
+//                   >
+//                     {option}
+//                   </div>
+//                 ))}
+//               </div>
+//             )}
+//           </div>
 
-      if (!clickedInsideDropdown && !clickedInsideButton && !clickedInsideMoreFilters) {
-        setActiveDropdown(null);
-        setShowMoreFilters(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+//           <div className={styles.searchDivider}></div>
 
-  const renderDropdownContent = (key) => {
-    const filter = filters.find(f => f.key === key);
-    if (!filter) return null;
+//           {/* Search Input */}
+//           <div
+//             className={styles.searchWrapper}
+//             ref={(el) => (filterRefs.current["search"] = el)}
+//           >
+//             <input
+//               type="text"
+//               placeholder="Enter city, locality..."
+//               className={styles.searchInput}
+//               value={searchTerm}
+//               onChange={handleSearchChange}
+//               onFocus={() => setFilteredCities(allCities)}
+//             />
+//             {filteredCities.length > 0 && (
+//               <div
+//                 className={`${styles.dropdownPanel} ${styles.searchDropdown}`}
+//               >
+//                 <ul>
+//                   {filteredCities.map((city) => (
+//                     <li key={city} onClick={() => handleCitySelect(city)}>
+//                       {city}
+//                     </li>
+//                   ))}
+//                 </ul>
+//               </div>
+//             )}
+//           </div>
+//         </div>
 
-    return (
-      <div className={`${styles.dropdown} ${styles[`dropdown-${key}`]}`} onClick={e => e.stopPropagation()}>
-        <ul>
-          {filter.options.map((opt, i) =>
-            typeof opt === "string" ? (
-              <li key={opt + i} onClick={() => handleSelect(filter.key, opt)} className={`${styles.dropdownItem} ${styles[`dropdownItem-${key}`]}`}>
-                {opt}
-              </li>
-            ) : (
-              <li key={i} className={styles.groupWrapper}>
-                <strong>{opt.group}</strong>
-                <ul>
-                  {opt.items.map(item => (
-                    <li key={item} onClick={() => handleSelect(filter.key, item)} className={`${styles.dropdownItem} ${styles[`dropdownItem-${key}`]}`}>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            )
-          )}
-        </ul>
-      </div>
-    );
-  };
+//         {/* Other filters */}
+//         <div className={styles.filtersWrapper}>
+//           {filters.slice(1).map((filter) => (
+//             <div
+//               key={filter.key}
+//               ref={(el) => (filterRefs.current[filter.key] = el)}
+//               className={`${styles.filterWrapper} ${
+//                 filter.key === "postedBy" ? styles.postedByWrapper : ""
+//               } ${filter.key === "bhk" ? styles.bhkWrapper : ""} ${
+//                 filter.key === "propertyType" ? styles.propertyTypeWrapper : ""
+//               } ${filter.key === "budget" ? styles.budgetWrapper : ""} ${
+//                 filter.key === "topLocalities"
+//                   ? styles.topLocalitiesWrapper
+//                   : ""
+//               }`}
+//             >
+//               <button
+//                 className={`${styles.filterButton} ${
+//                   selectedValues[filter.key] ? styles.active : ""
+//                 }`}
+//                 onClick={() => toggleDropdown(filter.key)}
+//               >
+//                 <small>{selectedValues[filter.key] || filter.label}</small>
+//                 <BiSolidDownArrow className={styles.dropdownIcon} />
+//               </button>
 
-  return (
-    <div className={styles.filterContainer}>
-      <div className={`${styles.filterBar} container`} ref={filterRef}>
-        {/* Search + Buy */}
-        <div className={styles.searchGroup}>
-          <button
-            className={`${styles.filterButton} ${styles['filterButton-buy']}`}
-            ref={el => filterButtonsRef.current["buy"] = el}
-            onClick={() => toggleDropdown("buy")}
-          >
-            {selectedValues.buy} <BiSolidDownArrow className={styles.dropdownIcon} />
-          </button>
+//               {activeDropdown === filter.key && (
+//                 <div
+//                   className={`${styles.dropdownPanel} ${
+//                     styles[filter.className]
+//                   }`}
+//                 >
+//                   <div className={styles.dropdownHeading}>{filter.heading}</div>
 
-          <div className={styles.searchDivider}></div>
+//                   {filter.type === "pills" &&
+//                     filter.options.map((opt) => (
+//                       <div
+//                         key={opt}
+//                         className={styles.pillOption}
+//                         onClick={() => handleSelect(filter.key, opt)}
+//                       >
+//                         {opt}
+//                       </div>
+//                     ))}
 
-          <div className={styles.searchWrapper} ref={searchRef}>
-            <input
-              type="text"
-              placeholder="Enter city, locality..."
-              className={styles.searchInput}
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
-            {filteredCities.length > 0 && (
-                <div className={styles.portalDropdown} style={searchDropdownStyle}>
-                  <ul className={styles.dropdown}>
-                    {filteredCities.map(city => (
-                      <li key={city} className={styles.dropdownItem} onClick={() => handleCitySelect(city)}>
-                        {city}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-            )}
-          </div>
-        </div>
+//                   {filter.type === "list" &&
+//                     filter.options.map((opt) => (
+//                       <div
+//                         key={opt}
+//                         className={styles.listOption}
+//                         onClick={() => handleSelect(filter.key, opt)}
+//                       >
+//                        <small>{opt}</small>
+//                       </div>
+//                     ))}
 
-        {/* Other filters */}
-        <div className={styles.filtersWrapper}>
-          {filters.slice(1).map(f => (
-            <div key={f.key} className={styles.filterDropdownWrapper}>
-              <button
-                className={`${styles.filterButton}  ${styles['filterButton-' + f.key]}`}
-                ref={el => filterButtonsRef.current[f.key] = el}
-                onClick={() => toggleDropdown(f.key)}
-              >
-                {selectedValues[f.key] || f.label} <BiSolidDownArrow className={styles.dropdownIcon} />
-              </button>
-            </div>
-          ))}
+//                   {filter.type === "grouped" &&
+//                     Object.entries(filter.options).map(([group, opts]) => (
+//                       <div key={group} className={styles.groupSection}>
+//                         <div className={styles.groupHeading}>{group}</div>
+//                         <div className={styles.groupOptions}>
+//                           {opts.map((opt) => (
+//                             <div
+//                               key={opt}
+//                               className={styles.pillOption}
+//                               onClick={() => handleSelect(filter.key, opt)}
+//                             >
+//                               + {opt}
+//                             </div>
+//                           ))}
+//                         </div>
+//                       </div>
+//                     ))}
 
-          {/* More Filters */}
-          <div className={styles.filterDropdownWrapper} ref={moreFiltersRef}>
-            <button className={styles.filterButton} onClick={toggleMoreFilters}>
-              <FaSlidersH className={styles.icon} /> More Filters <BiSolidDownArrow className={styles.dropdownIcon} />
-            </button>
-          </div>
-        </div>
-      </div>
+//                   {filter.type === "slider" && (
+//                     <div className={styles.sliderWrapper}>
+//                       <input
+//                         type="range"
+//                         min={filter.min}
+//                         max={filter.max}
+//                         step={filter.step}
+//                         onChange={(e) =>
+//                           handleSelect(filter.key, e.target.value)
+//                         }
+//                       />
+//                     </div>
+//                   )}
+//                 </div>
+//               )}
+//             </div>
+//           ))}
 
-      {/* Normal Dropdown Portal */}
-      {activeDropdown && (
-          <div ref={dropdownRef} className={styles.portalDropdown} style={dropdownStyle}>
-            {renderDropdownContent(activeDropdown)}
-          </div>
-      )}
+//           {/* More Filters */}
+//           <div
+//             className={styles.moreFiltersWrapper}
+//             ref={(el) => (filterRefs.current["more"] = el)}
+//           >
+//             <button
+//               className={`${styles.filterButton} ${
+//                 showMoreFilters ? styles.active : ""
+//               }`}
+//               onClick={toggleMoreFilters}
+//             >
+//               <small><FaSlidersH className={styles.icon} /> More Filters</small>
+//               <BiSolidDownArrow className={styles.dropdownIcon} />
+//             </button>
+//           </div>
+//         </div>
 
-      {/* More Filters Portal */}
-      {showMoreFilters && (
-          <div className={styles.moreFiltersPanel} ref={dropdownRef}>
-            <MoreFiltersPanel onClose={() => setShowMoreFilters(false)} />
-          </div>
-      )}
-    </div>
-  );
-}
+//         {showMoreFilters && (
+//           <div className={styles.moreFiltersPanel} ref={moreFiltersRef}>
+//             <MoreFiltersPanel onClose={() => setShowMoreFilters(false)} />
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }

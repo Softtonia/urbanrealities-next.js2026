@@ -188,7 +188,7 @@ span {
 
 small {
   font-family: var(--font-regular);
-  font-size: 13.33px;
+  font-size: 14px;
 }
 
 .tableRow:nth-child(odd) {
@@ -337,12 +337,14 @@ small {
 
 /* All buttons are here... */
 
-.btn-property {
+.btn-small {
   background-color: var(--Orange-Red);
   color: var(--White);
   padding: 10px 20px;
   border: none;
-  font-size: 13.33px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-family: var(--font-regular);
 }
 
 .navbar {

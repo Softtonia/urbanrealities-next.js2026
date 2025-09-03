@@ -4,6 +4,7 @@ import HelpSidebar from '../../components/HelpSidebar/HelpSidebar';
 import styles from '../../components/TopicDetailPage.module.css';
 import Link from 'next/link';
 import SubHero from '@/Components/SubHero/SubHero';
+import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
 
 const TopicDetailPage = async ({ params }) => {
   const { category, topic } = await params;
@@ -16,7 +17,7 @@ const TopicDetailPage = async ({ params }) => {
 
   return (
     <div className={` ${styles.contentLayout} row `}>
-      <div className={` ${styles.sidebar} col-12 col-lg-4   `}>
+      <div className={` ${styles.sidebar} col-12 `}>
         <Breadcrumbs activeCategory={category} activeTopic={topic} />
 
         <div className={` ${styles.contentLayout} row `}>
