@@ -19,29 +19,29 @@ const SubtopicPage = async ({ params }) => {
     if (!foundSubtopic) return <div>Subtopic not found.</div>;
 
     return (
-            <div className={` ${styles.contentLayout} row `}>
-                <div className={` ${styles.sidebar} col-12 col-md-4 `}>
-                    <Breadcrumbs activeCategory={category} activeTopic={topic} />
-                    <HelpSidebar topics={helpTopics} activeCategory={category} activeTopic={topic} activeSubtopic={subtopic} />
-                </div>
-                <div className={` ${styles.mainContent} col-12 col-md-8 `}>
-                 <SubHero subHeroHeading={foundSubtopic.title} subHeroText={""} />
+        <div className={` ${styles.contentLayout} row `}>
+            <div className={` ${styles.sidebar} col-12 col-md-4 `}>
+                <Breadcrumbs activeCategory={category} activeTopic={topic} />
+                <HelpSidebar topics={helpTopics} activeCategory={category} activeTopic={topic} activeSubtopic={subtopic} />
+            </div>
+            <div className={` ${styles.mainContent} col-12 col-md-8 `}>
+                <SubHero subHeroHeading={foundSubtopic.title} subHeroText={""} />
 
-        <div className="d-flex align-item-center justify-content-center">
+                <div className="d-flex align-item-center justify-content-center">
                     <ul className={styles.questionList}>
                         {foundSubtopic.questions.map(question => (
                             <li key={question.id}>
                                 <Link href={`/help/${category}/${topic}/${subtopic}/${question.id}`} className={styles.questionLink}>
-                              <div className="d-flex gap-2 ">
-                                <div className={` ${styles.icon} d-flex`}>
-                                  <IoIosArrowForward /> </div><p className={styles.questionpara}> {question.title}</p></div>
+                                    <div className="d-flex gap-2 ">
+                                        <div className={` ${styles.icon} d-flex`}>
+                                            <IoIosArrowForward /> </div><p className={styles.questionpara}> {question.title}</p></div>
                                 </Link>
                             </li>
                         ))}
                     </ul>
-                    </div>
                 </div>
             </div>
+        </div>
     );
 };
 

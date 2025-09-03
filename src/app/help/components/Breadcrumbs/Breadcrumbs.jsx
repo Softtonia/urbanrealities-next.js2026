@@ -5,15 +5,14 @@ import { helpTopics } from "@/app/help/data/helpData";
 import styles from './Breadcrumbs.module.css';
 
 const Breadcrumbs = ({ activeCategory, activeTopic, activeSubtopic }) => {
-  // URL के हिसाब से डेटा ढूँढें
+
   const currentCategory = helpTopics.find(cat => cat.id === activeCategory);
   const currentTopic = currentCategory?.topics.find(t => t.id === activeTopic);
   const currentSubtopic = currentTopic?.subtopics.find(sub => sub.id === activeSubtopic);
 
-  // ब्रेडक्रम्ब्स आइटम का एक Array बनाएँ
+ 
   const breadcrumbs = [];
 
-  // अगर category है, तो उसे जोड़ें
   if (currentCategory) {
     breadcrumbs.push({
       title: currentCategory.title,
@@ -21,7 +20,6 @@ const Breadcrumbs = ({ activeCategory, activeTopic, activeSubtopic }) => {
     });
   }
 
-  // अगर topic है, तो उसे जोड़ें
   if (currentTopic) {
     breadcrumbs.push({
       title: currentTopic.title,
@@ -29,7 +27,6 @@ const Breadcrumbs = ({ activeCategory, activeTopic, activeSubtopic }) => {
     });
   }
 
-  // अगर subtopic है, तो उसे जोड़ें
   if (currentSubtopic) {
     breadcrumbs.push({
       title: currentSubtopic.title,
@@ -44,7 +41,6 @@ const Breadcrumbs = ({ activeCategory, activeTopic, activeSubtopic }) => {
           <Link href={item.href} className={styles.link}>
             {item.title}
           </Link>
-          {/* आखिरी आइटम के बाद ">" न जोड़ें */}
           {index < breadcrumbs.length - 1 && (
             <span className={styles.separator}>&gt;</span>
           )}

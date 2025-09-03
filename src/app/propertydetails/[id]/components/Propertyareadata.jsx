@@ -41,7 +41,7 @@ const Propertyareadata = () => {
         {propertyData.map((item, index) => (
           <div key={index}>
             <p className={styles.label}>{item.label}</p>
-            <p className={styles.value}>{item.value}</p>
+            <div className={styles.value}>{item.value}</div>
           </div>
         ))}
 
