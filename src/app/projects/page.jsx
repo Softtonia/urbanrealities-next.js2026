@@ -1,10 +1,12 @@
 import React from 'react';
 import PropertyFilters from '@/Components/PropertyFilters/PropertyFilters';
 import Projectviewcards from './components/Project-viewcards/Projects-viewcards';
+import Filtertabs from '@/Components/PropertyFilters/filtertabs';
 const Projectpage = () => {
   return (
-    <div>
-      <PropertyFilters />
+    <div style={{  width: '100%', height: '100%'}}>
+      {/* <PropertyFilters /> */}
+      <Filtertabs />
       <Projectviewcards />
     </div>
   );
