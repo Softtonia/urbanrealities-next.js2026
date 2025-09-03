@@ -3,7 +3,7 @@ import { helpTopics } from "@/app/help/data/helpData";
 import HelpSidebar from "../../../../components/HelpSidebar/HelpSidebar";
 import styles from "../../../../components/TopicDetailPage.module.css";
 import Link from "next/link";
-import Breadcrumbs from "@/app/help/components/Breadcrumbs/Breadcrumbs";
+import Breadcrumbs from "@/Components/All-Breadcrumbs/Breadcrumbs";
 const QuestionPage = async ({ params }) => {
   // ✅ params को await करें
   const { category, topic, subtopic, question } = await params;

@@ -1,96 +1,93 @@
-// src/app/help/components/HelpSidebar/HelpSidebar.jsx
-import React from "react";
+import React,{memo} from "react";
 import Link from "next/link";
 import styles from "./HelpSidebar.module.css";
-import { helpTopics } from "@/app/help/data/helpData";
 import { IoIosArrowForward } from "react-icons/io";
 
-const HelpSidebar = ({ activeCategory, activeTopic, activeSubtopic }) => {
-  const currentCategory = helpTopics.find((cat) => cat.id === activeCategory);
-  const currentTopic = currentCategory?.topics.find(
-    (t) => t.id === activeTopic
-  );
+const HelpSidebar = ({ activeCategory, activeTopic, activeSubtopic, topics }) => {
+  console.log("topics", topics);
 
-  if (!currentCategory) {
-    return null;
-  }
+  // ✅ directly find active topic from topics
+  const currentTopic = topics.find(
+    (t) => String(t.id) === String(activeTopic)
+  );
 
   return (
     <nav className={styles.sidebar}>
-      {/* 1. अगर activeSubtopic मौजूद है, तो सिर्फ़ subtopics दिखाएँ */}
-      {activeSubtopic && currentTopic?.subtopics ? (
+      {/* If subtopic is active, show subtopics only */}
+      {activeSubtopic && currentTopic ? (
         <>
-     <div className="d-flex align-item-center mb-3 gap-2" >
-        {/* <div className={styles.icon}>   {currentTopic.usericon}</div> */}
-          <h3 className={styles.sidebarTitle}>
-          {currentTopic.title}
-          </h3>
-          </div> 
-            <ul className={styles.subtopicList}>
-            {currentTopic.subtopics.map((subtopic) => (
-              <li key={subtopic.id}
-                className={`${styles.subtopicItem} ${
-                  subtopic.id === activeSubtopic ? styles.active : ""
-                }`}
+          <div className="d-flex align-item-center mb-3 gap-2">
+            <h3 className={styles.sidebarTitle}>{currentTopic.name}</h3>
+          </div>
+          <ul className={styles.subtopicList}>
+            {currentTopic.child_categories?.map((subtopic) => (
+              <li
+                key={subtopic.id}
+                className={`${styles.subtopicItem} ${String(subtopic.id) === String(activeSubtopic) ? styles.active : ""
+                  }`}
               >
                 <Link
-                  href={`/help/${activeCategory}/${activeTopic}/${subtopic.id}`}
-                  className={`${styles.subtopicLink} ${
-                    subtopic.id === activeSubtopic ? styles.active : ""
-                  }`}
+                  href={{
+                    pathname: `/help/${subtopic.category.name}/${subtopic.name}`,
+                    query: {
+                      subcategoryId: subtopic.id,
+                      categoryId: activeCategory,
+                    },
+                  }}
+                  className={`${styles.subtopicLink} ${String(subtopic.id) === String(activeSubtopic) ? styles.active : ""
+                    }`}
                 >
                   <div className="d-flex justify-content-between align-items-center w-full">
                     <div className="d-flex align-items-center">
-
-                      <div className={styles.topicTitleText}>{subtopic.title}</div>
+                      <div className={styles.topicTitleText}>{subtopic.name}</div>
                     </div>
                     <div className={styles.arrowIcon}>
                       <IoIosArrowForward />
                     </div>
                   </div>
                 </Link>
+
               </li>
             ))}
           </ul>
         </>
       ) : (
-        // 2. अगर activeSubtopic नहीं है, तो सभी topics दिखाएँ
+        // Otherwise show all topics (from topics array)
         <>
-        <div className="d-flex align-item-center mb-3 gap-2" >
-        <div className={styles.icon}>   {currentTopic.usericon}</div>
-          <h3 className={styles.sidebarTitle}>
-          {currentTopic.title}
-          </h3>
+          <div className="d-flex align-item-center mb-3 gap-2">
+            <h3 className={styles.sidebarTitle}>Help Topics</h3>
           </div>
-          <div className="">
-          <ol className={styles.topicList}>
-            {currentCategory.topics.map((topic) => (
-              <li
-                key={topic.id}
-                className={`${styles.topicItem} ${
-                  topic.id === activeTopic ? styles.active : ""
-                }`}
-              >
-                <Link
-                  href={`/help/${currentCategory.id}/${topic.id}`}
-                  className={styles.topicLink}
+          <div>
+            <ol className={styles.topicList}>
+              {topics.map((topic) => (
+                <li
+                  key={topic.id}
+                  className={`${styles.topicItem} ${String(topic.id) === String(activeTopic) ? styles.active : ""
+                    }`}
                 >
-                  <div className="d-flex justify-content-between align-items-center w-full">
-                    <div className="d-flex align-items-center">
-                      {/* {topic.usericon && (
-                      <span className={styles.icon}>{topic.usericon}</span>
-                    )} */}
-                      <div className={styles.topicTitleText}>{topic.title}</div>
+                  <Link
+                    href={{
+                      pathname: `/help/${topic.category.name}/${topic.name}`,
+                      query: {
+                        subcategoryId: topic.id,
+                        categoryId: activeCategory,
+                      },
+                    }}
+                    className={styles.topicLink}
+                  >
+
+                    <div className="d-flex justify-content-between align-items-center w-full">
+                      <div className="d-flex align-items-center">
+                        <div className={styles.topicTitleText}>{topic.name}</div>
+                      </div>
+                      <div className={styles.arrowIcon}>
+                        <IoIosArrowForward />
+                      </div>
                     </div>
-                    {/* {topic.subtopics && <div className={styles.arrowIcon}><IoIosArrowForward /></div>} */}
-                    <div className={styles.arrowIcon}>
-                      <IoIosArrowForward />
-                    </div>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ol>
+                  </Link>
+                </li>
+              ))}
+            </ol>
           </div>
         </>
       )}
@@ -98,4 +95,4 @@ const HelpSidebar = ({ activeCategory, activeTopic, activeSubtopic }) => {
   );
 };
 
-export default HelpSidebar;
+export default memo(HelpSidebar);
