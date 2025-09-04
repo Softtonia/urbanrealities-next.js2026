@@ -1,4 +1,3 @@
-
 .closeButton {
   position: absolute;
   top: 15px;
@@ -15,30 +14,33 @@
 }
 .leftPanel {
   width: 372px;
-  background-color: #f8f8f8;
-  overflow-y: scroll; /* vertical scroll */
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: orange #f8f8f8; 
-   scrollbar-gutter: stable; 
+  background-color: var(--off-white);
+  border-radius: 8px;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: #fb6a18 #c5c9d1;
+  scrollbar-gutter: stable;
 }
+
 /* Chrome, Edge, Safari */
 .leftPanel::-webkit-scrollbar {
-  width: 12px; /* scrollbar width */
+  width: 12px;
 }
 
 .leftPanel::-webkit-scrollbar-track {
-  background: #f8f8f8; /* track color */
+  background: #c5c9d1;
   border-radius: 6px;
 }
 
 .leftPanel::-webkit-scrollbar-thumb {
-  background-color: orange; /* thumb color */
+  background-color: #fb6a18;
   border-radius: 6px;
-  border: 3px solid #f8f8f8; /* spacing around thumb */
 }
 
 .leftPanel::-webkit-scrollbar-thumb:hover {
-  background-color: darkorange; /* hover effect */
+  background-color: #fb6a18 #c5c9d1;
+  box-shadow: none;
+  outline: none;
 }
 
 .leftPanel .filterList {
@@ -50,15 +52,15 @@
 .leftPanel .filterList li {
   padding: 20px;
   cursor: pointer;
-  font-size: 14px;
-  color: #555;
-  border-bottom: 1px solid #eee;
+  font-size: clamp(14px, 1.25vw, 18px);
+  font-family: var(--font-medium);
+  border-bottom: 1px solid var(--Bright-Gray);
 }
 .leftPanel .filterList li.active {
   color: var(--Orange-Red);
-  font-weight: 600;
+  font-family: var(--font-medium);
   position: relative;
-  background: #fff;
+  background: var(--White);
 }
 
 .leftPanel .filterList li.active::before {
@@ -69,47 +71,50 @@
   bottom: 0;
   width: 5px;
   background: var(--Orange-Red);
-  border-radius: 0 12px 12px 0; 
+  border-radius: 0 12px 12px 0;
   box-shadow: 0 0 12px rgba(251, 106, 24, 0.5);
 }
 
 .rightPanel {
-  flex-grow: 1;
   padding: 21px 30px;
-  overflow-y: auto; 
+  overflow-y: auto;
   background-color: var(--White);
-
+  width: 552px;
 }
 
 .filterSection {
-  
   margin-bottom: 20px;
 }
 
-.filterSection h3 {
-  font-size: 16px;
+.filterTitle {
+  font-size: clamp(14px, 1.25vw, 18px);
+  font-family: var(--font-medium);
   margin-bottom: 15px;
-  color: #333;
 }
 
 .optionsWrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .filterOption {
-   padding: 8px 15px;
-  border: 1px solid #ccc;
+  padding: 8px 15px;
+  border: 1px solid var(--Lavender-Gray);
   border-radius: 20px;
-  background-color: #fff;
+  background-color: var(--White);
   cursor: pointer;
-  font-size: 14px;
+  font-size: clamp(12px, 1vw, 14px);
+  font-family: var(--font-regular);
+  white-space: normal;
+  word-break: break-word;
 }
 
 .filterOption.active {
   background-color: var(--Orange-Red);
-  color: #fff;
+  color: var(--White);
   border-color: var(--Orange-Red);
 }
 .optionsgroup {
@@ -118,13 +123,11 @@
   gap: 10px;
 }
 
-
 .budgetDropdowns {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
-  font-family: 'Inter', sans-serif;
 }
 
 .rangeDropdown {
@@ -137,17 +140,15 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  font-size: 14px;
+  font-size: clamp(12px, 1vw, 14px);
   font-weight: 500;
   color: #333;
-  background-color: #fff;
-  border: 1px solid #dcdcdc;
+  background-color: var(--White);
+  border: 1px solid var(--Bright-Gray);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
-
 
 .customSelect:hover {
   border-color: var(--Orange-Red);
@@ -158,48 +159,52 @@
   top: 110%;
   left: 0;
   width: 100%;
-  background-color: #fff;
-  border: 1px solid #dcdcdc;
+  background-color: var(--White);
+  border: 1px solid var(--Bright-Gray);
   border-radius: 8px;
-  max-height: 9999px;
+  max-height: 200px;
   overflow-y: auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   z-index: 1000;
+  padding: 0;
 }
 
 .menuList {
   padding: 12px 14px;
-  font-size: 14px;
-  color: #333;
+  font-size: clamp(12px, 1vw, 14px);
   cursor: pointer;
   list-style: none;
   transition: background 0.2s ease, color 0.2s ease;
+  text-align: center;
 }
 
 .menuList:hover {
-  background-color: #f8f8f8;
+  background-color: var(--off-white);
   color: var(--Orange-Red);
 }
 .accordionWrapper {
   display: flex;
   flex-direction: column;
-  width: 100%; /* full width le */
-  background-color: #f8f8f8; /* left panel jaisa */
-  border-right: 1px solid #eee; /* optional, desktop feel ke liye */
+  width: 100%;
+  background-color: var(--off-white);
+  border-right: 1px solid var(--Bright-Gray);
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: #fb6a18 #c5c9d1;
+  scrollbar-gutter: stable;
 }
 
 .accordionSection {
   width: 100%;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--Lavender-Gray);
 }
 .accordionHeader {
   padding: 20px;
-  font-size: 16px;
-  color: #555;
-  border-bottom: 1px solid #eee;
+  font-size: clamp(14px, 1.1vw, 16px);
+  font-family: var(--font-medium);
   cursor: pointer;
   position: relative;
-  background: #f8f8f8;
+  background: var(--off-white);
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -207,8 +212,8 @@
 
 .accordionHeader.active {
   color: var(--Orange-Red);
-  font-weight: 600;
-  background: #fff;
+  font-family: var(--font-medium);
+  background: var(--White);
 }
 
 .accordionHeader.active::before {
@@ -224,14 +229,25 @@
 }
 
 .accordionContent {
-  padding: 21px 30px; /* right panel jaisa */
-  background-color: #f8f8f8;
+  padding: 21px 30px;
+  background-color: var(--off-white);
   width: 100%;
   box-sizing: border-box;
 }
+.footerButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-top: 1px solid var(--Bright-Gray);
+  position: absolute;
+  width: calc(100% );
+  bottom: 0;
+  background: var(--White);
+  border-radius: 0 0 8px 8px;
+}
 
 @media (max-width: 768px) {
-
   .leftPanel {
     display: none;
   }

@@ -4,7 +4,7 @@ import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 
-const MoreFiltersPanel = ({ onClose }) => {
+const MoreFiltersPanel = ({})   => {
   const [activeFilter, setActiveFilter] = useState("Covered Area");
   const [expandedSections, setExpandedSections] = useState({
     "Covered Area": true,
@@ -102,7 +102,7 @@ const MoreFiltersPanel = ({ onClose }) => {
       case "Covered Area":
         return (
           <div className={styles.filterSection}>
-            <h3>Covered Area (sqft)</h3>
+            <h3 className={styles.filterTitle}>Covered Area (sqft)</h3>
             <div className={styles.budgetDropdowns}>
               <div className={styles.rangeDropdown}>
                 <div
@@ -115,6 +115,7 @@ const MoreFiltersPanel = ({ onClose }) => {
                 </div>
                 {openDropdown === "min" && (
                   <ul className={styles.dropdownMenuCustom}>
+                    <small>Min</small>
                     {budgetOptions.map((val) => (
                       <li
                         key={val}
@@ -139,6 +140,8 @@ const MoreFiltersPanel = ({ onClose }) => {
                 </div>
                 {openDropdown === "max" && (
                   <ul className={styles.dropdownMenuCustom}>
+                   <small>Max</small>
+
                     {budgetOptions.map((val) => (
                       <li
                         key={val}
@@ -178,7 +181,7 @@ const MoreFiltersPanel = ({ onClose }) => {
       case "Possession Status":
         return (
           <div className={styles.filterSection}>
-            <h3>Possession Status</h3>
+            <h3 className={styles.filterTitle}>Possession Status</h3>
             <div className={styles.optionsWrapper}>
               {data.possessionStatus.map((item) => (
                 <button
@@ -204,7 +207,7 @@ const MoreFiltersPanel = ({ onClose }) => {
       case "Sub Property Type":
         return (
           <div className={styles.filterSection}>
-            <h3>Sub Property Type</h3>
+            <h3 className={styles.filterTitle}>Sub Property Type</h3>
 
             {data.subPropertyType.map((group, i) => (
               <div key={i} className={styles.optionsWrapper}>
@@ -235,7 +238,7 @@ const MoreFiltersPanel = ({ onClose }) => {
       case "Sale Type":
         return (
           <div className={styles.filterSection}>
-            <h3>Sale Type</h3>
+            <h3 className={styles.filterTitle}>Sale Type</h3>
             <div className={styles.optionsWrapper}>
               {data.saleType.map((item) => (
                 <button
@@ -257,7 +260,7 @@ const MoreFiltersPanel = ({ onClose }) => {
       case "Posted By":
         return (
           <div className={styles.filterSection}>
-            <h3>Posted By</h3>
+            <h3 className={styles.filterTitle}>Posted By</h3>
             <div className={styles.optionsWrapper}>
               {data.postedBy.map((item) => (
                 <button
@@ -289,6 +292,7 @@ const MoreFiltersPanel = ({ onClose }) => {
       <div className={styles.panelContent}>
         {isMobile ? (
           // 📱 Mobile = Accordion
+          <>
           <div className={styles.accordionWrapper}>
             {filtersMenu.map((item) => (
               <div key={item} className={styles.accordionSection}>
@@ -314,6 +318,24 @@ const MoreFiltersPanel = ({ onClose }) => {
               </div>
             ))}
           </div>
+                         <div className={styles.footerButtons}>
+              <button
+                className={`${styles.clearBtn} btn-small`}
+                onClick={() => {
+                  setSelectedPossessionStatus([]);
+                  setSelectedSubPropertyType([]);
+                  setSelectedPostedBy([]);
+                  setSelectedSaleType([]);
+                  setBudgetRange([5, 2000]);
+                }}
+              >
+                Clear Filters
+              </button>
+              <button className={` ${styles.applyBtn} btn-small`}>
+                Apply Filters
+              </button>
+            </div>
+            </>
         ) : (
           // 💻 Desktop = Left + Right panel
           <>
@@ -333,10 +355,14 @@ const MoreFiltersPanel = ({ onClose }) => {
 
             <div className={styles.rightPanel}>
               {renderFilterContent(activeFilter)}
-            </div>
-          </>
-        )}
-      </div>
+                 </div>
+                 </>
+               )}
+               </div>  
+
+
+         
+     
     </div>
   );
 };
