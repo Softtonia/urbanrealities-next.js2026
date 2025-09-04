@@ -327,7 +327,21 @@ small {
   text-transform: capitalize;
   padding: 10px 20px;
 }
-
+.badge-btn {
+  background-color: var(--White);
+  color: var(--Orange-Red);
+  padding: 10px;
+  border-radius: 25px;
+  border: 1px solid var(--Orange-Red);
+  cursor: pointer;
+  font-size: 14px;
+}
+.badge-btn:hover {
+  background-color: var(--Orange-Red);
+  color: var(--White);
+  border: 1px solid var(--Orange-Red);
+  transition: 0.3s ease-in-out;
+}
 /* --------------------- */
 
 .location-heading {
@@ -354,14 +368,7 @@ small {
   font-size: 13.33px;
 }
 
-.badge-property {
-  background-color: var(--White);
-  color: var(--Orange-Red);
-  padding: 1px 5px;
-  border-radius: 2px;
-  border: none;
-  font-size: 10px;
-}
+
 
 .navbar-menu {
   color: var(--White);

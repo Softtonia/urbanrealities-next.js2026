@@ -42,7 +42,7 @@ const PropertygalleryBreadcrum = ({ property }) => {
   const sqft = sqftField ? sqftField.field_value : null;
   const price = priceField ? priceField.field_value : null;
   const gallery = galleryField ? galleryField.field_value : null;
-  const editgallery = gallery.map((url) => url.replace(/^127\.0\.0\.1:8000/, 'https://api.urbanrealities.com'))
+  const editgallery = gallery ? gallery.map((url) => url.replace(/^127\.0\.0\.1:8000/, 'https://api.urbanrealities.com')) : [];
   console.log("==>", editgallery)
 
   return (

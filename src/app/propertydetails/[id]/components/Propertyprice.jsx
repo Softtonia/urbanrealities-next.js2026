@@ -34,14 +34,14 @@ const Propertyprice = ({ property }) => {
     "property.interior.design.cost",
     "property.additional.parking.charges",
   ];
-
+console.log("property",property)
   // get matched fields from property
   const fieldData = templates.map((templateLabel) => {
     const field = property?.repeater_fields?.find(
-      (f) => f.template.name === templateLabel
+      (f) =>{const tmp = (f.template.name).toLowerCase(); return tmp === templateLabel}
     );
     
-    if (!field.value) return null;
+    if (!field || !field.field_value) return null;
 
     return {
       label: field.field_label, // pretty label
