@@ -38,10 +38,11 @@ const Propertyprice = ({ property }) => {
   // get matched fields from property
   const fieldData = templates.map((templateLabel) => {
     const field = property?.repeater_fields?.find(
-      (f) => f.template.name === templateLabel
+      (f) => f.template.name?.toLowerCase() === templateLabel?.toLowerCase()
     );
     
-    if (!field.value) return null;
+    
+    if ( !field || !field.value) return null;
 
     return {
       label: field.field_label, // pretty label

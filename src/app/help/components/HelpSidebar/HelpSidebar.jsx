@@ -2,6 +2,7 @@ import React,{memo} from "react";
 import Link from "next/link";
 import styles from "./HelpSidebar.module.css";
 import { IoIosArrowForward } from "react-icons/io";
+import { slugify } from "@/utils/slugify";
 
 const HelpSidebar = ({ activeCategory, activeTopic, activeSubtopic, topics }) => {
   console.log("topics", topics);
@@ -67,7 +68,7 @@ const HelpSidebar = ({ activeCategory, activeTopic, activeSubtopic, topics }) =>
                 >
                   <Link
                     href={{
-                      pathname: `/help/${topic.category.name}/${topic.name}`,
+                      pathname: `/help/${slugify(topic.category.name)}/${slugify(topic.name)}`,
                       query: {
                         subcategoryId: topic.id,
                         categoryId: activeCategory,

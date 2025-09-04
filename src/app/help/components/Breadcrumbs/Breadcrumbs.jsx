@@ -1,36 +1,37 @@
 // src/app/help/components/Breadcrumbs/Breadcrumbs.jsx
-import React from 'react';
-import Link from 'next/link';
-import { helpTopics } from "@/app/help/data/helpData";
-import styles from './Breadcrumbs.module.css';
+"use client";
+import React from "react";
+import Link from "next/link";
+import styles from "./Breadcrumbs.module.css";
+import { deslugify } from "@/utils/slugify";
+function formatBreadcrumb(slug) {
+  if (!slug) return "";
+  return slug
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
 const Breadcrumbs = ({ activeCategory, activeTopic, activeSubtopic }) => {
-
-  const currentCategory = helpTopics.find(cat => cat.id === activeCategory);
-  const currentTopic = currentCategory?.topics.find(t => t.id === activeTopic);
-  const currentSubtopic = currentTopic?.subtopics.find(sub => sub.id === activeSubtopic);
-
- 
   const breadcrumbs = [];
 
-  if (currentCategory) {
+  if (activeCategory) {
     breadcrumbs.push({
-      title: currentCategory.title,
+      title: deslugify(decodeURIComponent(activeCategory)), // keep it readable
       href: `/help`,
     });
   }
 
-  if (currentTopic) {
+  if (activeTopic) {
     breadcrumbs.push({
-      title: currentTopic.title,
-      href: `/help/${currentCategory.id}/${currentTopic.id}`,
+      title: deslugify(decodeURIComponent(activeTopic)),
+      href: `/help/${encodeURIComponent(activeCategory)}/${encodeURIComponent(activeTopic)}`,
     });
   }
 
-  if (currentSubtopic) {
+  if (activeSubtopic) {
     breadcrumbs.push({
-      title: currentSubtopic.title,
-      href: `/help/${currentCategory.id}/${currentTopic.id}/${currentSubtopic.id}`,
+      title: deslugify(decodeURIComponent(activeSubtopic)),
+      href: `/help/${encodeURIComponent(activeCategory)}/${encodeURIComponent(activeTopic)}/${encodeURIComponent(activeSubtopic)}`,
     });
   }
 

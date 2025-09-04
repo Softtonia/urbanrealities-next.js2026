@@ -27,7 +27,7 @@ const PropertyDetails = ({property,leadTypes}) => {
             <div className="col-8 large-col">
               <PropertyHighlights  property={property} />
               <PropertyDescription property={property}/>
-              <Propertyareadata />
+              <Propertyareadata property={property}/>
               <Propertyprice property={property}/>
               <PropertyAmenities />
             </div>

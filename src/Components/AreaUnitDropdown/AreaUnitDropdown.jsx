@@ -55,14 +55,31 @@ const unitRatesByRegion = {
     killa: 43560,
     kyncham: 4300,
   },
+  hyderabad: {
+    sqft: 1,
+    sqyrd: 9,         // 1 sq yd = 9 sqft
+    sqm: 10.7639,     // 1 sqm = 10.7639 sqft
+    acre: 43560,      // 1 acre = 43,560 sqft
+    guntha: 1089,     // 1 guntha = 1,089 sqft
+    gajam: 9,         // local term for 1 sq yd = 9 sqft
+    cent: 435.6,      // 1 cent = 435.6 sqft
+    hectare: 107639,  // 1 hectare = 107,639 sqft
+    are: 1076.4,      // 1 are = 1,076.4 sqft
+    killa: 43560,     // often same as acre in Telangana
+    // rarely used in Hyderabad, but you can include for uniformity
+    rood: 10890,      
+    ground: 2400,     
+    marla: 272.25,    
+    kanal: 5445,      
+  },
 };
 
 
-const AreaUnitDropdown = () => {
+
+const AreaUnitDropdown = ({baseSqft}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [region, setRegion] = useState("bangalore");
+  const [region, setRegion] = useState("hyderabad");
   const [selectedUnit, setSelectedUnit] = useState("sqft");
-  const baseSqft = 2726;
 
   const unitRatesInSqft = unitRatesByRegion[region];
   const unitOptions = Object.keys(unitRatesInSqft);

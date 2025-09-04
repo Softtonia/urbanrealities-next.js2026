@@ -7,6 +7,7 @@ import styles from '../../components/TopicDetailPage.module.css';
 import Link from 'next/link';
 import SubHero from '@/Components/SubHero/SubHero';
 import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
+import { deslugify, slugify } from '@/utils/slugify';
 
 const TopicDetailPage = ({ params }) => {
   const { category, topic } = use(params);
@@ -124,7 +125,7 @@ const TopicDetailPage = ({ params }) => {
   return (
     <div className={` ${styles.contentLayout} row `}>
       <div className={` ${styles.sidebar} col-12  `}>
-        <Breadcrumbs activeCategory={categoryPath} activeTopic={topicPath} />
+        <Breadcrumbs activeCategory={slugify(categoryPath)} activeTopic={slugify(topicPath)} />
 
         <div className={` ${styles.contentLayout} row `}>
           <div className={` ${styles.sidebar} col-12 col-md-4 `}>
@@ -133,18 +134,27 @@ const TopicDetailPage = ({ params }) => {
           <div className={` ${styles.mainContent} col-12 col-md-8 `}>
             {childCtg && (
               <>
-                <SubHero subHeroHeading={categoryPath} subHeroText={""} />
+                <SubHero subHeroHeading={deslugify(categoryPath)} subHeroText={""} />
                 <ol className={styles.subtopicList}>
-                  {childCtg.map(subtopic => (
+                  {childCtg.map((subtopic) => (
                     <li key={subtopic.id}>
                       <Link
-                        href={`/help/${category}/${topic}/${subtopic.id}`}
+                        href={{
+                          pathname: `/help/${slugify(category)}/${slugify(topic)}/${subtopic.id}`,
+                          query: {
+                            categoryId,         // current categoryId from searchParams
+                            subcategoryId,      // current subcategoryId from searchParams
+                            // subtopicId: subtopic.id,  // sending subtopic id too
+                            // subtopicName: subtopic.name // optional: for display without extra API call
+                          },
+                        }}
                         className={styles.subtopicLink}
                       >
                         {subtopic.name}
                       </Link>
                     </li>
                   ))}
+
                 </ol>
               </>
             )}
