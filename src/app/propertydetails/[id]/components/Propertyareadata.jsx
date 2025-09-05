@@ -2,63 +2,74 @@
 import { useState } from "react";
 import styles from "./Propertyareadata.module.css";
 import AreaUnitDropdown from "@/Components/AreaUnitDropdown/AreaUnitDropdown";
+import Link from "next/link";
 
-const Propertyareadata = () => {
+// utils/propertyHelpers.ts
+export function getRepeaterValue(property, slugStart) {
+  const field = property.repeater_fields?.find((f) => f.template.slug.startsWith(slugStart));
+  return field || null;
+}
+
+const Propertyareadata = ({ property }) => {
   const [showMore, setShowMore] = useState(false);
 
-  const propertyData = [
-    { label: "Carpet Area", value: <AreaUnitDropdown /> },
-    { label: "Developer", value: "Ganesh Property.pvt.ltd" },
-    { label: "Property Type", value: "New Property" },
-    { label: "Additional Room", value: "1 Playing Room" },
-    { label: "Facing", value: "East" },
-    { label: "Floor", value: "07 (out of 20 floors)" },
-    { label: "Available from", value: "Nxt Month" },
-    {
+  // Filter repeater fields
+  const areaFields = property.repeater_fields?.filter(
+    (f) =>
+      f.template.name.startsWith("property.area") ||
+      f.template.name.startsWith("property.furnishing")
+  ) || [];
+
+  // Map filtered fields to displayable structure
+  const repeaterData = areaFields.map((f) => ({
+    label: f.field_label,
+    value: f.template.name.startsWith("property.area") ? (
+      <AreaUnitDropdown baseSqft={f.field_value} />
+    ) : (
+      f.field_value
+    ),
+  }));
+
+  // Always include project, developer, and location
+  const staticData = [
+    { label: "Project", value: property?.project_id_name, link: `/project-details?id=${property?.project_id }` },
+    { label: "Developer", value: property?.Developer_id_name },
+    { 
       label: "Address",
       value: (
         <>
-          Ganesh Ernakulam,<br />
-          Kerela<br />
-          Pincode: 4785211
+          {property?.city?.name}, {property?.state?.name}
         </>
       ),
     },
-    { label: "Lifts", value: "Four" },
-    { label: "Available", value: "Family" },
   ];
 
-  const morePropertyData = [
-    { label: "Water Supply", value: "24x7" },
-    { label: "Furnishing", value: "Semi-Furnished" },
-    { label: "Age of Property", value: "Under Construction" },
-  ];
+  // Combine all fields
+  const allFields = [...repeaterData, ...staticData].filter(
+    (item) => item.value !== null && item.value !== "" && item.value !== undefined
+  );
+
+  const showButton = allFields.length > 6;
+  const visibleFields = showMore ? allFields : allFields.slice(0, 6);
 
   return (
-    <div className={` text-dark  ${styles.propertyDetailsBox}`}>
+    <div className={`text-dark ${styles.propertyDetailsBox}`}>
       <h4 className={styles.sectionTitle}>Property Details</h4>
-      <div className={`${styles.propertyDetailsGrid}`}>
-        {propertyData.map((item, index) => (
+      <div className={styles.propertyDetailsGrid}>
+        {visibleFields.map((item, index) => (
           <div key={index}>
             <p className={styles.label}>{item.label}</p>
-            <div className={styles.value}>{item.value}</div>
+            <div className={styles.value}>
+              {item.link ? <Link href={item.link}>{item.value}</Link> : item.value}
+            </div>
           </div>
         ))}
-
-        {showMore &&
-          morePropertyData.map((item, index) => (
-            <div key={index}>
-              <p className={styles.label}>{item.label}</p>
-              <p className={styles.value}>{item.value}</p>
-            </div>
-          ))}
       </div>
-      <button
-        className={styles.viewMore}
-        onClick={() => setShowMore(!showMore)}
-      >
-        {showMore ? "View less Details" : "View more Details"}
-      </button>
+      {showButton && (
+        <button className={styles.viewMore} onClick={() => setShowMore(!showMore)}>
+          {showMore ? "View less Details" : "View more Details"}
+        </button>
+      )}
     </div>
   );
 };

@@ -4,6 +4,7 @@ import HelpSidebar from "../../../../components/HelpSidebar/HelpSidebar";
 import styles from "../../../../components/TopicDetailPage.module.css";
 import Link from "next/link";
 import Breadcrumbs from "@/Components/All-Breadcrumbs/Breadcrumbs";
+import { slugify } from "@/utils/slugify";
 const QuestionPage = async ({ params }) => {
   // ✅ params को await करें
   const { category, topic, subtopic, question } = await params;
@@ -21,8 +22,8 @@ const QuestionPage = async ({ params }) => {
     <div className={` ${styles.contentLayout} row `}>
       <div className={` ${styles.sidebar} col-12 col-md-4 `}>
         <Breadcrumbs
-          activeCategory={category}
-          activeTopic={topic}
+          activeCategory={slugify(category)}
+          activeTopic={slugify(topic)}
           activeSubtopic={subtopic}
           activeQuestion={question}
         />
