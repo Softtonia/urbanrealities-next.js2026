@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { IoLocation } from "react-icons/io5";
 import { FaMapPin, FaHouse, FaRupeeSign, FaBuilding } from "react-icons/fa6";
 import { IoSearch } from "react-icons/io5";
+import {useCity} from "@/utils/CityContext"
 
 export default function PropertySearch() {
   const [activePriceType, setActivePriceType] = useState("min");
@@ -14,6 +15,7 @@ export default function PropertySearch() {
   const [inputLocation, setInputLocation] = useState("");
   const router = useRouter();
 
+const { city } = useCity();
 
   const handleViewsearch = () => {
     router.push("/FilterMobile");
@@ -119,7 +121,7 @@ export default function PropertySearch() {
                 data-bs-toggle="dropdown"
               >
                 <IoLocation className={"icon-custom"} />
-                <span className="Add-city">Bangalore</span>
+                <span className="Add-city">{city}</span>
                 <input
                   type="text"
                   placeholder="Add more..."

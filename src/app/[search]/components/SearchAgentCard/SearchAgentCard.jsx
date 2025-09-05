@@ -18,13 +18,13 @@ export default function AgentCard() {
         />
         <div>
           <h3 className={styles.agentName}>Salman</h3>
+              <p className={styles.agentId}>
+                RERA ID: PRM/KA/RERA/121/309/...
+              </p>
         </div>
       </div>
         
           <div>
-              <p className={styles.agentId}>
-                RERA ID: PRM/KA/RERA/121/309/...
-              </p>
               <p className={styles.company}>B S Associates</p>
               <p className={styles.since}>Operating since 2010</p>
           </div>
