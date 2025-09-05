@@ -20,6 +20,7 @@ import { GoChevronDown } from "react-icons/go";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { get } from "@/lib/api";
 import { useSiteSettings } from "../mycontext/siteSettingContext";
+import { useCity } from "@/utils/CityContext";
 
 const cities = {
   nearbyCities: ["New Delhi", "Gurgaon", "Greater Noida"],
@@ -104,9 +105,15 @@ const cities = {
 };
 
 const renderCityGrid = (citiesArray) => {
-  const { token } = useSiteSettings();
   const columnsPerRow = 5;
   const rows = [];
+
+     const { token } = useSiteSettings();
+  const { setCity } = useCity();
+
+  const handleSuggestionClick = (city) => {
+    setCity(city);
+  };
 
   for (let i = 0; i < citiesArray.length; i += columnsPerRow) {
     const rowItems = citiesArray.slice(i, i + columnsPerRow);
@@ -114,7 +121,12 @@ const renderCityGrid = (citiesArray) => {
       <div className="row mb-1 ms-3" key={i}>
         {rowItems.map((city, index) => (
           <div className="col" key={index}>
-            <div className="city-text mb-2">{city}</div>
+            <div
+              className="city-text mb-2"
+              onClick={() => handleSuggestionClick(city)}
+            >
+              {city}
+            </div>
           </div>
         ))}
       </div>
@@ -160,11 +172,7 @@ export default function Navbar() {
       .slice(0, 5);
     setSuggestions(filtered);
   };
-
-  const handleSuggestionClick = (city) => {
-    setSearchText(city);
-    setSuggestions([]);
-  };
+ 
 
   useEffect(() => {
     const handleResize = () => {
@@ -200,6 +208,7 @@ export default function Navbar() {
                 height={30}
               />
             </Link>
+
             <div
               className="position-relative"
               onMouseEnter={() => setShowDropdown(true)}

@@ -7,6 +7,8 @@ import Footer from "@/Components/Footer/Footer";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import BootstrapClient from "@/Components/BootstrapClient";
 import { SiteSettingsProvider } from "@/Components/mycontext/siteSettingContext";
+import { CityProvider } from "@/utils/CityContext";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -114,12 +116,14 @@ export default async function RootLayout({ children }) {
         />
       </head>
       <body className="antialiased">
+        <CityProvider>
         <SiteSettingsProvider initialSettings={settings}>
           <BootstrapClient />
           <Navbar />
           <main>{children}</main>
           <Footer />
         </SiteSettingsProvider>
+        </CityProvider>
       </body>
     </html>
   );
