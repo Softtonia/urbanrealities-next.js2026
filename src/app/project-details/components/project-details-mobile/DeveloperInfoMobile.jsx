@@ -1,21 +1,48 @@
 'use client';
 
+import { useState } from "react";
+import { useProject } from "../../context/ProjectContext";
 import styles from "./DeveloperInfoMobile.module.css";
 import { FaMapMarkerAlt } from "react-icons/fa";
 
 const DeveloperInfoMobile = () => {
+  const project = useProject()
+  const [expanded, setExpanded] = useState(false);
+
+  // Strip HTML tags for word count
+  const plainText = project.description.replace(/<[^>]+>/g, "");
+  const words = plainText.split(/\s+/);
+
+  // Take first 20 words only
+  const shortText = words.slice(0, 20).join(" ") + "...";
+
   return (
     <div className={styles.devContainer}>
       <div className={`text-dark ${styles.devInfoBox}`}>
-        <h5 className={styles.title}>About Mundeswari</h5>
+        <h5 className={styles.title}>About {project.name}</h5>
         <div className={styles.devContent}>
-          <p className={styles.description}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Pellentesque eu ex vestibulum, fermentum tellus nec, finibus nisl.
-            Nullam pellentesque ligula quam, a varius enim posuere sit amet.
-            Donec vel lectus odio. Donec posuere quis libero.
-            <span className={styles.readMore}>Read More</span>
-          </p>
+        <div className={styles.description}>
+      <p
+        className={`${styles["aboutProject-desc"]} body-text-16`}
+        dangerouslySetInnerHTML={{
+          __html: expanded
+            ? project.description
+            : words.length > 20
+            ? shortText
+            : project.description,
+        }}
+      ></p>
+
+      {words.length > 20 && !expanded && (
+        <span
+          className={styles.readMore}
+          onClick={() => setExpanded(true)}
+        >
+          Read More
+        </span>
+      )}
+    </div>
+
 
           <hr className={styles.divider} />
 
@@ -23,7 +50,7 @@ const DeveloperInfoMobile = () => {
             <strong>Office Address :-</strong>
             <p className={styles.address}>
               <FaMapMarkerAlt className={styles.icon} />
-              Metro, 123, Saidulajab, Mehrauli– Near Saket, New Delhi –110030
+              {`${project.street_address},${project.city_name},${project.state_name}-${project.pin_code}`}
             </p>
           </div>
 

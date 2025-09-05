@@ -48,7 +48,7 @@ const projectData = [
   },
 ];
 
-const ProjectCarousel = () => {
+const ProjectCarousel = ({projects}) => {
   const router = useRouter();
   const carouselRef = useRef(null);
   const scrollAmount = 850;
@@ -73,8 +73,9 @@ const ProjectCarousel = () => {
   };
 
   const handleProject = (project) => {
-    const query = new URLSearchParams(project).toString();
-    router.push(`/project-details?${query}`);
+
+    // const query = new URLSearchParams(project).toString();
+    router.push(`/project-details?name=${project.name}&property-name=${project.property_id_name}&id=${project.id}`);
   };
 
   return (
@@ -84,7 +85,7 @@ const ProjectCarousel = () => {
       </div>
 
       <div className="project-carousel" ref={carouselRef}>
-        {projectData.map((project, index) => (
+        {projects.map((project, index) => (
           <ProjectCard key={index} project={project} onViewProject={handleProject} />
         ))}
       </div>

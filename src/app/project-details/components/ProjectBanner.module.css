@@ -1,13 +1,16 @@
-.projectdetailsherosection{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: 50px;
-    padding-bottom: 55px;
-    background-image: url('/project_details_hero.png');
-    background-position: center;
-    background-repeat: no-repeat;
+.projectdetailsherosection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 50px;
+  padding-bottom: 55px;
+  
+  /* background-image: url('/project_details_hero.png'); */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% auto; /* full width, keep height natural */
 }
+
 .herosection{
     display: flex;
     justify-content: space-between;
@@ -32,13 +35,13 @@
  }
 
 .info{
-    width: 442px;
+    width: 490px;
     /* height: 186px; */
     margin-bottom: 24px;
 }
 .info1{
 
-    width: 412px;
+    width: 470px;
     /* height: 215px; */
         margin-bottom: 29px;
 

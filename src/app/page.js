@@ -52,7 +52,7 @@ export default async function Home() {
       <FeaturesCopy projects={projects}/>
       <PropertyListing propertyList={propertyList}/>
       <SponsoredProperty />
-      <ProjectCarousel />
+      <ProjectCarousel projects={projects} />
       <AdviceAndTools />
       <PropertyServices />
       <WhyChooseus />

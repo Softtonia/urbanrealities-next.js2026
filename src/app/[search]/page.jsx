@@ -11,17 +11,17 @@ const outerpage = () => {
       <div className="container">
         <div className={`row ${styles['tab-row']}`}>
 
-<div className={`col-lg-9 col-12 ${styles["listing-col"]}`}>
-  <SingleListingWithTab />
-</div>
+          <div className={`col-lg-9 col-12 ${styles["listing-col"]}`}>
+            <SingleListingWithTab />
+          </div>
 
-<div className={`col-lg-3 col-12 ${styles["search-col"]}`}>
-  <SearchAgentCard />
-</div>
+          <div className={`col-lg-3 col-12 ${styles["search-col"]}`}>
+            <SearchAgentCard />
+          </div>
 
-<div className={`col-lg-9 col-12 ${styles["faq-col"]}`}>
-  <ProjectFAQ />
-</div>
+          <div className={`col-lg-9 col-12 ${styles["faq-col"]}`}>
+            <ProjectFAQ />
+          </div>
 
 
 
