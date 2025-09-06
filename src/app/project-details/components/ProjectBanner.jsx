@@ -21,8 +21,27 @@ const ProjectBanner = () => {
   const possessionData = project?.repeater_fields?.find(
     (val) => val.template?.name === "project.possession-date"
   )?.field_value;
-  
-  console.log(project)
+  const brochure = project?.repeater_fields?.find(
+    (val) => val.template?.name === "project.brochure"
+  )?.field_value;
+  const propertyConfigurations = project?.repeater_fields?.find(
+    (val) => val.template?.name === "project.property-configuration"
+  )?.field_value;
+
+  const handleDownload = () => {
+    if (!brochure) {
+      alert("Brochure not available!");
+      return;
+    }
+
+    // Create a temporary <a> element to trigger download
+    const link = document.createElement("a");
+    link.href = brochure;
+    link.setAttribute("download", "brochure.pdf"); // 👈 force download (name optional)
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
 
   return (
@@ -47,15 +66,19 @@ const ProjectBanner = () => {
             <div className={styles.info1}>
               <h6 className={styles.price}>Price ₹ {totalPrice}</h6>
               <h6 className={styles.bhk}>
-                1Bhk, 2bhk ,3BHK Flats, Luxury Apartment
+                {propertyConfigurations && propertyConfigurations.join(", ")}
               </h6>
+
               <h6 className={styles.bhk}>Area - {superArea} sqft</h6>
               <h6 className={styles.posession}>Possession on:- {possessionData}</h6>
             </div>
+            {
+              brochure &&
+              <button onClick={handleDownload} className={`${styles.contentbtn} ${styles['btn-subscribe']}`}>
+                Download Brochure
+              </button>
+            }
 
-            <button className={`${styles.contentbtn} ${styles['btn-subscribe']}`}>
-              Download Brochure
-            </button>
           </div>
 
           <div
