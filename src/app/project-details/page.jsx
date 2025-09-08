@@ -1,4 +1,3 @@
-
 import styles from "./components/Project-detailsPage.module.css";
 import ProjectBanner from "./components/ProjectBanner";
 import ProjectTabs from "./components/ProjectTabs";
@@ -30,16 +29,15 @@ async function fetchProject(id) {
     if (data) return data;
     return [];
   } catch (err) {
-    console.log(err.response)
+    console.log(err.response);
     console.error("Error fetching project:", err);
     return [];
   }
 }
 
 const Page = async ({ searchParams }) => {
-
-  const { id } = searchParams
-  const project = await fetchProject(id)
+  const { id } = searchParams;
+  const project = await fetchProject(id);
 
   return (
     <ProjectProvider value={project}>
@@ -82,34 +80,23 @@ const Page = async ({ searchParams }) => {
 
             <div className={`col-3 ${styles.smallTabCol}`}></div>
 
-            <div className={`col-12 p-0 ${styles.mobileCol}`}>
-              <section id="all-project">
-                <AllProject />
-              </section>
+            <div className={`col-12  ${styles.mobileCol}`}>
+              <ProjectAbout />
+              <ProjectListingWithTab />
+              <ProjectTopAdvertisers />
+              <FloorPlanSection />
+              <ProjectPhotosAndReviews />
+              <ProjectDeveloperInfo />
+              <ProjectFAQ />
 
-              <section id="developer-mobile">
-                <DeveloperInfoMobile />
-              </section>
 
-              <section id="ongoing-projects">
-                <ProjectTileData headingText="Ongoing Project by Mundeshwari II" />
-              </section>
-
-              <section id="nearby-projects">
-                <OtherBuilders />
-              </section>
-
-              <section id="completed-projects">
-                <CompletedProjectTiles />
-              </section>
-
-              <section id="other-faq">
-                <FAQAccordion />
-              </section>
-
-              <section id="home-loan">
-                <HomeLoanOffers />
-              </section>
+              {/* <AllProject />
+              <DeveloperInfoMobile />
+              <ProjectTileData headingText="Ongoing Project by Mundeshwari II" />
+              <OtherBuilders />
+              <CompletedProjectTiles />
+              <FAQAccordion />
+              <HomeLoanOffers /> */}
             </div>
           </div>
 

@@ -18,39 +18,39 @@ import { useProject } from "../context/ProjectContext";
 const FloorPlanSection = () => {
   const project = useProject();
 
-  const floorPlans = project?.repeater_fields?.find(
-    (val) => val.template?.name === "project.floor-plan")?.field_value;
-  // const floorPlans = [
-  //   {
-  //     title: "3 BHK Flat",
-  //     area: "2201Sq-ft - 2774 Sq-ft",
-  //     sale: "₹ 16Cr.- ₹ 25Cr.",
-  //     rent: "-- --",
-  //     images: ["/image-254.png", "/image-255.png"],
-  //   },
-  //   {
-  //     title: "4 BHK Flat",
-  //     area: "3000Sq-ft - 3500 Sq-ft",
-  //     sale: "₹ 25Cr.- ₹ 30Cr.",
-  //     rent: "-- --",
-  //     images: ["/image-255.png", "/image-254.png"],
-  //   },
-  // ];
-  const formattedFloors = floorPlans.map((floor) => {
-    const floorObj = {};
-    floor.forEach((item) => {
-      if (item.field_type === "media") {
-        // media holds array of file objects
-        floorObj[item.field_label] = item.field_value.map((f) => f.file_url);
-      } else {
-        floorObj[item.field_label] = item.field_value;
-      }
-    });
-    return floorObj;
-  });
+  // const floorPlans = project?.repeater_fields?.find(
+  //   (val) => val.template?.name === "project.floor-plan")?.field_value;
+  const floorPlans = [
+    {
+      title: "3 BHK Flat",
+      area: "2201Sq-ft - 2774 Sq-ft",
+      sale: "₹ 16Cr.- ₹ 25Cr.",
+      rent: "-- --",
+      images: ["/image-254.png", "/image-255.png"],
+    },
+    {
+      title: "4 BHK Flat",
+      area: "3000Sq-ft - 3500 Sq-ft",
+      sale: "₹ 25Cr.- ₹ 30Cr.",
+      rent: "-- --",
+      images: ["/image-255.png", "/image-254.png"],
+    },
+  ];
+  // const formattedFloors = floorPlans.map((floor) => {
+  //   const floorObj = {};
+  //   floor.forEach((item) => {
+  //     if (item.field_type === "media") {
+  //       // media holds array of file objects
+  //       floorObj[item.field_label] = item.field_value.map((f) => f.file_url);
+  //     } else {
+  //       floorObj[item.field_label] = item.field_value;
+  //     }
+  //   });
+  //   return floorObj;
+  // });
 
   const masterPlanImages = ["/image-255.png", "/image-254.png"]; // You can add more images if needed
-  console.log("==>>",formattedFloors)
+  // console.log("==>>",formattedFloors)
   console.log("==>>",floorPlans)
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -69,9 +69,9 @@ const FloorPlanSection = () => {
         Mundeshwari Connaught One Floor Plan & Units
       </h2>
 
-      {/* <div className={styles.floorGrid}>
-        {floorPlans.map((plan, i) => (
-          <div className={styles.floorCard} key={i}>
+      <div className={styles.floorGrid}>
+        {floorPlans.map((plan) => (
+          <div className={styles.floorCard} key={plan.id}>
             <div className={styles.floorText}>
               <p className={styles.flatTitle}>{plan.title}</p>
               <p>{plan.area}</p>
@@ -93,13 +93,13 @@ const FloorPlanSection = () => {
             </div>
           </div>
         ))}
-      </div> */}
+      </div>
 
       {/* ✅ MASTER PLAN SECTION */}
       <div className={styles.masterPlan}>
         <div className={styles.masterInfo}>
           <p className={styles.masterTitle}>View Master Plan</p>
-          <p>Connection between buildings and surrounding environments</p>
+          <p className="m-0">Connection between buildings and surrounding environments</p>
         </div>
         <div className={styles.masterPlanImage}>
           <img src={masterPlanImages[0]} alt="master" />

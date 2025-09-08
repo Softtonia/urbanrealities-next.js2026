@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react'
-import styles from './ProjectBanner.module.css'
-import { useProject } from '../context/ProjectContext';
+import React from "react";
+import styles from "./ProjectBanner.module.css";
+import { useProject } from "../context/ProjectContext";
 
 const ProjectBanner = () => {
   const project = useProject();
@@ -43,24 +43,37 @@ const ProjectBanner = () => {
     document.body.removeChild(link);
   };
 
-
   return (
     <>
       <div
         className={styles.projectdetailsherosection}
         style={{
-          backgroundImage: `url(${project.featured_image
-            })`,
+          backgroundImage: `url(${project.featured_image})`,
         }}
       >
         <div className={`${styles.herosection} container`}>
+
           <div className={styles.contentsection}>
+            <div className={styles.infowraper}>
             <div className={styles.info}>
               <h6 className={styles.rarea}>Rera No. - {reraNumber}</h6>
               <h6 className={styles.name}>{project?.name}</h6>
               <h6 className={styles.builder}>
-                {project.area_locality}, {project?.city_name}, {project?.state_name}
-              </h6>
+                {project.area_locality}, {project?.city_name},{" "}
+                {project?.state_name}
+              </h6>               
+            </div>
+          <div
+            className={styles.logosection}
+            style={{
+              backgroundImage: `url(${
+                project?.featured_image
+                  ? project.featured_image
+                  : "/salford_logo.png"
+              })`,
+            }}
+          >            
+          </div>
             </div>
 
             <div className={styles.info1}>
@@ -70,24 +83,31 @@ const ProjectBanner = () => {
               </h6>
 
               <h6 className={styles.bhk}>Area - {superArea} sqft</h6>
-              <h6 className={styles.posession}>Possession on:- {possessionData}</h6>
+              <h6 className={styles.posession}>
+                Possession on:- {possessionData}
+              </h6>
             </div>
-            {
-              brochure &&
-              <button onClick={handleDownload} className={`${styles.contentbtn} ${styles['btn-subscribe']}`}>
+            {brochure && (
+              <button
+                onClick={handleDownload}
+                className={`${styles.contentbtn} ${styles["btn-subscribe"]}`}
+              >
                 Download Brochure
               </button>
-            }
-
+            )}
           </div>
 
-          <div
+          {/* <div
             className={styles.logosection}
             style={{
-              backgroundImage: `url(${project?.featured_image ? project.featured_image : "/salford_logo.png"
-                })`,
+              backgroundImage: `url(${
+                project?.featured_image
+                  ? project.featured_image
+                  : "/salford_logo.png"
+              })`,
             }}
-          ></div>
+          >            
+          </div> */}
         </div>
       </div>
     </>

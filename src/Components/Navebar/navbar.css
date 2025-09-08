@@ -36,6 +36,13 @@
   text-decoration: none;
 }
 
+.city-Nametext.active {
+  background-color: var(--Orange-Red); 
+  color: var(--White); 
+  
+}
+
+
 @media (max-width: 992px) {
   .navbar {
     padding: 10px 15px;

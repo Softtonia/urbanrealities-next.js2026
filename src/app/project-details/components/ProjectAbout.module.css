@@ -2,13 +2,13 @@
   border: 1px solid var(--Platnium);
   border-radius: 8px;
   background-color: var(--White);
-  padding: 20px;
-  margin-top: 50px;
+  padding: clamp(10px, 1.6vw, 20px);
+  margin-top: clamp(27px, 5vw, 50px);
 }
 
 .aboutProject-highlights {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+  grid-template-columns: repeat(4, 1fr);
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 24px;
@@ -19,21 +19,29 @@
   padding: 16px 0;
   border-radius: 6px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 .cert-icon,
-.aboutProject-icon{
+.aboutProject-icon {
   color: var(--Orange-Red);
   font-size: 20px;
 }
+.aboutProject-title {
+  font-size: clamp(16px, 2.22vw, 33px);
+  font-family: var(--font-semibold);
+}
+.aboutProject-desc {
+  font-size: clamp(14px, 1.11vw, 16px);
+  font-family: var(--font-regular);
+}
 .aboutProject-box span {
-  font-size: 16px;
+  font-size: clamp(14px, 1.11vw, 16px);
   font-family: var(--font-semibold);
   margin-right: 8px;
 }
 
 .aboutProject-box p {
-  font-size: 16px;
+  font-size: clamp(14px, 1.11vw, 16px);
   font-family: var(--font-regular);
   color: var(--Eerie-Black);
   margin-top: 4px;
@@ -41,7 +49,7 @@
 
 .aboutProject-certificates {
   border: 1px solid var(--Platnium);
-  padding: 20px;
+  padding: clamp(10px, 1.6vw, 20px);
   border-radius: 6px;
 }
 
@@ -51,18 +59,17 @@
   gap: 28px;
   margin: 12px 0;
 }
-.aboutProject-para-box{
- font-size: 16px;
+.aboutProject-para-box {
+  font-size: clamp(14px, 1.11vw, 16px);
   font-family: var(--font-regular);
   color: var(--Eerie-Black);
-
 }
 .aboutProject-cert-box {
   padding: 10px 14px;
   gap: 6px;
-  font-size: 16px;
+  font-size: clamp(14px, 1.11vw, 16px);
   font-family: var(--font-regular);
-  border-right:1px solid var(--Platnium)  ;
+  border-right: 1px solid var(--Platnium);
   color: var(--Eerie-Black);
 }
 .aboutProject-cert-box:first-child,
@@ -81,7 +88,7 @@
 }
 
 .aboutProject-whybuy-title {
-  font-size: 23px;
+  font-size: clamp(16px, 1.59vw, 23px);
   font-family: var(--font-medium);
   margin-bottom: 12px;
 }
@@ -91,8 +98,8 @@
   list-style-type: decimal;
   color: var(--Eerie-Black);
 }
-.whybuy-li{
-  font-size: 16px;
+.whybuy-li {
+  font-size: clamp(14px, 1.11vw, 16px);
   font-family: var(--font-regular);
 }
 
@@ -100,6 +107,7 @@
   display: inline-block;
   margin-top: 10px;
   color: var(--Orange-Red);
+  font-size: clamp(14px, 1.11vw, 16px);
   text-decoration: none;
 }
 
@@ -113,7 +121,17 @@
   color: var(--Orange-Red);
   border: 1px solid var(--Orange-Red);
   border-radius: 6px;
-  font-size: 16px;
+  font-size: clamp(14px, 1.11vw, 16px);
   font-family: var(--font-medium);
   cursor: pointer;
 }
+
+/* Mobile devices */
+@media (max-width: 768px) {
+  .aboutProject-highlights {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+}
+

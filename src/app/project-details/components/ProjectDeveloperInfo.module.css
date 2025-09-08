@@ -7,7 +7,7 @@ margin-top: 50px;
 }
 
 .heading {
-  font-size: 32px;
+  font-size: clamp(16px, 2.22vw, 33px);
 font-family: var(--font-semibold); 
  margin-bottom: 16px;
 }
@@ -23,14 +23,14 @@ font-family: var(--font-semibold);
 }
 
 .name {
-  font-size: 19px;
+font-size: clamp(14px, 2vw, 19px);
 font-family: var(--font-semibold); 
-  margin: 0;
+  margin-bottom: 10px;
 }
 
 .experience {
-  margin: 4px 0 0;
-  font-size: 16px;
+  margin:0;
+font-size: clamp(14px, 1vw, 16px);
   font-family: var(--font-regular); 
   color: var( --Eerie-Black);
 }
@@ -68,20 +68,20 @@ font-family: var(--font-semibold);
 
 .label {
   margin: 0;
-  font-size: 16px;
+font-size: clamp(14px, 1vw, 16px);
   font-family: var(--font-regular); 
   color: var(--Eerie-Black);
 }
 
 .value {
-  font-size: 16px;
+font-size: clamp(14px, 1vw, 16px);
   font-family: var(--font-regular); 
   display: block;
   margin-top: 4px;
 }
 
 .plus {
- font-size: 16px;
+font-size: clamp(14px, 1vw, 16px);
 font-family: var(--font-regular); 
 color: var(--Orange-Red);
 }
@@ -93,7 +93,7 @@ color: var(--Orange-Red);
 .description {
   border: 1px solid var(--Platnium);
   padding: 12px;
-  font-size: 16px;
+font-size: clamp(14px, 1vw, 16px);
   font-family: var(--font-regular); 
   line-height: 1.5;
   border-radius: 6px;
@@ -117,7 +117,7 @@ color: var(--Orange-Red);
   padding: 8px 16px;
   border-radius: 24px;
   cursor: pointer;
-  font-size: 16px;
+font-size: clamp(14px, 1vw, 16px);
   font-family: var(--font-regular); 
 }
 
@@ -128,7 +128,7 @@ color: var(--Orange-Red);
   padding: 8px 16px;
   border-radius: 24px;
   cursor: pointer;
-  font-size: 16px;
+font-size: clamp(14px, 1vw, 16px);
   font-family: var(--font-regular); 
 }
 @media (min-width: 992px) {

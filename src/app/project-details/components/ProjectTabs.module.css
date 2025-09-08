@@ -36,9 +36,3 @@
   font-weight: 500;
    border-bottom: 2px solid var(--Orange-Red);
 }
-@media (max-width:991.99px){
-.tabContainer{
-  background-color: var(--Cultured);
-} 
-
-}

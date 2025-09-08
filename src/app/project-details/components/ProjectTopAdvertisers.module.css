@@ -8,18 +8,20 @@ margin-top: 50px;
 }
 
 .heading {
-font-size: 32px;
+font-size: clamp(16px,2.29vw ,33px) ;
 font-family: var( --font-semibold);
 color: var( --Eerie-Black);
 }
 .borderCard{
-display: inline-flex;
+display: flex;
 align-items: center;
+justify-content: space-between;
 border: 1px solid var(--Platnium);
 padding: 20px;
 border-radius: 8px;
 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
 background-color: var(--White);
+width: 459px;
 
 }
 
@@ -81,4 +83,26 @@ transition: background-color 0.3s ease;
 .contactButton:hover {
 background-color: var(--Orange-Red); 
 color: var(--White);
+}
+@media (max-width:768px){
+  .borderCard{
+    align-items: start;
+    flex-direction: column;
+  }  
+  .advertiserCard,
+  .advertiserInfo{
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+@media (max-width:576px){
+  .borderCard{
+    width: 100%;
+    align-items: start;
+    flex-direction: column;
+  }  
+  .advertiserInfo{
+    width: 100%;
+    justify-content: space-between;
+  }
 }
