@@ -1,19 +1,21 @@
 .projectSection {
-   border: 1px solid var(--Platnium);
+  border: 1px solid var(--Platnium);
   border-radius: 8px;
   background-color: var(--White);
   padding: 20px;
-  margin-top: 50px;}
+  margin-top: 50px;
+}
 
 .projectHeading {
-  font-size: 2rem;
-font-family: var(--font-semibold);
-  margin-bottom: 0.5rem;
+  font-size: clamp(16px, 2.29vw, 33px);
+  font-family: var(--font-semibold);
+  font-size: clamp(8px, 2vw, 24px);
 }
 
 .projectSubheading {
+  font-size: clamp(14px, 1.31vw, 19px);
   color: var(--Eerie-Black);
-  margin-bottom: 1rem;
+  font-size: clamp(15px, 2vw, 24px);
 }
 
 .carouselWrapper {
@@ -22,45 +24,45 @@ font-family: var(--font-semibold);
 }
 
 .carouselTrackWrapper {
- overflow-x: auto;
+  overflow-x: auto;
   scroll-snap-type: x mandatory;
-scrollbar-width: none;
-  display: flex;  width: 100%;
+  scrollbar-width: none;
+  display: flex;
+  width: 100%;
 }
 .carouselTrack {
   display: flex;
   gap: 18px;
-   transition: transform 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out;
 }
 
 .carouselImg {
   width: 324px;
   height: 247px;
- border-radius: 8px;
- scroll-snap-align: start;
- object-fit: cover;
+  border-radius: 8px;
+  scroll-snap-align: start;
+  object-fit: cover;
 }
 
-
-
-
-
 .photoControls {
-   display: flex;
+  position: relative;
+  display: flex;
   align-items: center;
-  margin-top: 16px; 
-  margin-bottom: 20px;
+  margin-top: clamp(18px, 2vw, 30px);
+  margin-bottom: clamp(18px, 4vw, 40px);
 }
 
 .seeAll {
+  font-size: 14px;
   color: var(--Orange-Red);
- font-family: var(--font-semibold);
+  font-family: var(--font-semibold);
   text-decoration: none;
 }
 
 .arrows {
+  position: absolute;
   display: flex;
- margin-left: 27%;
+  left: 50%;
   gap: 1rem;
 }
 
@@ -75,9 +77,9 @@ scrollbar-width: none;
 }
 
 .reviewHeading {
-  font-size: 23px;
-font-family: var(--font-medium);
-  margin-bottom: 1.2rem;
+  font-size: clamp(14px, 2vw, 23px);
+  font-family: var(--font-medium);
+  margin-bottom: clamp(15px, 2vw, 24px);
 }
 
 .reviewsRow {
@@ -117,12 +119,13 @@ font-family: var(--font-medium);
 }
 
 .reviewName {
-  font-size: 1.2rem;
-font-family: var(--font-medium);
+  font-size: clamp(14px, 1.21vw, 19px);
+  font-family: var(--font-medium);
   margin: 0;
 }
 
 .reviewRole {
+  font-size: clamp(14px, 1vw, 16px);
   color: var(--Gray);
   margin: 0;
 }
@@ -140,7 +143,7 @@ font-family: var(--font-medium);
 
 .star {
   margin-left: 2px;
-filter: drop-shadow(1px 1px 1px var(--Selective-Yellow));
+  filter: drop-shadow(1px 1px 1px var(--Selective-Yellow));
 }
 
 .filled {
@@ -148,16 +151,18 @@ filter: drop-shadow(1px 1px 1px var(--Selective-Yellow));
 }
 
 .reviewDate {
-  color: #999;
+  font-size: clamp(14px, 1vw, 16px);
+  color: var(--Gray);
 }
 
 .reviewTitle {
-  font-size: 1.7rem;
- font-family: var(--font-medium);
+  font-size: clamp(14px, 1.5vw, 27px);
+  font-family: var(--font-medium);
   margin-bottom: 0.5rem;
 }
 
 .reviewContent {
+  font-size: clamp(14px, 1vw, 16px);
   color: var(--Gray);
 }
 
@@ -168,9 +173,24 @@ filter: drop-shadow(1px 1px 1px var(--Selective-Yellow));
   border: none;
   padding: 0.7rem 1.5rem;
   border-radius: 25px;
-  font-weight: 600;
+  font-size: clamp(14px, 1vw, 16px);
+  font-family: var(--font-regular);
   cursor: pointer;
   transition: background 0.3s ease;
 }
 
-
+@media (max-width: 768px) {
+  .arrows {
+    display: none;
+  }
+  .reviewsRow {
+    flex-direction: column;
+  }
+  .reviewCard {
+    border-right: none !important ;
+    border-bottom: 1px solid #ddd;
+  }
+  .reviewCard:last-child {
+    border-bottom: none;
+  }
+}

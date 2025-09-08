@@ -10,6 +10,6 @@
     }
     .mobileCol{
     display: block;
-    background-color: var(--Cultured);
+    padding: 20px;
 }
 }

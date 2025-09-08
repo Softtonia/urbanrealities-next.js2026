@@ -62,3 +62,7 @@
     transform: translateY(0%);
   }
 } 
+.city-text.active {
+  background-color: var(--Orange-Red); 
+  color: var(--White); 
+}

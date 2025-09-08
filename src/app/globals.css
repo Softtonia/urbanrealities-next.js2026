@@ -196,35 +196,35 @@ small {
 } 
 
 .body-text-12 {
-  font-size: 12px !important;
+  font-size: 12px ;
   font-family: var(--font-regular);
 }
 .body-text-14 {
-  font-size: 14px !important;
+  font-size: 14px ;
   font-family: var(--font-regular);
 }
 .body-text-16 {
-  font-size: 16px !important;
+  font-size: 16px ;
   font-family: var(--font-medium);
 }
 .body-text-rg16 {
-  font-size: 16px !important;
+  font-size: 16px ;
   font-family: var(--font-regular);
 }
 .body-text-sb18 {
-  font-size: 18px !important;
+  font-size: 18px ;
   font-family: var(--font-semibold);
 }
 .body-text-md18 {
-  font-size: 18px !important;
+  font-size: 18px ;
   font-family: var(--font-medium);
 }
 .body-text-20 {
-  font-size: 20px !important;
+  font-size: 20px ;
   font-family: var(--font-medium);
 }
 .top-heading {
-  font-size: 30px !important;
+  font-size: 30px ;
   font-family: var(--font-semibold);
 }
 .borderNone {

@@ -1,10 +1,9 @@
-"'use client';";
+'use client';
 
-import React from "react";
+import React, { useState } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import "../LocationDropdown/LocationDropdown.css";
 import { useCity } from "@/utils/CityContext";
-
 
 const cities = {
   nearbyCities: [
@@ -97,40 +96,39 @@ const cities = {
   ],
 };
 
-
-
 const LocationDropdown = () => {
-    const { setCity } = useCity();
+  const { setCity } = useCity();
+  const [activeCity, setActiveCity] = useState(null);
 
   const handleSuggestionClick = (city) => {
     setCity(city);
+    setActiveCity(city);
   };
 
-const renderCityGrid = (citiesArray) => {
-  const columnsPerRow = 5;
-  const rows = [];
+  const renderCityGrid = (citiesArray) => {
+    const columnsPerRow = 5;
+    const rows = [];
 
+    for (let i = 0; i < citiesArray.length; i += columnsPerRow) {
+      const rowItems = citiesArray.slice(i, i + columnsPerRow);
+      rows.push(
+        <div className="row" key={i}>
+          {rowItems.map((city, index) => (
+            <div className="col" key={index}>
+              <div
+                className={`city-text mb-2 ${activeCity === city ? "active" : ""}`}
+                onClick={() => handleSuggestionClick(city)}
+              >
+                {city}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return rows;
+  };
 
-  for (let i = 0; i < citiesArray.length; i += columnsPerRow) {
-    const rowItems = citiesArray.slice(i, i + columnsPerRow);
-    rows.push(
-      <div className="row " key={i}>
-        {rowItems.map((city, index) => (
-          <div className="col" key={index}>
-            <button
-              className="city-text"
-              onClick={() => handleSuggestionClick(city)}
-            >
-              {city}
-            </button>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  return rows;
-};
   return (
     <div
       className="position-absolute bg-white shadow rounded border p-4"
@@ -143,17 +141,17 @@ const renderCityGrid = (citiesArray) => {
         overflowY: "auto",
       }}
     >
-      <div className=" text-dark d-flex align-items- mb-3">
-        <FaMapMarkerAlt className=" m-0 mt-1 p-0 " />
-        <h6 className="text-state  ms-2 p-0">INDIA</h6>
+      <div className="text-dark d-flex align-items-center mb-3">
+        <FaMapMarkerAlt className="m-0 mt-1 p-0" />
+        <h6 className="text-state ms-2 p-0">INDIA</h6>
       </div>
 
-      <div className="">
+      <div>
         <div className="city-name mb-2">Nearby Cities</div>
         {renderCityGrid(cities.nearbyCities)}
       </div>
 
-      <div className="mb-2">
+      <div>
         <div className="city-name mb-2 mt-2">Popular Cities</div>
         {renderCityGrid(cities.popularCities)}
       </div>

@@ -116,7 +116,7 @@ export default function AboutProject() {
 
       <div className={styles["aboutProject-highlights"]}>
         {features && features.map((val) => (
-          <div className={styles["aboutProject-box"]}>
+          <div  key={val.field_label} className={styles["aboutProject-box"]}>
             <p className="" style={{ textTransform: 'capitalize' }}>{val.field_label}</p>
             <span>{val.field_value}</span>
             {iconMap[val.field_label] || null}
@@ -149,9 +149,9 @@ export default function AboutProject() {
       <div className={styles["aboutProject-certificates"]}>
         <div className={styles["aboutProject-cert-list"]}>
           {visibleCertificates && visibleCertificates.map((val) => (
-            <div className={styles["aboutProject-cert-box"]}>
-              {val.field_label}
-              {/* <p className={styles["aboutProject-para-box"/]}>C</p> */}
+            <div  key={val.field_label} className={styles["aboutProject-cert-box"]}>
+              {/* {val.field_label} */}
+              <p className={styles["aboutProject-para-box"]}> {val.field_label}</p>
               <div
                 onClick={() => handleDownload(val.field_value)} // 👈 pass file link
                 style={{ cursor: "pointer" }}

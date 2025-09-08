@@ -13,7 +13,9 @@ const ProjectTopAdvertisers = () => {
       <div className={styles.advertiserCard}>
         <span className={styles.agentBadge}>AGENT</span>
         <div className={styles.advertiserInfo}>
-          <p className={styles.advertiserName}>STAR ESTATE</p>
+                    <div>
+            <p className={styles.advertiserName}>STAR ESTATE</p>
+          </div>
           <div className={styles.rating}>
             <span className={styles.star}>S</span>
             <span className={styles.star}>T</span>
@@ -28,6 +30,7 @@ const ProjectTopAdvertisers = () => {
         <button className={styles.contactButton}>Contact Agent</button>
     </div>
     </div>
+    
     </div>
   );
 };

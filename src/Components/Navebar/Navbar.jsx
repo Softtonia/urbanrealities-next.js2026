@@ -104,39 +104,42 @@ const cities = {
   ],
 };
 
-const renderCityGrid = (citiesArray) => {
-  const columnsPerRow = 5;
-  const rows = [];
+export default function Navbar() {
+  const { city, setCity } = useCity();
+    const [activeCity, setActiveCity] = useState(null);
 
-     const { token } = useSiteSettings();
-  const { setCity } = useCity();
-
-  const handleSuggestionClick = (city) => {
-    setCity(city);
+  const handleSuggestionClick = (cityName) => {
+    setCity(cityName);
+    setActiveCity(cityName)
   };
 
-  for (let i = 0; i < citiesArray.length; i += columnsPerRow) {
-    const rowItems = citiesArray.slice(i, i + columnsPerRow);
-    rows.push(
-      <div className="row mb-1 ms-3" key={i}>
-        {rowItems.map((city, index) => (
-          <div className="col" key={index}>
-            <div
-              className="city-text mb-2"
-              onClick={() => handleSuggestionClick(city)}
-            >
-              {city}
+  const renderCityGrid = (citiesArray, city, handleSuggestionClick) => {
+    const columnsPerRow = 5;
+    const rows = [];
+
+    for (let i = 0; i < citiesArray.length; i += columnsPerRow) {
+      const rowItems = citiesArray.slice(i, i + columnsPerRow);
+      rows.push(
+        <div className="row mb-1 ms-3" key={i}>
+          {rowItems.map((cityName, index) => (
+            <div className="col" key={index}>
+              <div
+                className={`city-Nametext mb-2 ${
+                activeCity=== cityName ? "active" : ""
+                }`}
+                onClick={() => handleSuggestionClick(cityName)}
+              >
+                {cityName}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
+          ))}
+        </div>
+      );
+    }
 
-  return rows;
-};
+    return rows;
+  };
 
-export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLocationSlider, setShowLocationSlider] = useState(false);
@@ -172,7 +175,6 @@ export default function Navbar() {
       .slice(0, 5);
     setSuggestions(filtered);
   };
- 
 
   useEffect(() => {
     const handleResize = () => {
@@ -687,12 +689,20 @@ export default function Navbar() {
             <>
               <div className="mb-3">
                 <div className="city-heading-mob mb-2 ms-3">Nearby Cities</div>
-                {renderCityGrid(cities.nearbyCities)}
+                {renderCityGrid(
+                  cities.nearbyCities,
+                  city,
+                  handleSuggestionClick
+                )}
               </div>
 
               <div className="mb-3">
                 <div className="city-heading-mob mb-2 ms-3">Popular Cities</div>
-                {renderCityGrid(cities.popularCities)}
+                {renderCityGrid(
+                  cities.popularCities,
+                  city,
+                  handleSuggestionClick
+                )}
               </div>
 
               <div>
@@ -701,7 +711,11 @@ export default function Navbar() {
                   className="scrollable overflow-auto overflow-x-hidden"
                   style={{ maxHeight: "500px" }}
                 >
-                  {renderCityGrid(cities.otherCities)}
+                  {renderCityGrid(
+                    cities.otherCities,
+                    city,
+                    handleSuggestionClick
+                  )}
                 </div>
               </div>
             </>

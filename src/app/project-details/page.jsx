@@ -1,4 +1,3 @@
-
 import styles from "./components/Project-detailsPage.module.css";
 import ProjectBanner from "./components/ProjectBanner";
 import ProjectTabs from "./components/ProjectTabs";
@@ -30,16 +29,15 @@ async function fetchProject(id) {
     if (data) return data;
     return [];
   } catch (err) {
-    console.log(err.response)
+    console.log(err.response);
     console.error("Error fetching project:", err);
     return [];
   }
 }
 
 const Page = async ({ searchParams }) => {
-
-  const { id } = searchParams
-  const project = await fetchProject(id)
+  const { id } = searchParams;
+  const project = await fetchProject(id);
 
   return (
     <ProjectProvider value={project}>
@@ -60,14 +58,23 @@ const Page = async ({ searchParams }) => {
             </div>
             <div className={`col-3 ${styles.smallTabCol}`}></div>
 
-            <div className={`col-12 p-0 ${styles.mobileCol}`}>
-              <AllProject />
+            <div className={`col-12  ${styles.mobileCol}`}>
+              <ProjectAbout />
+              <ProjectListingWithTab />
+              <ProjectTopAdvertisers />
+              <FloorPlanSection />
+              <ProjectPhotosAndReviews />
+              <ProjectDeveloperInfo />
+              <ProjectFAQ />
+
+
+              {/* <AllProject />
               <DeveloperInfoMobile />
               <ProjectTileData headingText="Ongoing Project by Mundeshwari II" />
               <OtherBuilders />
               <CompletedProjectTiles />
               <FAQAccordion />
-              <HomeLoanOffers />
+              <HomeLoanOffers /> */}
             </div>
           </div>
         </div>
