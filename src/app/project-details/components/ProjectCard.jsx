@@ -36,31 +36,31 @@ export default function ProjectCard() {
           <FaMapMarkerAlt className={styles.locationIcon} /> New Ashok Nagar,
           Near Metro Station
         </p>
-     <div className={styles.cardtags}>
-  {[
-    {
-      icon: <MdOutlineChair className={styles["card-icon"]} />,
-      label: "3BHK"
-    },
-    {
-      icon: <MdOutlineCorporateFare className={styles["card-icon"]} />,
-      label: "4–5 Floor"
-    },
-    {
-      icon: <FaRulerCombined className={styles["card-icon"]} />,
-      label: "1700sqft."
-    },
-    {
-      icon: <FaBuilding className={styles["card-icon"]} />,
-      label: "Extra Tag"
-    }
-  ].slice(0, 3).map((tag, index) => (
-    <span key={index} className={styles.cardtag}>
-      {tag.icon}
-      {tag.label}
-    </span>
-  ))}
-</div>
+        <div className={styles.cardtags}>
+          {[
+            {
+              icon: <MdOutlineChair className={styles["card-icon"]} />,
+              label: "3BHK"
+            },
+            {
+              icon: <MdOutlineCorporateFare className={styles["card-icon"]} />,
+              label: "4–5 Floor"
+            },
+            {
+              icon: <FaRulerCombined className={styles["card-icon"]} />,
+              label: "1700sqft."
+            },
+            {
+              icon: <FaBuilding className={styles["card-icon"]} />,
+              label: "Extra Tag"
+            }
+          ].slice(0, 3).map((tag, index) => (
+            <span key={index} className={styles.cardtag}>
+              {tag.icon}
+              {tag.label}
+            </span>
+          ))}
+        </div>
 
         <p className={styles.owner}>Ganesh Property</p>
         <div className={styles.details}>
@@ -76,15 +76,15 @@ export default function ProjectCard() {
           <p>
             <FaRegCircleCheck className={styles["card-check"]} /> Newly Constructed Property
           </p>
-          </div>
+        </div>
         <p className={styles.description}>
           3 bhk newly constructed semi furnished flat with modular kitchen
         </p>
       </div>
       <div className={styles.cardright}>
         <div className={styles.pricesection}>
-        <p className={styles.price}>$ 56000</p>
-        <button className={styles.button}>Contact Agent</button>
+          <p className={styles.price}>$ 56000</p>
+          <button className={styles.button}>Contact Agent</button>
         </div>
       </div>
     </div>

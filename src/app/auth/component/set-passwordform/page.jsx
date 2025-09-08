@@ -67,15 +67,15 @@ const SetPassword = () => {
       );
       return;
     }
-
+  
     if (formData.password !== formData.confirm_password) {
       setError("Passwords do not match");
       return;
     }
-
+  
     setLoading(true);
     setError("");
-
+  
     try {
       const response = await fetch("/api/auth/user-register", {
         method: "POST",
@@ -92,22 +92,38 @@ const SetPassword = () => {
           password: formData.password,
         }),
       });
-
+  
       const result = await response.json();
-
+  
       if (!response.ok) {
-        throw new Error(result.error || "Registration failed");
+        // ✅ Check if all 3 duplicate errors are present
+        if (
+          result?.phone?.[0]?.includes("has already been taken") &&
+          result?.email?.[0]?.includes("has already been taken") &&
+          result?.user_name?.[0]?.includes("has already been taken")
+        ) {
+          throw new Error("User already got created");
+        }
+  
+        // fallback for other validation errors
+        // throw new Error(
+        //   Object.values(result).flat().join(", ") || "Registration failed"
+        // );
       }
+  
       if (result.api_token) {
         await login(result.api_token);
       }
+      sessionStorage.setItem("registration_step", "2");
       router.push(`/auth/login/verify-otp?email=${formData.email}`);
+
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
+  
 
   const EyeIcon = ({ open }) => (
     open ? (
@@ -128,6 +144,13 @@ const SetPassword = () => {
 
     )
   );
+  useEffect(() => {
+    const step = sessionStorage.getItem("registration_step");
+    if (step !== "1") {
+      // ⛔ Not allowed if Step 1 not complete
+      router.replace("/auth/login/register");
+    }
+  }, []);
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

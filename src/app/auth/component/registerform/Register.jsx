@@ -6,14 +6,19 @@ import { useRouter } from "next/navigation";
 import { useRegisterForm } from "../../context/RegisterFormProvider";
 import { useDebounce } from "@/hooks/useDebounce";
 
-const Register = ({roles=[]}) => {
+const Register = ({ roles = [] }) => {
   const { formData, updateField } = useRegisterForm();
   const [formError, setFormError] = useState("");
   // const [roles, setRoles] = useState(roles);
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("")
   const [phoneError, setPhoneError] = useState("")
+  const [firstNameError, setFirstNameError] = useState("");
+  const [lastNameError, setLastNameError] = useState("");
+
+
   const router = useRouter();
+
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (token) {
@@ -142,6 +147,44 @@ const Register = ({roles=[]}) => {
 
 
   // --- Next button handler ---
+  console.log(formData.role)
+  const validateForm = () => {
+    let isValid = true;
+
+    if (!formData.firstName?.trim()) {
+      setFirstNameError("First name is required.");
+      isValid = false;
+    } else setFirstNameError("");
+
+    if (!formData.lastName?.trim()) {
+      setLastNameError("Last name is required.");
+      isValid = false;
+    } else setLastNameError("");
+
+    if (!formData.userName?.trim()) {
+      setUsernameError("Username is required.");
+      isValid = false;
+    } else setUsernameError("");
+
+    if (!formData.email?.trim()) {
+      setEmailError("Email is required.");
+      isValid = false;
+    } else setEmailError("");
+
+    if (!formData.phone?.trim()) {
+      setPhoneError("Phone number is required.");
+      isValid = false;
+    } else setPhoneError("");
+
+    if (!formData.role) {
+      setRoleError("Role is required.");
+      isValid = false;
+    } else setRoleError("");
+
+    return isValid;
+  };
+
+
   const handleNext = () => {
     setFormError(""); // clear previous error
 
@@ -150,17 +193,7 @@ const Register = ({roles=[]}) => {
     if (phoneError) return; //phone taken
 
     // ✅ Required field validation
-    if (
-      !formData.firstName?.trim() ||
-      !formData.lastName?.trim() ||
-      !formData.userName?.trim() ||
-      !formData.email?.trim() ||
-      !formData.phone?.trim() ||
-      !formData.role
-    ) {
-      setFormError("Please fill in all required fields.");
-      return;
-    }
+    if (!validateForm()) return;
 
     const query = new URLSearchParams({
       email: formData.email,
@@ -170,6 +203,8 @@ const Register = ({roles=[]}) => {
       firstname: formData.firstName,
       lastname: formData.lastName
     }).toString();
+
+    sessionStorage.setItem("registration_step", "1");
 
     router.push(`/auth/login/setpassword?${query}`);
   };
@@ -200,8 +235,9 @@ const Register = ({roles=[]}) => {
   return (
     <div>
       <h2 className={`formHeading ${styles.formHeading}`}>{data.heading}</h2>
-      <p className={`formSubHeading ${styles.formSubHeading}`}>{data.subText}</p>
+      {/* <p className={`formSubHeading ${styles.formSubHeading}`}>{data.subText}</p> */}
 
+      {/* First Name */}
       {/* First Name */}
       <div className={styles.formGroup}>
         <label htmlFor="firstName" className={`formLabel ${styles.formLabel}`}>
@@ -215,6 +251,9 @@ const Register = ({roles=[]}) => {
           placeholder={data.firstNamePlaceholder}
           onChange={(e) => updateField("firstName", e.target.value)}
         />
+        {firstNameError && (
+          <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{firstNameError}</p>
+        )}
       </div>
 
       {/* Last Name */}
@@ -230,7 +269,11 @@ const Register = ({roles=[]}) => {
           placeholder={data.lastNamePlaceholder}
           onChange={(e) => updateField("lastName", e.target.value)}
         />
+        {lastNameError && (
+          <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{lastNameError}</p>
+        )}
       </div>
+
 
       {/* Username */}
       <div className={styles.formGroup}>
@@ -304,7 +347,7 @@ const Register = ({roles=[]}) => {
                 type="radio"
                 name="userType"
                 value={role.id}
-                checked={formData.role === role.id}
+                checked={formData.role == role.id}
                 onChange={() => updateField("role", role.id)}
               />
               <span className={`body-text-14 ${styles.spanOption}`}>{role.name}</span>

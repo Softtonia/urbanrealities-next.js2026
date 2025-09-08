@@ -13,7 +13,7 @@ export const RegisterFormProvider = ({ children }) => {
         userName: "",
         email: "",
         phone: "",
-        role: "Owner",
+        role: "2",
         password: "",
         confirm_password:''
     });

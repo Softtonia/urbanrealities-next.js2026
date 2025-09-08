@@ -1,0 +1,50 @@
+.section {
+padding: 20px 0px 18px 20px;
+text-align: center;
+background-color: var(--White);
+margin-top: 2px;
+}
+
+.title {
+font-size: 20px;
+font-family: var(--font-semibold);
+margin-bottom: 20px;
+}
+
+.cardWrapper {
+display: flex;
+gap: 17px;
+overflow-x: auto;
+scroll-snap-type: x mandatory;
+scrollbar-width: none; 
+}
+.cardWrapper::-webkit-scrollbar {
+display: none; /* Chrome, Safari */
+}
+
+.card {
+border: 1px solid #ccc;
+border-radius: 8px;
+padding: 20px 5px 8px;
+background: #fff;
+/* width: 123px;
+height: 105px; */
+display: flex;
+flex-direction: column;
+align-items: center;
+transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+object-fit: contain;
+margin-bottom: 11px;
+}
+
+.name {
+color: var(--Eerie-Black);
+margin: 0;
+}

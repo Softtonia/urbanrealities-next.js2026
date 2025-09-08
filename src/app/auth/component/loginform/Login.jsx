@@ -3,13 +3,15 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Login.module.css";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useSiteSettings();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,6 +28,7 @@ export default function LoginPage() {
       router.replace("/");
     }
   }, []);
+  console.log('==>',redirect)
 
   const data = {
     heading: "Login your account",
@@ -79,23 +82,32 @@ export default function LoginPage() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.message || "Login failed");
+        // 🔹 Handle server error messages nicely
+        if (result.message === "User not found") {
+          setError("Please enter a correct registered email address.");
+        } else if (result.message === "Login failed") {
+          setError("Incorrect password, please try again.");
+        } else {
+          setError(result.message || "Login failed, please try again.");
+        }
+        return; // ⛔ stop here
       }
-      console.log("login", result)
-      if (result.token) {
-        
-        login(result.token)
-      }
-      // Redirect user or do something else
 
-      // ✅ Success: redirect or store token
-      router.push("/");
+      // ✅ Success: store token + redirect
+      if (result.token) {
+        login(result.token);
+      }
+      console.log(redirect)
+
+      router.push(redirect);
+
     } catch (err) {
-      setError(err.message);
+      setError("Something went wrong. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <form onSubmit={handleLogin}>

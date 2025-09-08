@@ -18,10 +18,9 @@ const AmenitiesSection = () => {
 
 
     const aminityFields = (Array.isArray(formData.custom_field) ? formData.custom_field : []).filter(field => {
-        const templateName = field.template?.name?.toLowerCase() || "";
-
-        return templateName.endsWith("amenity");
-    });
+        return field.template?.name?.toLowerCase().startsWith("project.features.");
+      });
+      
 
     console.log("fields", aminityFields)
     const { token } = useSiteSettings();

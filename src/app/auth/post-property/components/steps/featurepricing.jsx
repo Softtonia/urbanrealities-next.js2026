@@ -20,11 +20,9 @@ const PricingAndOthers = () => {
   const selectedCategory = formData.basicDetails?.category || "";
 
   const priceFields = (Array.isArray(formData.custom_field) ? formData.custom_field : []).filter(field => {
-    const label = field.field_label?.toLowerCase() || "";
-    const slug = field.field_name_slug?.toLowerCase() || "";
-
-    return label.includes("price") || slug.includes("price");
+    return field.template?.name?.startsWith("property.price");
   });
+  
   console.log("fields", priceFields)
   const { token } = useSiteSettings();
   const [rentInWords, setRentInWords] = useState("");

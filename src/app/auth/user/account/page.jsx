@@ -45,7 +45,7 @@ const MyAccount = () => {
   );
 
   return (
-    <ProtectedRoute>
+    // <ProtectedRoute>
       <>
         {loading ? (
           <div className={styles.loaderWrapper}>
@@ -95,7 +95,8 @@ const MyAccount = () => {
             </nav>
           </>
         )}
-      </></ProtectedRoute>
+      </>
+      // </ProtectedRoute>
   );
 };
 

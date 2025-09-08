@@ -12,10 +12,10 @@ export async function POST(request) {
 
         return NextResponse.json(response.data); // return Laravel's response to frontend
     } catch (error) {
-        console.error("Registration Error:", error?.response?.data || error.message);
+        console.error("Registration Error:", error?.response?.data?.errors);
         return NextResponse.json(
-            { error: error?.response?.data?.message || error.message },
-            { status: 500 }
+            { error: error?.response?.data?.errors},
+            { status: error.status ||500 }
         );
     }
 }

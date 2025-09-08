@@ -41,17 +41,33 @@ const fetchProperties = async ()=> {
     return [];
   }
 }
+const fetchDeveloper = async ()=> {
+  try {
+    // ✅ Directly call backend API, not your Next.js API route
+    const response = await get(`/api/fetch-all-developer-listing-no-auth?per_page=5`);
+    const data = response?.data;
+    console.log("=>", data)
+
+    if (data) return data.data;
+    return [];
+  } catch (err) {
+    console.log(err.response)
+    console.error("Error fetching properties", err);
+    return [];
+  }
+}
 
 
 export default async function Home() {
   const projects =await fetchProject()
   const propertyList = await fetchProperties()
+  const developer = await fetchDeveloper()
   return (
     <>
       <SearchPropertySection />
       <FeaturesCopy projects={projects}/>
       <PropertyListing propertyList={propertyList}/>
-      <SponsoredProperty />
+      <SponsoredProperty developer={developer}/>
       <ProjectCarousel projects={projects} />
       <AdviceAndTools />
       <PropertyServices />

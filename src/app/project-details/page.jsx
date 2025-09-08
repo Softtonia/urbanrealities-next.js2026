@@ -45,31 +45,74 @@ const Page = async ({ searchParams }) => {
     <ProjectProvider value={project}>
       <div>
         <ProjectBanner />
-        <ProjectTabs />
-
+        <div style={{ position: 'sticky', top: '0', zIndex: '20' }}>
+          <ProjectTabs />
+        </div>
         <div className="container">
           <div className="row tab-row">
             <div className={`col-9 ${styles.largeTabCol}`}>
-              <ProjectAbout />
-              <ProjectListingWithTab />
-              <ProjectTopAdvertisers />
-              <FloorPlanSection />
-              <ProjectPhotosAndReviews />
-              <ProjectDeveloperInfo />
-              <ProjectFAQ />
+              <section id="about-project">
+                <ProjectAbout />
+              </section>
+
+              <section id="properties">
+                <ProjectListingWithTab />
+              </section>
+
+              <section id="top-advertiser">
+                <ProjectTopAdvertisers />
+              </section>
+
+              <section id="floor-plan-&-unit">
+                <FloorPlanSection />
+              </section>
+
+              <section id="project-details">
+                <ProjectPhotosAndReviews />
+              </section>
+
+              <section id="about-developer">
+                <ProjectDeveloperInfo />
+              </section>
+
+              <section id="faq">
+                <ProjectFAQ />
+              </section>
             </div>
+
             <div className={`col-3 ${styles.smallTabCol}`}></div>
 
             <div className={`col-12 p-0 ${styles.mobileCol}`}>
-              <AllProject />
-              <DeveloperInfoMobile />
-              <ProjectTileData headingText="Ongoing Project by Mundeshwari II" />
-              <OtherBuilders />
-              <CompletedProjectTiles />
-              <FAQAccordion />
-              <HomeLoanOffers />
+              <section id="all-project">
+                <AllProject />
+              </section>
+
+              <section id="developer-mobile">
+                <DeveloperInfoMobile />
+              </section>
+
+              <section id="ongoing-projects">
+                <ProjectTileData headingText="Ongoing Project by Mundeshwari II" />
+              </section>
+
+              <section id="nearby-projects">
+                <OtherBuilders />
+              </section>
+
+              <section id="completed-projects">
+                <CompletedProjectTiles />
+              </section>
+
+              <section id="other-faq">
+                <FAQAccordion />
+              </section>
+
+              <section id="home-loan">
+                <HomeLoanOffers />
+              </section>
             </div>
           </div>
+
         </div>
       </div>
     </ProjectProvider>

@@ -2,13 +2,34 @@ import styles from './My-Account-listing.module.css';
 import { FaBell } from "react-icons/fa";
 
 export default function MyAccountlisting({ data }) {
+  const templates = [
+
+    "property.basic.price",
+
+  ];
+  const fieldData = templates.map((templateLabel) => {
+    const field = data?.custom_field_values?.find(
+      (f) => { const tmp = (f.template.name).toLowerCase(); return tmp === templateLabel }
+    );
+
+    if (!field || !field.field_value) return null;
+
+    return {
+      label: field.field_label, // pretty label
+      value: Array.isArray(field.field_value)
+        ? field.field_value.join(", ")
+        : field.field_value,
+    };
+  }).filter(Boolean);
+
+  console.log(fieldData)
   return (
     <div className={` ${styles.card} `}>
       {/* Image with Verified tag */}
       <div className={` ${styles.imageWrapper} `}>
         <span className={styles.verified}>Verified</span>
         <img
-          src={data.imageUrl}
+          src={data.featured_image}
           alt="Property"
           className={styles.image}
         />
@@ -21,7 +42,7 @@ export default function MyAccountlisting({ data }) {
           <FaBell className={styles.bellIcon} />
         </div>
 
-        <div className={styles.price}>{data.price}</div>
+        <div className={styles.price}>{fieldData.value}</div>
 
         <p className={styles.infoLine}>
           <strong>{data.bhk}</strong> &nbsp; {data.type} &nbsp; {data.size}

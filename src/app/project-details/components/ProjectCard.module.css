@@ -6,6 +6,7 @@ border: 1px solid var(--Orange-Red);
 border-radius: 10px;
 margin: 20px 0;
 background: var(--White);
+z-index: auto;
 align-items: center;
 gap: 24px;
 width: 100%;

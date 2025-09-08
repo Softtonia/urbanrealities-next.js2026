@@ -22,21 +22,27 @@ const VerifyOTP = () => {
 
   const handleVerify = async (e) => {
     e.preventDefault();
+  
+    // ✅ check if OTP is missing
+    if (!otp || otp.trim() === "") {
+      setError("Please enter the OTP");
+      return;
+    }
+  
     setLoading(true);
     setError("");
-
+  
     try {
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email_otp: otp, token: token })
+        body: JSON.stringify({ email_otp: otp, token }),
       });
-
+  
       const result = await res.json();
-      // console.log(result)
-
+  
       if (res.ok) {
         // OTP is correct
         router.push("/");
@@ -49,6 +55,14 @@ const VerifyOTP = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const step = sessionStorage.getItem("registration_step");
+    if (step !== "2") {
+      router.replace("/auth/login/register");
+    }
+  }, []);
+  
 
   return (
     <div>

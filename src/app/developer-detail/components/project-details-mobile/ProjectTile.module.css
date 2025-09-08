@@ -1,0 +1,112 @@
+
+.card {
+  scroll-snap-align: start;
+  position: relative;
+  background: var(--White);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  width: 100%;
+  max-width: 336px;
+  max-height: 367px;
+  margin: auto;
+ border-radius: 0 24px 12px 12px;
+ margin-bottom: 51px;
+}
+
+.badge {
+  position: absolute;
+  background: var(--Orange-Red);
+  color: var(--White);
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 0 0 8px 0;
+  z-index: 5;
+}
+
+.imageWrapper {
+ border-radius: 0 24px 0 24px ;
+ position: relative;
+  overflow: hidden;
+}
+
+.image {
+  display: block;
+}
+
+.bookmark {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--White);
+  padding: 5px 6px;
+  font-size: 38px;
+  color: var(--Gray);
+  border-radius: 50%;
+  /* Add bookmark icon or SVG inside */
+}
+
+.content {
+  padding: 6px 20px;
+border-top: none;
+ border-radius: 0 0 12px 12px;
+
+}
+
+.priceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--Cultured);
+}
+
+.price {
+font-size: 16;
+color: var( --Slimy-Green);
+font-family: var(--font-regular);
+
+}
+
+.rating {
+    font-size: 14px;
+color: var( --Eerie-Black);
+font-family: var(--font-regular);
+}
+
+.star {
+  margin-left: 4px;
+  color: var(--Selective-Yellow);
+}
+
+.details, .location, .carpetArea, .availableFor {
+  color: var(--Gray);
+  font-size: 14px;
+  font-family: var(--font-regular);
+  margin: 4px 0;
+  border-bottom: 1px solid var(--Cultured);
+}
+.carpetArea{
+border-bottom: none;
+}
+.projectName {
+  color: var(--Orange-Red);
+}
+.Fordata,
+.Areadata{
+color: var( --Eerie-Black);
+margin-left: 7px;
+}
+.moreBtn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--Orange-Red);
+  background: transparent;
+  color: var(--Orange-Red);
+  font-size: 12px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.moreBtn:hover {
+  background: var(--Orange-Red);
+  color: var(--White);
+}

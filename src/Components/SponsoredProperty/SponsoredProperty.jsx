@@ -1,37 +1,60 @@
-
 'use client';
 import React from 'react';
 import './SponsoredProperty.css';
 
-const SponsoredProperty = () => {
-  return (
-    <div className='container'>
-      <div className="sponsored-property-row-container">
+const SponsoredProperty = ({ developer }) => {
+  console.log("Developer list:", developer);
 
-        {[1, 2, 3].map((_, index) => (
-          <div key={index} className="sponsored-property-card">
-            <div className="sponsored-property-image-container">
-              <img
-                src="/sponsored-property-image.png"
-                alt="Sponsored Property"
-                className="sponsored-property-image"
-             
-              />
-              <div className="sponser-tag">Sponsored</div>
-            </div>
-            <div className="sponsored-property-content">
-              <div className="sponsored-property-content-inner">
-                <div className="sponsored-property-title body-text-16 text-dark">Ganesh Property</div>
-                <div className="sponsored-property-info-row">
-                  <div className="sponsored-property-description text-gray body-text-14">3BHK Builder Floor 1700sqft.</div>
-                  <div className="sponsored-property-location text-gray body-text-14">Ernakulam, Kerala</div>
-                  <div className="sponsored-property-price body-text-14">₹ 3 Crore</div>
+
+  return (
+    <div className="container">
+      <div className="sponsored-property-row-container">
+        {developer && developer.length > 0 ? (
+          developer.map((val, index) => (
+            <div key={index} className="sponsored-property-card">
+              <div className="sponsored-property-image-container">
+                <img
+                  src={val.image || "/sponsored-property-image.png"}
+                  alt={val.title || "Sponsored Property"}
+                  className="sponsored-property-image"
+                />
+                <div className="sponser-tag">Sponsored</div>
+              </div>
+              <div className="sponsored-property-content">
+                <div className="sponsored-property-content-inner">
+                  <div className="sponsored-property-title body-text-16 text-dark">
+                    {val.name}
+                  </div>
+                  <div className="sponsored-property-info-row">
+                    <div className="sponsored-property-description text-gray body-text-14">
+                      {
+                        val?.custom_field_values?.find(
+                          (temp) => temp?.template?.name === "developer.bedrooms"
+                      )?.field_value?.join(", ") 
+                      } {
+                        val?.custom_field_values?.find(
+                          (temp) => temp?.template?.name === "developer.area-sqft"
+                        )?.field_value
+                      } sqft.
+                    </div>
+                    <div className="sponsored-property-location text-gray body-text-14">
+                      {val.city_name + ',' + val.state_name}
+                    </div>
+                    <div className="sponsored-property-price body-text-14">
+                      ₹{
+                        val?.custom_field_values?.find(
+                          (temp) => temp?.template?.name === "developer.price"
+                        )?.field_value
+                      }
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-
+          ))
+        ) : (
+          <p>No sponsored properties available</p>
+        )}
       </div>
     </div>
   );

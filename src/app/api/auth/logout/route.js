@@ -15,13 +15,28 @@ export async function POST(req) {
       },
     });
 
-    // If your `post()` returns a fetch Response:
-    const data = await apiResponse.json();
+    let data;
 
-    return Response.json(data, { status: apiResponse.status });
+    // Case 1: If `post()` uses fetch → has `.json()`
+    if (typeof apiResponse.json === "function") {
+      data = await apiResponse.json();
+    }
+    // Case 2: If `post()` uses axios → has `.data`
+    else if (apiResponse?.data) {
+      data = apiResponse.data;
+    }
+    // Case 3: fallback → stringify safely
+    else {
+      data = { message: "Logout successful" };
+    }
 
+    return Response.json(data, { status: apiResponse.status || 200 });
   } catch (error) {
     console.error("Logout API error:", error);
-    return Response.json({ message: "Internal server error" }, { status: 500 });
+
+    return Response.json(
+      { message: error.message || "Internal server error" },
+      { status: 500 }
+    );
   }
 }
