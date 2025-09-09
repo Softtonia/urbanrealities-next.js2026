@@ -1,0 +1,65 @@
+.statssection {
+  border: 1px solid var(--Platnium);
+  border-radius: 8px;
+  background-color: var(--White);
+  padding: clamp(10px, 1.6vw, 20px);
+  margin-top: clamp(27px, 5vw, 50px);
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: clamp(16px, 2.22vw, 33px);
+  font-family: var(--font-semibold);
+  margin-bottom: 24px;
+}
+.subtitle{
+  font-size: clamp(16px, 2.22vw, 33px);
+  font-family: var(--font-semibold);
+  margin-bottom: 20px;
+
+}
+.description {
+  font-size: clamp(14px, 1.11vw, 16px);
+  font-family: var(--font-regular);
+  color: #555;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.statCard {
+  border: 1px solid var(--Platnium);
+  flex: 1;
+  cursor: pointer;
+  padding: 17px 0;
+  border-radius: 6px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+
+}
+
+
+
+.statNumber {
+  font-size: clamp(16px, 2.22vw, 33px);
+ font-family: var(--font-semibold);
+  margin-bottom: 5px;
+}
+
+.statLabel {
+  font-size: clamp(14px, 1.11vw, 16px);
+  font-family: var(--font-semibold);
+}
+
+.arrow {
+  display: inline-block;
+  margin-left: 5px;
+  color: var(--Orange-Red);
+  font-size: 24px;
+}
