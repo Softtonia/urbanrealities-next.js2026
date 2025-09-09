@@ -11,10 +11,9 @@ async function getAgentProfile(id) {
   try {
 
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await get(`/api/get-user-details-by-id?id=${id}`);
+    const response = await get(`/api/get-userdata-by-id?id=${id}`);
     const data = response?.data;
     if (data.success === true) return data.user;
-
 
     return [];
 
@@ -70,6 +69,7 @@ const agentdetailspage = async ({ params, searchParams }) => {
   const purpose_id = searchParams?.purpose_id; // query string ?purpose_id=123
 
   const agentProfile = await getAgentProfile(id)
+  
   const relatedProperties = await fetchRelatedProperties(id)
   const userProperties = await fetchUserProperties(id, purpose_id)
   return (

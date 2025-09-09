@@ -68,7 +68,7 @@ const AgentProfileLayout = ({agentProfile,relatedProperties,userProperties}) => 
   //   fetchRelatedProperties();
   // }, [id]);
 
-  console.log("==>", relatedProperties)
+  console.log("==>", agentProfile)
   // const demoProperties = [
   //   {
   //     id: 1,

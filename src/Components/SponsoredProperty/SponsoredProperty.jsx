@@ -23,7 +23,13 @@ const SponsoredProperty = ({ developer }) => {
               <div className="sponsored-property-content">
                 <div className="sponsored-property-content-inner">
                   <div className="sponsored-property-title body-text-16 text-dark">
-                    {val.name}
+                  <a
+                      href={`/developer-detail?name=${val.name}&property-name=${val.property_id_name}&id=${val.id}`}
+                      // className="explore-btn"
+                      style={{color:'black',textDecoration:"none"}}
+                    >
+                      {val.name}
+                    </a>
                   </div>
                   <div className="sponsored-property-info-row">
                     <div className="sponsored-property-description text-gray body-text-14">

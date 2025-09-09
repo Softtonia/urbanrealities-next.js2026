@@ -114,7 +114,7 @@ export default function LeadsTable() {
   }}
         /> */}
           <button className={` ${styles.TicketButton} btn-AddTicket`}>
-           
+
             Add Ticket
           </button>
         </div>
@@ -172,17 +172,16 @@ export default function LeadsTable() {
               </td>
               {/* <td className={`${styles.td} ${styles.subjectCol}`}>{item.subject}</td> */}
               <td className={`${styles.td} ${styles.leadTypeCol}`}>
-        <span
-          className={`${styles.badge} ${item.leadType === 'High' ? styles.high :item.leadType === 'Medium' ? styles.medium : styles.low }`}
-        >
-          {item.leadType}
-        </span>
-      </td>
+                <span
+                  className={`${styles.badge} ${item.leadType === 'High' ? styles.high : item.leadType === 'Medium' ? styles.medium : styles.low}`}
+                >
+                  {item.leadType}
+                </span>
+              </td>
               <td className={`${styles.td} ${styles.statusCol}`}>
                 <span
-                  className={`${styles.status} ${
-                    styles[item.status.toLowerCase()]
-                  }`}
+                  className={`${styles.status} ${styles[item.status.toLowerCase()]
+                    }`}
                 >
                   {item.status}
                 </span>
