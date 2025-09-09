@@ -97,17 +97,6 @@ const ProjectBanner = () => {
             )}
           </div>
 
-          {/* <div
-            className={styles.logosection}
-            style={{
-              backgroundImage: `url(${
-                project?.featured_image
-                  ? project.featured_image
-                  : "/salford_logo.png"
-              })`,
-            }}
-          >            
-          </div> */}
         </div>
       </div>
     </>

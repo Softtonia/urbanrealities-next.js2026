@@ -1,9 +1,9 @@
 .mobileCol{
-    /* display: none ; */
+    display: none ;
 }
 
 
-/* @media (max-width:991.99px){
+@media (max-width:991.99px){
     .smallTabCol,
     .largeTabCol{
         display: none !important;
@@ -12,4 +12,4 @@
     display: block;
     background-color: var(--Cultured);
 }
-} */
+}

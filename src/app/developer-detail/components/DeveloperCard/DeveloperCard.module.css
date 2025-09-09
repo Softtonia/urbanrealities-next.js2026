@@ -1,0 +1,252 @@
+.card {
+  display: flex;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  gap: 24px;
+  width: 100%;
+  margin: 20px auto;
+}
+
+.imageContainer {
+  flex-shrink: 0;
+  position: relative;
+}
+.badge {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: var(--Orange-Red);
+  color: var(--White);
+  font-size: 12px;
+  padding: 2px 30px;
+  border-top-left-radius: 10px;
+  font-weight: bold;
+}
+.tagIconOnImage {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px 0;
+  border-radius: 25px;
+  font-size: 44px;
+  color: var(--Eerie-Black);
+}
+.imageCard {
+  width: 338px;
+  height: 225px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.cardContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Header Section */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.headerLeft h3 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #333;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}
+
+.locationIcon {
+  margin-right: 4px;
+  font-size: 14px;
+  color: #ff5722; /* Use a color from the image, like a rusty orange */
+}
+
+.headerRight {
+  text-align: right;
+  font-size: 14px;
+  color: #777;
+}
+
+.developerInfo,
+.possessionInfo {
+  margin: 0 0 4px 0;
+}
+
+/* Pricing and Description */
+.pricingAndDescription {
+  margin-bottom: 16px;
+}
+
+.priceContainer {
+  background-color: #f7f7f7;
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ff5722;
+  margin: 0;
+}
+
+.description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Tags and Button */
+.tagsAndButton {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: auto;
+}
+
+.cardtags {
+  display: flex;
+  gap: 8px;
+}
+
+.cardtag {
+  border: 1px solid var(--Orange-Red);
+  background-color: var(--Misty-Rose);
+  padding: 4px 8px;
+  font-size: clamp(10px, 1.6vw, 12px);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.cardtag:hover {
+  background-color: var(--Orange-Red);
+  color: var(--White);
+}
+.viewProjectButton {
+  background-color: #ff5722;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.viewProjectButton:hover {
+  background-color: #e04a1f;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .imageCard {
+    width: 100%;
+    height: 200px;
+  }
+
+  .cardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .headerRight {
+    text-align: left;
+    margin-top: 8px;
+  }
+
+  .tagsAndButton {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .tagContainer {
+    flex-wrap: wrap;
+  }
+
+  .viewProjectButton {
+    width: 100%;
+  }
+}
+
+
+
+
+
+
+
+@media (max-width: 1270px) {
+  .card {
+    padding: 5px;
+    height: auto;
+  }
+
+  .image-card {
+    width: 180px;
+  }
+
+  .cardCenter {
+    flex: 1;
+  }
+
+  .pricesection {
+    width: 160px;
+    padding: 8px;
+  }
+
+  /* .button {
+    font-size: clamp(11px, 2vw, 14px);
+    padding: 6px 10px;
+  } */
+}
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+    height: auto;
+  }
+  .cardleft,
+  .imageContainer {
+    width: 100%; 
+  }
+  .image-card {
+    width: 100%;
+  }
+  .cardright,
+  .pricesection {
+    width: 100%;
+    height: auto;
+  }
+  .button{
+    width:100%
+  }
+}
+
+

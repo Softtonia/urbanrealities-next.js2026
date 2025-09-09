@@ -88,7 +88,7 @@ const filters = parseSlug(slugString);
           </div>
 
           <div className={`col-lg-9 col-12 ${styles["faq-col"]}`}>
-            <ProjectFAQ className={styles.ProjectFAQ} />
+            {/* <ProjectFAQ className={styles.ProjectFAQ} /> */}
 
             <FAQAccordion
               className={styles.FAQAccordion}

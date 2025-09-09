@@ -8,14 +8,6 @@ import ProjectPhotosAndReviews from "./components/ProjectPhotosAndReviews";
 import ProjectTopAdvertisers from "./components/ProjectTopAdvertisers";
 import ProjectDeveloperInfo from "./components/ProjectDeveloperInfo";
 import FloorPlanSection from "./components/FloorPlanSection";
-// Mobilepage
-import AllProject from "./components/project-details-mobile/AllProject";
-import DeveloperInfoMobile from "./components/project-details-mobile/DeveloperInfoMobile";
-import ProjectTileData from "./components/project-details-mobile/ProjectTileData";
-import CompletedProjectTiles from "./components/project-details-mobile/CompletedProjectTiles";
-import OtherBuilders from "./components/project-details-mobile/OtherBuilders";
-import FAQAccordion from "./components/project-details-mobile/FAQAccordion";
-import HomeLoanOffers from "./components/project-details-mobile/HomeLoanOffers";
 import { get } from "@/lib/api";
 import { ProjectProvider } from "./context/ProjectContext";
 
@@ -89,14 +81,6 @@ const Page = async ({ searchParams }) => {
               <ProjectDeveloperInfo />
               <ProjectFAQ />
 
-
-              {/* <AllProject />
-              <DeveloperInfoMobile />
-              <ProjectTileData headingText="Ongoing Project by Mundeshwari II" />
-              <OtherBuilders />
-              <CompletedProjectTiles />
-              <FAQAccordion />
-              <HomeLoanOffers /> */}
             </div>
           </div>
 
