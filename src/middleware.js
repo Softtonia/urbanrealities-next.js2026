@@ -6,7 +6,7 @@ export function middleware(request) {
     const token = request.cookies.get("token")?.value;
     const { pathname } = request.nextUrl;
 
-    console.log("Token from middleware:", token);
+    // console.log("Token from middleware:", token);
 
     if (!token) {
         const loginUrl = new URL("/auth/login", request.url);
