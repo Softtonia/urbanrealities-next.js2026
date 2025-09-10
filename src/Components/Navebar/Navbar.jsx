@@ -490,9 +490,9 @@ export default function Navbar() {
                     <li>
                       <Link
                         className="dropdown-item"
-                        href="/"
+                        href="/auth/user/account"
                         style={{
-                          backgroundColor: "transparent",
+                         backgroundColor: "transparent",
                           color: "inherit",
                         }}
                       >
@@ -502,7 +502,7 @@ export default function Navbar() {
                     <li>
                       <Link
                         className="dropdown-item"
-                        href="/"
+                        href="/auth/user/setting"
                         style={{
                           backgroundColor: "transparent",
                           color: "inherit",

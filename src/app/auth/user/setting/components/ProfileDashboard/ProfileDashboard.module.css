@@ -1,0 +1,296 @@
+/* All CSS styles from the previous responses are combined here. */
+.dashboardcontainer{
+    padding: 30px; 
+    background-color: var(--White);
+    
+}
+.dashboardsection {
+    display: flex;
+    gap: 30px;
+  border-radius: 8px;
+}
+
+.profileCard {
+    background-color: var(--White);
+  border-radius: 12px;
+  padding: 30px 6px 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.profileHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.profileImageContainer {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.profileImage {
+  width: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  position: relative;
+}
+
+.moreIcon {
+  position: absolute;
+  top: -20px;
+  right: 0;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.profileName {
+  font-size: 1.25rem;
+  margin-bottom: 27px;
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border: 1px solid;
+  padding: 20px 30px;
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: bold;
+  color: #555;
+  min-width: 100px;
+}
+
+.value {
+  color: #777;
+}
+
+.section {
+  margin-top: 1.5rem;
+}
+.sectionTitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.filesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding:30px 21px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  gap: 20px;
+}
+
+.filediv {
+
+  background-color: var(--Apple);
+  border-radius: 50%;
+  padding: 15px 16px ;
+  color: #333;
+border: 1px solid var(--Slimy-Green);
+}
+.fileIcon{
+  width: 24px;
+  height:24px;
+  color: var( --Slimy-Green);
+}
+
+.fileLabel {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #555;
+  margin: 0;
+}
+
+.fileDate {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.fileItem.createButtonContainer {
+    grid-column: span 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: transparent;
+}
+.createButton {
+  background-color: #ff8c00;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  grid-column: span 3;
+}
+
+.createButton:hover {
+  background-color: #e57e00;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.aboutUsSection {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.aboutUsheading {
+  border-bottom: 1px solid;
+  padding: 13px 30px;
+  margin: 0;
+}
+.bioText {
+  font-size: 14px;
+  color: #666;
+  padding: 20px 30px 30px;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 54px;
+  margin-top: 30px;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.infoIcon {
+  color: var(--Orange-Red);
+  font-size: 1.5rem;
+}
+
+.infoLabel {
+  font-weight: bold;
+  color: #555;
+}
+
+.infoValue {
+  color: #777;
+}
+
+.propertiesGrid {
+  display: flex;
+  gap: 2rem;
+}
+
+.propertyCard {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 21px 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+}
+.Barcontent{
+    display: flex;
+    flex-direction: column;
+}
+.propertyCount {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.propertyLabel {
+  font-size: 1rem;
+  color: #777;
+  margin-bottom: 1rem;
+}
+
+.progressBar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: conic-gradient(#4caf50 0%, #4caf50 70%, #e0e0e0 70%);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.progressBar::before {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background-color: #fff;
+  border-radius: 50%;
+}
+
+.progressText {
+  position: relative;
+  z-index: 1;
+  font-weight: bold;
+  color: #333;
+}
+
+.otherFilesGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+
+.otherFileItem {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 10px ;
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  gap: 20px;
+  border: 1px solid;
+}
+
+.otherFileIcon {
+  font-size: 24px;
+}
+
+.otherFileLabel {
+ margin-top:5px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+
+
+/* Specific overrides for progress bars */
+.propertyCard:first-child .progressBar {
+  background: conic-gradient(#4caf50 0%, #4caf50 85%, #e0e0e0 85%);
+}
+
+.propertyCard:last-child .progressBar {
+  background: conic-gradient(#2196f3 0%, #2196f3 70%, #e0e0e0 70%);
+}

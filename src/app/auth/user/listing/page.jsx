@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import styles from '../components/My-Account-Dashboard.module.css'; // same layout CSS
+import styles from '../components/All-list-Dashboard.module.css'; // same layout CSS
 import MyAccountListing from './components/My-Account-listing';
 import ProtectedRoute from '@/Components/protectedRoute';
 import { SiteSettingsProvider, useSiteSettings } from '@/Components/mycontext/siteSettingContext';

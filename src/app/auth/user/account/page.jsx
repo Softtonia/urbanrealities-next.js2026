@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import styles from '../components/My-Account-Dashboard.module.css';
+import styles from '../components/All-list-Dashboard.module.css';
 import MyAccountAnalytics from './components/My-Account-Analytics';
 import ProtectedRoute from '@/Components/protectedRoute';
 

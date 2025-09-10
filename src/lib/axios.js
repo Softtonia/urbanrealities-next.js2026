@@ -1,5 +1,29 @@
 import axios from "axios";
-import { cookies } from "next/headers"; // Next.js App Router cookies
+
+let getToken;
+
+// 🔹 Detect runtime
+if (typeof window === "undefined") {
+  // Server-side (App Router)
+  try {
+    // lazy import inside server
+    const { cookies } = require("next/headers");
+    getToken = () => cookies().get("token")?.value || null;
+  } catch {
+    getToken = () => null;
+  }
+} else {
+  // Client-side (browser)
+  getToken = () => {
+    try {
+      // if you store in cookie
+      const match = document.cookie.match(/(^| )token=([^;]+)/);
+      return match ? match[2] : null;
+    } catch {
+      return null;
+    }
+  };
+}
 
 const axiosInstance = axios.create({
   baseURL: process.env.LARAVEL_API_BASE_URL,
@@ -12,21 +36,13 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// 🔹 Add token if found, otherwise skip
+// 🔹 Add token conditionally
 axiosInstance.interceptors.request.use(
-  async (config) => {
-    try {
-      const cookieStore = cookies();
-      const token = cookieStore.get("token")?.value;
-
-      if (token) {
-        config.headers["Authorization"] = `Bearer ${token}`;
-      }
-    } catch (err) {
-      // Skip if cookies() not available (e.g. client-side request)
-      console.warn("No token found in cookies:", err?.message);
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
-
     return config;
   },
   (error) => Promise.reject(error)

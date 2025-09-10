@@ -1,7 +1,7 @@
 .card {
   display: flex;
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: var(--White);
+  border: 1px solid var(  --Platnium);
   border-radius: 12px;
   padding: clamp(12px, 2vw, 16px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
@@ -61,21 +61,19 @@
   font-size: clamp(20px, 2vw, 27px);
   font-family: var(--font-medium);
   margin: 0 0 10px 0;
-  color: #333;
 }
 
 .location {
   display: flex;
   align-items: center;
   font-size: clamp(14px, 1vw, 16px);
-  color: #555;
   margin: 0;
 }
 
 .locationIcon {
   margin-right: 4px;
   font-size: 14px;
-  color: #ff5722; /* Use a color from the image, like a rusty orange */
+  color: var(--Orange-Red); /* Use a color from the image, like a rusty orange */
 }
 
 .headerRight {

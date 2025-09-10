@@ -18,13 +18,6 @@ const nextConfig = {
       config.devtool = false; // no source maps in dev
     }
 
-    // Optional: ignore moment.js locales (saves bundle size if using moment)
-    config.plugins.push(
-      new (require("webpack")).IgnorePlugin({
-        resourceRegExp: /^\.\/locale$/,
-        contextRegExp: /moment$/,
-      })
-    );
 
     return config;
   },
