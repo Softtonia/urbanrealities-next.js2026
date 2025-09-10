@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './components/My-Account-Dashboard.module.css';
 import SidebarDashboard from './components/Sidebar-Dashboard';
 import { usePathname, useRouter } from 'next/navigation';
+import ProtectedRoute from '@/Components/protectedRoute';
 
 export default function Layout({ children }) {
   const pathname = usePathname();
@@ -47,6 +48,7 @@ const handleSidebarItemClick = () => {
 };
 
   return (
+    <ProtectedRoute>
     <div className={styles.dashboard}>
       <div className={`${styles.mainContainer} container`}>
         <h1 className={`${styles.heading} top-heading`}>
@@ -76,5 +78,6 @@ const handleSidebarItemClick = () => {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

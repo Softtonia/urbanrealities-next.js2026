@@ -90,8 +90,7 @@
   border-radius: 6px;
   font-size: 14px;
   font-family: var(--font-medium);
-  /* color: var(--White); */
-  color: var(--black);
+  color: var(--White);
   display: inline-block;
 }
 

@@ -6,6 +6,7 @@ import { useProject } from "../context/ProjectContext";
 
 const ProjectBanner = () => {
   const project = useProject();
+  console.log(project)
 
   // ✅ Extract RERA number safely
   const reraNumber = project?.repeater_fields?.find(

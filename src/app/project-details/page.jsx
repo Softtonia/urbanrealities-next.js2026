@@ -30,6 +30,7 @@ async function fetchProject(id) {
 const Page = async ({ searchParams }) => {
   const { id } = searchParams;
   const project = await fetchProject(id);
+  
 
   return (
     <ProjectProvider value={project}>

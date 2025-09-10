@@ -20,6 +20,7 @@ export async function checkAuth() {
         console.error("Auth check failed:", error.response?.data || error.message);
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("userId");
+        
         if (error.response?.status === 401) {
             // Option 1: Reload page
             window.location.reload();

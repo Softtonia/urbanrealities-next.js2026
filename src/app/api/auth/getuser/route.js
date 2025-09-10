@@ -1,5 +1,7 @@
 import { get } from "@/lib/api";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+
 
 export async function GET(req) {
     try {
@@ -26,6 +28,15 @@ export async function GET(req) {
         return NextResponse.json(res.data);
     } catch (error) {
         console.error("Proxy error:", error?.response?.data || error.message);
+        cookies().set({
+            name: "token",
+            value: "",
+            path: "/",
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 0, // expire immediately
+          });
 
         // ✅ Forward Laravel error if available
         if (error.response) {
