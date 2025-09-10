@@ -1,5 +1,6 @@
 'use client'
 
+import { checkAuth } from '@/app/auth/checkAuth'
 // import { cookies } from 'next/headers'
 import { createContext, useContext, useState, useEffect } from 'react'
 
@@ -7,6 +8,7 @@ const AuthContext = createContext(null)
 
 export const SiteSettingsProvider = ({ initialSettings, children }) => {
     const [settings, setSettings] = useState(initialSettings)
+    const [user,setUser] = useState('')
     const [token, setToken] = useState(null)
     const [isLoadingToken, setIsLoadingToken] = useState(true) // NEW
     const [isLogeIn, setIsLogeIn] = useState(false)
@@ -20,12 +22,28 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
         setIsLoadingToken(false) // done loading
     }, [])
 
+    console.log(token)
+
+    useEffect(() => {
+        const initAuth = async () => {
+            const { isAuthenticated, user} = await checkAuth();
+            if (isAuthenticated) setUser(user);
+            // setLoading(false);
+            console.log("hello inside")
+        };
+        initAuth();
+    }, [])
+
+    // console.log(object)
+
+
     // Save to sessionStorage and state
-    const login = (newToken) => {
-        
-        
-        sessionStorage.setItem('token', newToken)
-        setToken(newToken)
+    const login = (data) => {
+
+        sessionStorage.setItem('token', data.token)
+        sessionStorage.setItem('userId', data.user_id)
+        setToken(data.token)
+        console.log(data.user_id)
     }
     useEffect(() => {
         setIsLogeIn(token ? true : false)

@@ -73,9 +73,6 @@ export default function LoginPage() {
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ email, password }),
       });
 
@@ -94,8 +91,8 @@ export default function LoginPage() {
       }
 
       // ✅ Success: store token + redirect
-      if (result.token) {
-        login(result.token);
+      if (result) {
+        login(result)
       }
       console.log(redirect)
 

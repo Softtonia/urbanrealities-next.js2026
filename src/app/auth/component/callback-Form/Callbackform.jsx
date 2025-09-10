@@ -40,9 +40,9 @@ export default function CallbackForm({roles=[]}) {
             if (!res.ok) {
                 throw new Error(result.message || "Request failed");
             }
-            if (result.token) {
+            if (result) {
                 // Store token in sessionStorage
-                login(result.token)
+                login(result)
             }
             // Redirect user or do something else
 
@@ -59,14 +59,12 @@ export default function CallbackForm({roles=[]}) {
 
     return (
         <div>
-            <h5 className={styles.formHeading}>User Role</h5>
+            <h5 className={styles.formHeading}>Set Role</h5>
             <form className={styles.form}>
-
-
                 <div className={styles.formGroup}>
-                    <label className={`formLabel ${styles.formLabel}`}>
+                    {/* <label className={`formLabel ${styles.formLabel}`}>
                         Roles
-                    </label>
+                    </label> */}
                     <div className={styles.radioGroup}>
                         {roles.map((role) => (
                             <label key={role.id} className={styles.radioOption}>
