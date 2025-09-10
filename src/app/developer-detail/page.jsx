@@ -29,7 +29,7 @@ async function fetchDeveloper(id) {
 }
 
 const DeveloperPage = async ({ searchParams }) => {
-  const { id } =await searchParams;
+  const { id } = await searchParams;
 
   const developer = await fetchDeveloper(id);
 
@@ -45,9 +45,15 @@ const DeveloperPage = async ({ searchParams }) => {
             <div className={`col-9 ${styles.largeTabCol}`}>
               <DeveloperStats />
               <DeveloperListingwithTabs />
-              <ProjectFAQ />
+              {/* <ProjectFAQ />
+               <HomeLoanOffers /> */}
             </div>
-            <div className={`col-12 ${styles.smallTabCol}`}></div>
+
+            <div className={`col-12 ${styles.smallTabCol}`}>
+              {" "}
+              <ProjectFAQ />
+              <HomeLoanOffers />
+            </div>
             <div className={`col-12 p-0 ${styles.mobileCol}`}>
               <section id="all-project">
                 <AllProjects />

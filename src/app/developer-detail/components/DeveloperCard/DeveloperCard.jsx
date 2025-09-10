@@ -16,7 +16,6 @@ import styles from "./DeveloperCard.module.css";
 export default function ProjectCard() {
   return (
     <div className={styles.card}>
-      <div className={styles.cardleft}>
         <div className={styles.imageContainer}>
           <span className={styles.badge}>Featured</span>
           <FaRegBookmark className={styles.tagIconOnImage} />
@@ -26,7 +25,6 @@ export default function ProjectCard() {
             className={`${styles["image-card"]}`}
           />
         </div>
-      </div>
       {/* Right Side - Content */}
       <div className={styles.cardContent}>
             <h3 className={styles.title}>NEW Ganesh Property Pvt Ltd</h3>
