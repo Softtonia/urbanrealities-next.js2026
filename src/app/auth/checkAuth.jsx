@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function checkAuth() {
     const token = sessionStorage.getItem("token");
-    const userId = sessionStorage.getItem("userId") ||'15';
+    const userId = sessionStorage.getItem("userId");
 
     console.log(token,userId)
 

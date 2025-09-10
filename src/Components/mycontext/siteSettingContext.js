@@ -38,10 +38,12 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
 
 
     // Save to sessionStorage and state
-    const login = (newToken) => {
-        
-        sessionStorage.setItem('token', newToken)
-        setToken(newToken)
+    const login = (data) => {
+
+        sessionStorage.setItem('token', data.token)
+        sessionStorage.setItem('userId', data.user_id)
+        setToken(data.token)
+        console.log(data.user_id)
     }
     useEffect(() => {
         setIsLogeIn(token ? true : false)

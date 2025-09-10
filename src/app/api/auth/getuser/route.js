@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(req) {
     try {
         const token = req.headers.get("authorization")?.replace("Bearer ", "");
-        const userId = req.nextUrl.searchParams.get("id") || "15";
+        const userId = req.nextUrl.searchParams.get("id");
 
         if (!token || !userId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

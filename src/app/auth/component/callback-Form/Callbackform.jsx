@@ -40,9 +40,9 @@ export default function CallbackForm({roles=[]}) {
             if (!res.ok) {
                 throw new Error(result.message || "Request failed");
             }
-            if (result.token) {
+            if (result) {
                 // Store token in sessionStorage
-                login(result.token)
+                login(result)
             }
             // Redirect user or do something else
 
