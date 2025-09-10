@@ -25,7 +25,7 @@ export function middleware(request) {
 export const config = {
     matcher: [
         "/auth/post-property/:path*", // ✅ works for /auth/post-property and children
-        "/auth/user/:path*",
+        // "/auth/user/:path*",
         // add more protected routes here
     ],
 };
