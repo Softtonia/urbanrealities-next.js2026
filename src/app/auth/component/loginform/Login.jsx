@@ -92,7 +92,7 @@ export default function LoginPage() {
 
       // ✅ Success: store token + redirect
       if (result) {
-        login(result)
+        login(result.user_id,result.token)
       }
       console.log(redirect)
 

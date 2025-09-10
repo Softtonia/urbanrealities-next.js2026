@@ -42,7 +42,7 @@ export default function CallbackForm({roles=[]}) {
             }
             if (result) {
                 // Store token in sessionStorage
-                login(result)
+                login(result.user.id,result.token)
             }
             // Redirect user or do something else
 
