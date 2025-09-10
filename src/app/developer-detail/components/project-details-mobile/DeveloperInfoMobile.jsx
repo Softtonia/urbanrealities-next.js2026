@@ -9,6 +9,10 @@ const DeveloperInfoMobile = () => {
   const project = useDeveloper()
   const [expanded, setExpanded] = useState(false);
 
+  if (!project || !project.description) {
+    return <div>Loading...</div>; // fallback jab tak data ready na ho
+  }
+
   // Strip HTML tags for word count
   const plainText = project.description.replace(/<[^>]+>/g, "");
   const words = plainText.split(/\s+/);

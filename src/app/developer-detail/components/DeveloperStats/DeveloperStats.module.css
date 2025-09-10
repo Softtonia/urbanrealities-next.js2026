@@ -24,7 +24,6 @@
 .description {
   font-size: clamp(14px, 1.11vw, 16px);
   font-family: var(--font-regular);
-  color: #555;
 }
 
 .stats {
@@ -47,14 +46,15 @@
 
 
 .statNumber {
-  font-size: clamp(16px, 2.22vw, 33px);
+  /* font-size: clamp(16px, 2.22vw, 33px); */
+font-size: clamp(14px, 1.5vw, 16px);
  font-family: var(--font-semibold);
   margin-bottom: 5px;
 }
 
 .statLabel {
-  font-size: clamp(14px, 1.11vw, 16px);
-  font-family: var(--font-semibold);
+  font-size: clamp(14px, 1vw, 16px);
+  font-family: var(--font-regular);
 }
 
 .arrow {
