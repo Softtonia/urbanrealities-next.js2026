@@ -1,4 +1,4 @@
-import React,{memo} from "react";
+import React, { memo } from "react";
 import Link from "next/link";
 import styles from "./HelpSidebar.module.css";
 import { IoIosArrowForward } from "react-icons/io";
@@ -21,7 +21,7 @@ const HelpSidebar = ({ activeCategory, activeTopic, activeSubtopic, topics }) =>
             <h3 className={styles.sidebarTitle}>{currentTopic.name}</h3>
           </div>
           <ul className={styles.subtopicList}>
-            {currentTopic.child_categories?.map((subtopic) => (
+            {topics.map((subtopic) => (
               <li
                 key={subtopic.id}
                 className={`${styles.subtopicItem} ${String(subtopic.id) === String(activeSubtopic) ? styles.active : ""
@@ -29,7 +29,11 @@ const HelpSidebar = ({ activeCategory, activeTopic, activeSubtopic, topics }) =>
               >
                 <Link
                   href={{
-                    pathname: `/help/${subtopic.category.name}/${subtopic.name}`,
+                    pathname: `/help/
+                    ${slugify(activeCategory || '')}
+                     ${slugify(activeTopic)}/
+                     ${slugify(activeSubtopic)}
+                                         `,
                     query: {
                       subcategoryId: subtopic.id,
                       categoryId: activeCategory,
@@ -40,7 +44,7 @@ const HelpSidebar = ({ activeCategory, activeTopic, activeSubtopic, topics }) =>
                 >
                   <div className="d-flex justify-content-between align-items-center w-full">
                     <div className="d-flex align-items-center">
-                      <div className={styles.topicTitleText}>{subtopic.name}</div>
+                      <div className={styles.topicTitleText}>{subtopic.name ? subtopic.name : subtopic.title}</div>
                     </div>
                     <div className={styles.arrowIcon}>
                       <IoIosArrowForward />
@@ -79,7 +83,7 @@ const HelpSidebar = ({ activeCategory, activeTopic, activeSubtopic, topics }) =>
 
                     <div className="d-flex justify-content-between align-items-center w-full">
                       <div className="d-flex align-items-center">
-                        <div className={styles.topicTitleText}>{topic.name}</div>
+                        <div className={styles.topicTitleText}>{topic.name ? topic.name : topic.title}</div>
                       </div>
                       <div className={styles.arrowIcon}>
                         <IoIosArrowForward />

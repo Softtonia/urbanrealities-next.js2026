@@ -39,6 +39,8 @@ const TopicDetailPage = ({ params }) => {
     }
   }, [pathname]);
 
+  console.log('==>>',categoryPath,topicPath)
+
   const fetchChildCategories = async () => {
     setLoading(true);
     try {
@@ -140,11 +142,11 @@ const TopicDetailPage = ({ params }) => {
                     <li key={subtopic.id}>
                       <Link
                         href={{
-                          pathname: `/help/${slugify(category)}/${slugify(topic)}/${subtopic.id}`,
+                          pathname: `/help/${category}/${topic}/${subtopic.name}`,
                           query: {
                             categoryId,         // current categoryId from searchParams
                             subcategoryId,      // current subcategoryId from searchParams
-                            // subtopicId: subtopic.id,  // sending subtopic id too
+                            subtopicId: subtopic.id,  // sending subtopic id too
                             // subtopicName: subtopic.name // optional: for display without extra API call
                           },
                         }}
