@@ -107,7 +107,9 @@ transform: rotate(360deg);
 }
 
 @media (max-width:1100px){
-
+.mainContainer{
+  padding:0 20px;
+}
 .listingcard{
   display: grid;
   grid-template-columns: repeat(1, 1fr);
@@ -125,14 +127,8 @@ padding: 0 ;
 
 }
 @media (max-width: 768.98px) {
-  /* .main {
-    display: none;
-  }
 
-  .main.active {
-    display: block;
-  } */
-  .mobileSidebar{
+  .mobileSidebarTabs{
  width: 100%;
 }
 }

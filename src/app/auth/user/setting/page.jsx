@@ -1,21 +1,15 @@
-'use client';
-import ProtectedRoute from '@/Components/protectedRoute';
-import React from 'react';
-import ProfileDashboard from './components/ProfileDashboard/ProfileDashboard';
-import Progressbar from './components/ProfileDashboard/demoprogressbar'
-
+import React from "react";
+import ProtectedRoute from "@/Components/protectedRoute";
+import ProfileDashboard from "./components/ProfileDashboard/ProfileDashboard";
 
 const settingpage = () => {
   return (
-    <ProtectedRoute>    
+    <ProtectedRoute>
       <div>
-      <ProfileDashboard/>
-
-      <Progressbar/>
-    </div>
+        <ProfileDashboard />
+      </div>
     </ProtectedRoute>
-
   );
-}
+};
 
 export default settingpage;

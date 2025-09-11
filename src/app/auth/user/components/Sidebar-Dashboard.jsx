@@ -20,18 +20,16 @@ const menuItems = [
   { icon: <FaCog />, label: "Settings", link: "/auth/user/setting" },
 ];
 
-export default function SidebarDashboard({onItemClick}) {
+export default function SidebarDashboard({ onItemClick }) {
   const pathname = usePathname();
   const router = useRouter();
 
-const handleMobileClick = (link) => {
-  if (pathname !== link) {
-    if (onItemClick) onItemClick();
-    router.push(link);
-  }
-};
+  const handleMobileClick = (link) => {
+    if (pathname !== link) {
+      router.push(link);
+    }
+  };
 
-console.log(onItemClick);
   return (
     <div className={styles.sidebarContainer}>
       {/* Desktop Sidebar */}
@@ -51,7 +49,7 @@ console.log(onItemClick);
         {menuItems.map((item, index) => (
           <button
             key={index}
-            className={styles.gridItem}
+            className={styles.gridItem} 
             onClick={() => handleMobileClick(item.link)}
           >
             <div className={styles.gridIcon}>{item.icon}</div>

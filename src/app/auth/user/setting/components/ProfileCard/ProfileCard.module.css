@@ -1,0 +1,89 @@
+.profileCard  {
+  background-color: var(--off-white);
+  border: 1px solid var(--Bright-Gray);
+  border-radius: 12px;
+  padding: 30px 6px 6px 6px;
+  width: 306px;
+  height: 413px;
+}
+
+.profileHeader  {
+  text-align: center;
+  position: relative;
+}
+.moreIcon {
+  position: absolute;
+  top: -20px;
+  right: 0;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.profileImageContainer {
+  margin-bottom: 20px;
+}
+.profileImage {
+  border-radius: 50%;
+}
+.profileName {
+  font-size: 16px;
+  font-family: var(--font-medium);
+  margin-bottom: 27px;
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border: 1px solid var(--Bright-Gray);
+  padding: 20px 30px 13px;
+  background-color: var(--White);
+  border-radius: 0 0 12px 12px;
+}
+.detailItem {
+  display: flex;
+  gap: 0.5rem;
+}
+.label, .value {
+  font-size: 14px;
+  font-family: var(--font-regular);
+}
+
+
+
+.dropdownMenu {
+  position: absolute;
+  bottom: 30px;
+  right: 10px;
+  text-align: left !important;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 8px 0;
+  border-radius: 4px;
+  width:200px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.dropdownItem {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  text-align: left !important;
+  width: 100%;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: var(--font-regular);
+  text-decoration: none;
+  color:var(--Eerie-Black)
+}
+
+.dropdownItem:hover {
+  background-color: #f0f0f0;
+}
+
+@media (max-width: 1000px) {
+  .profileCard  {
+    width: 100%;
+  }
+
+}

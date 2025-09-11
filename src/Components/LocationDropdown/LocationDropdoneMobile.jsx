@@ -43,6 +43,8 @@ const renderCityGrid = (citiesArray) => {
 };
 
 const LocationDropdownMobile = () => {
+
+  
   return (
     <div
       className="position-absolute bg-white shadow rounded border p-4"

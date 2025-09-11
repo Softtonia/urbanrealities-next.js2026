@@ -1,0 +1,56 @@
+.section {
+  margin-top: 30px;
+}
+.sectionTitle {
+  font-size: 20px;
+  font-family: var(--font-medium);
+  margin-bottom: 30px;
+}
+.otherFilesGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+.otherFileItem {
+  background-color: var(--Lotion);
+  border-radius: 15px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  gap: 20px;
+  border: 1px solid var(--Bright-Gray);
+}
+.otherFileIcon {
+  font-size: 24px;
+  color: var(--Spanish-Gray);
+}
+.otherFileLabel {
+  margin-top:5px;
+  font-size: 16px;
+  font-family: var(--font-regular);
+}
+.folderIcon {
+  color: var(--Spanish-Gray);
+}
+@media (max-width: 1162.98px) {
+.otherFilesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+}
+@media (max-width: 992px) {
+.otherFilesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+}
+@media (max-width: 576px) {
+.otherFilesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+}

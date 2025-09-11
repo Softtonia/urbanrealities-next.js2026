@@ -1,21 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true, // helps catch issues in dev but can add overhead
+  reactStrictMode: true, 
 
-  swcMinify: true, // ⚡ enable SWC minifier (faster than Terser)
-  compress: true,  // ⚡ enable gzip compression for faster page loads
+  swcMinify: true, 
+  compress: true,  
 
-  productionBrowserSourceMaps: false, // no source maps in prod
+  productionBrowserSourceMaps: false, 
 
   experimental: {
-    turbo: true, // ⚡ use Turbopack (super fast dev builds)
+    turbo: true,
     optimizePackageImports: ["lodash", "date-fns"], 
-    // add heavy libs you import often
   },
 
   webpack(config, { dev, isServer }) {
     if (dev) {
-      config.devtool = false; // no source maps in dev
+      config.devtool = false; 
     }
 
 
@@ -34,3 +33,33 @@ const nextConfig = {
 };
 
 export default nextConfig;
+
+
+
+// /** @type {import('next').NextConfig} */
+// const nextConfig = {
+//   reactStrictMode: true,
+//   compress: true,
+//   productionBrowserSourceMaps: false,
+//   turbopack: true,
+//   experimental: {
+//     optimizePackageImports: ["lodash", "date-fns"],
+//   },
+//   webpack(config, { dev, isServer }) {
+//     if (dev) {
+//       config.devtool = false;
+//     }
+//     return config;
+//   },
+//   images: {
+//     remotePatterns: [
+//       {
+//         protocol: "https",
+//         hostname: "api.urbanrealities.com",
+//       },
+//     ],
+//     domains: ["images.unsplash.com"],
+//   },
+// };
+
+// export default nextConfig;
