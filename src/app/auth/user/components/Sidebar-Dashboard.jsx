@@ -6,13 +6,14 @@ import {
   FaChartBar, FaBuilding, FaEnvelope, FaBook,
   FaCalendarAlt, FaLifeRing, FaCog
 } from "react-icons/fa";
-import { HiDocumentChartBar } from "react-icons/hi2";
+import { HiDocumentChartBar,HiOutlineTicket } from "react-icons/hi2";
 
 const menuItems = [
   { icon: <FaChartBar />, label: "Analytics", link: "/auth/user/account" },
   { icon: <FaBuilding />, label: "Listings", link: "/auth/user/listing" },
   { icon: <FaEnvelope />, label: "Inquiry", link: "/auth/user/inquiry" },
   { icon: <FaBook />, label: "Insights", link: "/auth/user/insight" },
+  { icon: <HiOutlineTicket />, label: "Leads", link: "/auth/user/leads" },
   { icon: <HiDocumentChartBar />, label: "Document", link: "/auth/user/document" },
   { icon: <FaCalendarAlt />, label: "Appointment", link: "/auth/user/appointment" },
   { icon: <FaLifeRing />, label: "Support", link: "/auth/user/support" },

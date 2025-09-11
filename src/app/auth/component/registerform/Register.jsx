@@ -176,11 +176,7 @@ const Register = ({ roles = [] }) => {
       isValid = false;
     } else setPhoneError("");
 
-    if (!formData.role) {
-      setRoleError("Role is required.");
-      isValid = false;
-    } else setRoleError("");
-
+  
     return isValid;
   };
 

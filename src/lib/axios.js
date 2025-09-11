@@ -1,37 +1,51 @@
-// lib/axiosInstance.ts or app/api/_utils/axiosInstance.ts
 import axios from "axios";
 
+let getToken;
+
+// 🔹 Detect runtime
+if (typeof window === "undefined") {
+  // Server-side (App Router)
+  try {
+    // lazy import inside server
+    const { cookies } = require("next/headers");
+    getToken = () => cookies().get("token")?.value || null;
+  } catch {
+    getToken = () => null;
+  }
+} else {
+  // Client-side (browser)
+  getToken = () => {
+    try {
+      // if you store in cookie
+      const match = document.cookie.match(/(^| )token=([^;]+)/);
+      return match ? match[2] : null;
+    } catch {
+      return null;
+    }
+  };
+}
+
 const axiosInstance = axios.create({
-  baseURL: process.env.LARAVEL_API_BASE_URL, // secure API base URL
+  baseURL: process.env.LARAVEL_API_BASE_URL,
   headers: {
     "X-Client-ID": process.env.X_CLIENT_ID,
     "X-Client-Secret": process.env.X_CLIENT_SECRET,
     "Content-Type": "application/json",
-    "Origin": process.env.NEXT_PUBLIC_API_URL, 
+    "Origin": process.env.NEXT_PUBLIC_API_URL,
   },
-  withCredentials: true, // optional if cookies needed
+  withCredentials: true,
 });
-// for token verifying
-/* This code block is setting up an interceptor for the Axios instance. Interceptors in Axios are
-functions that are called for every request before it is sent. In this specific interceptor: */
-// axiosInstance.interceptors.request.use(
-//   (config) => {
-//       const sessionData = sessionStorage.getItem('token');
-//       console.log(sessionData)
-//       if (sessionData) {
-//           try {
-//             console.log(sessionData)
-//               const parsed = JSON.parse(sessionData);
-//               if (parsed?.token) {
-//                   config.headers['Authorization'] = `Bearer ${parsed.token}`;
-//               }
-//           } catch (err) {
-//               console.error('Invalid session auth format', err);
-//           }
-//       }
-//       return config;
-//   },
-//   (error) => Promise.reject(error)
-// );
+
+// 🔹 Add token conditionally
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export default axiosInstance;

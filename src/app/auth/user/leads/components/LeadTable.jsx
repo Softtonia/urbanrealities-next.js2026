@@ -71,20 +71,17 @@ const leadsData = [
 ];
 
 export default function LeadsTable({data}) {
-  console.log(data)
   const [searchTerm, setSearchTerm] = useState("");
   const [searchTicket, setSearchTicket] = useState("");
   const [selectAll, setSelectAll] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
+  console.log(data)
 
-  const filteredLeads = data.filter((item) => {
-    const ticket = item.ticket_number || "";
-    const email = item.email || "";
-    const term = searchTerm;
-  
-    return ticket.includes(term) || email.includes(term);
-  });
-  
+  const filteredLeads = data.filter(
+    (item) =>
+      item.name.includes(searchTerm) ||
+      item.email.includes(searchTerm)
+  );
 
   return (
     <div className={styles.wrapper}>
@@ -119,7 +116,7 @@ export default function LeadsTable({data}) {
         /> */}
           <button className={` ${styles.TicketButton} btn-AddTicket`}>
 
-            Add Ticket
+            Add Lead
           </button>
         </div>
       </div>
@@ -141,11 +138,11 @@ export default function LeadsTable({data}) {
             </th> */}
             <th className={`${styles.th} ${styles.serialCol}`}>S. No</th>
             <th className={`${styles.th} ${styles.propertyIdCol}`}>
-              Ticket Number
+              Email
             </th>
-            <th className={`${styles.th} ${styles.subjectCol}`}>Subject</th>
-            <th className={`${styles.th} ${styles.leadTypeCol}`}>Priority</th>
-            <th className={`${styles.th} ${styles.statusCol}`}>Status</th>
+            {/* <th className={`${styles.th} ${styles.subjectCol}`}>Subjects</th> */}
+            <th className={`${styles.th} ${styles.leadTypeCol}`}>Message</th>
+            {/* <th className={`${styles.th} ${styles.statusCol}`}>Status</th> */}
             <th className={`${styles.th} ${styles.actionCol}`}>Action</th>{" "}
           </tr>
         </thead>
@@ -172,24 +169,24 @@ export default function LeadsTable({data}) {
                 {index + 1}
               </td>
               <td className={`${styles.td} ${styles.propertyIdCol}`}>
-                {item.ticket_number}
+                {item.email}
               </td>
-              <td className={`${styles.td} ${styles.subjectCol}`}>{item.subject}</td>
+              {/* <td className={`${styles.td} ${styles.subjectCol}`}>{item.subject}</td> */}
               <td className={`${styles.td} ${styles.leadTypeCol}`}>
                 <span
-                  className={`${styles.badge} ${item.priority_name === 'High' ? styles.high : item.priority_name === 'Medium' ? styles.medium : styles.low}`}
+                  className={`${styles.badge} ${item.leadType === 'High' ? styles.high : item.leadType === 'Medium' ? styles.medium : styles.low}`}
                 >
-                  {item.priority_name}
+                  {item.message}
                 </span>
               </td>
-              <td className={`${styles.td} ${styles.statusCol}`}>
+              {/* <td className={`${styles.td} ${styles.statusCol}`}>
                 <span
                   className={`${styles.status} ${styles[item.status]
                     }`}
                 >
-                  {item.status_name}
+                  {item.status}
                 </span>
-              </td>
+              </td> */}
               <td
                 className={`${styles.td} ${styles.actionCol} ${styles.actions}`}
               >

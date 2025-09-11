@@ -1,4 +1,5 @@
 import { post } from "@/lib/api";
+import { cookies } from "next/headers";
 
 export async function POST(req) {
   try {
@@ -29,6 +30,15 @@ export async function POST(req) {
     else {
       data = { message: "Logout successful" };
     }
+    cookies().set({
+      name: "token",
+      value: "",
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 0, // expire immediately
+    });
 
     return Response.json(data, { status: apiResponse.status || 200 });
   } catch (error) {

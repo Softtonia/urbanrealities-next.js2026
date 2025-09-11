@@ -1,8 +1,10 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import styles from "./components/All-list-Dashboard.module.css";
-import SidebarDashboard from "./components/Sidebar-Dashboard";
-import { usePathname } from "next/navigation";
+'use client';
+import React, { useEffect, useState } from 'react';
+// import styles from './components/My-Account-Dashboard.module.css';
+import styles from './components/All-list-Dashboard.module.css'
+import SidebarDashboard from './components/Sidebar-Dashboard';
+import { usePathname, useRouter } from 'next/navigation';
+import ProtectedRoute from '@/Components/protectedRoute';
 
 export default function Layout({ children }) {
   const pathname = usePathname();
@@ -44,6 +46,7 @@ export default function Layout({ children }) {
   if (!hasMounted) return null;
 
   return (
+    <ProtectedRoute>
     <div className={styles.dashboard}>
       <div className={`${styles.mainContainer} container`}>
         <h1 className={`${styles.heading} top-heading`}>
@@ -79,5 +82,6 @@ export default function Layout({ children }) {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
