@@ -2,51 +2,43 @@
 import React, { useEffect, useState } from "react";
 import styles from "./components/All-list-Dashboard.module.css";
 import SidebarDashboard from "./components/Sidebar-Dashboard";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export default function Layout({ children }) {
   const pathname = usePathname();
 
-  const [isMobile, setIsMobile] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(false);
-  const [showContent, setShowContent] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
+  const [mode, setMode] = useState("mobile-sidebar"); // 'desktop', 'mobile-sidebar', 'mobile-content'
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
-  useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (!mobile) {
-        setShowSidebar(false);
-        setShowContent(true);
-      } else {
-        setShowSidebar(true);
-        setShowContent(false);
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     const mobile = window.innerWidth < 768;
+  //     setIsMobile(mobile);
+  //     if (!mobile) {
+  //       setMode("desktop");
+  //     } else {
+  //       setMode("mobile-sidebar");
+  //     }
+  //   };
+  //   handleResize();
+  //   window.addEventListener("resize", handleResize);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, []);
 
+  // Jab route change ho, mobile me content dikhaye
   useEffect(() => {
-    if (!isMobile) {
-      setShowContent(true);
+    if (isMobile && mode === "mobile-sidebar") {
+      setMode("mobile-content");
     }
-  }, [pathname, isMobile]);
-
-  const handleSidebarItemClick = () => {
-    setShowContent(true);
-    setShowSidebar(false);
-  };
+  }, [pathname]);
 
   const handleBackClick = () => {
-    setShowContent(false);
-    setShowSidebar(true);
+    setMode("mobile-sidebar");
   };
 
   if (!hasMounted) return null;
@@ -60,23 +52,23 @@ export default function Layout({ children }) {
 
         <div className={styles.pagerow}>
           {/* Desktop Sidebar */}
-          {!isMobile && (
+          {mode === "desktop" && (
             <div className={styles.Sidebarcol}>
-              <SidebarDashboard onItemClick={handleSidebarItemClick} />
+              <SidebarDashboard />
             </div>
           )}
 
-          {/* Mobile Sidebar Fullscreen with Slide */}
-          {isMobile && showSidebar && (
-            <div className={styles.mobileSidebar}>
-              <SidebarDashboard onItemClick={handleSidebarItemClick} />
+          {/* Mobile Sidebar */}
+          {isMobile && mode === "mobile-sidebar" && (
+            <div className={styles.mobileSidebarTabs}>
+              <SidebarDashboard />
             </div>
           )}
 
           {/* Main Content */}
-          {showContent && (
+          {(mode === "desktop" || mode === "mobile-content") && (
             <main className={styles.main}>
-              {isMobile && (
+              {isMobile && mode === "mobile-content" && (
                 <button className={styles.backBtn} onClick={handleBackClick}>
                   ← Back
                 </button>

@@ -1,0 +1,62 @@
+.aboutUsSection {
+  background-color: var(--Lotion);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--Bright-Gray);
+}
+.aboutUsheading {
+  border-bottom: 1px solid var(--Bright-Gray);
+  padding: 13px 30px;
+  font-size: 20px;
+  font-family: var(--font-medium);
+  margin: 0;
+}
+.bioText {
+  font-size: 14px;
+  font-family: var(--font-regular);
+  color: var(--Spanish-Gray);
+  padding: 20px 30px 30px;
+}
+.bioText strong {
+  color: var(--Eerie-Black);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px clamp(20px, 2vw, 54px);
+  margin-top: 30px;
+}
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+.infoIcon {
+  color: var(--Orange-Red);
+  font-size: 1.2rem;
+  margin: 0;
+}
+.infoLabel {
+  font-size: 14px;
+  font-family: var(--font-regular);
+  color: var(--Eerie-Black);
+}
+.infoValue {
+  font-size: 14px;
+  font-family: var(--font-regular);
+  color: var(--Eerie-Black);
+}
+@media (max-width: 1162px) {
+  .infoGrid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 10px 54px;
+    margin-top: 30px;
+  }
+  .infoItem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

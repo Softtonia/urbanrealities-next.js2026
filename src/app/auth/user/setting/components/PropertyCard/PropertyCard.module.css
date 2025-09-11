@@ -1,0 +1,29 @@
+.propertyCard {
+  background-color: var( --Lotion);
+  border-radius: 12px;
+  padding: 21px 30px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  border: 1px solid var(  --Bright-Gray);
+}
+.Barcontent {
+  display: flex;
+  flex-direction: column;
+}
+.propertyCount {
+  font-size: 25px;
+  font-family: var(--font-semibold);
+}
+.propertyLabel {
+  font-size: 14px;
+  font-family: var(--font-regular);
+  margin-bottom: 1rem;
+}
+.progressBar {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}

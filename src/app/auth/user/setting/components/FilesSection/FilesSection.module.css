@@ -1,0 +1,115 @@
+.section {
+  margin-top: 30px;
+}
+.sectionTitle {
+  font-size: 20px;
+  font-family: var(--font-medium);
+  margin-bottom: 30px;
+}
+.filesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+.fileItem {
+  display: flex;
+  align-items: center;
+  padding: 30px 21px;
+  border-radius: 8px;
+  border: 1px solid var(--Bright-Gray);
+  gap: 20px;
+}
+.folderdiv {
+  background-color: var(--Alabaster);
+  border-radius: 50%;
+  padding: 15px 16px;
+  border: 1px solid var(--Slimy-Green);
+}
+.folderdiv .fileIcon {
+  width: 24px;
+  height: 24px;
+  color: var(--Slimy-Green);
+}
+.gallerydiv {
+  background-color: var(--Linen);
+  border-radius: 50%;
+  padding: 15px 16px;
+  border: 1px solid var(--Orange-Red);
+}
+.gallerydiv .fileIcon {
+  width: 24px;
+  height: 24px;
+  color: var(--Orange-Red);
+}
+.documentdiv {
+  background-color: var(--Ghost-White);
+  border-radius: 50%;
+  padding: 15px 16px;
+  border: 1px solid var(--Persian-Blue);
+}
+.documentdiv .fileIcon {
+  width: 24px;
+  height: 24px;
+  color: var(--Persian-Blue);
+}
+.fileLabel {
+  font-size: 16px;
+  font-family: var(--font-medium);
+  margin: 0;
+}
+.fileDate {
+  font-size: 14px;
+  font-family: var(--font-regular);
+  color: var(--Spanish-Gray);
+}
+.createButtonContainer {
+  grid-column: span 1;
+  display: flex;
+  align-items: center;
+  border: none;
+  padding: 0;
+  background-color: transparent;
+}
+.createButton {
+  background-color: #ff8c00;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  grid-column: span 3;
+}
+@media (max-width: 1162.98px) {
+.filesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+}
+@media (max-width: 768px) {
+.filesGrid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+}
+@media (max-width: 576px) {
+.section{
+  border: 1px solid var(--Bright-Gray);
+  padding: 22px 37px 20px 24px;
+  background-color: var( --Lotion);
+  border-radius: 12px;
+}
+.fileItem {
+  background-color: var(--White);
+}
+.createButtonContainer {
+  background-color: transparent;
+}
+}

@@ -1,5 +1,7 @@
 :root {
   /* Primary color */
+  --Linen: rgba(255, 239, 231);
+
   --Orange-Red: #fb6a18;
 
   /* Pure White */
@@ -29,7 +31,11 @@
   /* Price color property listing */
   --Slimy-Green: #3d8b0d;
 
+  --Alabaster: rgba(237, 248, 226);
+
   --Apple: #7cbc3b;
+
+  --Ghost-White: rgba(245, 246, 255);
 
   --Raisin-Black: #222222;
 
