@@ -24,7 +24,7 @@ export function middleware(request) {
 // Apply middleware only on protected routes
 export const config = {
     matcher: [
-        "/auth/post-property/:path*", // ✅ works for /auth/post-property and children
+        // "/auth/post-property/:path*", // ✅ works for /auth/post-property and children
         // "/auth/user/:path*",
         // add more protected routes here
     ],

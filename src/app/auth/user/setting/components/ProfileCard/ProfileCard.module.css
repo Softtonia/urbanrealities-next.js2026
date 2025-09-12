@@ -17,6 +17,7 @@
   right: 0;
   font-size: 1.5rem;
   cursor: pointer;
+  z-index: 100;
 }
 .profileImageContainer {
   margin-bottom: 20px;
@@ -52,16 +53,16 @@
 
 .dropdownMenu {
   position: absolute;
-  bottom: 30px;
-  right: 10px;
+  bottom: 25px;
+  right: 15px;
   text-align: left !important;
   background-color: white;
   border: 1px solid #ccc;
   padding: 8px 0;
   border-radius: 4px;
-  width:200px;
+  width:150px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  z-index: 10;
+  z-index: 100;
 }
 
 .dropdownItem {
@@ -77,9 +78,7 @@
   color:var(--Eerie-Black)
 }
 
-.dropdownItem:hover {
-  background-color: #f0f0f0;
-}
+
 
 @media (max-width: 1000px) {
   .profileCard  {

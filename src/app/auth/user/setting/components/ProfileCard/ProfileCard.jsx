@@ -40,7 +40,7 @@ const ProfileCard = () => {
           <FiMoreVertical />
           {dropdownOpen && (
             <div className={styles.dropdownMenu}>
-              <Link href="/auth/user/change-profile" className={styles.dropdownItem} role="button">
+              <Link href="/auth/user/setting/edit-profile" className={styles.dropdownItem} role="button">
                 Edit Profile
               </Link>
             </div>
