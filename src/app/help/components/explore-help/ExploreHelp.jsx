@@ -54,14 +54,11 @@ const ExploreHelp = async ({ headingText = "Explore Help Topics" }) => {
               <h3>{topic.name}</h3>
             </div>
             <ol className="m-0">
-              {/* यहाँ पर जाँच करें कि topic.topics मौजूद है और एक एरे है */}
               {subCategories && subCategories.filter((ctg) => topic.id === ctg.help_category_id).map((item) => (
                 <li key={item.id}>
                   <Link
                     href={{
-                      pathname: `/help/${slugify(topic.name)}/${slugify(item.name)}`,
-                      query: { subcategoryId: item.id,
-                      categoryId:topic.id }, // sending id as query param
+                      pathname: `/help/${slugify(`${topic.name} ${topic.id}`)}/${slugify(`${item.name} ${item.id}`)}`,
                     }}
                     className={styles.itemLink}
                   >

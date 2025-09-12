@@ -7,10 +7,10 @@ import Link from "next/link";
 import { IoIosArrowForward } from "react-icons/io";
 import SubHero from "@/Components/SubHero/SubHero";
 import Breadcrumbs from "@/app/help/components/Breadcrumbs/Breadcrumbs";
-import { deslugify, slugify } from "@/utils/slugify";
+import { deslugify, extractIdFromSlug, slugify } from "@/utils/slugify";
 
 const SubtopicPage = ({ params }) => {
-    const {category,topic} =React.use(params);
+    const { category, topic, subtopic } = React.use(params);
 
     // 🟢 State for subtopics & articles
     const [childCtg, setChildCtg] = useState([]); // subtopics
@@ -20,9 +20,12 @@ const SubtopicPage = ({ params }) => {
 
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    const categoryId = searchParams.get("categoryId");
-    const subcategoryId = searchParams.get("subcategoryId");
-    const subtopic = searchParams.get("subtopicId");
+    const categoryId = extractIdFromSlug(category)
+    const subcategoryId = extractIdFromSlug(topic)
+    const childTopic = extractIdFromSlug(subtopic)
+
+    console.log('=--->', childTopic)
+    console.log('=--->', topic)
 
     // 🟢 Extract readable category/topic path from URL
     const [categoryPath, setCategoryPath] = useState("");
@@ -38,7 +41,7 @@ const SubtopicPage = ({ params }) => {
     }, [pathname]);
     console.log(topicPath)
 
-    // 🟢 Fetch subtopics (child categories)
+    // 🟢 Fetch childTopics (child categories)
     const fetchChildCategories = async () => {
         setLoading(true);
         try {
@@ -59,7 +62,7 @@ const SubtopicPage = ({ params }) => {
         }
     };
 
-    // 🟢 Fetch articles/questions inside a subtopic
+    // 🟢 Fetch articles/questions inside a childTopic
     const fetchArticles = async () => {
         setLoading(true);
         try {
@@ -67,13 +70,14 @@ const SubtopicPage = ({ params }) => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    help_childcategory_id: subtopic,
+                    help_childcategory_id: childTopic,
                     help_category_id: categoryId,
                     help_subcategory_id: subcategoryId,
                 }),
             });
             const result = await res.json();
-            setArticles(result.data || []);
+            const addName = (result.data).map((val) => ({ ...val, name: val.title }))
+            setArticles(addName);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -96,57 +100,57 @@ const SubtopicPage = ({ params }) => {
 
     // Fetch articles when subtopic changes
     useEffect(() => {
-        if (subtopic) {
+        if (childTopic) {
             fetchArticles();
         }
-    }, [subtopic]);
-    console.log('==>', childCtg)
+    }, [childTopic]);
+    console.log('==>', articles)
     return (
         <div className={` ${styles.contentLayout} row `}>
             {/* Left Sidebar */}
             <div className={` ${styles.sidebar} col-12 col-md-4 `}>
-                <Breadcrumbs activeCategory={deslugify(categoryPath)} activeTopic={deslugify(topicPath)} />
+                <Breadcrumbs activeCategory={category} activeTopic={topic}  />
                 <HelpSidebar
-                    activeCategory={categoryId}
-                    activeTopic={subcategoryId}
+                    activeCategory={category}
+                    activeTopic={topic}
                     activeSubtopic={subtopic}
                     topics={childCtg}
+                    mode='childCategory'
+                    active={childTopic}
                 />
             </div>
 
             {/* Right Content */}
             <div className={` ${styles.mainContent} col-12 col-md-8 `}>
-                <SubHero subHeroHeading={deslugify(topicPath)} subHeroText={""} />
+                <SubHero subHeroHeading={deslugify(subtopic)} subHeroText={""} />
                 {/* 
                 {loading && <div>Loading...</div>}
                 {error && <div>Error: {error}</div>} */}
 
                 {/* Show Article List */}
-                <div className="d-flex align-item-center justify-content-left">
+                <div className="d-flex align-item-center justify-content-left w-100">
                     <ul className={styles.questionList}>
-                        {articles.map((question) => (
-                            <li key={question.id}>
-                                <Link
-                                    href={{
-                                        pathname: `/help/${category}/${topic}/${subtopic}/${slugify(question.name)}`,
-                                        query: {
-                                            categoryId,         // current categoryId from searchParams
-                                            subcategoryId,      // current subcategoryId from searchParams
-                                            ArticleId: question.id,  // sending subtopic id too
-                                            // subtopicName: subtopic.name // optional: for display without extra API call
-                                        },
-                                    }}
-                                    className={styles.questionLink}
-                                >
-                                    <div className="d-flex gap-2 ">
-                                        <div className={` ${styles.icon} d-flex`}>
-                                            <IoIosArrowForward />
+                        {!loading ?
+                            articles.length <= 0 ? (<li className="align-center">Articles Not Found</li>) : articles.map((question) => (
+                                <li key={question.id}>
+                                    <Link
+                                        href={{
+                                            pathname: `/help/${category}/${topic}/${subtopic}/${slugify(`${question.name} ${question.id}`)}`,
+
+                                        }}
+                                        className={styles.questionLink}
+                                    >
+                                        <div className="d-flex gap-2 ">
+                                            <div className={` ${styles.icon} d-flex`}>
+                                                <IoIosArrowForward />
+                                            </div>
+                                            <p className={styles.questionpara}> {question.name}</p>
                                         </div>
-                                        <p className={styles.questionpara}> {question.title}</p>
-                                    </div>
-                                </Link>
-                            </li>
-                        ))}
+                                    </Link>
+                                </li>
+                            ))
+                        :<li className="w-100 d-flex justify-content-center"><div className="loaderWrapper">
+                        <div className="spinner"></div></div></li>}
                     </ul>
                 </div>
             </div>

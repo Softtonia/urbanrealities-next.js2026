@@ -11,7 +11,7 @@ function formatBreadcrumb(slug) {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-const Breadcrumbs = ({ activeCategory, activeTopic, activeSubtopic ,activeArticle}) => {
+const Breadcrumbs = ({ activeCategory, activeTopic, activeSubtopic }) => {
   const breadcrumbs = [];
 
   if (activeCategory) {
@@ -34,12 +34,7 @@ const Breadcrumbs = ({ activeCategory, activeTopic, activeSubtopic ,activeArticl
       href: `/help/${encodeURIComponent(activeCategory)}/${encodeURIComponent(activeTopic)}/${encodeURIComponent(activeSubtopic)}`,
     });
   }
-  if (activeArticle) {
-    breadcrumbs.push({
-      title: deslugify(decodeURIComponent(activeArticle)),
-      href: `/help/${encodeURIComponent(activeCategory)}/${encodeURIComponent(activeTopic)}/${encodeURIComponent(activeSubtopic)}/${encodeURIComponent(activeArticle)}`,
-    });
-  }
+
 
 
   return (
@@ -58,4 +53,4 @@ const Breadcrumbs = ({ activeCategory, activeTopic, activeSubtopic ,activeArticl
   );
 };
 
-export default Breadcrumbs;
+export default Breadcrumbs; 

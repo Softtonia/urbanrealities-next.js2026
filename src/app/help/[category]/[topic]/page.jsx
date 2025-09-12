@@ -7,7 +7,7 @@ import styles from '../../components/TopicDetailPage.module.css';
 import Link from 'next/link';
 import SubHero from '@/Components/SubHero/SubHero';
 import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
-import { deslugify, slugify } from '@/utils/slugify';
+import { deslugify, extractIdFromSlug, slugify } from '@/utils/slugify';
 
 const TopicDetailPage = ({ params }) => {
   const { category, topic } = use(params);
@@ -18,8 +18,8 @@ const TopicDetailPage = ({ params }) => {
   const [error, setError] = useState(null);
 
   const searchParams = useSearchParams();
-  const categoryId = searchParams.get('categoryId');
-  const subcategoryId = searchParams.get('subcategoryId');
+  const categoryId = extractIdFromSlug(category)
+  const subcategoryId = extractIdFromSlug(topic)
 
   const pathname = usePathname();
 
@@ -31,15 +31,20 @@ const TopicDetailPage = ({ params }) => {
     if (pathname) {
       // Remove "/help/" and decode
       const pathAfterHelp = decodeURIComponent(pathname.replace(/^\/help\//, ""));
+
       // Split by "/" → ["User Profile", "New Registration & Login"]
       const parts = pathAfterHelp.split("/");
 
-      setCategoryPath(parts[0] || "");
-      setTopicPath(parts[1] || "");
+      // Utility to remove trailing number/id
+      const removeId = (str) => str.replace(/-\d+$/, "");
+
+      setCategoryPath(parts[0] ? removeId(parts[0]) : "");
+      setTopicPath(parts[1] ? removeId(parts[1]) : "");
     }
   }, [pathname]);
 
-  console.log('==>>',categoryPath,topicPath)
+
+  console.log('==>>', categoryPath, topicPath)
 
   const fetchChildCategories = async () => {
     setLoading(true);
@@ -127,35 +132,32 @@ const TopicDetailPage = ({ params }) => {
   return (
     <div className={` ${styles.contentLayout} row `}>
       <div className={` ${styles.sidebar} col-12  `}>
-        <Breadcrumbs activeCategory={slugify(categoryPath)} activeTopic={slugify(topicPath)} />
+        <Breadcrumbs activeCategory={category} />
 
         <div className={` ${styles.contentLayout} row `}>
           <div className={` ${styles.sidebar} col-12 col-md-4 `}>
-            <HelpSidebar topics={memoizedTopics} activeCategory={categoryId} activeTopic={subcategoryId} />
+            <HelpSidebar topics={memoizedTopics} activeCategory={category} activeTopic={topic} mode='subcategory' active={subcategoryId} />
           </div>
           <div className={` ${styles.mainContent} col-12 col-md-8 `}>
             {childCtg && (
               <>
-                <SubHero subHeroHeading={deslugify(categoryPath)} subHeroText={""} />
+                <SubHero subHeroHeading={deslugify(topic)} subHeroText={""} />
                 <ol className={styles.subtopicList}>
-                  {childCtg.map((subtopic) => (
+                  {childCtg ? childCtg.map((subtopic) => (
                     <li key={subtopic.id}>
                       <Link
                         href={{
-                          pathname: `/help/${category}/${topic}/${subtopic.name}`,
-                          query: {
-                            categoryId,         // current categoryId from searchParams
-                            subcategoryId,      // current subcategoryId from searchParams
-                            subtopicId: subtopic.id,  // sending subtopic id too
-                            // subtopicName: subtopic.name // optional: for display without extra API call
-                          },
+                          pathname: `/help/${category}/${topic}/${slugify(`${subtopic.name} ${subtopic.id}`)}`,
                         }}
                         className={styles.subtopicLink}
                       >
                         {subtopic.name}
                       </Link>
                     </li>
-                  ))}
+                  )) : <div className='w-100'>
+                    <div className="loaderWrapper">
+                      <div className="spinner"></div></div>
+                  </div>}
 
                 </ol>
               </>

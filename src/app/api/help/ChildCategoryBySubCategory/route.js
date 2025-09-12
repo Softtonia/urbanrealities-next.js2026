@@ -1,13 +1,27 @@
-import { NextResponse } from 'next/server';
-import { post } from '@/lib/api';
+// src/app/api/help/childcategories/route.js
+import { NextResponse } from "next/server";
+import { post } from "@/lib/api";
+
+// 🗄️ In-memory cache (works per server instance)
+const cache = new Map();
+const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
 
 export async function POST(request) {
     try {
-        // Read JSON data directly from the request body
         const payload = await request.json();
+        const key = JSON.stringify(payload);
 
-        // Pass the JSON payload to your Laravel API
+        // ✅ Check cache first
+        const cached = cache.get(key);
+        if (cached && cached.expiry > Date.now()) {
+            return NextResponse.json(cached.data);
+        }
+
+        // 🚀 Call Laravel API if cache miss
         const response = await post(`/api/help-childcategory-by-subcategoryid`, payload);
+
+        // ✅ Save to cache
+        cache.set(key, { data: response.data, expiry: Date.now() + CACHE_TTL });
 
         return NextResponse.json(response.data);
     } catch (error) {

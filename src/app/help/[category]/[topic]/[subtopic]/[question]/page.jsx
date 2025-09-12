@@ -3,8 +3,8 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 import HelpSidebar from "../../../../components/HelpSidebar/HelpSidebar";
 import styles from "../../../../components/TopicDetailPage.module.css";
-import Breadcrumbs from "@/Components/All-Breadcrumbs/Breadcrumbs";
-import { deslugify, slugify } from "@/utils/slugify";
+import { deslugify, extractIdFromSlug, slugify } from "@/utils/slugify";
+import Breadcrumbs from "@/app/help/components/Breadcrumbs/Breadcrumbs";
 
 const QuestionPage = ({ params }) => {
   const { category, topic, subtopic, question } = React.use(params);;
@@ -17,9 +17,11 @@ const QuestionPage = ({ params }) => {
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const categoryId = searchParams.get("categoryId");
-  const subcategoryId = searchParams.get("subcategoryId");
-  const questionId = searchParams.get("ArticleId");
+  const categoryId = extractIdFromSlug(category)
+  const childCategory = extractIdFromSlug(subtopic)
+  const subcategoryId = extractIdFromSlug(topic)
+
+  const questionId = extractIdFromSlug(question)
 
 
   // Extract readable paths for breadcrumbs
@@ -60,7 +62,7 @@ const QuestionPage = ({ params }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          help_childcategory_id: subtopic,
+          help_childcategory_id: childCategory,
           help_category_id: categoryId,
           help_subcategory_id: subcategoryId,
         }),
@@ -111,10 +113,10 @@ const QuestionPage = ({ params }) => {
   }, [stableCategoryId, stableSubcategoryId]);
 
   useEffect(() => {
-    if (subtopic) {
+    if (childCategory) {
       fetchArticles();
     }
-  }, [subtopic]);
+  }, [childCategory]);
 
   useEffect(() => {
     if (question) {
@@ -122,38 +124,44 @@ const QuestionPage = ({ params }) => {
     }
   }, [question]);
 
-  if (!questionDetail) {
-    return <div>Loading question...</div>;
-  }
+  // if (!questionDetail) {
+  //   return <div>Loading question...</div>;
+  // }
 
   return (
     <div className={` ${styles.contentLayout} row `}>
       {/* Sidebar */}
       <div className={` ${styles.sidebar} col-12 col-md-4 `}>
         <Breadcrumbs
-          activeCategory={deslugify(categoryPath)}
-          activeTopic={deslugify(topicPath)}
+          activeCategory={category}
+          activeTopic={topic}
           activeSubtopic={subtopic}
-          activeArticle={question}
+          
         />
 
         <HelpSidebar
-          topics={articles}
-          activeCategory={categoryId}
-          activeTopic={subcategoryId}
+          topics={childCtg}
+          activeCategory={category}
+          activeTopic={topic}
           activeSubtopic={subtopic}
-          activeQuestion={question}
+          active={childCategory}
+          mode='childCategory'
+          // activeQuestion={question}
         />
       </div>
 
       {/* Main Content */}
+      {questionDetail ?
       <div className={` ${styles.mainContent} col-12 col-md-8 `}>
         <h1 className={styles.questionTitle}>{questionDetail.title}</h1>
         <div
           className={styles.questionContent}
           dangerouslySetInnerHTML={{ __html: questionDetail.description }}
         />
-      </div>
+      </div>:
+      <div className="w-100 d-flex justify-content-center">
+      <div className="loaderWrapper">
+        <div className="spinner"></div></div></div>}
     </div>
   );
 };
