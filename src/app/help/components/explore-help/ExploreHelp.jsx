@@ -5,6 +5,7 @@ import Link from "next/link";
 import { helpTopics } from "@/app/help/data/helpData";
 import TextHeading from "@/Components/TextHeading/TextHeading.jsx";
 import { get } from "@/lib/api";
+import { slugify } from "@/utils/slugify";
 
 async function getCategories() {
   try {
@@ -58,7 +59,7 @@ const ExploreHelp = async ({ headingText = "Explore Help Topics" }) => {
                 <li key={item.id}>
                   <Link
                     href={{
-                      pathname: `/help/${topic.name}/${item.name}`,
+                      pathname: `/help/${slugify(topic.name)}/${slugify(item.name)}`,
                       query: { subcategoryId: item.id,
                       categoryId:topic.id }, // sending id as query param
                     }}

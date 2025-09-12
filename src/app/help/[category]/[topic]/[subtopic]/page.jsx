@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useRef, useMemo,use } from "react";
+import React, { useEffect, useState, useRef, useMemo, use } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import HelpSidebar from "../../../components/HelpSidebar/HelpSidebar";
 import styles from "../../../components/TopicDetailPage.module.css";
@@ -10,7 +10,7 @@ import Breadcrumbs from "@/app/help/components/Breadcrumbs/Breadcrumbs";
 import { deslugify, slugify } from "@/utils/slugify";
 
 const SubtopicPage = ({ params }) => {
-    const { category, topic, subtopic } = use(params);
+    const {category,topic} =React.use(params);
 
     // 🟢 State for subtopics & articles
     const [childCtg, setChildCtg] = useState([]); // subtopics
@@ -22,6 +22,7 @@ const SubtopicPage = ({ params }) => {
     const searchParams = useSearchParams();
     const categoryId = searchParams.get("categoryId");
     const subcategoryId = searchParams.get("subcategoryId");
+    const subtopic = searchParams.get("subtopicId");
 
     // 🟢 Extract readable category/topic path from URL
     const [categoryPath, setCategoryPath] = useState("");
@@ -35,6 +36,7 @@ const SubtopicPage = ({ params }) => {
             setTopicPath(parts[1] || "");
         }
     }, [pathname]);
+    console.log(topicPath)
 
     // 🟢 Fetch subtopics (child categories)
     const fetchChildCategories = async () => {
@@ -65,7 +67,7 @@ const SubtopicPage = ({ params }) => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    help_subtopic_id: subtopic,
+                    help_childcategory_id: subtopic,
                     help_category_id: categoryId,
                     help_subcategory_id: subcategoryId,
                 }),
@@ -98,34 +100,42 @@ const SubtopicPage = ({ params }) => {
             fetchArticles();
         }
     }, [subtopic]);
-
+    console.log('==>', childCtg)
     return (
         <div className={` ${styles.contentLayout} row `}>
             {/* Left Sidebar */}
             <div className={` ${styles.sidebar} col-12 col-md-4 `}>
-                <Breadcrumbs activeCategory={slugify(categoryPath)} activeTopic={slugify(topicPath)} />
+                <Breadcrumbs activeCategory={deslugify(categoryPath)} activeTopic={deslugify(topicPath)} />
                 <HelpSidebar
-                    topics={childCtg}
                     activeCategory={categoryId}
                     activeTopic={subcategoryId}
                     activeSubtopic={subtopic}
+                    topics={childCtg}
                 />
             </div>
 
             {/* Right Content */}
             <div className={` ${styles.mainContent} col-12 col-md-8 `}>
                 <SubHero subHeroHeading={deslugify(topicPath)} subHeroText={""} />
-{/* 
+                {/* 
                 {loading && <div>Loading...</div>}
                 {error && <div>Error: {error}</div>} */}
 
                 {/* Show Article List */}
-                <div className="d-flex align-item-center justify-content-center">
+                <div className="d-flex align-item-center justify-content-left">
                     <ul className={styles.questionList}>
                         {articles.map((question) => (
                             <li key={question.id}>
                                 <Link
-                                    href={`/help/${category}/${topic}/${subtopic}/${question.id}`}
+                                    href={{
+                                        pathname: `/help/${category}/${topic}/${subtopic}/${slugify(question.name)}`,
+                                        query: {
+                                            categoryId,         // current categoryId from searchParams
+                                            subcategoryId,      // current subcategoryId from searchParams
+                                            ArticleId: question.id,  // sending subtopic id too
+                                            // subtopicName: subtopic.name // optional: for display without extra API call
+                                        },
+                                    }}
                                     className={styles.questionLink}
                                 >
                                     <div className="d-flex gap-2 ">
