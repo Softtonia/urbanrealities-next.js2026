@@ -1,0 +1,87 @@
+
+  .profileWraper {
+  max-width: 764px;
+  margin: 0 auto;
+}
+
+.profileSection {
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  text-align: center;
+  margin-bottom: 30px;
+  gap: 30px;
+}
+
+.profileImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.changeProfile {
+  color: var(--Orange-Red);
+  margin-top: 8px;
+  cursor: pointer;
+  font-family: var(--font-medium);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.row {
+  display: flex;
+  gap: 50px;
+}
+
+.inputGroup {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.inputGroup label {
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-family: var(--font-regular);
+}
+
+.inputGroup input,
+.inputGroup textarea {
+  padding: 10px 20px 5px;
+  border: 1px solid var( --Lavender-Gray);
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: var(--font-regular);
+}
+
+.inputGroup textarea {
+     resize: vertical ;
+}
+
+.updateButton {
+  background-color: var(--Orange-Red);
+  color: var(--White);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-family: var(--font-regular);
+  cursor: pointer;
+  align-self: center;
+  width: 150px;
+}
+
+.updateButton:hover {
+  background-color: #e55b00;
+}
+@media (max-width:768){
+  .row{
+flex-direction:column;
+gap: 30px;
+  }
+}

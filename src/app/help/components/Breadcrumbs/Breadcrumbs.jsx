@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import styles from "./Breadcrumbs.module.css";
 import { deslugify } from "@/utils/slugify";
+
 function formatBreadcrumb(slug) {
   if (!slug) return "";
   return slug

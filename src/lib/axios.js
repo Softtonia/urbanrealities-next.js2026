@@ -8,8 +8,11 @@ if (typeof window === "undefined") {
   try {
     // lazy import inside server
     const { cookies } = require("next/headers");
-    getToken = () => cookies().get("token")?.value || null;
-  } catch {
+    getToken = async () => {
+      const cookieStore = await cookies(); // ✅ await here
+      return cookieStore.get("token")?.value || null;
+    };
+    } catch {
     getToken = () => null;
   }
 } else {

@@ -18,7 +18,7 @@ border: 1px solid #eee;
   display: flex;
   gap: 20px;
 }
-.main-container{
+.mainContainer{
 display: flex;
 flex-direction: column;
 overflow: hidden;
@@ -35,7 +35,9 @@ margin: 0;
 }
 .main {
    width: 1277px;
-  overflow: hidden;
+}
+.fullWidth {
+  width: 100%;
 }
 .grid {
 display: flex;
