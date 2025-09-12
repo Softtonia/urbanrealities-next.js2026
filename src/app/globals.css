@@ -105,24 +105,30 @@
 
 @font-face {
   font-family: "poppins-bold";
-  src: url("/fonts/Poppins-Bold.ttf");
+  src: url("/fonts/Poppins-Bold.ttf") format("truetype");
   font-weight: 700;
+  font-display: swap;
 }
+
 @font-face {
   font-family: "poppins-semibold";
-  src: url("/fonts/poppins-Semibold.ttf");
+  src: url("/fonts/Poppins-Semibold.ttf") format("truetype");
   font-weight: 600;
+  font-display: swap;
 }
+
 @font-face {
   font-family: "poppins-medium";
-  src: url("/fonts/Poppins-Medium.ttf");
+  src: url("/fonts/Poppins-Medium.ttf") format("truetype");
   font-weight: 500;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "poppins-regular";
-  src: url("/fonts/Poppins-Regular.ttf");
+  src: url("/fonts/Poppins-Regular.ttf") format("truetype");
   font-weight: 400;
+  font-display: swap;
 }
 
 :root {
@@ -199,38 +205,38 @@ small {
 
 .tableRow:nth-child(odd) {
   background-color: #f9f9f9;
-} 
+}
 
 .body-text-12 {
-  font-size: 12px ;
+  font-size: 12px;
   font-family: var(--font-regular);
 }
 .body-text-14 {
-  font-size: 14px ;
+  font-size: 14px;
   font-family: var(--font-regular);
 }
 .body-text-16 {
-  font-size: 16px ;
+  font-size: 16px;
   font-family: var(--font-medium);
 }
 .body-text-rg16 {
-  font-size: 16px ;
+  font-size: 16px;
   font-family: var(--font-regular);
 }
 .body-text-sb18 {
-  font-size: 18px ;
+  font-size: 18px;
   font-family: var(--font-semibold);
 }
 .body-text-md18 {
-  font-size: 18px ;
+  font-size: 18px;
   font-family: var(--font-medium);
 }
 .body-text-20 {
-  font-size: 20px ;
+  font-size: 20px;
   font-family: var(--font-medium);
 }
 .top-heading {
-  font-size: 30px ;
+  font-size: 30px;
   font-family: var(--font-semibold);
 }
 .borderNone {
@@ -373,8 +379,6 @@ small {
   border: none;
   font-size: 13.33px;
 }
-
-
 
 .navbar-menu {
   color: var(--White);
