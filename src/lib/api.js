@@ -1,7 +1,49 @@
-import axiosInstance from "./axios";
+import { axiosInstance, getToken } from "./axios";
 
+// ✅ get request
+export const get = async (url, config = {}) => {
+  const token = await getToken();
+  if (token) {
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  return axiosInstance.get(url, config);
+};
 
-export const get = (url, config = {}) => axiosInstance.get(url, config);
-export const post = (url, data, config = {}) => axiosInstance.post(url, data, config);
-export const put = (url, data, config = {}) => axiosInstance.put(url, data, config);
-export const del = (url, config = {}) => axiosInstance.delete(url, config);
+// ✅ post request
+export const post = async (url, data, config = {}) => {
+  const token = await getToken();
+  if (token) {
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  return axiosInstance.post(url, data, config);
+};
+
+// ✅ put request
+export const put = async (url, data, config = {}) => {
+  const token = await getToken();
+  if (token) {
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  return axiosInstance.put(url, data, config);
+};
+
+// ✅ delete request
+export const del = async (url, config = {}) => {
+  const token = await getToken();
+  if (token) {
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  return axiosInstance.delete(url, config);
+};

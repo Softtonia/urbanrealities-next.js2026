@@ -244,6 +244,9 @@ small {
 }
 
 /* =============all global btn css========  */
+tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
 
 .btn {
   font-family: var(--font-regular);

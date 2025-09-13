@@ -1,0 +1,190 @@
+.wrapper {
+  padding: 20px 20px 50px 20px ;
+  background-color: var(--White);
+  border-radius: 10px;
+  overflow-x: auto;
+ border: 1px solid var(--Bright-Gray);
+}
+.search-div{
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 0;
+}
+.searchContainer {
+  display: flex;
+gap: 10px;
+}
+
+.searchInput {
+  padding: 5px 20px;
+  border: 1px solid var( --Bright-Gray);
+  border-radius: 5px ;
+  outline: none;                       
+  width: 436px;
+  font-size: 14px;
+  font-family: var(--font-regular);
+}
+
+.filterButton{
+  border:none;
+  background-color:var(--White);
+    font-size: 16px;
+  font-family: var(--font-regular);
+
+}
+.icon{
+  margin-left:10px;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-family: var(--font-regular);
+  border-bottom: 1px solid var(--Lotion);
+  border-top: 1px solid var(--Lotion) ;
+}
+
+.th, .td {
+  padding: 12px 10px;
+  text-align: left;
+ border-right: 1px solid var(--Lotion);
+}
+
+.th {
+  background-color: var(--White);
+    font-size: 14px;
+  font-family: var(--font-medium);
+
+}
+
+/* TicketTable.module.css */
+.tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+
+.th:last-child,
+.td:last-child{
+  border-right: none;
+}
+
+.badge {
+  border-radius: 6px;
+  color: var(--White);
+  font-size: 14px;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.high {
+  color: var( --UFO-Green);
+}
+
+.low {
+  color: var(--Dark-Tangerine);
+}
+.medium{
+  color: var(--Tomato);
+}
+.status {
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: var(--font-regular);
+  color: var(--black);
+  display: inline-block;
+}
+
+.solved {
+  color: var( --UFO-Green);
+}
+
+.unresolved {
+  color: var( --Tomato);
+}
+
+.pending {
+  color: var(--Dark-Tangerine);
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+
+}
+
+
+.btn {
+  padding: 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--White);
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view {
+  background-color: var(  --Violet-Blue);
+}
+
+.edit {
+  background-color: var(--Dark-Tangerine);
+}
+
+.delete {
+  background-color: var(--KU-Crimson);
+}
+
+
+/* LeadTable.module.css */
+.checkboxCol {
+  width: 40px;
+}
+
+/* .serialCol {
+  width: 60px;
+} */
+
+/* .propertyIdCol {
+  width: 110px;
+}
+
+.subjectCol {
+  width: 170px;
+}
+
+.leadTypeCol {
+  width: 100px;
+}
+
+.statusCol {
+  width: 100px;
+}
+
+.actionCol {
+  width: 130px;
+} */
+
+.checkboxCol input[type="checkbox"] {
+  width: 18px; 
+  height: 18px;
+  cursor: pointer;
+}
+
+@media(max-width:576px){
+/* .search-div{
+  gap: 14px;
+} */
+.searchInput{
+  width: 180px;
+}
+.leadTypeCol{
+  display: none;
+}
+.searchButton {
+  padding: 8px 15px;
+}
+
+}

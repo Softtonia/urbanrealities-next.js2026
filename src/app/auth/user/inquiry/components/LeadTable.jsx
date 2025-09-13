@@ -70,8 +70,8 @@ const leadsData = [
   },
 ];
 
-export default function LeadsTable({data}) {
-  console.log(data)
+export default function LeadsTable({ data }) {
+  console.log(data);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchTicket, setSearchTicket] = useState("");
   const [selectAll, setSelectAll] = useState(false);
@@ -81,10 +81,9 @@ export default function LeadsTable({data}) {
     const ticket = item.ticket_number || "";
     const email = item.email || "";
     const term = searchTerm;
-  
+
     return ticket.includes(term) || email.includes(term);
   });
-  
 
   return (
     <div className={styles.wrapper}>
@@ -118,7 +117,6 @@ export default function LeadsTable({data}) {
   }}
         /> */}
           <button className={` ${styles.TicketButton} btn-AddTicket`}>
-
             Add Ticket
           </button>
         </div>
@@ -146,7 +144,7 @@ export default function LeadsTable({data}) {
             <th className={`${styles.th} ${styles.subjectCol}`}>Subject</th>
             <th className={`${styles.th} ${styles.leadTypeCol}`}>Priority</th>
             <th className={`${styles.th} ${styles.statusCol}`}>Status</th>
-            <th className={`${styles.th} ${styles.actionCol}`}>Action</th>{" "}
+            <th className={`${styles.th} ${styles.actionCol}`}>Action</th>
           </tr>
         </thead>
         <tbody className={styles.tbody}>
@@ -174,19 +172,24 @@ export default function LeadsTable({data}) {
               <td className={`${styles.td} ${styles.propertyIdCol}`}>
                 {item.ticket_number}
               </td>
-              <td className={`${styles.td} ${styles.subjectCol}`}>{item.subject}</td>
+              <td className={`${styles.td} ${styles.subjectCol}`}>
+                {item.subject}
+              </td>
               <td className={`${styles.td} ${styles.leadTypeCol}`}>
                 <span
-                  className={`${styles.badge} ${item.priority_name === 'High' ? styles.high : item.priority_name === 'Medium' ? styles.medium : styles.low}`}
+                  className={`${styles.badge} ${
+                    item.priority_name === "High"
+                      ? styles.high
+                      : item.priority_name === "Medium"
+                      ? styles.medium
+                      : styles.low
+                  }`}
                 >
                   {item.priority_name}
                 </span>
               </td>
               <td className={`${styles.td} ${styles.statusCol}`}>
-                <span
-                  className={`${styles.status} ${styles[item.status]
-                    }`}
-                >
+                <span className={`${styles.status} ${styles[item.status]}`}>
                   {item.status_name}
                 </span>
               </td>

@@ -2,7 +2,7 @@
 import ProtectedRoute from '@/Components/protectedRoute';
 import React from 'react';
 
-const insightPage = () => {
+const InsightPage = () => {
   return (
     <ProtectedRoute>
       <div>
@@ -12,4 +12,4 @@ const insightPage = () => {
   );
 };
 
-export default insightPage;
+export default InsightPage;

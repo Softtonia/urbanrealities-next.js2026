@@ -4,22 +4,20 @@ let getToken;
 
 // 🔹 Detect runtime
 if (typeof window === "undefined") {
-  // Server-side (App Router)
+  // Server-side
   try {
-    // lazy import inside server
     const { cookies } = require("next/headers");
     getToken = async () => {
-      const cookieStore = await cookies(); // ✅ await here
+      const cookieStore = await cookies();
       return cookieStore.get("token")?.value || null;
     };
-    } catch {
-    getToken = () => null;
+  } catch {
+    getToken = async () => null;
   }
 } else {
-  // Client-side (browser)
+  // Client-side
   getToken = () => {
     try {
-      // if you store in cookie
       const match = document.cookie.match(/(^| )token=([^;]+)/);
       return match ? match[2] : null;
     } catch {
@@ -39,16 +37,5 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// 🔹 Add token conditionally
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = getToken();
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-export default axiosInstance;
+// ✅ Export both axiosInstance and getToken for api.js to use
+export { axiosInstance, getToken };
