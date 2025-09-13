@@ -143,7 +143,7 @@ export default function LeadsTable({data}) {
             {/* <th className={`${styles.th} ${styles.subjectCol}`}>Subjects</th> */}
             <th className={`${styles.th} ${styles.leadTypeCol}`}>Message</th>
             {/* <th className={`${styles.th} ${styles.statusCol}`}>Status</th> */}
-            <th className={`${styles.th} ${styles.actionCol}`}>Action</th>{" "}
+            <th className={`${styles.th} ${styles.actionCol}`}>Action</th>
           </tr>
         </thead>
         <tbody className={styles.tbody}>

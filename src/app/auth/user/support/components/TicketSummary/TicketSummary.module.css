@@ -1,0 +1,76 @@
+.summaryContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items:center;
+  margin-bottom: 20px;
+  border: 1px solid var(--Bright-Gray);
+border-radius: 12px;
+background:var(--White);
+padding:8px;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-align: center;
+}
+
+.statDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.statPercentage {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+.totalSection{
+  padding:12px 71px ;
+  border-left: 1px solid var(--Bright-Gray);
+  border-right:1px solid var(--Bright-Gray);
+
+}
+
+.totalTitle {
+  font-weight: bold;
+  font-size: 20px;
+  font-family: var(--font-medium);
+  margin-bottom: 10px;
+}
+
+.totalItem {
+  display: flex;
+  gap:10px;
+  margin: 10px 0;
+  font-size: 16px;
+  font-family: var(--font-regular);
+}
+.btn {
+  padding: 7px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--White);
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.Active {
+  background-color: var(--UFO-Green);
+}
+.Closed {
+  background-color: var(--Violet-Blue);
+}
+.chartSection{
+
+}

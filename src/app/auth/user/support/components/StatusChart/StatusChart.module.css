@@ -1,0 +1,79 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.barContainer {
+  width: 16px;
+  height: 118px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border: 1px solid #ccc;
+}
+
+.segment {
+  width: 100%;
+}
+
+.open {
+  background-color: #0033cc;
+  height: 40%;
+}
+
+.inProgress {
+  background-color: #ffaa00;
+  height: 20%;
+}
+
+.resolved {
+  background-color: #00cc33;
+  height: 15%;
+}
+
+.completed {
+  background-color: #ff6600;
+  height: 15%;
+}
+
+.assigned {
+  background-color: #ff3333;
+  height: 10%;
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-family: var(--font-regular);
+  color: #666;
+}
+
+.colorDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.openDot {
+  background-color: #0033cc;
+}
+.inProgressDot {
+  background-color: #ffaa00;
+}
+.resolvedDot {
+  background-color: #00cc33;
+}
+.completedDot {
+  background-color: #ff6600;
+}
+.assignedDot {
+  background-color: #ff3333;
+}

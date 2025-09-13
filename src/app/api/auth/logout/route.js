@@ -30,7 +30,10 @@ export async function POST(req) {
     else {
       data = { message: "Logout successful" };
     }
-    cookies().set({
+
+     const cookieStore = await cookies();
+
+    cookieStore.set({
       name: "token",
       value: "",
       path: "/",
