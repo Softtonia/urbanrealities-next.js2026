@@ -1,111 +1,47 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import "../LocationDropdown/LocationDropdown.css";
 import { useCity } from "@/utils/CityContext";
 
-const cities = {
-  nearbyCities: [
-    "New Delhi",
-    "Gurgaon",
-    "Greater Noida",
-    "Ghaziabad",
-    "Mumbai",
-  ],
-  popularCities: [
-    "Ahmedabad",
-    "Bangalore",
-    "Beyond Thane",
-    "Chennai",
-    "Gurgaon",
-    "Hyderabad",
-    "Indore",
-    "Jaipur",
-    "Kolkata",
-    "Lucknow",
-    "Mumbai",
-    "Navi Mumbai",
-    "New Delhi",
-    "Noida",
-    "Pune",
-    "Thane",
-  ],
-  otherCities: [
-    "Agra",
-    "Ahmadnagar",
-    "Allahabad",
-    "Aluva",
-    "Amritsar",
-    "Aurangabad",
-    "Badlapur",
-    "Bareilly",
-    "Belgaum",
-    "Bhiwadi",
-    "Bhiwandi",
-    "Bhopal",
-    "Bhubaneswar",
-    "Bokaro Steel City",
-    "Chandigarh",
-    "Chengalpattu",
-    "Coimbatore",
-    "Dehradun",
-    "Durgapur",
-    "Ernakulam",
-    "Erode",
-    "Faridabad",
-    "Ghaziabad",
-    "Goa",
-    "Gorakhpur",
-    "Greater Noida",
-    "Guntur",
-    "Guwahati",
-    "Gwalior",
-    "Haridwar",
-    "Hosur",
-    "Hubli",
-    "Jabalpur",
-    "Jalandhar",
-    "Jammu",
-    "Jamshedpur",
-    "Jodhpur",
-    "Kalyan",
-    "Kannur",
-    "Kanpur",
-    "Khopoli",
-    "Kochi",
-    "Kodaikanal",
-    "Kottayam",
-    "Kozhikode",
-    "Lonavala",
-    "Ludhiana",
-    "Madurai",
-    "Mangalore",
-    "Mohali",
-    "Mysore",
-    "Nagpur",
-    "Nainital",
-    "Nanded",
-    "Nashik",
-    "Navsari",
-    "Nellore",
-    "Newtown",
-    "Ooty",
-    "Palakkad",
-    "Palghar",
-  ],
-};
-
 const LocationDropdown = () => {
   const { setCity } = useCity();
   const [activeCity, setActiveCity] = useState(null);
+  const [cities, setCities] = useState({
+    filter_city: null,
+    nearby: [],
+    popular: [],
+    other: []
+  });
+
+  // Fetch cities with debounce
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      const fetchCities = async () => {
+        try {
+          const res = await fetch(`/api/navbar-location?country_id=1&city_id=3`);
+          const data = await res.json();
+          if (data?.cities) {
+            setCities(data.cities);
+          }
+        } catch (err) {
+          console.error("Error fetching cities:", err);
+        }
+      };
+      fetchCities();
+    }, 400); // debounce delay
+
+    return () => clearTimeout(handler);
+  }, []);
 
   const handleSuggestionClick = (city) => {
-    setCity(city);
-    setActiveCity(city);
+    setCity(city); // Save globally in context
+    setActiveCity(city.id); // Highlight by id
   };
 
   const renderCityGrid = (citiesArray) => {
+    if (!citiesArray?.length) return null;
     const columnsPerRow = 5;
     const rows = [];
 
@@ -113,13 +49,13 @@ const LocationDropdown = () => {
       const rowItems = citiesArray.slice(i, i + columnsPerRow);
       rows.push(
         <div className="row" key={i}>
-          {rowItems.map((city, index) => (
-            <div className="col" key={index}>
+          {rowItems.map((city) => (
+            <div className="col" key={city.id}>
               <div
-                className={`city-text mb-2 ${activeCity === city ? "active" : ""}`}
+                className={`city-text mb-2 ${activeCity === city.id ? "active" : ""}`}
                 onClick={() => handleSuggestionClick(city)}
               >
-                {city}
+                {city.name}
               </div>
             </div>
           ))}
@@ -143,22 +79,29 @@ const LocationDropdown = () => {
     >
       <div className="text-dark d-flex align-items-center mb-3">
         <FaMapMarkerAlt className="m-0 mt-1 p-0" />
-        <h6 className="text-state ms-2 p-0">INDIA</h6>
+        <h6 className="text-state ms-2 p-0">{cities?.filter_city?.country_name || "India"}</h6>
       </div>
+
+      {cities?.filter_city && (
+        <div className="mb-3">
+          <div className="city-name mb-2">Selected City</div>
+          <div className="city-text active">{cities.filter_city.name}</div>
+        </div>
+      )}
 
       <div>
         <div className="city-name mb-2">Nearby Cities</div>
-        {renderCityGrid(cities.nearbyCities)}
+        {renderCityGrid(cities.nearby)}
       </div>
 
       <div>
         <div className="city-name mb-2 mt-2">Popular Cities</div>
-        {renderCityGrid(cities.popularCities)}
+        {renderCityGrid(cities.popular)}
       </div>
 
       <div>
         <div className="city-name mb-2 mt-2">Other Cities</div>
-        {renderCityGrid(cities.otherCities)}
+        {renderCityGrid(cities.other)}
       </div>
     </div>
   );
