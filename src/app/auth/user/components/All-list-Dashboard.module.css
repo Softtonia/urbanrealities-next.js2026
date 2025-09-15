@@ -17,6 +17,7 @@ border: 1px solid #eee;
 .pagerow{
   display: flex;
   gap: 20px;
+   overflow-x: visible;
 }
 .mainContainer{
 display: flex;
@@ -34,7 +35,8 @@ margin: 0;
   padding-right: 0px;
 }
 .main {
-   width: 1277px;
+ flex: 1;          
+  min-width: 0;
 }
 .fullWidth {
   width: 100%;
@@ -128,7 +130,7 @@ padding: 0 ;
 }
 
 }
-@media (max-width: 768.98px) {
+@media (max-width: 768px) {
 
   .mobileSidebarTabs{
  width: 100%;

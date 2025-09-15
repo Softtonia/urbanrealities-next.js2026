@@ -1,15 +1,12 @@
-import React from 'react';
-import TicketSummary from './components/TicketSummary/TicketSummary';
-import TicketTable from './components/TicketTable/TicketTable';
+import React from "react";
+import AllTicket from "./components/AllTicket/AllTicket";
 
 const supportpage = () => {
   return (
- <div className="">
-      <h2>Ticketing System</h2>
-      <TicketSummary />
-      <TicketTable/>
+    <div>
+      <AllTicket />
     </div>
   );
-}
+};
 
 export default supportpage;

@@ -114,10 +114,7 @@ export default function LeadsTable({data}) {
     }
   }}
         /> */}
-          <button className={` ${styles.TicketButton} btn-AddTicket`}>
 
-            Add Lead
-          </button>
         </div>
       </div>
       <table className={styles.table}>

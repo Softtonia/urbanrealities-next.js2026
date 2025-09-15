@@ -37,16 +37,7 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true, 
-  compress: true,  
-  productionBrowserSourceMaps: false, 
-
-  webpack(config, { dev, isServer }) {
-    if (dev) {
-      config.devtool = false; 
-    }
-    return config;
-  },
+  reactStrictMode: true,
 
   images: {
     remotePatterns: [
@@ -56,6 +47,13 @@ const nextConfig = {
       },
     ],
     domains: ["images.unsplash.com"],
+  },
+
+  webpack(config, { dev, isServer }) {
+    if (dev) {
+      config.devtool = false; // Development me debugging tool off karna (optional)
+    }
+    return config;
   },
 };
 

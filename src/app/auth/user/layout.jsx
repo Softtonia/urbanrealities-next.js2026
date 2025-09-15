@@ -22,20 +22,20 @@ function Layout({ children }) {
     setHasMounted(true);
   }, []);
 
-  useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (!mobile) {
-        setMode("desktop");
-      } else {
-        setMode("mobile-sidebar");
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     const mobile = window.innerWidth < 768;
+  //     setIsMobile(mobile);
+  //     if (!mobile) {
+  //       setMode("desktop");
+  //     } else {
+  //       setMode("mobile-sidebar");
+  //     }
+  //   };
+  //   handleResize();
+  //   window.addEventListener("resize", handleResize);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, []);
 
   // Jab route change ho, mobile me content dikhaye
   useEffect(() => {
