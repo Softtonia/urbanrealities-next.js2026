@@ -1,31 +1,26 @@
-// middleware.js
+// middlewareAuth.js
 import { NextResponse } from "next/server";
 
-export function middleware(request) {
-    // ✅ Get token from cookies
-    const token = request.cookies.get("token")?.value;
-    const { pathname } = request.nextUrl;
+export function middlewareAuth(request) {
+  const { pathname } = request.nextUrl;
 
-    // console.log("Token from middleware:", token);
+  // ✅ 1. Auth check
+  const token = request.cookies.get("token")?.value;
 
-    if (!token) {
-        const loginUrl = new URL("/auth/login", request.url);
+  if (!token) {
+    const loginUrl = new URL("/auth/login", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
 
-        // ✅ Add ?redirect=/original-path
-        loginUrl.searchParams.set("redirect", pathname);
-
-        return NextResponse.redirect(loginUrl);
-    }
-
-    // ✅ Allow access if token exists
-    return NextResponse.next();
+  // ✅ 2. Allow access if token exists
+  return NextResponse.next();
 }
 
-// Apply middleware only on protected routes
+// Apply only on protected routes
 export const config = {
-    matcher: [
-        // "/auth/post-property/:path*", // ✅ works for /auth/post-property and children
-        // "/auth/user/:path*",
-        // add more protected routes here
-    ],
+  matcher: [
+    // "/auth/post-property/:path*",
+    // "/auth/user/:path*",
+  ],
 };

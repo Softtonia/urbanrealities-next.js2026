@@ -14,7 +14,23 @@ export async function GET(req) {
 
             return NextResponse.json(res.data);
     } catch (err) {
-        console.error("Error fetching cities:", err);
-        return NextResponse.json({ error: "Failed to fetch cities" }, { status: 500 });
+        console.error("Error fetching cities:", err?.response?.data || err.message);
+    
+        // If Laravel sent an error response, forward it
+        if (err.response) {
+            return NextResponse.json(
+                {
+                    error: err.response.data?.message || err.response.data || "Laravel error",
+                },
+                { status: err.response.status || 500 }
+            );
+        }
+    
+        // Otherwise, fallback to generic error
+        return NextResponse.json(
+            { error: err.message || "Failed to fetch cities" },
+            { status: 500 }
+        );
     }
+    
 }

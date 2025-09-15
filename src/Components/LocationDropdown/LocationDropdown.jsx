@@ -7,37 +7,60 @@ import { useCity } from "@/utils/CityContext";
 
 const LocationDropdown = () => {
   const { setCity } = useCity();
-  const [activeCity, setActiveCity] = useState(null);
+
+  const [activeCity, setActiveCity] = useState(null); // ✅ initially null
   const [cities, setCities] = useState({
     filter_city: null,
     nearby: [],
     popular: [],
     other: []
   });
+  useEffect(() => {
+    const savedCity = localStorage.getItem("selectedCity");
+    if (savedCity.length>0 ||savedCity) {
+      const parsed = JSON.parse(savedCity);
+      setActiveCity(parsed.id);
+      setCity(parsed);
+    }
+  }, []);
+  
 
   // Fetch cities with debounce
   useEffect(() => {
     const handler = setTimeout(() => {
       const fetchCities = async () => {
         try {
-          const res = await fetch(`/api/navbar-location?country_id=1&city_id=3`);
+          const res = await fetch(
+            `/api/navbar-location?country_id=1${activeCity ? `&city_id=${activeCity}` : ""}`
+          );
           const data = await res.json();
           if (data?.cities) {
             setCities(data.cities);
+
+            // ✅ If no activeCity yet, try restoring from localStorage
+            if (!activeCity) {
+              const savedCity = localStorage.getItem("selectedCity");
+              if (savedCity) {
+                const parsed = JSON.parse(savedCity);
+                setActiveCity(parsed.id);
+                setCity([parsed]);
+              }
+            }
           }
         } catch (err) {
           console.error("Error fetching cities:", err);
         }
       };
       fetchCities();
-    }, 400); // debounce delay
+    }, 400);
 
     return () => clearTimeout(handler);
-  }, []);
+  }, [activeCity]);
 
   const handleSuggestionClick = (city) => {
-    setCity(city); // Save globally in context
-    setActiveCity(city.id); // Highlight by id
+    setCity([city]); // update in context
+    setActiveCity(city.id); // set selected city id
+    localStorage.setItem("selectedCity", JSON.stringify(city)); // ✅ store full city object
   };
 
   const renderCityGrid = (citiesArray) => {
@@ -77,10 +100,14 @@ const LocationDropdown = () => {
         overflowY: "auto",
       }}
     >
-      <div className="text-dark d-flex align-items-center mb-3">
-        <FaMapMarkerAlt className="m-0 mt-1 p-0" />
-        <h6 className="text-state ms-2 p-0">{cities?.filter_city?.country_name || "India"}</h6>
-      </div>
+      {cities?.filter_city?.country_name && (
+        <div className="text-dark d-flex align-items-center mb-3">
+          <FaMapMarkerAlt className="m-0 mt-1 p-0" />
+          <h6 className="text-state ms-2 p-0">
+            {cities?.filter_city?.country_name || "India"}
+          </h6>
+        </div>
+      )}
 
       {cities?.filter_city && (
         <div className="mb-3">

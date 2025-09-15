@@ -22,96 +22,128 @@ import { get } from "@/lib/api";
 import { useSiteSettings } from "../mycontext/siteSettingContext";
 import { useCity } from "@/utils/CityContext";
 
-const cities = {
-  nearbyCities: ["New Delhi", "Gurgaon", "Greater Noida"],
-  popularCities: ["Ahmedabad", "Bangalore", "Beyond Thane"],
-  otherCities: [
-    "Agra",
-    "Ahmadnagar",
-    "Allahabad",
-    "Aluva",
-    "Amritsar",
-    "Aurangabad",
-    "Badlapur",
-    "Bareilly",
-    "Belgaum",
-    "Bhiwadi",
-    "Bhiwandi",
-    "Bhopal",
-    "Bhubaneswar",
-    "Bokaro Steel City",
-    "Chandigarh",
-    "Chengalpattu",
-    "Coimbatore",
-    "Dehradun",
-    "Durgapur",
-    "Ernakulam",
-    "Erode",
-    "Faridabad",
-    "Ghaziabad",
-    "Goa",
-    "Gorakhpur",
-    "Greater Noida",
-    "Guntur",
-    "Guwahati",
-    "Gwalior",
-    "Haridwar",
-    "Hosur",
-    "Hubli",
-    "Jabalpur",
-    "Jalandhar",
-    "Jammu",
-    "Jamshedpur",
-    "Jodhpur",
-    "Kalyan",
-    "Kannur",
-    "Kanpur",
-    "Khopoli",
-    "Kochi",
-    "Kodaikanal",
-    "Kottayam",
-    "Kozhikode",
-    "Lonavala",
-    "Ludhiana",
-    "Madurai",
-    "Mangalore",
-    "Mohali",
-    "Mysore",
-    "Nagpur",
-    "Nainital",
-    "Nanded",
-    "Nashik",
-    "Navsari",
-    "Nellore",
-    "Newtown",
-    "Ooty",
-    "Palakkad",
-    "Palghar",
-    "Gurgaon",
-    "Hyderabad",
-    "Indore",
-    "Jaipur",
-    "Kolkata",
-    "Lucknow",
-    "Mumbai",
-    "Navi Mumbai",
-    "New Delhi",
-    "Noida",
-    "Pune",
-    "Thane",
-    "Chennai",
-    "Ghaziabad",
-  ],
-};
+// const cities = {
+//   nearbyCities: ["New Delhi", "Gurgaon", "Greater Noida"],
+//   popularCities: ["Ahmedabad", "Bangalore", "Beyond Thane"],
+//   otherCities: [
+//     "Agra",
+//     "Ahmadnagar",
+//     "Allahabad",
+//     "Aluva",
+//     "Amritsar",
+//     "Aurangabad",
+//     "Badlapur",
+//     "Bareilly",
+//     "Belgaum",
+//     "Bhiwadi",
+//     "Bhiwandi",
+//     "Bhopal",
+//     "Bhubaneswar",
+//     "Bokaro Steel City",
+//     "Chandigarh",
+//     "Chengalpattu",
+//     "Coimbatore",
+//     "Dehradun",
+//     "Durgapur",
+//     "Ernakulam",
+//     "Erode",
+//     "Faridabad",
+//     "Ghaziabad",
+//     "Goa",
+//     "Gorakhpur",
+//     "Greater Noida",
+//     "Guntur",
+//     "Guwahati",
+//     "Gwalior",
+//     "Haridwar",
+//     "Hosur",
+//     "Hubli",
+//     "Jabalpur",
+//     "Jalandhar",
+//     "Jammu",
+//     "Jamshedpur",
+//     "Jodhpur",
+//     "Kalyan",
+//     "Kannur",
+//     "Kanpur",
+//     "Khopoli",
+//     "Kochi",
+//     "Kodaikanal",
+//     "Kottayam",
+//     "Kozhikode",
+//     "Lonavala",
+//     "Ludhiana",
+//     "Madurai",
+//     "Mangalore",
+//     "Mohali",
+//     "Mysore",
+//     "Nagpur",
+//     "Nainital",
+//     "Nanded",
+//     "Nashik",
+//     "Navsari",
+//     "Nellore",
+//     "Newtown",
+//     "Ooty",
+//     "Palakkad",
+//     "Palghar",
+//     "Gurgaon",
+//     "Hyderabad",
+//     "Indore",
+//     "Jaipur",
+//     "Kolkata",
+//     "Lucknow",
+//     "Mumbai",
+//     "Navi Mumbai",
+//     "New Delhi",
+//     "Noida",
+//     "Pune",
+//     "Thane",
+//     "Chennai",
+//     "Ghaziabad",
+//   ],
+// };
 
 export default function Navbar() {
   const { city, setCity } = useCity();
-    const [activeCity, setActiveCity] = useState(null);
+  const cityId = city ? city.id : ''
+  const cityName = city ? city.name : ''
+  const [activeCity, setActiveCity] = useState(cityId);
+  const [cities, setCities] = useState({
+    filter_city: null,
+    nearby: [],
+    popular: [],
+    other: []
+  });
+  console.log(city)
 
-  const handleSuggestionClick = (cityName) => {
-    setCity(cityName);
-    setActiveCity(cityName)
+
+  const handleSuggestionClick = (city) => {
+    setCity(city); // Save globally in context
+    setActiveCity(city.id); // Highlight by id
+    // localStorage.setItem("selectedCity", city);
   };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      const fetchCities = async () => {
+        try {
+          const res = await fetch(`/api/navbar-location?country_id=1&city_id=${activeCity}`);
+          const data = await res.json();
+          if (data?.cities) {
+            setCities(data.cities);
+            setCity(data.cities?.filter_city || '');
+            // localStorage.setItem("selectedCity", data.cities?.filter_city);
+          }
+        } catch (err) {
+          console.error("Error fetching cities:", err);
+        }
+      };
+      fetchCities();
+    }, 400); // debounce delay
+
+    return () => clearTimeout(handler);
+  }, [activeCity]);
 
   const renderCityGrid = (citiesArray, city, handleSuggestionClick) => {
     const columnsPerRow = 5;
@@ -121,15 +153,14 @@ export default function Navbar() {
       const rowItems = citiesArray.slice(i, i + columnsPerRow);
       rows.push(
         <div className="row mb-1 ms-3" key={i}>
-          {rowItems.map((cityName, index) => (
+          {rowItems.map((city, index) => (
             <div className="col" key={index}>
               <div
-                className={`city-Nametext mb-2 ${
-                activeCity=== cityName ? "active" : ""
-                }`}
-                onClick={() => handleSuggestionClick(cityName)}
+                className={`city-Nametext mb-2 ${activeCity === city.id ? "active" : ""
+                  }`}
+                onClick={() => handleSuggestionClick(city)}
               >
-                {cityName}
+                {city.name}
               </div>
             </div>
           ))}
@@ -217,12 +248,12 @@ export default function Navbar() {
               onMouseLeave={() => setShowDropdown(false)}
             >
               <div className="nav-link d-flex align-items-center" role="button">
+              {/* <div className="nav-items-name">{cityName}</div> */}
                 <FaMapMarkerAlt className="icon-nav-loc me-1" />
               </div>
               <div
-                className={`transition-opacity duration-300 ${
-                  showDropdown ? "opacity-100 visible" : "opacity-0 invisible"
-                } position-absolute top-100 start-0`}
+                className={`transition-opacity duration-300 ${showDropdown ? "opacity-100 visible" : "opacity-0 invisible"
+                  } position-absolute top-100 start-0`}
                 style={{ marginTop: "15px" }}
               >
                 <LocationDropdown />
@@ -239,9 +270,8 @@ export default function Navbar() {
                 Buy <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${
-                  activeDropdown === "buy" ? "show" : ""
-                }`}
+                className={`dropdown-menu mega-menu p-3 ${activeDropdown === "buy" ? "show" : ""
+                  }`}
                 style={{ width: "50vw", marginTop: "15px" }}
               >
                 <DropdownMegaMenu />
@@ -257,9 +287,8 @@ export default function Navbar() {
                 Rent <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${
-                  activeDropdown === "rent" ? "show" : ""
-                }`}
+                className={`dropdown-menu mega-menu p-3 ${activeDropdown === "rent" ? "show" : ""
+                  }`}
                 style={{ width: "50vw", marginTop: "15px" }}
               >
                 <DropdownMegaMenu />
@@ -274,9 +303,8 @@ export default function Navbar() {
                 Sell <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${
-                  activeDropdown === "sell" ? "show" : ""
-                }`}
+                className={`dropdown-menu mega-menu p-3 ${activeDropdown === "sell" ? "show" : ""
+                  }`}
                 style={{ width: "60vw", marginTop: "15px" }}
               >
                 <SellerDropdown />
@@ -492,7 +520,7 @@ export default function Navbar() {
                         className="dropdown-item"
                         href="/auth/user/account"
                         style={{
-                         backgroundColor: "transparent",
+                          backgroundColor: "transparent",
                           color: "inherit",
                         }}
                       >
@@ -557,8 +585,8 @@ export default function Navbar() {
                   siteData?.website_logo?.startsWith("http")
                     ? siteData.website_logo
                     : siteData?.mobile_logo?.startsWith("http")
-                    ? siteData.mobile_logo
-                    : "/logo.png"
+                      ? siteData.mobile_logo
+                      : "/logo.png"
                 }
                 alt="Urbanrealities"
                 width={100}
@@ -690,7 +718,7 @@ export default function Navbar() {
               <div className="mb-3">
                 <div className="city-heading-mob mb-2 ms-3">Nearby Cities</div>
                 {renderCityGrid(
-                  cities.nearbyCities,
+                  cities.nearby,
                   city,
                   handleSuggestionClick
                 )}
@@ -699,7 +727,7 @@ export default function Navbar() {
               <div className="mb-3">
                 <div className="city-heading-mob mb-2 ms-3">Popular Cities</div>
                 {renderCityGrid(
-                  cities.popularCities,
+                  cities.popular,
                   city,
                   handleSuggestionClick
                 )}
@@ -712,7 +740,7 @@ export default function Navbar() {
                   style={{ maxHeight: "500px" }}
                 >
                   {renderCityGrid(
-                    cities.otherCities,
+                    cities.other,
                     city,
                     handleSuggestionClick
                   )}
