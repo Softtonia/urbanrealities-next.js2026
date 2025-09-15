@@ -1,60 +1,70 @@
 .wrapper {
-  padding: 20px 20px 50px 20px ;
+  padding: 20px 20px 50px 20px;
   background-color: var(--White);
   border-radius: 10px;
-  overflow-x: auto;
- border: 1px solid var(--Bright-Gray);
+  width: 100%;
+  border: 1px solid var(--Bright-Gray);
 }
-.search-div{
+.search-div {
   display: flex;
   justify-content: space-between;
   padding: 20px 0;
+   overflow-x: auto;
+  width: 100%;
+  flex-wrap: nowrap;
+
 }
 .searchContainer {
   display: flex;
-gap: 10px;
+  gap: 10px;
+  /* min-width: 300px; */
 }
 
 .searchInput {
   padding: 5px 20px;
-  border: 1px solid var( --Bright-Gray);
-  border-radius: 5px ;
-  outline: none;                       
+  border: 1px solid var(--Bright-Gray);
+  border-radius: 5px;
+  outline: none;
   width: 436px;
   font-size: 14px;
   font-family: var(--font-regular);
 }
 
-.filterButton{
-  border:none;
-  background-color:var(--White);
-    font-size: 16px;
+.filterButton {
+  border: none;
+  background-color: var(--White);
+  font-size: clamp(14px, 1vw, 16px);
   font-family: var(--font-regular);
+}
+.icon {
+  margin-left: 10px;
+}
+.tableContainer {
+  overflow-x: auto;
+  width: 100%;
+}
 
-}
-.icon{
-  margin-left:10px;
-}
 .table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
   font-family: var(--font-regular);
   border-bottom: 1px solid var(--Lotion);
-  border-top: 1px solid var(--Lotion) ;
+  border-top: 1px solid var(--Lotion);
+  table-layout: fixed;
 }
 
-.th, .td {
+.th,
+.td {
   padding: 12px 10px;
   text-align: left;
- border-right: 1px solid var(--Lotion);
+  border-right: 1px solid var(--Lotion);
 }
 
 .th {
   background-color: var(--White);
-    font-size: 14px;
+  font-size: 14px;
   font-family: var(--font-medium);
-
 }
 
 /* TicketTable.module.css */
@@ -62,9 +72,8 @@ gap: 10px;
   background-color: #f9f9f9;
 }
 
-
 .th:last-child,
-.td:last-child{
+.td:last-child {
   border-right: none;
 }
 
@@ -77,13 +86,13 @@ gap: 10px;
 }
 
 .high {
-  color: var( --UFO-Green);
+  color: var(--UFO-Green);
 }
 
 .low {
   color: var(--Dark-Tangerine);
 }
-.medium{
+.medium {
   color: var(--Tomato);
 }
 .status {
@@ -95,11 +104,11 @@ gap: 10px;
 }
 
 .solved {
-  color: var( --UFO-Green);
+  color: var(--UFO-Green);
 }
 
 .unresolved {
-  color: var( --Tomato);
+  color: var(--Tomato);
 }
 
 .pending {
@@ -109,9 +118,7 @@ gap: 10px;
 .actions {
   display: flex;
   gap: 6px;
-
 }
-
 
 .btn {
   padding: 5px;
@@ -126,7 +133,7 @@ gap: 10px;
 }
 
 .view {
-  background-color: var(  --Violet-Blue);
+  background-color: var(--Violet-Blue);
 }
 
 .edit {
@@ -137,18 +144,17 @@ gap: 10px;
   background-color: var(--KU-Crimson);
 }
 
-
 /* LeadTable.module.css */
 .checkboxCol {
   width: 40px;
 }
 
-/* .serialCol {
+.serialCol {
   width: 60px;
-} */
+}
 
-/* .propertyIdCol {
-  width: 110px;
+.propertyIdCol {
+  width: 130px;
 }
 
 .subjectCol {
@@ -156,35 +162,31 @@ gap: 10px;
 }
 
 .leadTypeCol {
-  width: 100px;
+  width: 170px;
 }
 
 .statusCol {
-  width: 100px;
+  width: 130px;
 }
 
 .actionCol {
   width: 130px;
-} */
+}
 
 .checkboxCol input[type="checkbox"] {
-  width: 18px; 
+  width: 18px;
   height: 18px;
   cursor: pointer;
 }
 
-@media(max-width:576px){
-/* .search-div{
-  gap: 14px;
-} */
-.searchInput{
-  width: 180px;
-}
-.leadTypeCol{
-  display: none;
-}
-.searchButton {
-  padding: 8px 15px;
+@media (max-width: 953px) {
+  .searchInput {
+    width: 250px;
+  }
 }
 
+@media (max-width: 586px) {
+  .searchInput {
+    width: 180px;
+  }
 }

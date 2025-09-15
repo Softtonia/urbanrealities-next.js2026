@@ -2,7 +2,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 
-function CircularProgressRing({ percentage = 0, label = '', color = '#3498db', radius = 45, stroke = 10 }) {
+function CircularProgressRing({ percentage = 0, label = '', color = '#3498db', radius = 45, stroke = 10,  className = '', }) {
   const normalizedRadius = radius - stroke / 2;
   const circumference = 2 * Math.PI * normalizedRadius;
   const [offset, setOffset] = useState(circumference);
@@ -17,10 +17,10 @@ function CircularProgressRing({ percentage = 0, label = '', color = '#3498db', r
 
   return (
     <>
-      <div className="col">
+      <div className="">
         <div className="dashboard-progress-cards">
           <div className="dashboard-heading-flex">
-            <svg height={radius * 2} width={radius * 2}>
+            <svg className={`progressRing ${className}`} height={radius * 2} width={radius * 2}>
               {/* Gray background ring */}
               <circle
                 stroke="#eee"

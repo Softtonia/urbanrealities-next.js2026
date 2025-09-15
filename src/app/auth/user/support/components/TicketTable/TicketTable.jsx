@@ -97,7 +97,14 @@ const TicketTable = () => {
         onChange={(e) => setSearchTicket(e.target.value)}
       />
     </div>
+       <div className={styles.searchContainer}>
+            <button className={` ${styles.TicketButton} btn-AddTicket`}>
+            Add Ticket
+          </button>
+        </div>
   </div>
+  
+   <div className={styles.tableContainer}>
       <table className={styles.table}>
         <thead className={styles.thead}>
           <tr className={styles.tableRow}>
@@ -193,6 +200,7 @@ const TicketTable = () => {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };
