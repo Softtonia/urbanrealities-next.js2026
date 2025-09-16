@@ -3,6 +3,8 @@ import { useState } from "react";
 import styles from "./TicketTable.module.css";
 import { LuSlidersHorizontal } from "react-icons/lu";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import Link from "next/link";
+
 
 const TicketTable = () => {
   const [searchTicket, setSearchTicket] = useState("");
@@ -97,11 +99,11 @@ const TicketTable = () => {
         onChange={(e) => setSearchTicket(e.target.value)}
       />
     </div>
-       <div className={styles.searchContainer}>
-            <button className={` ${styles.TicketButton} btn-AddTicket`}>
-            Add Ticket
-          </button>
-        </div>
+ <div className={styles.searchContainer}>
+      <Link href="/auth/user/support/add-ticket" className={`${styles.TicketButton} btn-AddTicket`}>
+        Add Ticket
+      </Link>
+    </div>
   </div>
   
    <div className={styles.tableContainer}>
@@ -189,12 +191,12 @@ const TicketTable = () => {
                 <button className={`${styles.btn} ${styles.view}`}>
                   <FaEye />
                 </button>
-                <button className={`${styles.btn} ${styles.edit}`}>
+                {/* <button className={`${styles.btn} ${styles.edit}`}>
                   <FaEdit />
                 </button>
                 <button className={`${styles.btn} ${styles.delete}`}>
                   <FaTrash />
-                </button>
+                </button> */}
               </td>
             </tr>
           ))}

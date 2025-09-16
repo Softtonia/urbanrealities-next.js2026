@@ -14,8 +14,8 @@ function Layout({ children }) {
   const pathname = usePathname();
   const { showSidebar, pageHeading } = useDashboard();
 
-  const [isMobile, setIsMobile] = useState(false);
-  const [mode, setMode] = useState("desktop"); // 'desktop', 'mobile-sidebar', 'mobile-content'
+  const [isMobile, setIsMobile] = useState(true);
+  const [mode, setMode] = useState("mobile-sidebar"); // 'desktop', 'mobile-sidebar', 'mobile-content'
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
