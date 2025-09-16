@@ -31,6 +31,7 @@ const axiosInstance = axios.create({
   headers: {
     "X-Client-ID": process.env.X_CLIENT_ID,
     "X-Client-Secret": process.env.X_CLIENT_SECRET,
+    'X-App-Type':process.env.X_APP_TYPE,
     "Content-Type": "application/json",
     "Origin": process.env.NEXT_PUBLIC_API_URL,
   },

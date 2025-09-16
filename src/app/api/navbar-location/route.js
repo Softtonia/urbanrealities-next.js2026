@@ -4,18 +4,24 @@ import { NextResponse } from "next/server";
 
 export async function GET(req) {
     const { searchParams } = new URL(req.url);
-    const country_id = searchParams.get("country_id") || 1;
+    const country_id = searchParams.get("country_id") || '';
     const city_id = searchParams.get("city_id") || "";
+    const search = searchParams.get("search") || "";
 
     try {
         // Forward request to Laravel backend
-        const res = await get(
-            `${process.env.LARAVEL_API_BASE_URL}/api/locations?country_id=${country_id}&city_id=${city_id}`);
+        const queryParams = new URLSearchParams();
+        if (country_id) queryParams.append("country_id", country_id);
+        if (city_id) queryParams.append("city_id", city_id);
+        if (search) queryParams.append("search", search);
 
-            return NextResponse.json(res.data);
+        const res = await get(
+            `${process.env.LARAVEL_API_BASE_URL}/api/locations?${queryParams.toString()}`
+        );
+        return NextResponse.json(res.data);
     } catch (err) {
         console.error("Error fetching cities:", err?.response?.data || err.message);
-    
+
         // If Laravel sent an error response, forward it
         if (err.response) {
             return NextResponse.json(
@@ -25,12 +31,12 @@ export async function GET(req) {
                 { status: err.response.status || 500 }
             );
         }
-    
+
         // Otherwise, fallback to generic error
         return NextResponse.json(
             { error: err.message || "Failed to fetch cities" },
             { status: 500 }
         );
     }
-    
+
 }

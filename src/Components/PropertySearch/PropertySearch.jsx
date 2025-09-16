@@ -17,7 +17,9 @@ export default function PropertySearch() {
 
   const { city } = useCity();
 
+
   console.log('==>', city)
+  console.log('==>', 'rerun')
 
   const handleViewsearch = () => {
     router.push("/FilterMobile");
@@ -123,7 +125,7 @@ export default function PropertySearch() {
                 data-bs-toggle="dropdown"
               >
                 <IoLocation className={"icon-custom"} />
-                <span className="Add-city">{}</span>
+                <span className="Add-city">{city && city.name}</span>
                 <input
                   type="text"
                   placeholder="Add more..."

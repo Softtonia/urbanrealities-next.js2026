@@ -9,7 +9,7 @@ import OtherBuilders from "./components/project-details-mobile/OtherBuilders";
 import CompletedProjectTiles from "./components/project-details-mobile/CompletedProjectTiles";
 import FAQAccordion from "./components/project-details-mobile/FAQAccordion";
 import HomeLoanOffers from "./components/project-details-mobile/HomeLoanOffers";
-import { get } from "@/lib/api";
+import { get, getssr } from "@/lib/api";
 import styles from "./components/developer-listing.module.css";
 // for desktop
 import DeveloperStats from "./components/DeveloperStats/DeveloperStats";
@@ -18,7 +18,7 @@ import ProjectFAQ from "@/Components/FAQAccordion/ProjectFAQ";
 
 async function fetchDeveloper(id) {
   try {
-    const response = await get(`/api/get-data-developer-no-auth/${id}`);
+    const response = await getssr(`/api/get-data-developer-no-auth/${id}`);
     const data = response?.data;
     if (data) return data;
     return [];

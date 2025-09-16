@@ -5,62 +5,57 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import "../LocationDropdown/LocationDropdown.css";
 import { useCity } from "@/utils/CityContext";
 
-const LocationDropdown = () => {
+const LocationDropdown = ({cities,selectCity}) => {
   const { setCity } = useCity();
+  console.log('=>',cities)
 
   const [activeCity, setActiveCity] = useState(null); // ✅ initially null
-  const [cities, setCities] = useState({
-    filter_city: null,
-    nearby: [],
-    popular: [],
-    other: []
-  });
-  useEffect(() => {
-    const savedCity = localStorage.getItem("selectedCity");
-    if (savedCity.length>0 ||savedCity) {
-      const parsed = JSON.parse(savedCity);
-      setActiveCity(parsed.id);
-      setCity(parsed);
-    }
-  }, []);
-  
+  // const [cities, setCities] = useState({
+  //   filter_city: null,
+  //   nearby: [],
+  //   popular: [],
+  //   other: []
+  // });
+
 
   // Fetch cities with debounce
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      const fetchCities = async () => {
-        try {
-          const res = await fetch(
-            `/api/navbar-location?country_id=1${activeCity ? `&city_id=${activeCity}` : ""}`
-          );
-          const data = await res.json();
-          if (data?.cities) {
-            setCities(data.cities);
+  // useEffect(() => {
+  //   const handler = setTimeout(() => {
+  //     const fetchCities = async () => {
+  //       try {
+  //         const res = await fetch(
+  //           `/api/navbar-location?country_id=1${activeCity ? `&city_id=${activeCity}` : ""}`
+  //         );
+  //         const data = await res.json();
+  //         if (data?.cities) {
+  //           setCities(data.cities);
 
-            // ✅ If no activeCity yet, try restoring from localStorage
-            if (!activeCity) {
-              const savedCity = localStorage.getItem("selectedCity");
-              if (savedCity) {
-                const parsed = JSON.parse(savedCity);
-                setActiveCity(parsed.id);
-                setCity([parsed]);
-              }
-            }
-          }
-        } catch (err) {
-          console.error("Error fetching cities:", err);
-        }
-      };
-      fetchCities();
-    }, 400);
+  //           // ✅ If no activeCity yet, try restoring from localStorage
+  //           // if (!activeCity) {
+  //           //   const savedCity = localStorage.getItem("selectedCity");
+  //           //   if (savedCity) {
+  //           //     const parsed = JSON.parse(savedCity);
+  //           //     setActiveCity(parsed.id);
+  //           //     setCity([parsed]);
+  //           //   }
+  //           // }
+  //         }
+  //       } catch (err) {
+  //         console.error("Error fetching cities:", err);
+  //       }
+  //     };
+  //     fetchCities();
+  //   }, 400);
 
-    return () => clearTimeout(handler);
-  }, [activeCity]);
+  //   return () => clearTimeout(handler);
+  // }, [activeCity]);
 
   const handleSuggestionClick = (city) => {
-    setCity([city]); // update in context
+    console.log(city)
+    setCity(city); // update in context
     setActiveCity(city.id); // set selected city id
-    localStorage.setItem("selectedCity", JSON.stringify(city)); // ✅ store full city object
+    // selectCity()
+    // localStorage.setItem("selectedCity", JSON.stringify(city)); // ✅ store full city object
   };
 
   const renderCityGrid = (citiesArray) => {

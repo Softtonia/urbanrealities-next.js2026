@@ -15,11 +15,11 @@
 import React from 'react';
 import CompanyBg from '../components/company-bg/company-bg';
 import PrivacyPolicy from './components/Privacy-Policy';
-import { get } from '@/lib/api';
+import { get, getssr } from '@/lib/api';
 
 async function getPrivacyPolicyData() {
   try {
-    const response = await get(`/api/get-pages-by-id?slug=privacy-policy`);
+    const response = await getssr(`/api/get-pages-by-id?slug=privacy-policy`);
     return response.data; // Axios response format
     
   } catch (error) {

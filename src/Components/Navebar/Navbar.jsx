@@ -18,7 +18,6 @@ import homeLogo from "../../../img/add_home.svg";
 import LocationDropdown from "../LocationDropdown/LocationDropdown";
 import { GoChevronDown } from "react-icons/go";
 import { IoArrowBackSharp } from "react-icons/io5";
-import { get } from "@/lib/api";
 import { useSiteSettings } from "../mycontext/siteSettingContext";
 import { useCity } from "@/utils/CityContext";
 
@@ -128,11 +127,11 @@ export default function Navbar() {
     const handler = setTimeout(() => {
       const fetchCities = async () => {
         try {
-          const res = await fetch(`/api/navbar-location?country_id=1&city_id=${activeCity}`);
+          const res = await fetch(`/api/navbar-location?country_id=1&city_id=${cityId}`);
           const data = await res.json();
           if (data?.cities) {
             setCities(data.cities);
-            setCity(data.cities?.filter_city || '');
+            // setCity(data.cities?.filter_city || '');
             // localStorage.setItem("selectedCity", data.cities?.filter_city);
           }
         } catch (err) {
@@ -143,7 +142,7 @@ export default function Navbar() {
     }, 400); // debounce delay
 
     return () => clearTimeout(handler);
-  }, [activeCity]);
+  }, [activeCity, cityId]);
 
   const renderCityGrid = (citiesArray, city, handleSuggestionClick) => {
     const columnsPerRow = 5;
@@ -198,14 +197,43 @@ export default function Navbar() {
   }, []);
 
   const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchText(value);
-
-    const filtered = cities.otherCities
-      .filter((city) => city.toLowerCase().includes(value.toLowerCase()))
-      .slice(0, 5);
-    setSuggestions(filtered);
+    setSearchText(e.target.value);
   };
+
+  // Debounced API call (3 sec)
+  useEffect(() => {
+    if (!searchText) {
+      setSuggestions([]);
+      return;
+    }
+
+    const handler = setTimeout(() => {
+      const fetchCities = async () => {
+        try {
+          const res = await fetch(
+            `/api/navbar-location?search=${encodeURIComponent(searchText)}`
+          );
+          const data = await res.json();
+          console.log('-----=>', data)
+          // / Combine multiple arrays if needed
+          const combined = [
+            ...(data.popular || []),
+            ...(data.nearby || []),
+            ...(data.other || []),
+          ];
+
+          // Take top 5
+          setSuggestions(data); // adjust based on API response
+        } catch (err) {
+          console.error("Error fetching cities:", err);
+        }
+      };
+      fetchCities();
+    }, 1000); // 3 sec debounce
+
+    return () => clearTimeout(handler);
+  }, [searchText]);
+  console.log('----->', suggestions)
 
   useEffect(() => {
     const handleResize = () => {
@@ -248,7 +276,7 @@ export default function Navbar() {
               onMouseLeave={() => setShowDropdown(false)}
             >
               <div className="nav-link d-flex align-items-center" role="button">
-              {/* <div className="nav-items-name">{cityName}</div> */}
+                <div className="nav-items-name">{city && city.name}</div>
                 <FaMapMarkerAlt className="icon-nav-loc me-1" />
               </div>
               <div
@@ -256,7 +284,7 @@ export default function Navbar() {
                   } position-absolute top-100 start-0`}
                 style={{ marginTop: "15px" }}
               >
-                <LocationDropdown />
+                <LocationDropdown cities={cities} />
               </div>
             </div>
           </div>
@@ -480,13 +508,10 @@ export default function Navbar() {
               role="button"
               onClick={() => setShowLocationSlider(true)}
             >
-              Location <FaAngleDown />
+              {city ? city.name : 'Location'} <FaAngleDown />
             </div>
           </div>
           <div className="nav-items-name d-flex align-items-center gap-3 m-0">
-            <a className="text-decoration-none text-dark" href="#">
-              Help
-            </a>
             {token ? (
               <div
                 className="dropdown"
@@ -688,27 +713,49 @@ export default function Navbar() {
                   style={{ fontSize: "16px" }}
                 />
               </div>
-              {searchText && suggestions.length > 0 && (
-                <ul
-                  className="list-group position-absolute w-100 shadow-sm"
-                  style={{
-                    top: "100%",
-                    // zIndex:2000,
-                    borderRadius: "0.5rem",
-                    overflow: "hidden",
-                  }}
-                >
-                  {suggestions.map((city, index) => (
-                    <li
-                      key={index}
-                      className="city-text list-group-item list-group-item-action px-3 py-2"
-                      onClick={() => handleSuggestionClick(city)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {city}
-                    </li>
-                  ))}
-                </ul>
+              {searchText && suggestions && (
+                <>
+                  <ul
+                    className="list-group position-absolute w-100 shadow-sm"
+                    style={{
+                      top: "100%",
+                      // zIndex:2000,
+                      borderRadius: "0.5rem",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {suggestions?.cities?.filter_city && (
+                      <li
+                        // key={index}
+                        className="city-text list-group-item list-group-item-action px-3 py-2"
+                        onClick={() => handleSuggestionClick(suggestions?.cities?.filter_city)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {suggestions?.cities?.filter_city.name}
+                      </li>
+                    )}
+                  </ul>
+                  <ul
+                    className="list-group position-absolute w-100 shadow-sm"
+                    style={{
+                      top: "100%",
+                      // zIndex:2000,
+                      borderRadius: "0.5rem",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {suggestions?.cities?.other?.length > 0 && (suggestions.cities.other.map((city, index) => (
+                      <li
+                        key={index}
+                        className="city-text list-group-item list-group-item-action px-3 py-2"
+                        onClick={() => handleSuggestionClick(city)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {city.name}
+                      </li>
+                    )))}
+                  </ul>
+                </>
               )}
             </div>
           </div>

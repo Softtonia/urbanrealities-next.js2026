@@ -1,12 +1,12 @@
 
 import React from 'react';
 import PropertyAllDetails from './components/PropertyAllDetails'
-import { get } from '@/lib/api';
+import { get, getssr } from '@/lib/api';
 
 async function fetchProperty(id) {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await get(`/api/get-data-properties-no-auth/${id}`);
+    const response = await getssr(`/api/get-data-properties-no-auth/${id}`);
     const data = response?.data;
     console.log("=>", data)
 
@@ -21,7 +21,7 @@ async function fetchProperty(id) {
 async function fetchLeadType() {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await get(`/api/lead-types`);
+    const response = await getssr(`/api/lead-types`);
     const data = response?.data;
     console.log("=>", data)
 

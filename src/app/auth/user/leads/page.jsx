@@ -2,7 +2,7 @@ import React from "react";
 import LeadsTable from "./components/LeadTable";
 import ProtectedRoute from "@/Components/protectedRoute";
 import { cookies } from "next/headers"; // ✅ use Next.js cookies
-import { get } from "@/lib/api"; // I assume you already have this wrapper
+import { get, getssr } from "@/lib/api"; // I assume you already have this wrapper
 
 // ✅ This runs on the server
 async function fetchLeads() {
@@ -10,7 +10,7 @@ async function fetchLeads() {
     const token = cookies().get("token")?.value; // ✅ read cookie securely on server
     if (!token) return [];
 
-    const response = await get(`/api/get-assign-lead-to-user`, {
+    const response = await getssr(`/api/get-assign-lead-to-user`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

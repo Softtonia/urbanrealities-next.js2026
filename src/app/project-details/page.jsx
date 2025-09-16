@@ -8,13 +8,13 @@ import ProjectPhotosAndReviews from "./components/ProjectPhotosAndReviews";
 import ProjectTopAdvertisers from "./components/ProjectTopAdvertisers";
 import ProjectDeveloperInfo from "./components/ProjectDeveloperInfo";
 import FloorPlanSection from "./components/FloorPlanSection";
-import { get } from "@/lib/api";
+import { get, getssr } from "@/lib/api";
 import { ProjectProvider } from "./context/ProjectContext";
 
 async function fetchProject(id) {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await get(`/api/get-data-project-no-auth/${id}`);
+    const response = await getssr(`/api/get-data-project-no-auth/${id}`);
     const data = response?.data;
     // console.log("=>", data)
 

@@ -21,11 +21,11 @@ import React from 'react';
 import CompanyBg from '../components/company-bg/company-bg';
 import LegalPage from './components/legal';
 
-import { get } from '@/lib/api';
+import { get, getssr } from '@/lib/api';
 
 async function getlegalpageData() {
   try {
-    const response = await get(`/api/get-pages-by-id?slug=legal`);
+    const response = await getssr(`/api/get-pages-by-id?slug=legal`);
     return response.data; // Axios response format
     
   } catch (error) {

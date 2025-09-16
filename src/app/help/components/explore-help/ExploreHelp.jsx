@@ -4,13 +4,13 @@ import styles from "./ExploreHelp.module.css";
 import Link from "next/link";
 import { helpTopics } from "@/app/help/data/helpData";
 import TextHeading from "@/Components/TextHeading/TextHeading.jsx";
-import { get } from "@/lib/api";
+import { get, getssr } from "@/lib/api";
 import { slugify } from "@/utils/slugify";
 
 async function getCategories() {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await get(`/api/help-category-list`);
+    const response = await getssr(`/api/help-category-list`);
     const data = response?.data;
     // console.log("==>",data)
     if (Array.isArray(data)) return data;
@@ -25,7 +25,7 @@ async function getCategories() {
 async function getSubCategories() {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await get(`/api/help-subcategory-list`);
+    const response = await getssr(`/api/help-subcategory-list`);
     const data = response?.data;
     // console.log("==>",data)
     if (Array.isArray(data)) return data;

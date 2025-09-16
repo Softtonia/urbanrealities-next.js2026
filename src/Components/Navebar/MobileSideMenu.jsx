@@ -6,10 +6,13 @@ import BuyData from "../MobileMenudata/BuyData";
 import SellData from "../MobileMenudata/SellData";
 import "./MobileSideMenu.css";
 import Link from "next/link";
+import { buildSlug } from "@/utils/seoSlug";
+import { useCity } from "@/utils/CityContext";
 
 const MobileSideMenu = () => {
   const [activeMenu, setActiveMenu] = useState("main");
   const [openSections, setOpenSections] = useState({});
+  const { city } = useCity(); // ✅ city context
 
   const menuItems = [
     { name: "Buy", submenu: "buy" },
@@ -20,7 +23,6 @@ const MobileSideMenu = () => {
     { name: "Property Services", href: "/property-services" },
     { name: "Home Loans", href: "/home-loan" },
     { name: "Help", href: "/help" },
-    { name: "Sign In", href: "/signin" },
   ];
 
   const toggleSection = (idx) => {
@@ -30,7 +32,82 @@ const MobileSideMenu = () => {
     }));
   };
 
-  const renderBuyOrRentSubMenu = (title, data) => (
+  // ✅ buildSlug helper like in DropdownMegaMenu
+  const makeSlug = (heading, label) => {
+    const filters = {};
+    if (heading === "Property Types") filters.propertyType = label;
+    if (heading === "Popular Choices") filters.popularChoice = label;
+
+    if (heading === "Budget") filters.budget = label;
+
+    filters.city = city ? city.name : "";
+    return buildSlug(filters);
+  };
+
+  // ✅ BUY submenu with slug links
+  const renderBuySubMenu = () => (
+    <div className={`menu-panel ${activeMenu === "buy" ? "active" : ""}`}>
+      <div className="d-flex align-items-center border-bottom px-3 py-3">
+        <IoArrowBackSharp
+          className="m-0"
+          style={{ cursor: "pointer" }}
+          onClick={() => setActiveMenu("main")}
+        />
+        <h6 className="m-3 my-0">Buy</h6>
+      </div>
+
+      <div className="px-3 pt-3">
+        {BuyData.map((section, idx) => {
+          const key = `buy-${idx}`;
+          const isOpen = openSections[key];
+
+          return (
+            <div key={idx} className="mb-4">
+              <div
+                className={`section-area d-flex justify-content-between align-items-center p-2 ${section.expandable ? "rounded" : ""
+                  }`}
+                onClick={() => section.expandable && toggleSection(key)}
+                style={{ cursor: section.expandable ? "pointer" : "default" }}
+              >
+                <h6 className="section-heading text-muted m-0">
+                  {section.heading}
+                </h6>
+                {section.expandable &&
+                  (isOpen ? (
+                    <FaMinus size={14} className="m-0" />
+                  ) : (
+                    <FaPlus size={14} className="m-0" />
+                  ))}
+              </div>
+
+              {(!section.expandable || isOpen) && (
+                <ul className="list-unstyled ps-3 pt-2">
+                  {section.items.map((item, j) => {
+                    const slug = makeSlug(section.heading, item.name);
+                    return (
+                      <li key={j} className="mb-2">
+                        <Link
+                          href={`/${slug}`}
+                          className="text-dark text-decoration-none d-flex justify-content-between align-items-center"
+                        >
+                          {item.name}
+                          {item.badge && (
+                            <span className="badge">{item.badge}</span>
+                          )}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+    const renderBuyOrRentSubMenu = (title, data) => (
     <div className={`menu-panel ${activeMenu === title ? "active" : ""}`}>
       <div className="d-flex align-items-center border-bottom px-3 py-3">
         <IoArrowBackSharp
@@ -91,6 +168,7 @@ const MobileSideMenu = () => {
       </div>
     </div>
   );
+
   const renderSellSubMenu = () => (
     <div className={`menu-panel ${activeMenu === "sell" ? "active" : ""}`}>
       <div className="d-flex align-items-center border-bottom px-3 py-3">
@@ -110,9 +188,8 @@ const MobileSideMenu = () => {
           return (
             <div key={idx} className="mb-4">
               <div
-                className={`section-area d-flex justify-content-between align-items-center p-2 ${
-                  section.expandable ? "rounded" : ""
-                }`}
+                className={`section-area d-flex justify-content-between align-items-center p-2 ${section.expandable ? "rounded" : ""
+                  }`}
                 onClick={() => section.expandable && toggleSection(key)}
                 style={{ cursor: section.expandable ? "pointer" : "default" }}
               >
@@ -208,7 +285,7 @@ const MobileSideMenu = () => {
       </div>
 
       {/* Submenus */}
-      {renderBuyOrRentSubMenu("buy", BuyData)}
+      {renderBuySubMenu()}
       {renderBuyOrRentSubMenu("rent", BuyData)}
       {renderSellSubMenu()}
     </div>

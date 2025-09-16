@@ -20,11 +20,11 @@
 import React from 'react';
 import CompanyBg from '../components/company-bg/company-bg';
 import SalesRefund from './components/SalesRefund';
-import { get } from '@/lib/api';
+import { get, getssr } from '@/lib/api';
 
 async function getSalesRefundData() {
   try {
-    const response = await get(`/api/get-pages-by-id?slug=sales-and-refunds`);
+    const response = await getssr(`/api/get-pages-by-id?slug=sales-and-refunds`);
     return response.data; // Axios response format
     
   } catch (error) {

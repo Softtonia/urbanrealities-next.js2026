@@ -16,10 +16,10 @@
     heading: "Property Types",
      expandable: true,
     items: [
-      { name: "Flats in Bangalore", href: "#" },
+      { name: "Flats ", href: "#" },
       { name: "House for Sale", href: "#" },
-      { name: "Villa in Bangalore", href: "#" },
-      { name: "Plot in Bangalore", href: "#" },
+      { name: "Villa ", href: "#" },
+      { name: "Plot ", href: "#" },
       { name: "Office Space", href: "#" },
     ],
   },
