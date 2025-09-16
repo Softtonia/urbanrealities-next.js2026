@@ -1,0 +1,86 @@
+.profileWraper {
+padding: 30px ;
+  margin: 0 auto;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.row {
+  display: flex;
+  gap: 50px;
+}
+
+.inputGroup {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.inputGroup label {
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-family: var(--font-regular);
+}
+
+.inputGroup input,
+.inputGroup textarea {
+  padding: 10px 20px 5px;
+  border: 1px solid var(--Lavender-Gray);
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: var(--font-regular);
+}
+
+
+.inputGroup textarea {
+  resize: vertical;
+}
+
+.inputGroup input:focus,
+.inputGroup textarea:focus,
+.inputGroup select:focus {
+  outline: none;
+}
+
+.fileInputContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.attachButton {
+  background-color: var(--Orange-Red);
+  color: var(--White);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-family: var(--font-regular);
+  cursor: pointer;
+}
+
+
+.updateButton {
+  background-color: var(--Orange-Red);
+  color: var(--White);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-family: var(--font-regular);
+  cursor: pointer;
+  align-self: center;
+  width: 150px;
+}
+
+
+@media (max-width: 768) {
+  .row {
+    flex-direction: column;
+    gap: 30px;
+  }
+}

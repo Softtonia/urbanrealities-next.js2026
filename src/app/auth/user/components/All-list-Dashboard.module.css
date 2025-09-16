@@ -22,7 +22,6 @@ border: 1px solid #eee;
 .mainContainer{
 display: flex;
 flex-direction: column;
-overflow: hidden;
 width: 100%;
 }
 .heading {

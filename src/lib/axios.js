@@ -33,6 +33,7 @@ const axiosInstance = axios.create({
     "X-Client-Secret": process.env.X_CLIENT_SECRET,
     'X-App-Type':process.env.X_APP_TYPE,
     "Content-Type": "application/json",
+    "X-App-Type": process.env.X_App_Type,
     "Origin": process.env.NEXT_PUBLIC_API_URL,
   },
   withCredentials: true,
