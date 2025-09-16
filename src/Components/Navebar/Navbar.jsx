@@ -605,19 +605,21 @@ export default function Navbar() {
               </svg>
             </div>
             <div>
-              <Image
-                src={
-                  siteData?.website_logo?.startsWith("http")
-                    ? siteData.website_logo
-                    : siteData?.mobile_logo?.startsWith("http")
-                      ? siteData.mobile_logo
-                      : "/logo.png"
-                }
-                alt="Urbanrealities"
-                width={100}
-                height={25}
-                priority // Optional: for faster loading above-the-fold
-              />
+              <Link className="" href="/">
+                <Image
+                  src={
+                    siteData?.website_logo?.startsWith("http")
+                      ? siteData.website_logo
+                      : siteData?.mobile_logo?.startsWith("http")
+                        ? siteData.mobile_logo
+                        : "/logo.png"
+                  }
+                  alt="Urbanrealities"
+                  width={100}
+                  height={25}
+                  priority // Optional: for faster loading above-the-fold
+                />
+              </Link>
             </div>
           </div>
           <div className="m-0">
