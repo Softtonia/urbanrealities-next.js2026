@@ -32,8 +32,13 @@ const CustomDropdown = ({ label, options, value, onChange }) => {
         className={`${styles.dropdownHeader} ${open ? styles.open : ""}`}
         onClick={() => setOpen(!open)}
       >
-        {value || `Select ${label.toLowerCase()}`}
-        <span className={styles.arrow}>{open ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}</span>
+        {/* {value || `Select ${label.toLowerCase()}`} */}
+        <span className={value ? "" : styles.placeholderText}>
+          {value || `Select ${label.toLowerCase()}`}
+        </span>
+        <span className={styles.arrow}>
+          {open ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
+        </span>
       </div>
       {open && (
         <div className={styles.dropdownList}>

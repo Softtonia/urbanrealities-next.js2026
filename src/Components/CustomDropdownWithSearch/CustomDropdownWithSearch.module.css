@@ -77,3 +77,12 @@
   font-size: 14px;
   
 }
+.dropdownHeader span{
+    font-size: 14px;
+
+}
+.placeholderText {
+  color: var(--Gray);
+  font-size: 14px;
+  
+}

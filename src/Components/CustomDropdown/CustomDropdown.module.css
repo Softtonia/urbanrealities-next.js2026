@@ -59,6 +59,10 @@
   background-color: var(--Orange-Red);
   color: var(--White);
 }
+.dropdownHeader span{
+    font-size: 14px;
+
+}
 .placeholderText {
   color: var(--Gray);
   font-size: 14px;

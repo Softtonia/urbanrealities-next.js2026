@@ -4,7 +4,7 @@ import TicketTable from '../TicketTable/TicketTable';
 import styles from "./AllTicket.module.css";
 
 
-const supportpage = () => {
+const AllTicket = () => {
   return (
  <div className={styles.pageContainer}>
       <h2>Ticketing System</h2>
@@ -14,4 +14,4 @@ const supportpage = () => {
   );
 }
 
-export default supportpage;
+export default AllTicket;
