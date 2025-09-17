@@ -26,13 +26,13 @@ export default function OuterPage() {
   console.log("Slug check:", slugString, valid, filters);
   useEffect(() => {
     if (!valid) {
-      router.push("/not-found"); // ✅ runs only in browser
+      // router.push("/not-found"); // ✅ runs only in browser
     }
   }, [valid, router]);
 
-  if (!valid) {
-    return null; // prevent rendering until redirect finishes
-  }
+  // if (!valid) {
+  //   return null; // prevent rendering until redirect finishes
+  // }
 
   return (
     <div>

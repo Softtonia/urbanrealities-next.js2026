@@ -46,16 +46,16 @@ export default function Searchbar() {
         )}
       </nav>
 
-      {navItems.map((item) =>
-        !item.link ? ( // tab-content sirf un items ke liye jisme link nahi hai
+      {/* {navItems.map((item) =>
+        !item.link ? ( // tab-content sirf un items ke liye jisme link nahi hai */}
           <div
-            key={item.value}
-            className={`tab-content ${activeTab === item.value ? "active" : ""}`}
+            // key={item.value}
+            className={`active`}
           >
             <PropertySearch onSearch={handleSearch}  />
           </div>
-        ) : null
-      )}
+        {/* ) : null */}
+      {/* )} */}
     </>
   );
 }

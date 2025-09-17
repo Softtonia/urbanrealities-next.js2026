@@ -13,6 +13,11 @@ export default function PropertySearch() {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [inputLocation, setInputLocation] = useState("");
+  const [propertyType, setPropertyType] = useState(null)
+  const [properties, setProperties] = useState(null)
+
+  const [selectedTypes, setSelectedTypes] = useState([]); // <-- for property type(s)
+
   const router = useRouter();
 
   const { city } = useCity();
@@ -71,6 +76,16 @@ export default function PropertySearch() {
     };
   }, []);
 
+  const handleTypeChange = (typeId, propertyId) => {
+    console.log(typeId)
+    setSelectedTypes((prev) =>
+      prev.includes(typeId)
+        ? prev.filter((id) => id !== typeId)
+        : [...prev, typeId]
+    );
+  };
+
+
   const handleTogglePrice = (type) => {
     setActivePriceType(type);
   };
@@ -111,6 +126,71 @@ export default function PropertySearch() {
       setMaxPrice(price);
     }
     console.log(`${activePriceType.toUpperCase()} Price Selected:`, price);
+  };
+  useEffect(() => {
+    const fetchProperty = async () => {
+      try {
+        const res = await fetch(`/api/post-property/get-property-listing`, {
+          method: 'GET',
+        });
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setProperties(data);
+        } else if (data?.data) {
+          setProperties(data.data);
+        }
+      } catch (err) {
+        console.error('Error fetching properties:', err);
+      }
+    };
+
+    fetchProperty();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchPropertyTypes = async () => {
+      try {
+        if (!properties || properties.length === 0) return;
+
+        // 🔹 Make multiple API calls in parallel
+        const typeRequests = properties.map((prop) =>
+          fetch(`/api/post-property/get-property-type/${prop.id}`, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((data) => ({
+              ...prop,
+              types: Array.isArray(data) ? data : data?.data || [], // attach extra field
+            }))
+        );
+
+        // 🔹 Wait for all to resolve and get updated properties
+        const results = await Promise.all(typeRequests);
+
+        // 🔹 Now update the state with properties including their types
+        setPropertyType(results);
+      } catch (err) {
+        console.error("Error fetching property types:", err);
+      }
+    };
+
+    // if (properties.length > 0) {
+    fetchPropertyTypes();
+    // }
+  }, [properties]);
+  console.log('==', selectedTypes)
+
+
+  const handleSearch = () => {
+    const queryParams = new URLSearchParams({
+      location: inputLocation || city?.name || "",
+      minPrice,
+      maxPrice,
+      types: selectedTypes.join(","),
+    });
+
+    router.push(`/search/property-for-sell?${queryParams.toString()}`);
   };
 
   return (
@@ -177,101 +257,68 @@ export default function PropertySearch() {
               >
                 <FaHouse className={"icon-custom"} />
                 <div className="nav-text">
-                  <span className="text-muted nav-text">Flate+1</span>
+                  <span className="text-muted nav-text">{selectedTypes}</span>
                 </div>
               </div>
               <div
                 className="dropdown-menu custom-dropdown-2"
-                onClick={(e) => e.stopPropagation()}
               >
                 <div className="accordion" id="propertyAccordion">
                   {/* Residential */}
-                  <div className="accordion-item">
-                    <div className="accordion-header" id="headingOne">
-                      <button
-                        className="accordion-button collapsed body-text-14"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseOne"
-                        aria-expanded="true"
-                        aria-controls="collapseOne"
-                      >
-                        Residential
-                      </button>
-                    </div>
-                    <div
-                      id="collapseOne"
-                      className="accordion-collapse collapse"
-                      aria-labelledby="headingOne"
-                      data-bs-parent="#propertyAccordion"
-                    >
-                      <div className="accordion-body">
-                        <div className="radio-group body-text-12 text-muted">
-                          <input
-                            type="checkbox"
-                            id="flat"
-                            name="propertyType"
-                            className="radio-input"
-                          />
-                          <label htmlFor="flat" className="radio-label">
-                            Flat
-                          </label>
-
-                          <input
-                            type="checkbox"
-                            id="villa"
-                            name="propertyType"
-                            className="radio-input"
-                          />
-                          <label htmlFor="villa" className="radio-label">
-                            House/Villa
-                          </label>
-
-                          <input
-                            type="checkbox"
-                            id="plot"
-                            name="propertyType"
-                            className="radio-input"
-                          />
-                          <label htmlFor="plot" className="radio-label">
-                            Plot
-                          </label>
+                  {propertyType &&
+                    propertyType.map((property, index) => (
+                      <div className="accordion-item" key={index}> {/* ✅ REMOVED onClick here */}
+                        <div className="accordion-header" id={`heading-${index}`}>
+                          <button
+                            className="accordion-button collapsed body-text-14"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target={`#collapse${index}`}
+                            aria-expanded="false"
+                            aria-controls={`collapse${index}`}
+                          >
+                            {property.name}
+                          </button>
                         </div>
 
                         <div
-                          id="bhkOptions"
-                          className="radio-group body-text-12 text-muted mt-2"
-                          style={{ display: "none" }}
+                          id={`collapse${index}`}
+                          className="accordion-collapse collapse"
+                          aria-labelledby={`heading-${index}`}
+                          data-bs-parent="#propertyAccordion"
                         >
-                          {[
-                            "1Bhk",
-                            "2Bhk",
-                            "3Bhk",
-                            "4Bhk",
-                            "5Bhk",
-                            "5+Bhk",
-                          ].map((label, idx) => (
-                            <div key={idx}>
-                              <input
-                                type="checkbox"
-                                id={label.toLowerCase()}
-                                className="radio-input"
-                              />
-                              <label
-                                htmlFor={label.toLowerCase()}
-                                className="radio-label"
-                              >
-                                {label}
-                              </label>
-                            </div>
-                          ))}
+                          <div className="accordion-body">
+                            {property.types &&
+                              property.types.map((type, idx) => (
+                                <div
+                                  className="radio-group d-flex flex-wrap body-text-12 text-muted"
+                                  key={idx}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    id={`type-${type.id}`}
+                                    checked={selectedTypes.includes(type.id)}
+                                    onChange={(e) => {
+                                      console.log("onChange fired:", type.id, e.target.checked);
+                                      handleTypeChange(type.id.toString(), property.id.toString());
+                                    }}
+                                    name="propertyType"
+                                    className="radio-input"
+                                  />
+                                  <label htmlFor={`type-${type.id}`} className="radio-label">
+                                    {type.name}
+                                  </label>
+                                </div>
+                              ))}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    ))}
+
+
 
                   {/* Commercial */}
-                  <div className="accordion-item">
+                  {/* <div className="accordion-item">
                     <div className="accordion-header" id="headingTwo">
                       <button
                         className="accordion-button collapsed body-text-14"
@@ -315,10 +362,10 @@ export default function PropertySearch() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Other Property Types */}
-                  <div className="accordion-item">
+                  {/* <div className="accordion-item">
                     <div className="accordion-header" id="headingThree">
                       <button
                         className="accordion-button collapsed body-text-14"
@@ -361,7 +408,7 @@ export default function PropertySearch() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -382,7 +429,7 @@ export default function PropertySearch() {
 
               <div
                 className="dropdown-menu custom-dropdown-3"
-                onClick={(e) => e.stopPropagation()}
+              // onClick={(e) => e.stopPropagation()}
               >
                 <div className="price-text d-flex gap-2 mb-2 body-text-14">
                   <input
@@ -451,7 +498,7 @@ export default function PropertySearch() {
               </div>
             </div>
 
-            <button type="button" className="btn search-btn text-white">
+            <button type="button" onClick={handleSearch} className="btn search-btn text-white">
               <IoSearch />
               Search
             </button>
