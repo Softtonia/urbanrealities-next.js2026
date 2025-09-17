@@ -6,13 +6,13 @@ import Step4 from "../components/steps/photo-details/photodetails";
 import Step5 from "../components/steps/featurepricing";
 import StepSidebar from "../components/StepperSidebar/StepperSidebar";
 import styles from "../components/post-property.module.css";
-import { get } from "@/lib/api";
+import { get, getssr } from "@/lib/api";
 import AmenitiesSection from "../components/steps/AmenitiesSection";
 
 async function fetchPurpose() {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await get(`/api/purpose-listing`);
+    const response = await getssr(`/api/purpose-listing`);
     const data = response;
     console.log("==>", data)
     if (data?.data) return data.data;
@@ -26,7 +26,7 @@ async function fetchPurpose() {
 async function fetchProperties() {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await get(`/api/property-listing`);
+    const response = await getssr(`/api/property-listing`);
     const data = response.data;
     // console.log("==>",data)
     if (data) return data;

@@ -65,7 +65,7 @@
 import "./DropdownMegaMenu.css";
 import { buildSlug } from "@/utils/seoSlug";
 import Link from "next/link";
-import {useCity} from "@/utils/CityContext"
+import { useCity } from "@/utils/CityContext"
 
 const menuData = [
   {
@@ -81,10 +81,10 @@ const menuData = [
   {
     heading: "Property Types",
     items: [
-      { name: "Flats in Bangalore" },
+      { name: "Flats " },
       { name: "House for Sale" },
-      { name: "Villa in Bangalore" },
-      { name: "Plot in Bangalore" },
+      { name: "Villa " },
+      { name: "Plot " },
       { name: "Office Space" },
     ],
   },
@@ -101,7 +101,7 @@ const menuData = [
 
 export default function DropdownMegaMenu() {
   // ✅ Default value SSR + CSR match kare
-const { city } = useCity();
+  const { city } = useCity();
 
 
   const makeSlug = (heading, label) => {
@@ -110,7 +110,7 @@ const { city } = useCity();
     if (heading === "Property Types") filters.propertyType = label;
     if (heading === "Budget") filters.budget = label;
 
-    filters.city = city || "Mohali";
+    filters.city = city?city.name:'';
     return buildSlug(filters);
   };
 

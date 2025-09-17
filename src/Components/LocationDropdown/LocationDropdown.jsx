@@ -5,39 +5,57 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import "../LocationDropdown/LocationDropdown.css";
 import { useCity } from "@/utils/CityContext";
 
-const LocationDropdown = () => {
+const LocationDropdown = ({cities,selectCity}) => {
   const { setCity } = useCity();
-  const [activeCity, setActiveCity] = useState(null);
-  const [cities, setCities] = useState({
-    filter_city: null,
-    nearby: [],
-    popular: [],
-    other: []
-  });
+  console.log('=>',cities)
+
+  const [activeCity, setActiveCity] = useState(null); // ✅ initially null
+  // const [cities, setCities] = useState({
+  //   filter_city: null,
+  //   nearby: [],
+  //   popular: [],
+  //   other: []
+  // });
+
 
   // Fetch cities with debounce
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      const fetchCities = async () => {
-        try {
-          const res = await fetch(`/api/navbar-location?country_id=1&city_id=3`);
-          const data = await res.json();
-          if (data?.cities) {
-            setCities(data.cities);
-          }
-        } catch (err) {
-          console.error("Error fetching cities:", err);
-        }
-      };
-      fetchCities();
-    }, 400); // debounce delay
+  // useEffect(() => {
+  //   const handler = setTimeout(() => {
+  //     const fetchCities = async () => {
+  //       try {
+  //         const res = await fetch(
+  //           `/api/navbar-location?country_id=1${activeCity ? `&city_id=${activeCity}` : ""}`
+  //         );
+  //         const data = await res.json();
+  //         if (data?.cities) {
+  //           setCities(data.cities);
 
-    return () => clearTimeout(handler);
-  }, []);
+  //           // ✅ If no activeCity yet, try restoring from localStorage
+  //           // if (!activeCity) {
+  //           //   const savedCity = localStorage.getItem("selectedCity");
+  //           //   if (savedCity) {
+  //           //     const parsed = JSON.parse(savedCity);
+  //           //     setActiveCity(parsed.id);
+  //           //     setCity([parsed]);
+  //           //   }
+  //           // }
+  //         }
+  //       } catch (err) {
+  //         console.error("Error fetching cities:", err);
+  //       }
+  //     };
+  //     fetchCities();
+  //   }, 400);
+
+  //   return () => clearTimeout(handler);
+  // }, [activeCity]);
 
   const handleSuggestionClick = (city) => {
-    setCity(city); // Save globally in context
-    setActiveCity(city.id); // Highlight by id
+    console.log(city)
+    setCity(city); // update in context
+    setActiveCity(city.id); // set selected city id
+    // selectCity()
+    // localStorage.setItem("selectedCity", JSON.stringify(city)); // ✅ store full city object
   };
 
   const renderCityGrid = (citiesArray) => {
@@ -77,10 +95,14 @@ const LocationDropdown = () => {
         overflowY: "auto",
       }}
     >
-      <div className="text-dark d-flex align-items-center mb-3">
-        <FaMapMarkerAlt className="m-0 mt-1 p-0" />
-        <h6 className="text-state ms-2 p-0">{cities?.filter_city?.country_name || "India"}</h6>
-      </div>
+      {cities?.filter_city?.country_name && (
+        <div className="text-dark d-flex align-items-center mb-3">
+          <FaMapMarkerAlt className="m-0 mt-1 p-0" />
+          <h6 className="text-state ms-2 p-0">
+            {cities?.filter_city?.country_name || "India"}
+          </h6>
+        </div>
+      )}
 
       {cities?.filter_city && (
         <div className="mb-3">

@@ -3,11 +3,11 @@ import ContactAgent from "./components/contact-agent/ContactAgent";
 import ContactFormWithInfo from "./components/ContactFormWithInfo/ContactFormWithInfo";
 import Breadcrumbs from "@/Components/All-Breadcrumbs/Breadcrumbs";
 import styles from "./components/contact-agent/ContactAgent.module.css";
-import { get } from '@/lib/api';
+import { get, getssr } from '@/lib/api';
 
 async function getContactUsData() {
   try {
-    const response = await get(`/api/site-setting`);
+    const response = await getssr(`/api/site-setting`);
     // console.log(response.data);
     return response.data; // Axios response format
     

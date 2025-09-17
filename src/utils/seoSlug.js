@@ -43,12 +43,13 @@ export function buildSlug(filters = {}) {
     const s = mappings.popularChoices[filters.popularChoice];
     if (s) parts.push(s);
   }
-
   if (filters.propertyType) {
-    const s = mappings.propertyTypes[filters.propertyType];
-    if (s) parts.push(s);
+    parts.push(mappings.propertyTypes[filters.propertyType]);
   }
 
+ 
+
+ 
   if (filters.city) {
     parts.push(`in-${slugify(filters.city)}`);
   }
@@ -140,4 +141,38 @@ function slugify(s) {
 }
 function deslugify(s) {
   return s.replace(/-/g, " ").replace(/\binr\b/g, "₹").replace(/\b\w/g, (m) => m.toUpperCase());
+}
+
+// validate slug
+
+export function validateSlug(slug) {
+  const filters = parseSlug(slug);
+
+  // If no filters matched at all, invalid
+  if (!filters.popularChoice && !filters.propertyType && !filters.budget) {
+    return { valid: false, filters };
+  }
+
+  // If city is required but not found
+  // if (!filters.city) {
+  //   return { valid: false, filters };
+  // }
+
+  // Double check that parsed labels actually exist in mappings
+  if (
+    (filters.popularChoice &&
+      !Object.keys(mappings.popularChoices).includes(filters.popularChoice)) ||
+    (filters.propertyType &&
+      !Object.keys(mappings.propertyTypes).includes(filters.propertyType)) ||
+    (filters.budget &&
+      !Object.keys(mappings.budget).includes(filters.budget)) 
+  ) {
+    return { valid: false, filters };
+    
+  }
+  if (!slug.includes("in-")) {
+    return { valid: false, filters };
+  }
+
+  return { valid: true, filters };
 }

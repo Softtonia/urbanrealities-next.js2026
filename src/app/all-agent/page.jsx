@@ -1,5 +1,5 @@
 
-import { get } from "@/lib/api";
+import { getssr } from "@/lib/api";
 import AgentCard from "./components/AgentCard/AgentCard";
 import styles from "./components/AllAgents.module.css";
 
@@ -7,7 +7,7 @@ import styles from "./components/AllAgents.module.css";
 async function getAgent() {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await get(`/api/get-all-users-by-role?role_id=3&per_page&page`);
+    const response = await getssr(`/api/get-all-users-by-role?role_id=3&per_page&page`);
     const data = response?.data?.users?.data;
     // console.log("==>",data)
     if (Array.isArray(data)) return data;

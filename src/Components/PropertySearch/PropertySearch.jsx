@@ -6,7 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { IoLocation } from "react-icons/io5";
 import { FaMapPin, FaHouse, FaRupeeSign, FaBuilding } from "react-icons/fa6";
 import { IoSearch } from "react-icons/io5";
-import {useCity} from "@/utils/CityContext"
+import { useCity } from "@/utils/CityContext"
 
 export default function PropertySearch() {
   const [activePriceType, setActivePriceType] = useState("min");
@@ -15,28 +15,32 @@ export default function PropertySearch() {
   const [inputLocation, setInputLocation] = useState("");
   const router = useRouter();
 
-const { city } = useCity();
+  const { city } = useCity();
+
+
+  console.log('==>', city)
+  console.log('==>', 'rerun')
 
   const handleViewsearch = () => {
     router.push("/FilterMobile");
   };
- useEffect(() => {
-  const dropdownMenus = document.querySelectorAll(".dropdown-menu");
+  useEffect(() => {
+    const dropdownMenus = document.querySelectorAll(".dropdown-menu");
 
-  const stopPropagation = (e) => {
-    e.stopPropagation();
-  };
+    const stopPropagation = (e) => {
+      e.stopPropagation();
+    };
 
-  dropdownMenus.forEach((menu) => {
-    menu.addEventListener("click", stopPropagation);
-  });
-
-  return () => {
     dropdownMenus.forEach((menu) => {
-      menu.removeEventListener("click", stopPropagation);
+      menu.addEventListener("click", stopPropagation);
     });
-  };
-}, []);
+
+    return () => {
+      dropdownMenus.forEach((menu) => {
+        menu.removeEventListener("click", stopPropagation);
+      });
+    };
+  }, []);
 
   useEffect(() => {
     const flatCheckbox = document.getElementById("flat");
@@ -121,7 +125,7 @@ const { city } = useCity();
                 data-bs-toggle="dropdown"
               >
                 <IoLocation className={"icon-custom"} />
-                <span className="Add-city">{city}</span>
+                <span className="Add-city">{city && city.name}</span>
                 <input
                   type="text"
                   placeholder="Add more..."
@@ -390,7 +394,7 @@ const { city } = useCity();
                       e.stopPropagation();
                       handleTogglePrice("min");
                     }}
-                      onChange={(e) => setMinPrice(e.target.value)} 
+                    onChange={(e) => setMinPrice(e.target.value)}
                   />
                   <input
                     type="text"
@@ -407,9 +411,8 @@ const { city } = useCity();
 
                 <div className="price-container d-flex body-text-12 text-muted">
                   <div
-                    className={`price-section ${
-                      activePriceType === "min" ? "active" : ""
-                    }`}
+                    className={`price-section ${activePriceType === "min" ? "active" : ""
+                      }`}
                   >
                     <div className="price-list">
                       <span
@@ -427,9 +430,8 @@ const { city } = useCity();
                   </div>
 
                   <div
-                    className={`price-section ${
-                      activePriceType === "max" ? "active" : ""
-                    }`}
+                    className={`price-section ${activePriceType === "max" ? "active" : ""
+                      }`}
                   >
                     <div className="price-list">
                       <span
