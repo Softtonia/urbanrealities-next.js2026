@@ -105,29 +105,31 @@ import { useCity } from "@/utils/CityContext";
 
 export default function Navbar() {
   const { city, setCity } = useCity();
-  const cityId = city ? city.id : ''
-  const cityName = city ? city.name : ''
+  const cityId = city ? city.id : "";
+  const cityName = city ? city.name : "";
   const [activeCity, setActiveCity] = useState(cityId);
   const [cities, setCities] = useState({
     filter_city: null,
     nearby: [],
     popular: [],
-    other: []
+    other: [],
   });
-  console.log(city)
-
+  console.log(city);
 
   const handleSuggestionClick = (city) => {
     setCity(city); // Save globally in context
     setActiveCity(city.id); // Highlight by id
-    // localStorage.setItem("selectedCity", city);
+    setActiveDropdown(null);
+    setShowLocationSlider(false);
   };
 
   useEffect(() => {
     const handler = setTimeout(() => {
       const fetchCities = async () => {
         try {
-          const res = await fetch(`/api/navbar-location?country_id=1&city_id=${cityId}`);
+          const res = await fetch(
+            `/api/navbar-location?country_id=1&city_id=${cityId}`
+          );
           const data = await res.json();
           if (data?.cities) {
             setCities(data.cities);
@@ -144,32 +146,25 @@ export default function Navbar() {
     return () => clearTimeout(handler);
   }, [activeCity, cityId]);
 
-  const renderCityGrid = (citiesArray, city, handleSuggestionClick) => {
-    const columnsPerRow = 5;
-    const rows = [];
+  const renderCityGrid = (citiesArray, handleSuggestionClick) => {
+    if (!citiesArray?.length) return null;
 
-    for (let i = 0; i < citiesArray.length; i += columnsPerRow) {
-      const rowItems = citiesArray.slice(i, i + columnsPerRow);
-      rows.push(
-        <div className="row mb-1 ms-3" key={i}>
-          {rowItems.map((city, index) => (
-            <div className="col" key={index}>
-              <div
-                className={`city-Nametext mb-2 ${activeCity === city.id ? "active" : ""
-                  }`}
-                onClick={() => handleSuggestionClick(city)}
-              >
-                {city.name}
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    return rows;
+    return (
+      <div className="mobilecity-grid">
+        {citiesArray.map((city) => (
+          <div
+            key={city.id}
+            className={`city-nametext mb-2 px-4 py-2 ${
+              activeCity === city.id ? "active" : ""
+            }`}
+            onClick={() => handleSuggestionClick(city)}
+          >
+            {city.name}
+          </div>
+        ))}
+      </div>
+    );
   };
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLocationSlider, setShowLocationSlider] = useState(false);
@@ -187,7 +182,10 @@ export default function Navbar() {
   useEffect(() => {
     const handleClickOutside = (event) => {
       // Agar click kisi dropdown ke andar nahi hua
-      if (!event.target.closest(".nav-item.dropdown")) {
+      if (
+        !event.target.closest(".nav-item.dropdown") &&
+        !event.target.closest(".position-relative")
+      ) {
         setActiveDropdown(null);
       }
     };
@@ -214,7 +212,7 @@ export default function Navbar() {
             `/api/navbar-location?search=${encodeURIComponent(searchText)}`
           );
           const data = await res.json();
-          console.log('-----=>', data)
+          console.log("-----=>", data);
           // / Combine multiple arrays if needed
           const combined = [
             ...(data.popular || []),
@@ -233,7 +231,7 @@ export default function Navbar() {
 
     return () => clearTimeout(handler);
   }, [searchText]);
-  console.log('----->', suggestions)
+  console.log("----->", suggestions);
 
   useEffect(() => {
     const handleResize = () => {
@@ -257,7 +255,7 @@ export default function Navbar() {
     <>
       {/* Desktop Navbar */}
       <nav className="navbar navbar-expand-xl px-4 py-2 d-none d-xl-flex">
-        <div className="container-fluid d-flex align-items-center justify-content-between">
+        <div className="container-fluid d-flex align-items-center justify-content-between p-0">
           <div className="d-flex align-items-center">
             <Link className="navbar-brand d-flex align-items-center" href="/">
               <Image
@@ -272,16 +270,18 @@ export default function Navbar() {
 
             <div
               className="position-relative"
-              onMouseEnter={() => setShowDropdown(true)}
-              onMouseLeave={() => setShowDropdown(false)}
+              onClick={() => toggleDropdown("location")}
             >
               <div className="nav-link d-flex align-items-center" role="button">
                 <div className="nav-items-name">{city && city.name}</div>
                 <FaMapMarkerAlt className="icon-nav-loc me-1" />
               </div>
               <div
-                className={`transition-opacity duration-300 ${showDropdown ? "opacity-100 visible" : "opacity-0 invisible"
-                  } position-absolute top-100 start-0`}
+                className={`transition-opacity duration-300 ${
+                  activeDropdown === "location"
+                    ? "opacity-100 visible"
+                    : "opacity-0 invisible"
+                } position-absolute top-100 start-0`}
                 style={{ marginTop: "15px" }}
               >
                 <LocationDropdown cities={cities} />
@@ -298,8 +298,9 @@ export default function Navbar() {
                 Buy <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${activeDropdown === "buy" ? "show" : ""
-                  }`}
+                className={`dropdown-menu mega-menu p-3 ${
+                  activeDropdown === "buy" ? "show" : ""
+                }`}
                 style={{ width: "50vw", marginTop: "15px" }}
               >
                 <DropdownMegaMenu />
@@ -315,8 +316,9 @@ export default function Navbar() {
                 Rent <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${activeDropdown === "rent" ? "show" : ""
-                  }`}
+                className={`dropdown-menu mega-menu p-3 ${
+                  activeDropdown === "rent" ? "show" : ""
+                }`}
                 style={{ width: "50vw", marginTop: "15px" }}
               >
                 <DropdownMegaMenu />
@@ -331,17 +333,18 @@ export default function Navbar() {
                 Sell <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${activeDropdown === "sell" ? "show" : ""
-                  }`}
+                className={`dropdown-menu mega-menu p-3 ${
+                  activeDropdown === "sell" ? "show" : ""
+                }`}
                 style={{ width: "60vw", marginTop: "15px" }}
               >
                 <SellerDropdown />
               </div>
             </li>
             {[
-              { label: "Find Agent", href: "/all-agent" },
+              { label: " Agent", href: "/all-agent" },
               { label: "Projects", href: "/projects" },
-              { label: "Property Services", href: "/property-services" },
+              { label: "Services", href: "/property-services" },
               { label: "Home Loans", href: "/home-loan" },
             ].map((item, i) => (
               <li key={i} className="nav-item">
@@ -367,15 +370,11 @@ export default function Navbar() {
               />
               Post Property <span className="badge-property">Free</span>
             </Link>
-            <div className="nav-items-name d-flex align-items-center gap-3 position-relative">
-              {/* <a className="text-white text-decoration-none" href="#">
-                Help
-              </a> */}
+            <div className="nav-items-name d-flex align-items-center  position-relative">
               <div
                 className="dropdown"
-                onMouseEnter={() => setShowHelp(true)}
-                onMouseLeave={() => setShowHelp(false)}
                 style={{ position: "relative" }}
+                onClick={() => toggleDropdown("help")}
               >
                 <button
                   className="btn btn-link text-white text-decoration-none dropdown-toggle nav-items-name"
@@ -383,7 +382,17 @@ export default function Navbar() {
                 >
                   Help
                 </button>
-                <ul className={`dropdown-menu  ${showHelp ? "show" : ""}`}>
+                <ul
+                  className={`dropdown-menu  ${
+                    activeDropdown === "help" ? "show" : ""
+                  }`}
+                  style={{
+                    top: "100%",
+                    right: 0,
+                    left: "auto",
+                    minWidth: "200px",
+                  }}
+                >
                   <li>
                     <Link
                       className="dropdown-item"
@@ -508,7 +517,7 @@ export default function Navbar() {
               role="button"
               onClick={() => setShowLocationSlider(true)}
             >
-              {city ? city.name : 'Location'} <FaAngleDown />
+              {city ? city.name : "Location"} <FaAngleDown />
             </div>
           </div>
           <div className="nav-items-name d-flex align-items-center gap-3 m-0">
@@ -611,8 +620,8 @@ export default function Navbar() {
                     siteData?.website_logo?.startsWith("http")
                       ? siteData.website_logo
                       : siteData?.mobile_logo?.startsWith("http")
-                        ? siteData.mobile_logo
-                        : "/logo.png"
+                      ? siteData.mobile_logo
+                      : "/logo.png"
                   }
                   alt="Urbanrealities"
                   width={100}
@@ -730,7 +739,11 @@ export default function Navbar() {
                       <li
                         // key={index}
                         className="city-text list-group-item list-group-item-action px-3 py-2"
-                        onClick={() => handleSuggestionClick(suggestions?.cities?.filter_city)}
+                        onClick={() =>
+                          handleSuggestionClick(
+                            suggestions?.cities?.filter_city
+                          )
+                        }
                         style={{ cursor: "pointer" }}
                       >
                         {suggestions?.cities?.filter_city.name}
@@ -746,16 +759,17 @@ export default function Navbar() {
                       overflow: "hidden",
                     }}
                   >
-                    {suggestions?.cities?.other?.length > 0 && (suggestions.cities.other.map((city, index) => (
-                      <li
-                        key={index}
-                        className="city-text list-group-item list-group-item-action px-3 py-2"
-                        onClick={() => handleSuggestionClick(city)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        {city.name}
-                      </li>
-                    )))}
+                    {suggestions?.cities?.other?.length > 0 &&
+                      suggestions.cities.other.map((city, index) => (
+                        <li
+                          key={index}
+                          className="city-text list-group-item list-group-item-action px-3 py-2"
+                          onClick={() => handleSuggestionClick(city)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          {city.name}
+                        </li>
+                      ))}
                   </ul>
                 </>
               )}
@@ -765,21 +779,22 @@ export default function Navbar() {
           {searchText.length === 0 && (
             <>
               <div className="mb-3">
-                <div className="city-heading-mob mb-2 ms-3">Nearby Cities</div>
-                {renderCityGrid(
-                  cities.nearby,
-                  city,
-                  handleSuggestionClick
+                <div className="city-heading-mob mb-2 ms-3">Selected City</div>
+                {city && (
+                  <div className="city-Nametext active mb-2 px-4 py-2">
+                    {city.name}
+                  </div>
                 )}
               </div>
 
               <div className="mb-3">
+                <div className="city-heading-mob mb-2 ms-3">Nearby Cities</div>
+                {renderCityGrid(cities.nearby, handleSuggestionClick)}
+              </div>
+
+              <div className="mb-3">
                 <div className="city-heading-mob mb-2 ms-3">Popular Cities</div>
-                {renderCityGrid(
-                  cities.popular,
-                  city,
-                  handleSuggestionClick
-                )}
+                {renderCityGrid(cities.popular, handleSuggestionClick)}
               </div>
 
               <div>
@@ -788,11 +803,7 @@ export default function Navbar() {
                   className="scrollable overflow-auto overflow-x-hidden"
                   style={{ maxHeight: "500px" }}
                 >
-                  {renderCityGrid(
-                    cities.other,
-                    city,
-                    handleSuggestionClick
-                  )}
+                  {renderCityGrid(cities.other, handleSuggestionClick)}
                 </div>
               </div>
             </>

@@ -35,14 +35,28 @@
 .btn-property{
   text-decoration: none;
 }
-
-.city-Nametext.active {
-  background-color: var(--Orange-Red); 
-  color: var(--White); 
-  
+/* common-dropdown.css */
+.dropdown-item,
+.city-text,
+.nav-items-name {
+  cursor: pointer;
+}
+.mobilecity-grid {
+  display: grid;
+    /* grid-template-columns: repeat(5, 1fr);  */
+  grid-template-columns: repeat(auto-fit, minmax(209px, 1fr));
+   gap: 10px; 
+}
+.city-nametext{
+    font-size: 14px;
+    font-family: var(--font-regular);
 }
 
-
+@media (max-width: 1250px) {
+.nav-items-name{
+  font-size: 13px !important;
+}
+}
 @media (max-width: 992px) {
   .navbar {
     padding: 10px 15px;

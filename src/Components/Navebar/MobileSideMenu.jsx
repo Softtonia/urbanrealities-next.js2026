@@ -22,7 +22,20 @@ const MobileSideMenu = () => {
     { name: "Projects", href: "/projects" },
     { name: "Property Services", href: "/property-services" },
     { name: "Home Loans", href: "/home-loan" },
-    { name: "Help", href: "/help" },
+    { name: "Help", submenu: "help" },
+  ];
+
+  // Correct HelpData structure (Buy/Sell jaise)
+  const HelpData = [
+    {
+      heading: "Help",
+      expandable: false,
+      items: [
+        { name: "Help Center", href: "/help" },
+        { name: "Sales Enquiry", href: "/" },
+        { name: "Chat with Us", href: "/" },
+      ],
+    },
   ];
 
   const toggleSection = (idx) => {
@@ -64,8 +77,9 @@ const MobileSideMenu = () => {
           return (
             <div key={idx} className="mb-4">
               <div
-                className={`section-area d-flex justify-content-between align-items-center p-2 ${section.expandable ? "rounded" : ""
-                  }`}
+                className={`section-area d-flex justify-content-between align-items-center p-2 ${
+                  section.expandable ? "rounded" : ""
+                }`}
                 onClick={() => section.expandable && toggleSection(key)}
                 style={{ cursor: section.expandable ? "pointer" : "default" }}
               >
@@ -107,7 +121,7 @@ const MobileSideMenu = () => {
     </div>
   );
 
-    const renderBuyOrRentSubMenu = (title, data) => (
+  const renderBuyOrRentSubMenu = (title, data) => (
     <div className={`menu-panel ${activeMenu === title ? "active" : ""}`}>
       <div className="d-flex align-items-center border-bottom px-3 py-3">
         <IoArrowBackSharp
@@ -188,8 +202,9 @@ const MobileSideMenu = () => {
           return (
             <div key={idx} className="mb-4">
               <div
-                className={`section-area d-flex justify-content-between align-items-center p-2 ${section.expandable ? "rounded" : ""
-                  }`}
+                className={`section-area d-flex justify-content-between align-items-center p-2 ${
+                  section.expandable ? "rounded" : ""
+                }`}
                 onClick={() => section.expandable && toggleSection(key)}
                 style={{ cursor: section.expandable ? "pointer" : "default" }}
               >
@@ -243,6 +258,67 @@ const MobileSideMenu = () => {
       </div>
     </div>
   );
+  const renderHelpSubMenu = () => (
+    <div className={`menu-panel ${activeMenu === "help" ? "active" : ""}`}>
+      <div className="d-flex align-items-center border-bottom px-3 py-3">
+        <IoArrowBackSharp
+          className="m-0"
+          style={{ cursor: "pointer" }}
+          onClick={() => setActiveMenu("main")}
+        />
+        <h6 className="m-3 my-0">Help</h6>
+      </div>
+
+      <div className="px-3 pt-3">
+        {HelpData.map((section, idx) => {
+          const key = `help-${idx}`;
+          const isOpen = openSections[key];
+
+          return (
+            <div key={idx} className="mb-4">
+              <div
+                className={`section-area d-flex justify-content-between align-items-center p-2 ${
+                  section.expandable ? "rounded" : ""
+                }`}
+                onClick={() => section.expandable && toggleSection(key)}
+                style={{ cursor: section.expandable ? "pointer" : "default" }}
+              >
+                <h6 className="section-heading text-muted m-0">
+                  {section.heading}
+                </h6>
+                {section.expandable &&
+                  (isOpen ? (
+                    <FaMinus size={14} className="m-0" />
+                  ) : (
+                    <FaPlus size={14} className="m-0" />
+                  ))}
+              </div>
+
+              {(!section.expandable || isOpen) && (
+                <ul className="list-unstyled ps-3 pt-2">
+                  {section.items.map((item, j) => {
+                    return (
+                      <li key={j} className="mb-2">
+                        <Link
+                          href={`${item.href}`}
+                          className="text-dark text-decoration-none d-flex justify-content-between align-items-center"
+                        >
+                          {item.name}
+                          {item.badge && (
+                            <span className="badge">{item.badge}</span>
+                          )}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -288,6 +364,7 @@ const MobileSideMenu = () => {
       {renderBuySubMenu()}
       {renderBuyOrRentSubMenu("rent", BuyData)}
       {renderSellSubMenu()}
+      {renderHelpSubMenu()}
     </div>
   );
 };

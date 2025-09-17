@@ -58,30 +58,23 @@ const LocationDropdown = ({cities,selectCity}) => {
     // localStorage.setItem("selectedCity", JSON.stringify(city)); // ✅ store full city object
   };
 
-  const renderCityGrid = (citiesArray) => {
-    if (!citiesArray?.length) return null;
-    const columnsPerRow = 5;
-    const rows = [];
+const renderCityGrid = (citiesArray) => {
+  if (!citiesArray?.length) return null;
 
-    for (let i = 0; i < citiesArray.length; i += columnsPerRow) {
-      const rowItems = citiesArray.slice(i, i + columnsPerRow);
-      rows.push(
-        <div className="row" key={i}>
-          {rowItems.map((city) => (
-            <div className="col" key={city.id}>
-              <div
-                className={`city-text mb-2 ${activeCity === city.id ? "active" : ""}`}
-                onClick={() => handleSuggestionClick(city)}
-              >
-                {city.name}
-              </div>
-            </div>
-          ))}
+  return (
+    <div className="city-grid">
+      {citiesArray.map((city) => (
+        <div
+          key={city.id}
+          className={`city-text mb-2 ${activeCity === city.id ? "active" : ""}`}
+          onClick={() => handleSuggestionClick(city)}
+        >
+          {city.name}
         </div>
-      );
-    }
-    return rows;
-  };
+      ))}
+    </div>
+  );
+};
 
   return (
     <div

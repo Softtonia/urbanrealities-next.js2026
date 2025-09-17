@@ -37,7 +37,6 @@
   position: relative;
   display: inline-block;
   color: black;
-  padding-bottom: 5px;
   text-decoration: none;
   transition: color 0.3s;
 }

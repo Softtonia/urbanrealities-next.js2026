@@ -7,16 +7,22 @@
 }
 .search-div {
   display: flex;
-  justify-content: space-between;
   padding: 20px 0;
-   overflow-x: auto;
+  overflow-x: auto;
   width: 100%;
   flex-wrap: nowrap;
+}
+.searchContainer{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
 
 }
 .searchsection {
-  display: flex; 
-  gap: 10px;
+  display: flex;
+    gap: 10px;
+
 }
 
 .searchInput {
@@ -28,8 +34,8 @@
   font-size: 14px;
   font-family: var(--font-regular);
 }
-.TicketButton{
-text-decoration: none;
+.TicketButton {
+  text-decoration: none;
 }
 .filterButton {
   border: none;
@@ -180,35 +186,35 @@ text-decoration: none;
   cursor: pointer;
 }
 .pagination {
-margin: 20px;
-text-align: end;
+  margin: 20px;
+  text-align: end;
 }
 .pagination button {
-padding: 6px 12px;
-background-color: #fff;
-border: 1px solid #ddd;
-cursor: pointer;
-border-radius: 4px;
+  padding: 6px 12px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
 .pagination button:hover {
-background-color: #f26522;
-color: white;
+  background-color: #f26522;
+  color: white;
 }
 .loaderWrapper {
-height: 100%;
-display: flex;
-justify-content: center;
-align-items: center;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .spinner {
-width: 50px;
-height: 50px;
-border: 6px solid #eee;
-border-top: 6px solid #f26522;
-border-radius: 50%;
-animation: spin 0.8s linear infinite;
+  width: 50px;
+  height: 50px;
+  border: 6px solid #eee;
+  border-top: 6px solid #f26522;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes slideIn {
@@ -232,11 +238,10 @@ animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-to {
-transform: rotate(360deg);
+  to {
+    transform: rotate(360deg);
+  }
 }
-}
-
 
 @media (max-width: 953px) {
   .searchInput {
@@ -248,7 +253,8 @@ transform: rotate(360deg);
   .searchInput {
     width: 180px;
   }
-  .searchsection {
-  min-width:474px;
-}
+  .searchContainer {
+    justify-content: flex-start;
+    min-width: 474px;
+  }
 }
