@@ -1,8 +1,13 @@
 .text-state{
     font-family: var(--font-regular);
 }
+.city-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 columns */
+  gap: 10px; /* spacing between items */
+}
 .city-name{
-    font-size: 14px;
+    font-size: 16px;
     color: var(--Eerie-Black);
     font-family: var(--font-semibold);
 }
@@ -62,7 +67,6 @@
     transform: translateY(0%);
   }
 } 
-.city-text.active {
-  background-color: var(--Orange-Red); 
-  color: var(--White); 
-}
+
+
+
