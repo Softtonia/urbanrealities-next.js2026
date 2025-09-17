@@ -17,6 +17,11 @@ export default function Searchbar() {
     { label: "Post Free Property Ad", value: "Post Free Property Ad", link:"/post-property" },
   ];
 
+  const handleSearch = (filters) => {
+    console.log("Parent received filters:", filters);
+    // Call API or navigate with query params here
+  };
+
   return (
     <>
       <nav className="nav">
@@ -47,7 +52,7 @@ export default function Searchbar() {
             key={item.value}
             className={`tab-content ${activeTab === item.value ? "active" : ""}`}
           >
-            <PropertySearch />
+            <PropertySearch onSearch={handleSearch}  />
           </div>
         ) : null
       )}
