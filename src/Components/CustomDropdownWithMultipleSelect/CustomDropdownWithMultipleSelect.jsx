@@ -58,6 +58,9 @@ const CustomDropdownWithMultiSelectAndSearch = ({ label, options, value, onChang
             ))
           ) : (
             <span >{`Select ${label.toLowerCase()}`}</span>
+        //         <span className={value ? "" : styles.placeholderText}>
+        //   {`Select ${label.toLowerCase()}`}
+        // </span>
           )}
         </div>
         <span className={styles.arrow}>
