@@ -82,20 +82,21 @@ min-width: 180px;
   padding: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   /* background-color: var(--white) !important; */
-transform: translate( 5px, 40px) !important;
+transform: translate( 5px, 25px) !important;
 }
 .custom-dropdown-2 {
     width: 510px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   /* background-color: var(--white) !important; */
-transform: translate( 5px, 40px) !important;  
+transform: translate( 5px, 25px) !important;
+padding: 0;  
 }
 .custom-dropdown-3 {
     width: 250px;
     padding: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   /* background-color: var(--white) !important; */
-transform: translate( 5px, 40px) !important;  
+transform: translate( 5px, 25px) !important;  
 }
 .btn.search-btn {
     font-family: var(--font-regular);
@@ -138,7 +139,7 @@ margin-bottom: 15px;
 }
 
 /* Commercial ka bottom border hata diya */
-#propertyAccordion .accordion-item:nth-child(3) {
+#propertyAccordion .accordion-item:nth-child(4) {
   border-bottom: none !important;
 }
 
@@ -171,7 +172,6 @@ margin-bottom: 15px;
 
 
 .price-container {
-  position: relative;
   height: 200px;
   width: 100%;
   gap: 10px;
@@ -185,36 +185,29 @@ margin-bottom: 15px;
   box-shadow: none;
   text-align: center;
 }
-.price-list1{
-padding-left: 10px;
-
+.price-section {
+width: 100%;
 }
- .price-section {
-  display: none;
 
+.price-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
 }
-.price-section.active {
-  display: block;
-} 
 
-
-/* .price-section {
-  position: absolute;
-  top: 0;
-  width: 40%;
-  max-height: 100%;
-  background: var(--white);
-  z-index: 10;
-} */
-
-/* #minSection{
-  left: 0;
-  width: 100%;
+.price-list.left-align {
+  text-align: left;     /* Min */
 }
-#maxSection{
-  right: 0;
-  width: 100%;
-}  */
+
+.price-list.right-align {
+  text-align: right;    /* Max */
+}
+.toggle-link {
+  font-weight: 600;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
 
 .small-search{
   display: none;

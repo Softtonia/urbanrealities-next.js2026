@@ -16,12 +16,13 @@ export default function PropertySearch() {
   const [propertyType, setPropertyType] = useState(null);
   const [properties, setProperties] = useState(null);
   const [selectedTypes, setSelectedTypes] = useState([]);
-  const [budgetDropdown,setBudgetDropdown] = useState(false)
-
+  const [budgetDropdown, setBudgetDropdown] = useState(false);
+  const [isLocationOpen,setIsLocationOpen] = useState(false)
   const [isTypeOpen, setIsTypeOpen] = useState(false); // ✅ custom dropdown state
 
   const dropdownRef = useRef(null);
-  const budgetDropdownRef = useRef(null)
+  const locationRef =useRef(null)
+  const budgetDropdownRef = useRef(null);
   const router = useRouter();
   const { city } = useCity();
 
@@ -35,8 +36,17 @@ export default function PropertySearch() {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setIsTypeOpen(false);
       }
-      if (budgetDropdownRef.current && !budgetDropdownRef.current.contains(e.target)) {
+      if (
+        budgetDropdownRef.current &&
+        !budgetDropdownRef.current.contains(e.target)
+      ) {
         setBudgetDropdown(false);
+      }
+         if (
+        locationRef.current &&
+        !locationRef.current.contains(e.target)
+      ) {
+        setIsLocationOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -44,7 +54,7 @@ export default function PropertySearch() {
   }, []);
 
   const handleTypeChange = (typeId) => {
-    console.log(typeId)
+    console.log(typeId);
     setSelectedTypes((prev) =>
       prev.includes(typeId)
         ? prev.filter((id) => id !== typeId)
@@ -135,15 +145,15 @@ export default function PropertySearch() {
 
   // Map selected IDs → names
   const selectedTypeNames = (() => {
-    const selected = propertyType
-      ?.flatMap((p) => p.types || [])
-      .filter((t) => selectedTypes.includes(String(t.id))) || [];
+    const selected =
+      propertyType
+        ?.flatMap((p) => p.types || [])
+        .filter((t) => selectedTypes.includes(String(t.id))) || [];
 
     if (selected.length === 0) return "Select Type";
     if (selected.length === 1) return selected[0].name;
     return `${selected[0].name} +${selected.length - 1} more`;
   })();
-
 
   const handleSearch = () => {
     const queryParams = new URLSearchParams({
@@ -155,15 +165,18 @@ export default function PropertySearch() {
     router.push(`/search/property-for-sell?${queryParams.toString()}`);
   };
 
-  console.log(selectedTypes)
+  console.log(selectedTypes);
   return (
     <>
       <div className="container">
         <div className="searchbar-cts d-flex justify-content-center align-items-center">
           <div className="search-container">
             {/* Location Dropdown */}
-            <div className="dropdown full-click-area">
-              <div className="dropdown-toggle d-flex align-items-center gap-2">
+            <div className="dropdown full-click-area" ref={locationRef}>
+              <div
+                className="dropdown-toggle d-flex align-items-center gap-2"
+                 onClick={() => setIsLocationOpen((prev) => !prev)}
+              >
                 <IoLocation className={"icon-custom"} />
                 <span className="Add-city">{city && city.name}</span>
                 <input
@@ -171,9 +184,43 @@ export default function PropertySearch() {
                   placeholder="Add more..."
                   className="search-input"
                   value={inputLocation}
+                   onClick={(e) => e.stopPropagation()}  
                   onChange={(e) => setInputLocation(e.target.value)}
                 />
               </div>
+              {isLocationOpen&&(
+              <ul
+                className="dropdown-menu body-text-14 custom-dropdown show"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <li>
+                  <a className="dropdown-item text-muted" href="#">
+                    <i>
+                      {" "}
+                      <IoLocation />
+                    </i>
+                    City,Locality
+                  </a>
+                </li>
+                <li>
+                  <a className="dropdown-item text-muted" href="#">
+                    <i>
+                      {" "}
+                      <FaMapPin />{" "}
+                    </i>
+                    Area (Like South Delhi)
+                  </a>
+                </li>
+                <li>
+                  <a className="dropdown-item text-muted" href="#">
+                    <i>
+                      <FaBuilding />
+                    </i>
+                    Project or builder name
+                  </a>
+                </li>
+              </ul>
+              )}
             </div>
 
             <div className="vertical-line"></div>
@@ -218,11 +265,11 @@ export default function PropertySearch() {
                             id={`collapse${index}`}
                             className="accordion-collapse collapse"
                           >
-                            <div className="accordion-body w-100">
+                            <div className="accordion-body w-100 d-flex flex-wrap">
                               {property.types &&
                                 property.types.map((type, idx) => (
                                   <div
-                                    className="radio-group d-flex flex-wrap body-text-12 text-muted"
+                                    className="radio-group  body-text-12 text-muted"
                                     key={idx}
                                   >
                                     <input
@@ -260,15 +307,19 @@ export default function PropertySearch() {
             <div className="dropdown full-click-area" ref={budgetDropdownRef}>
               <div
                 className="dropdown-toggle d-flex align-items-center gap-2"
-                onClick={()=>setBudgetDropdown((prev) => !prev)}
-              // data-bs-toggle="dropdown"
+                onClick={() => setBudgetDropdown((prev) => !prev)}
               >
                 <FaRupeeSign className="icon-custom" />
                 <div className="nav-text">
-                  <span className="text-muted nav-text"> {minPrice||maxPrice ? minPrice+'-'+maxPrice:'Budget'}</span>
+                  <span className="text-muted nav-text">
+                    {" "}
+                    {minPrice || maxPrice
+                      ? minPrice + "-" + maxPrice
+                      : "Budget"}
+                  </span>
                 </div>
               </div>
-              {budgetDropdown &&(
+              {budgetDropdown && (
                 <div className="dropdown-menu custom-dropdown-3 show">
                   <div className="price-text d-flex gap-2 mb-2 body-text-14">
                     <input
@@ -296,52 +347,46 @@ export default function PropertySearch() {
                   </div>
 
                   <div className="price-container d-flex body-text-12 text-muted">
-                    <div
-                      className={`price-section ${activePriceType === "min" ? "active" : ""
-                        }`}
-                    >
-                      <div className="price-list">
-                        <span
-                          className="toggle-link"
-                          onClick={() => handleTogglePrice("min")}
-                        >
-                          Min
-                        </span>
-                        {priceOptions.map((price, index) => (
-                          <div
-                            key={index}
-                            onClick={(e) => selectPrice(price, e)}
-                          >
-                            {price}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                 {activePriceType === "min" && (
+    <div className="price-section">
+      <div className="price-list left-align">
+        <span
+          className="toggle-link"
+          onClick={() => handleTogglePrice("min")}
+        >
+          Min
+        </span>
+        {priceOptions.map((price, index) => (
+          <div key={index} onClick={(e) => selectPrice(price, e)}>
+            {price}
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
 
-                    <div
-                      className={`price-section ${activePriceType === "max" ? "active" : ""
-                        }`}
-                    >
-                      <div className="price-list">
-                        <span
-                          className="toggle-link"
-                          onClick={() => handleTogglePrice("max")}
-                        >
-                          Max
-                        </span>
-                        {priceOptions.map((price, index) => (
-                          <div
-                            key={index}
-                            onClick={(e) => selectPrice(price, e)}
-                          >
-                            {price}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    {activePriceType === "max" && (
+    <div className="price-section">
+      <div className="price-list right-align">
+        <span
+          className="toggle-link"
+          onClick={() => handleTogglePrice("max")}
+        >
+          Max
+        </span>
+        {priceOptions.map((price, index) => (
+          <div key={index} onClick={(e) => selectPrice(price, e)}>
+            {price}
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+
                   </div>
-                </div>)
-                }
+                </div>
+              )}
             </div>
 
             <button
@@ -366,7 +411,10 @@ export default function PropertySearch() {
             placeholder="Search By City, Locality, Project"
           />
           <div className="small-btn">
-            <div className="btn circle-btn text-white " onClick={handleViewsearch}>
+            <div
+              className="btn circle-btn text-white "
+              onClick={handleViewsearch}
+            >
               <IoSearch />
             </div>
           </div>
