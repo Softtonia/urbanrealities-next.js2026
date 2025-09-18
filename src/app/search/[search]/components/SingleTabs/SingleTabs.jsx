@@ -3,10 +3,10 @@
 import styles from './SingleTabs.module.css';
 import { useState } from 'react';
 
-export default function SingleTabs() {
+export default function SingleTabs({count}) {
   const [activeTab, setActiveTab] = useState('BUY');
 
-  const tabs = ['Properties (count)', 'New Project ', ' Top Agent'];
+  const tabs = [`Properties (${count})`, 'New Project ', ' Top Agent'];
 
   return (
     <div className={styles.filtersContainer}>

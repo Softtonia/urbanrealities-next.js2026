@@ -10,7 +10,7 @@ import { MdOutlineChair, MdOutlineCorporateFare } from "react-icons/md";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import styles from "./SingleCard.module.css";
 
-export default function SingleCard() {
+export default function SingleCard({ property }) {
   return (
     <div className={styles.card}>
       {/* Left Side - Image */}
@@ -19,7 +19,7 @@ export default function SingleCard() {
           <span className={styles.badge}>Featured</span>
           <FaRegBookmark className={styles.tagIconOnImage} />
           <img
-            src="/image-card.png"
+            src={property.featured_image ? property.featured_image : ''}
             alt="Property"
             className={styles.imageCard}
           />
@@ -92,7 +92,7 @@ export default function SingleCard() {
           </button>
           <button className={styles.button}>Visit Property</button>
         </div>
-        
+
       </div>
 
       {/* Right Side (Desktop only) */}

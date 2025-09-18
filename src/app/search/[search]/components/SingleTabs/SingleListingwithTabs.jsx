@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 import { useEffect } from 'react';
 import styles from './SingleListingwithTabs.module.css';
-import SingleList from "../SingleCard/SingleList" 
+import SingleList from "../SingleCard/SingleList"
 import SingleTabs from "./SingleTabs";
+import { useCity } from "@/utils/CityContext";
 
 function getPagination(currentPage, totalPages, maxVisible = 6) {
   const pages = [];
@@ -47,14 +48,15 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
 }
 
 
-const SingleListingWithTab = () => {
-  const totalProperties = Array(96).fill(1); // Dummy 24 cards
+const SingleListingWithTab = ({ searchResults }) => {
+  const { city } = useCity();
+  const totalProperties = searchResults ? searchResults.properties : []; // Dummy 24 cards
   const cardsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(totalProperties.length / cardsPerPage);
- const [isLoading, setIsLoading] = useState(false);
- 
- const pageNumbers = getPagination(currentPage, totalPages,6);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const pageNumbers = getPagination(currentPage, totalPages, 6);
 
 
   useEffect(() => {
@@ -66,41 +68,44 @@ const SingleListingWithTab = () => {
     return () => clearTimeout(timeout);
   }, [currentPage]);
 
+  const count = searchResults? searchResults.total_count:''
+
 
   return (
     <div>
-    <div className={styles.listing}>
-      <h2>Properties in Mundeshwari Connaught One</h2>
-      <SingleTabs />
+      <div className={styles.listing}>
+        <h2>Properties in {city &&city.name} </h2>
+        <SingleTabs count={count} />
 
-      {/* Property list + Loader wrapper */}
-  <div className={styles.propertyListWrapper}>
-    {isLoading ? (
-      <div className={styles.loader}>Loading properties...</div>
-    ) : (
-      <SingleList
-        currentPage={currentPage}
-        cardsPerPage={cardsPerPage}
-        totalProperties={totalProperties}
-      />
-    )}
-  </div>
-</div>
+        {/* Property list + Loader wrapper */}
+        <div className={styles.propertyListWrapper}>
+          {isLoading ? (
+            <div className={styles.loader}>Loading properties...</div>
+          ) : (
+            <SingleList
+              currentPage={currentPage}
+              cardsPerPage={cardsPerPage}
+              totalProperties={totalProperties}
+            // propertylist={searchResults.properties}
+            />
+          )}
+        </div>
+      </div>
 
       {/* Pagination ke buttons — YAHIN LIST KE BAAD HONGE */}
-    <div className={styles.pagination}>
-   {pageNumbers.map((page, index) => (
-    <button
-      key={index}
-      disabled={page === "..."}
-      className={`${styles.pageButton} ${currentPage === page ? styles.active : ''}`}
-      onClick={() => page !== "..." && setCurrentPage(page)}
-    >
-      {page}
-    </button>
-  ))}
- 
-</div>
+      <div className={styles.pagination}>
+        {pageNumbers.map((page, index) => (
+          <button
+            key={index}
+            disabled={page === "..."}
+            className={`${styles.pageButton} ${currentPage === page ? styles.active : ''}`}
+            onClick={() => page !== "..." && setCurrentPage(page)}
+          >
+            {page}
+          </button>
+        ))}
+
+      </div>
 
     </div>
   );

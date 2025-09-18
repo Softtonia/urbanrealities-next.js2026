@@ -8,7 +8,7 @@ import { FaMapPin, FaHouse, FaRupeeSign, FaBuilding } from "react-icons/fa6";
 import { useCity } from "@/utils/CityContext";
 import { slugify } from "@/utils/slugify";
 
-export default function PropertySearch() {
+export default function PropertySearch({ purpose }) {
   const [activePriceType, setActivePriceType] = useState("min");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
@@ -16,7 +16,7 @@ export default function PropertySearch() {
   const [propertyType, setPropertyType] = useState(null);
   const [properties, setProperties] = useState(null);
   const [selectedTypes, setSelectedTypes] = useState([]);
-  const [budgetDropdown,setBudgetDropdown] = useState(false)
+  const [budgetDropdown, setBudgetDropdown] = useState(false)
 
   const [isTypeOpen, setIsTypeOpen] = useState(false); // ✅ custom dropdown state
 
@@ -43,53 +43,75 @@ export default function PropertySearch() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleTypeChange = (typeId) => {
-    console.log(typeId)
-    setSelectedTypes((prev) =>
-      prev.includes(typeId)
-        ? prev.filter((id) => id !== typeId)
-        : [...prev, typeId]
-    );
+  // to handle property type and type id
+
+  const handleTypeChange = (typeId, propertyId) => {
+    setSelectedTypes((prev) => {
+      const prevTypes = prev[propertyId] || [];
+
+      let updatedTypes;
+      if (prevTypes.includes(typeId)) {
+        // remove the type if already selected
+        updatedTypes = prevTypes.filter((id) => id !== typeId);
+      } else {
+        // add the type
+        updatedTypes = [...prevTypes, typeId];
+      }
+
+      // if no types left for this property → remove propertyId entirely
+      if (updatedTypes.length === 0) {
+        const { [propertyId]: _, ...rest } = prev;
+        return rest;
+      }
+
+      // otherwise update propertyId with new types
+      return {
+        ...prev,
+        [propertyId]: updatedTypes,
+      };
+    });
   };
+
 
   const handleTogglePrice = (type) => {
     setActivePriceType(type);
   };
 
   const priceOptions = [
-    "₹5 Lac",
-    "₹10 Lac",
-    "₹20 Lac",
-    "₹30 Lac",
-    "₹40 Lac",
-    "₹50 Lac",
-    "₹60 Lac",
-    "₹70 Lac",
-    "₹80 Lac",
-    "₹90 Lac",
-    "₹1 Cr",
-    "₹1.2 Cr",
-    "₹1.4 Cr",
-    "₹1.6 Cr",
-    "₹1.8 Cr",
-    "₹2 Cr",
-    "₹2.3 Cr",
-    "₹2.6 Cr",
-    "₹3 Cr",
-    "₹3.5 Cr",
-    "₹4 Cr",
-    "₹4.5 Cr",
-    "₹5 Cr",
-    "₹10 Cr",
-    "₹20 Cr",
+    { label: "₹5 Lac", value: 500000 },
+    { label: "₹10 Lac", value: 1000000 },
+    { label: "₹20 Lac", value: 2000000 },
+    { label: "₹30 Lac", value: 3000000 },
+    { label: "₹40 Lac", value: 4000000 },
+    { label: "₹50 Lac", value: 5000000 },
+    { label: "₹60 Lac", value: 6000000 },
+    { label: "₹70 Lac", value: 7000000 },
+    { label: "₹80 Lac", value: 8000000 },
+    { label: "₹90 Lac", value: 9000000 },
+    { label: "₹1 Cr", value: 10000000 },
+    { label: "₹1.2 Cr", value: 12000000 },
+    { label: "₹1.4 Cr", value: 14000000 },
+    { label: "₹1.6 Cr", value: 16000000 },
+    { label: "₹1.8 Cr", value: 18000000 },
+    { label: "₹2 Cr", value: 20000000 },
+    { label: "₹2.3 Cr", value: 23000000 },
+    { label: "₹2.6 Cr", value: 26000000 },
+    { label: "₹3 Cr", value: 30000000 },
+    { label: "₹3.5 Cr", value: 35000000 },
+    { label: "₹4 Cr", value: 40000000 },
+    { label: "₹4.5 Cr", value: 45000000 },
+    { label: "₹5 Cr", value: 50000000 },
+    { label: "₹10 Cr", value: 100000000 },
+    { label: "₹20 Cr", value: 200000000 },
   ];
+
 
   const selectPrice = (price, e) => {
     e.stopPropagation();
     if (activePriceType === "min") {
-      setMinPrice(price);
+      setMinPrice(price.value);
     } else {
-      setMaxPrice(price);
+      setMaxPrice(price.value);
     }
   };
 
@@ -135,9 +157,13 @@ export default function PropertySearch() {
 
   // Map selected IDs → names
   const selectedTypeNames = (() => {
+    // flatten all selected type ids from object
+    const allSelectedTypeIds = Object.values(selectedTypes).flat().map(String);
+
+    // match with propertyType list
     const selected = propertyType
       ?.flatMap((p) => p.types || [])
-      .filter((t) => selectedTypes.includes(String(t.id))) || [];
+      .filter((t) => allSelectedTypeIds.includes(String(t.id))) || [];
 
     if (selected.length === 0) return "Select Type";
     if (selected.length === 1) return selected[0].name;
@@ -145,15 +171,37 @@ export default function PropertySearch() {
   })();
 
 
+
   const handleSearch = () => {
+    // extract property ids
+    const propertyIds = Object.keys(selectedTypes);
+
+    // flatten all type ids
+    const typeIds = Object.values(selectedTypes).flat();
+
     const queryParams = new URLSearchParams({
-      location: inputLocation || city?.name || "",
       minPrice,
       maxPrice,
-      types: slugify(selectedTypes.join(",")),
+      propertyId: propertyIds.join(","),   // e.g. 65,70
+      propertyType: typeIds.join(","),     // e.g. 1,2,3,4
+      purpose,
+      location: inputLocation || city?.name || "",
     });
-    router.push(`/search/property-for-sell?${queryParams.toString()}`);
+
+    router.push(`/search/property-for-${purpose}?${queryParams.toString()}`);
   };
+
+  // Min options → less than maxPrice (if maxPrice chosen)
+  const filteredMinOptions = priceOptions.filter(
+    (option) => !maxPrice || option.value < maxPrice
+  );
+
+  // Max options → greater than minPrice (if minPrice chosen)
+  const filteredMaxOptions = priceOptions.filter(
+    (option) => !minPrice || option.value > minPrice
+  );
+
+
 
   console.log(selectedTypes)
   return (
@@ -228,11 +276,9 @@ export default function PropertySearch() {
                                     <input
                                       type="checkbox"
                                       id={`type-${type.id}`}
-                                      checked={selectedTypes.includes(
-                                        String(type.id)
-                                      )}
+                                      checked={selectedTypes[property.id]?.includes(String(type.id)) || false}
                                       onChange={() =>
-                                        handleTypeChange(String(type.id))
+                                        handleTypeChange(String(type.id), String(property.id))
                                       }
                                       name="propertyType"
                                       className="radio-input"
@@ -260,15 +306,15 @@ export default function PropertySearch() {
             <div className="dropdown full-click-area" ref={budgetDropdownRef}>
               <div
                 className="dropdown-toggle d-flex align-items-center gap-2"
-                onClick={()=>setBudgetDropdown((prev) => !prev)}
+                onClick={() => setBudgetDropdown((prev) => !prev)}
               // data-bs-toggle="dropdown"
               >
                 <FaRupeeSign className="icon-custom" />
                 <div className="nav-text">
-                  <span className="text-muted nav-text"> {minPrice||maxPrice ? minPrice+'-'+maxPrice:'Budget'}</span>
+                  <span className="text-muted nav-text"> {minPrice || maxPrice ? minPrice + '-' + maxPrice : 'Budget'}</span>
                 </div>
               </div>
-              {budgetDropdown &&(
+              {budgetDropdown && (
                 <div className="dropdown-menu custom-dropdown-3 show">
                   <div className="price-text d-flex gap-2 mb-2 body-text-14">
                     <input
@@ -307,12 +353,12 @@ export default function PropertySearch() {
                         >
                           Min
                         </span>
-                        {priceOptions.map((price, index) => (
+                        {filteredMinOptions.map((price, index) => (
                           <div
                             key={index}
                             onClick={(e) => selectPrice(price, e)}
                           >
-                            {price}
+                            {price.label}
                           </div>
                         ))}
                       </div>
@@ -329,19 +375,19 @@ export default function PropertySearch() {
                         >
                           Max
                         </span>
-                        {priceOptions.map((price, index) => (
+                        {filteredMaxOptions.map((price, index) => (
                           <div
                             key={index}
                             onClick={(e) => selectPrice(price, e)}
                           >
-                            {price}
+                            {price.label}
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
                 </div>)
-                }
+              }
             </div>
 
             <button

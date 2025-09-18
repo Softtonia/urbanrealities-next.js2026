@@ -6,21 +6,23 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const country_id = searchParams.get("country_id") || '';
     const city_id = searchParams.get("city_id") || "";
-    const search = searchParams.get("search") || "";
+    const state_id = searchParams.get("state_id") || "";
+    const model = searchParams.get("model") || "";
 
     try {
         // Forward request to Laravel backend
         const queryParams = new URLSearchParams();
         if (country_id) queryParams.append("country_id", country_id);
         if (city_id) queryParams.append("city_id", city_id);
-        if (search) queryParams.append("search", search);
+        if (state_id) queryParams.append("state_id", state_id);
+        if (model) queryParams.append("model", model);
 
         const res = await get(
-            `/api/locations?${queryParams.toString()}`
+            `/api/get-localities-filter-by-location-id?${queryParams.toString()}`
         );
         return NextResponse.json(res.data);
     } catch (err) {
-        console.error("Error fetching cities:", err?.response?.data || err.message);
+        console.error("Error fetching Localities:", err?.response?.data || err.message);
 
         // If Laravel sent an error response, forward it
         if (err.response) {
