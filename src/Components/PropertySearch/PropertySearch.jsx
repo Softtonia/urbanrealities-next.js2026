@@ -1,82 +1,49 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import "./PropertySearch.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { IoLocation } from "react-icons/io5";
+import { IoLocation, IoSearch } from "react-icons/io5";
 import { FaMapPin, FaHouse, FaRupeeSign, FaBuilding } from "react-icons/fa6";
-import { IoSearch } from "react-icons/io5";
-import { useCity } from "@/utils/CityContext"
+import { useCity } from "@/utils/CityContext";
+import { slugify } from "@/utils/slugify";
 
 export default function PropertySearch() {
   const [activePriceType, setActivePriceType] = useState("min");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [inputLocation, setInputLocation] = useState("");
-  const [propertyType, setPropertyType] = useState(null)
-  const [properties, setProperties] = useState(null)
+  const [propertyType, setPropertyType] = useState(null);
+  const [properties, setProperties] = useState(null);
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [budgetDropdown,setBudgetDropdown] = useState(false)
 
-  const [selectedTypes, setSelectedTypes] = useState([]); // <-- for property type(s)
+  const [isTypeOpen, setIsTypeOpen] = useState(false); // ✅ custom dropdown state
 
+  const dropdownRef = useRef(null);
+  const budgetDropdownRef = useRef(null)
   const router = useRouter();
-
   const { city } = useCity();
-
-
-  console.log('==>', city)
-  console.log('==>', 'rerun')
 
   const handleViewsearch = () => {
     router.push("/FilterMobile");
   };
+
+  // Close dropdown when clicking outside
   useEffect(() => {
-    const dropdownMenus = document.querySelectorAll(".dropdown-menu");
-
-    const stopPropagation = (e) => {
-      e.stopPropagation();
-    };
-
-    dropdownMenus.forEach((menu) => {
-      menu.addEventListener("click", stopPropagation);
-    });
-
-    return () => {
-      dropdownMenus.forEach((menu) => {
-        menu.removeEventListener("click", stopPropagation);
-      });
-    };
-  }, []);
-
-  useEffect(() => {
-    const flatCheckbox = document.getElementById("flat");
-    const villaCheckbox = document.getElementById("villa");
-    const plotCheckbox = document.getElementById("plot");
-    const bhkOptions = document.getElementById("bhkOptions");
-
-    const handleCheckboxChange = () => {
-      if (
-        flatCheckbox?.checked ||
-        villaCheckbox?.checked ||
-        plotCheckbox?.checked
-      ) {
-        bhkOptions.style.display = "flex";
-      } else {
-        bhkOptions.style.display = "none";
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsTypeOpen(false);
+      }
+      if (budgetDropdownRef.current && !budgetDropdownRef.current.contains(e.target)) {
+        setBudgetDropdown(false);
       }
     };
-
-    flatCheckbox?.addEventListener("change", handleCheckboxChange);
-    villaCheckbox?.addEventListener("change", handleCheckboxChange);
-    plotCheckbox?.addEventListener("change", handleCheckboxChange);
-
-    return () => {
-      flatCheckbox?.removeEventListener("change", handleCheckboxChange);
-      villaCheckbox?.removeEventListener("change", handleCheckboxChange);
-      plotCheckbox?.removeEventListener("change", handleCheckboxChange);
-    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleTypeChange = (typeId, propertyId) => {
+  const handleTypeChange = (typeId) => {
     console.log(typeId)
     setSelectedTypes((prev) =>
       prev.includes(typeId)
@@ -84,7 +51,6 @@ export default function PropertySearch() {
         : [...prev, typeId]
     );
   };
-
 
   const handleTogglePrice = (type) => {
     setActivePriceType(type);
@@ -125,14 +91,13 @@ export default function PropertySearch() {
     } else {
       setMaxPrice(price);
     }
-    console.log(`${activePriceType.toUpperCase()} Price Selected:`, price);
   };
+
+  // Fetch all properties
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const res = await fetch(`/api/post-property/get-property-listing`, {
-          method: 'GET',
-        });
+        const res = await fetch(`/api/post-property/get-property-listing`);
         const data = await res.json();
         if (Array.isArray(data)) {
           setProperties(data);
@@ -140,46 +105,44 @@ export default function PropertySearch() {
           setProperties(data.data);
         }
       } catch (err) {
-        console.error('Error fetching properties:', err);
+        console.error("Error fetching properties:", err);
       }
     };
-
     fetchProperty();
   }, []);
 
-
+  // Fetch property types
   useEffect(() => {
+    if (!properties || properties.length === 0) return;
     const fetchPropertyTypes = async () => {
       try {
-        if (!properties || properties.length === 0) return;
-
-        // 🔹 Make multiple API calls in parallel
         const typeRequests = properties.map((prop) =>
-          fetch(`/api/post-property/get-property-type/${prop.id}`, {
-            method: "GET",
-          })
+          fetch(`/api/post-property/get-property-type/${prop.id}`)
             .then((res) => res.json())
             .then((data) => ({
               ...prop,
-              types: Array.isArray(data) ? data : data?.data || [], // attach extra field
+              types: Array.isArray(data) ? data : data?.data || [],
             }))
         );
-
-        // 🔹 Wait for all to resolve and get updated properties
         const results = await Promise.all(typeRequests);
-
-        // 🔹 Now update the state with properties including their types
         setPropertyType(results);
       } catch (err) {
         console.error("Error fetching property types:", err);
       }
     };
-
-    // if (properties.length > 0) {
     fetchPropertyTypes();
-    // }
   }, [properties]);
-  console.log('==', selectedTypes)
+
+  // Map selected IDs → names
+  const selectedTypeNames = (() => {
+    const selected = propertyType
+      ?.flatMap((p) => p.types || [])
+      .filter((t) => selectedTypes.includes(String(t.id))) || [];
+
+    if (selected.length === 0) return "Select Type";
+    if (selected.length === 1) return selected[0].name;
+    return `${selected[0].name} +${selected.length - 1} more`;
+  })();
 
 
   const handleSearch = () => {
@@ -187,12 +150,12 @@ export default function PropertySearch() {
       location: inputLocation || city?.name || "",
       minPrice,
       maxPrice,
-      types: selectedTypes.join(","),
+      types: slugify(selectedTypes.join(",")),
     });
-
     router.push(`/search/property-for-sell?${queryParams.toString()}`);
   };
 
+  console.log(selectedTypes)
   return (
     <>
       <div className="container">
@@ -200,10 +163,7 @@ export default function PropertySearch() {
           <div className="search-container">
             {/* Location Dropdown */}
             <div className="dropdown full-click-area">
-              <div
-                className="dropdown-toggle d-flex align-items-center gap-2"
-                data-bs-toggle="dropdown"
-              >
+              <div className="dropdown-toggle d-flex align-items-center gap-2">
                 <IoLocation className={"icon-custom"} />
                 <span className="Add-city">{city && city.name}</span>
                 <input
@@ -214,297 +174,188 @@ export default function PropertySearch() {
                   onChange={(e) => setInputLocation(e.target.value)}
                 />
               </div>
-              <ul
-                className="dropdown-menu body-text-14 custom-dropdown"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <li>
-                  <a className="dropdown-item text-muted" href="#">
-                    <i>
-                      {" "}
-                      <IoLocation />
-                    </i>
-                    City,Locality
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item text-muted" href="#">
-                    <i>
-                      {" "}
-                      <FaMapPin />{" "}
-                    </i>
-                    Area (Like South Delhi)
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item text-muted" href="#">
-                    <i>
-                      <FaBuilding />
-                    </i>
-                    Project or builder name
-                  </a>
-                </li>
-              </ul>
             </div>
 
             <div className="vertical-line"></div>
 
-            {/* Type Dropdown */}
-            <div className="dropdown full-click-area">
+            {/* ✅ Custom Type Dropdown */}
+            <div className="dropdown full-click-area" ref={dropdownRef}>
               <div
                 className="dropdown-toggle d-flex align-items-center gap-2"
-                data-bs-toggle="dropdown"
+                onClick={() => setIsTypeOpen((prev) => !prev)}
               >
                 <FaHouse className={"icon-custom"} />
                 <div className="nav-text">
-                  <span className="text-muted nav-text">{selectedTypes}</span>
+                  <span className="text-muted nav-text">
+                    {selectedTypeNames || "Select Type"}
+                  </span>
                 </div>
               </div>
-              <div
-                className="dropdown-menu custom-dropdown-2"
-              >
-                <div className="accordion" id="propertyAccordion">
-                  {/* Residential */}
-                  {propertyType &&
-                    propertyType.map((property, index) => (
-                      <div className="accordion-item" key={index}> {/* ✅ REMOVED onClick here */}
-                        <div className="accordion-header" id={`heading-${index}`}>
-                          <button
-                            className="accordion-button collapsed body-text-14"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target={`#collapse${index}`}
-                            aria-expanded="false"
-                            aria-controls={`collapse${index}`}
-                          >
-                            {property.name}
-                          </button>
-                        </div>
 
-                        <div
-                          id={`collapse${index}`}
-                          className="accordion-collapse collapse"
-                          aria-labelledby={`heading-${index}`}
-                          data-bs-parent="#propertyAccordion"
-                        >
-                          <div className="accordion-body">
-                            {property.types &&
-                              property.types.map((type, idx) => (
-                                <div
-                                  className="radio-group d-flex flex-wrap body-text-12 text-muted"
-                                  key={idx}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    id={`type-${type.id}`}
-                                    checked={selectedTypes.includes(type.id)}
-                                    onChange={(e) => {
-                                      console.log("onChange fired:", type.id, e.target.checked);
-                                      handleTypeChange(type.id.toString(), property.id.toString());
-                                    }}
-                                    name="propertyType"
-                                    className="radio-input"
-                                  />
-                                  <label htmlFor={`type-${type.id}`} className="radio-label">
-                                    {type.name}
-                                  </label>
-                                </div>
-                              ))}
+              {isTypeOpen && (
+                <div className="dropdown-menu custom-dropdown-2 show">
+                  <div className="accordion" id="propertyAccordion">
+                    {propertyType &&
+                      propertyType.map((property, index) => (
+                        <div className="accordion-item" key={index}>
+                          <div
+                            className="accordion-header"
+                            id={`heading-${index}`}
+                          >
+                            <button
+                              className="accordion-button collapsed body-text-14"
+                              type="button"
+                              data-bs-toggle="collapse"
+                              data-bs-target={`#collapse${index}`}
+                              aria-expanded="false"
+                              aria-controls={`collapse${index}`}
+                            >
+                              {property.name}
+                            </button>
+                          </div>
+
+                          <div
+                            id={`collapse${index}`}
+                            className="accordion-collapse collapse"
+                          >
+                            <div className="accordion-body w-100">
+                              {property.types &&
+                                property.types.map((type, idx) => (
+                                  <div
+                                    className="radio-group d-flex flex-wrap body-text-12 text-muted"
+                                    key={idx}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      id={`type-${type.id}`}
+                                      checked={selectedTypes.includes(
+                                        String(type.id)
+                                      )}
+                                      onChange={() =>
+                                        handleTypeChange(String(type.id))
+                                      }
+                                      name="propertyType"
+                                      className="radio-input"
+                                    />
+                                    <label
+                                      htmlFor={`type-${type.id}`}
+                                      className="radio-label"
+                                    >
+                                      {type.name}
+                                    </label>
+                                  </div>
+                                ))}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-
-
-
-                  {/* Commercial */}
-                  {/* <div className="accordion-item">
-                    <div className="accordion-header" id="headingTwo">
-                      <button
-                        className="accordion-button collapsed body-text-14"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseTwo"
-                        aria-expanded="true"
-                        aria-controls="collapseTwo"
-                      >
-                        Commercial
-                      </button>
-                    </div>
-                    <div
-                      id="collapseTwo"
-                      className="accordion-collapse collapse"
-                      aria-labelledby="headingTwo"
-                      data-bs-parent="#propertyAccordion"
-                    >
-                      <div className="accordion-body">
-                        <div className="radio-group body-text-12 d-flex flex-wrap text-muted">
-                          {[
-                            ["office", "Office Space"],
-                            ["shop", "Shop/Showroom"],
-                            ["land", "Commercial Land"],
-                            ["Warehouse", "Warehouse/Godown"],
-                            ["indbuild", "Industrial Building"],
-                            ["shed", "Industrial Shed"],
-                          ].map(([id, label], i) => (
-                            <div key={i}>
-                              <input
-                                type="checkbox"
-                                id={id}
-                                name="propertyType"
-                                className="radio-input"
-                              />
-                              <label htmlFor={id} className="radio-label">
-                                {label}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
-
-                  {/* Other Property Types */}
-                  {/* <div className="accordion-item">
-                    <div className="accordion-header" id="headingThree">
-                      <button
-                        className="accordion-button collapsed body-text-14"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseThree"
-                        aria-expanded="true"
-                        aria-controls="collapseThree"
-                      >
-                        Other Property Types
-                      </button>
-                    </div>
-                    <div
-                      id="collapseThree"
-                      className="accordion-collapse collapse"
-                      aria-labelledby="headingThree"
-                      data-bs-parent="#propertyAccordion"
-                    >
-                      <div className="accordion-body">
-                        <div className="radio-group body-text-12 text-muted">
-                          <input
-                            type="checkbox"
-                            id="agri"
-                            name="propertyType"
-                            className="radio-input"
-                          />
-                          <label htmlFor="agri" className="radio-label">
-                            Agricultural Land
-                          </label>
-
-                          <input
-                            type="checkbox"
-                            id="farm"
-                            name="propertyType"
-                            className="radio-input"
-                          />
-                          <label htmlFor="farm" className="radio-label">
-                            Farm House
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
+                      ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="vertical-line"></div>
 
-            {/* Budget Dropdown */}
-            <div className="dropdown full-click-area">
+            {/* Budget Dropdown (unchanged) */}
+            <div className="dropdown full-click-area" ref={budgetDropdownRef}>
               <div
                 className="dropdown-toggle d-flex align-items-center gap-2"
-                data-bs-toggle="dropdown"
+                onClick={()=>setBudgetDropdown((prev) => !prev)}
+              // data-bs-toggle="dropdown"
               >
                 <FaRupeeSign className="icon-custom" />
                 <div className="nav-text">
-                  <span className="text-muted nav-text">Budget</span>
+                  <span className="text-muted nav-text"> {minPrice||maxPrice ? minPrice+'-'+maxPrice:'Budget'}</span>
                 </div>
               </div>
-
-              <div
-                className="dropdown-menu custom-dropdown-3"
-              // onClick={(e) => e.stopPropagation()}
-              >
-                <div className="price-text d-flex gap-2 mb-2 body-text-14">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Min Price"
-                    value={minPrice}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleTogglePrice("min");
-                    }}
-                    onChange={(e) => setMinPrice(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Max Price"
-                    value={maxPrice}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleTogglePrice("max");
-                    }}
-                    onChange={(e) => setMaxPrice(e.target.value)}
-                  />
-                </div>
-
-                <div className="price-container d-flex body-text-12 text-muted">
-                  <div
-                    className={`price-section ${activePriceType === "min" ? "active" : ""
-                      }`}
-                  >
-                    <div className="price-list">
-                      <span
-                        className="toggle-link"
-                        onClick={() => handleTogglePrice("min")}
-                      >
-                        Min
-                      </span>
-                      {priceOptions.map((price, index) => (
-                        <div key={index} onClick={(e) => selectPrice(price, e)}>
-                          {price}
-                        </div>
-                      ))}
-                    </div>
+              {budgetDropdown &&(
+                <div className="dropdown-menu custom-dropdown-3 show">
+                  <div className="price-text d-flex gap-2 mb-2 body-text-14">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Min Price"
+                      value={minPrice}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleTogglePrice("min");
+                      }}
+                      onChange={(e) => setMinPrice(e.target.value)}
+                    />
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Max Price"
+                      value={maxPrice}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleTogglePrice("max");
+                      }}
+                      onChange={(e) => setMaxPrice(e.target.value)}
+                    />
                   </div>
 
-                  <div
-                    className={`price-section ${activePriceType === "max" ? "active" : ""
-                      }`}
-                  >
-                    <div className="price-list">
-                      <span
-                        className="toggle-link"
-                        onClick={() => handleTogglePrice("max")}
-                      >
-                        Max
-                      </span>
-                      {priceOptions.map((price, index) => (
-                        <div key={index} onClick={(e) => selectPrice(price, e)}>
-                          {price}
-                        </div>
-                      ))}
+                  <div className="price-container d-flex body-text-12 text-muted">
+                    <div
+                      className={`price-section ${activePriceType === "min" ? "active" : ""
+                        }`}
+                    >
+                      <div className="price-list">
+                        <span
+                          className="toggle-link"
+                          onClick={() => handleTogglePrice("min")}
+                        >
+                          Min
+                        </span>
+                        {priceOptions.map((price, index) => (
+                          <div
+                            key={index}
+                            onClick={(e) => selectPrice(price, e)}
+                          >
+                            {price}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div
+                      className={`price-section ${activePriceType === "max" ? "active" : ""
+                        }`}
+                    >
+                      <div className="price-list">
+                        <span
+                          className="toggle-link"
+                          onClick={() => handleTogglePrice("max")}
+                        >
+                          Max
+                        </span>
+                        {priceOptions.map((price, index) => (
+                          <div
+                            key={index}
+                            onClick={(e) => selectPrice(price, e)}
+                          >
+                            {price}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                </div>)
+                }
             </div>
 
-            <button type="button" onClick={handleSearch} className="btn search-btn text-white">
+            <button
+              type="button"
+              onClick={handleSearch}
+              className="btn search-btn text-white"
+            >
               <IoSearch />
               Search
             </button>
           </div>
         </div>
       </div>
+
       {/* Mobile view */}
       <div className="container">
         <div className="search-container-small" onClick={handleViewsearch}>
@@ -512,14 +363,10 @@ export default function PropertySearch() {
           <input
             type="text"
             className="search-text"
-            // size={80}
             placeholder="Search By City, Locality, Project"
           />
           <div className="small-btn">
-            <div
-              className="btn circle-btn text-white "
-              onClick={handleViewsearch}
-            >
+            <div className="btn circle-btn text-white " onClick={handleViewsearch}>
               <IoSearch />
             </div>
           </div>
