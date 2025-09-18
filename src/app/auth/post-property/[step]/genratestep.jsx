@@ -64,17 +64,17 @@ export default async function StepComponent({ step }) {
   };
 
   return (
-    <div className="container">
-      <div className={`${styles.wrapper} row`}>
-        <div className="col-3 p-0">
+    <div className="container p-0">
+      <div className={`${styles.wrapper} `}>
+        {/* <div className="col-3 p-0"> */}
           <div className={styles.sidebarCol}>
             <StepSidebar currentStep={currentStep} />
           </div>
-        </div>
-        <div className="col-9 p-0">
+        {/* </div> */}
+        {/* <div className="col-9 p-0"> */}
           <div className={styles.mainContent}>{renderStepContent()}</div>
         </div>
-      </div>
+      {/* </div> */}
     </div>
   );
 }

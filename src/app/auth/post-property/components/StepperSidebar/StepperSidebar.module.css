@@ -1,3 +1,4 @@
+/* ====== Desktop Sidebar (default) ====== */
 .sidebar {
   height: max-content;
   background-color: #f2f3f5;
@@ -62,8 +63,7 @@
 }
 
 .activeStep .stepTitle {
-  color: #000;
-  font-weight: bold;
+  font-family: var(--font-medium);
 }
 
 .stepTitle {
@@ -75,3 +75,78 @@
   font-size: 0.9rem;
   color: #a0aec0;
 }
+
+/* ====== Mobile Responsive ====== */
+ @media (max-width: 992px) {
+  .sidebar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    position: relative;
+  }
+
+  .step {
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    text-align: center;
+  }
+
+  .stepCircle {
+    margin: 0 0 10px 0;
+  }
+  .sidebar::before {
+    content: "";
+    position: absolute;
+    top: 10px; 
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #cbd5e0;
+    z-index: 0;
+  }
+  .step::after {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    height: 2px;
+     width: calc(var(--progress, 0) * 100%);
+    background-color: #cbd5e0;
+    z-index: 1;
+  }
+
+  .step:last-child::after {
+    display: none;
+  }
+
+  .activeStep::after,
+  .completedStep::after {
+    background-color: var(--Orange-Red);
+  }
+
+  .stepcontent {
+    text-align: center;
+    white-space: normal;   
+    word-break: break-word;
+  }
+
+  
+  .stepSub {
+    font-size: 11px;
+    color: #a0aec0;
+  }
+  
+  .stepTitle {
+    display: none;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+  .stepLine,
+  .stepLineFilled {
+    display: none;
+  }
+} 
