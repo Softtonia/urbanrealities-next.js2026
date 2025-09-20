@@ -3,14 +3,84 @@ import { useState, useRef, useEffect } from "react";
 import { FaSlidersH } from "react-icons/fa";
 import { BiSolidDownArrow } from "react-icons/bi";
 import styles from "./filtertabs.module.css";
-import MoreFiltersPanel from "./MoreFiltersPanel";
+import Slider from "rc-slider";
 
-export default function PropertyFilters() {
+import MoreFiltersPanel from "./MoreFiltersPanel";
+import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+import { useCity } from "@/utils/CityContext";
+
+
+export default function PropertyFilters({ initialFilters }) {
+  const { city } = useCity();
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredCities, setFilteredCities] = useState([]);
   const filterRefs = useRef({}); // all dropdown refs
+  const [propertyType, setPropertyType] = useState(null);
+  const [properties, setProperties] = useState(null);
+  // track selected types per propertyId
+  const [selectedTypes, setSelectedTypes] = useState({});
+  const [purposes, setPurpose] = useState([])
+  const [budgetRange, setBudgetRange] = useState([0, 0]); // [min, max]
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [localities, setLocalities] = useState([])
+  const priceOptions = [
+    { label: "5 Lac", value: 500000 },
+    { label: "10 Lac", value: 1000000 },
+    { label: "20 Lac", value: 2000000 },
+    { label: "30 Lac", value: 3000000 },
+    { label: "40 Lac", value: 4000000 },
+    { label: "50 Lac", value: 5000000 },
+    { label: "60 Lac", value: 6000000 },
+    { label: "70 Lac", value: 7000000 },
+    { label: "80 Lac", value: 8000000 },
+    { label: "90 Lac", value: 9000000 },
+    { label: "1 Cr", value: 10000000 },
+    { label: "1.2 Cr", value: 12000000 },
+    { label: "1.4 Cr", value: 14000000 },
+    { label: "1.6 Cr", value: 16000000 },
+    { label: "1.8 Cr", value: 18000000 },
+    { label: "2 Cr", value: 20000000 },
+    { label: "2.3 Cr", value: 23000000 },
+    { label: "2.6 Cr", value: 26000000 },
+    { label: "3 Cr", value: 30000000 },
+    { label: "3.5 Cr", value: 35000000 },
+    { label: "4 Cr", value: 40000000 },
+    { label: "4.5 Cr", value: 45000000 },
+    { label: "5 Cr", value: 50000000 },
+    { label: "10 Cr", value: 100000000 },
+    { label: "20 Cr", value: 200000000 },
+  ];
+
+  // Format number to label
+  const formatBudget = (val) => {
+    const item = priceOptions.find((p) => p.value === val);
+    return item ? item.label : val;
+  };
+
+  // Initialize budgetRange from initialFilters
+  useEffect(() => {
+    if (initialFilters) {
+      const min = Number(initialFilters.property_price_low) || priceOptions[0].value;
+      const max = Number(initialFilters.property_price_high) || priceOptions[priceOptions.length - 1].value;
+      setBudgetRange([min, max]);
+    }
+  }, [initialFilters]);
+
+  const handleSelectBudget = (type, value) => {
+    if (type === "min") {
+      // Ensure min < max
+      const max = budgetRange[1];
+      const newMin = value >= max ? priceOptions.find(p => p.value < value)?.value || max : value;
+      setBudgetRange([newMin, max]);
+    } else {
+      const min = budgetRange[0];
+      const newMax = value <= min ? priceOptions.find(p => p.value > value)?.value || min : value;
+      setBudgetRange([min, newMax]);
+    }
+  };
+
 
   const allCities = [
     "Mumbai",
@@ -81,14 +151,128 @@ export default function PropertyFilters() {
     },
   ];
 
+  useEffect(() => {
+    if (initialFilters?.property_type_id && propertyType?.length) {
+      const typeIds = initialFilters.property_type_id
+        .split(",")
+        .map((id) => String(id).trim());
+
+      const mappedSelections = {};
+
+      typeIds.forEach((id) => {
+        propertyType.forEach((prop) => {
+          const found = prop.types.find((t) => String(t.id) === id);
+          if (found) {
+            if (!mappedSelections[prop.id]) {
+              mappedSelections[prop.id] = [];
+            }
+            mappedSelections[prop.id].push(String(found.id));
+          }
+        });
+      });
+
+      setSelectedTypes(mappedSelections);
+    }
+  }, [initialFilters, propertyType]);
+  useEffect(() => {
+    if (initialFilters) {
+      setSelectedValues((prev) => ({
+        ...prev,
+        purpose: initialFilters.purpose,
+      }))
+    }
+  }, [initialFilters])
+  console.log('-->', initialFilters)
+
+
+  useEffect(() => {
+    const fetchProperty = async () => {
+      try {
+        const res = await fetch(`/api/post-property/get-property-listing`);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setProperties(data);
+        } else if (data?.data) {
+          setProperties(data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching properties:", err);
+      }
+    };
+    fetchProperty();
+  }, []);
+
+  
+
+  useEffect(() => {
+    const fetchLocalities = async () => {
+      try {
+        const res = await fetch(`/api/global-search-filter/get-locality?${city?`city_id=${city.id}&state_id=${city.state_id}&country_id=${city.country_id}` : ''}&model=PropertyList`);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setLocalities(data);
+        } else if (data?.data) {
+          setLocalities(data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching purpose:", err);
+      }
+    };
+    if (city) {
+      fetchLocalities();
+    }
+
+  }, [city]);
+
+
+  useEffect(() => {
+    const fetchPurpose = async () => {
+      try {
+        const res = await fetch(`/api/post-property/get-purpose`);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setPurpose(data);
+        } else if (data?.data) {
+          setPurpose(data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching purpose:", err);
+      }
+    };
+    fetchPurpose();
+  }, []);
+
+  // Fetch property types
+  useEffect(() => {
+    if (!properties || properties.length === 0) return;
+    const fetchPropertyTypes = async () => {
+      try {
+        const typeRequests = properties.map((prop) =>
+          fetch(`/api/post-property/get-property-type/${prop.id}`)
+            .then((res) => res.json())
+            .then((data) => ({
+              ...prop,
+              types: Array.isArray(data) ? data : data?.data || [],
+            }))
+        );
+        const results = await Promise.all(typeRequests);
+        setPropertyType(results);
+      } catch (err) {
+        console.error("Error fetching property types:", err);
+      }
+    };
+    fetchPropertyTypes();
+  }, [properties]);
+
   const [selectedValues, setSelectedValues] = useState({
-    buy: "",
+    purpose: initialFilters.purpose,
     topLocalities: "",
     budget: "",
     propertyType: "",
     bhk: "",
     postedBy: "",
   });
+
 
   // Toggle dropdown
   const toggleDropdown = (key) => {
@@ -101,10 +285,47 @@ export default function PropertyFilters() {
     setActiveDropdown(null);
   };
 
-  const handleSelect = (key, value) => {
-    setSelectedValues((prev) => ({ ...prev, [key]: value }));
-    setActiveDropdown(null);
+  // const handleSelect = (key, value) => {
+  //   setSelectedValues((prev) => ({ ...prev, [key]: value }));
+  //   setActiveDropdown(null);
+  // };
+  const handleSelect = (typeId, propertyId) => {
+    const typeIdStr = String(typeId);
+    const propertyIdStr = String(propertyId);
+
+    setSelectedTypes((prev) => {
+      const prevTypes = prev[propertyIdStr] || [];
+
+      let updatedTypes;
+      if (prevTypes.includes(typeIdStr)) {
+        // remove the type if already selected
+        updatedTypes = prevTypes.filter((id) => id !== typeIdStr);
+      } else {
+        // add the type
+        updatedTypes = [...prevTypes, typeIdStr];
+      }
+
+      // if no types left for this property → remove propertyId entirely
+      if (updatedTypes.length === 0) {
+        const { [propertyIdStr]: _, ...rest } = prev;
+        return rest;
+      }
+
+      // otherwise update propertyId with new types
+      return {
+        ...prev,
+        [propertyIdStr]: updatedTypes,
+      };
+    });
   };
+  const handleSelectPurpose = (type) => {
+    setSelectedValues((prev) => ({
+      ...prev,
+      purpose: type
+    }))
+  }
+  console.log(selectedValues)
+
 
   const handleSearchChange = (e) => {
     const val = e.target.value;
@@ -157,18 +378,19 @@ export default function PropertyFilters() {
               className={`${styles.filterButton} ${styles.buyButton}`}
               onClick={() => toggleDropdown("buy")}
             >
-             <small>{selectedValues.buy || "Buy"} </small> 
+              <small>{selectedValues.purpose} </small>
               <BiSolidDownArrow className={styles.dropdownIcon} />
             </button>
             {activeDropdown === "buy" && (
               <div className={`${styles.dropdownPanel} ${styles.buyDropdown}`}>
-                {filters[0].options.map((option) => (
+                {purposes.map((option) => (
                   <div
                     key={option}
-                    className={styles.option}
-                    onClick={() => handleSelect("buy", option)}
+                    className={`${styles.option} ${selectedValues.purpose === option.name ? styles.pillOptionActive : ''}`}
+
+                    onClick={() => handleSelectPurpose(option.name)}
                   >
-                    {option}
+                    {option.name}
                   </div>
                 ))}
               </div>
@@ -212,20 +434,16 @@ export default function PropertyFilters() {
             <div
               key={filter.key}
               ref={(el) => (filterRefs.current[filter.key] = el)}
-              className={`${styles.filterWrapper} ${
-                filter.key === "postedBy" ? styles.postedByWrapper : ""
-              } ${filter.key === "bhk" ? styles.bhkWrapper : ""} ${
-                filter.key === "propertyType" ? styles.propertyTypeWrapper : ""
-              } ${filter.key === "budget" ? styles.budgetWrapper : ""} ${
-                filter.key === "topLocalities"
+              className={`${styles.filterWrapper} ${filter.key === "postedBy" ? styles.postedByWrapper : ""
+                } ${filter.key === "bhk" ? styles.bhkWrapper : ""} ${filter.key === "propertyType" ? styles.propertyTypeWrapper : ""
+                } ${filter.key === "budget" ? styles.budgetWrapper : ""} ${filter.key === "topLocalities"
                   ? styles.topLocalitiesWrapper
                   : ""
-              }`}
+                }`}
             >
               <button
-                className={`${styles.filterButton} ${
-                  selectedValues[filter.key] ? styles.active : ""
-                }`}
+                className={`${styles.filterButton} ${selectedValues[filter.key] ? styles.active : ""
+                  }`}
                 onClick={() => toggleDropdown(filter.key)}
               >
                 <small>{selectedValues[filter.key] || filter.label}</small>
@@ -234,9 +452,8 @@ export default function PropertyFilters() {
 
               {activeDropdown === filter.key && (
                 <div
-                  className={`${styles.dropdownPanel} ${
-                    styles[filter.className]
-                  }`}
+                  className={`${styles.dropdownPanel} ${styles[filter.className]
+                    }`}
                 >
                   <div className={styles.dropdownHeading}>{filter.heading}</div>
 
@@ -252,45 +469,149 @@ export default function PropertyFilters() {
                     ))}
 
                   {filter.type === "list" &&
-                    filter.options.map((opt) => (
+                    localities.map((opt, index) => (
                       <div
-                        key={opt}
+                        key={index}
                         className={styles.listOption}
                         onClick={() => handleSelect(filter.key, opt)}
                       >
-                       <small>{opt}</small>
+                        <small>{opt}</small>
                       </div>
                     ))}
 
                   {filter.type === "grouped" &&
-                    Object.entries(filter.options).map(([group, opts]) => (
-                      <div key={group} className={styles.groupSection}>
-                        <div className={styles.groupHeading}>{group}</div>
+                    propertyType && propertyType.map((property, index) => (
+                      <div key={index} className={styles.groupSection}>
+                        <div className={styles.groupHeading}>{property.name}</div>
                         <div className={styles.groupOptions}>
-                          {opts.map((opt) => (
-                            <div
-                              key={opt}
-                              className={styles.pillOption}
-                              onClick={() => handleSelect(filter.key, opt)}
-                            >
-                              + {opt}
-                            </div>
-                          ))}
+                          {property.types.map((type, index) => {
+                            const isSelected = selectedTypes[property.id]?.includes(String(type.id));
+                            return (
+                              <div
+                                key={index}
+                                className={`${styles.pillOption} ${isSelected ? styles.pillOptionActive : ""}`}
+                                onClick={() => handleSelect(type.id, property.id)}
+                              >
+                                {isSelected ? "✓" : "+"} {type.name}
+                              </div>
+                            );
+                          })}
+
                         </div>
                       </div>
                     ))}
 
                   {filter.type === "slider" && (
-                    <div className={styles.sliderWrapper}>
-                      <input
-                        type="range"
-                        min={filter.min}
-                        max={filter.max}
-                        step={filter.step}
-                        onChange={(e) =>
-                          handleSelect(filter.key, e.target.value)
-                        }
+                    <div className={styles.filterSection}>
+                      {/* <h3 className={styles.filterTitle}>Budget </h3> */}
+                      <div className={styles.budgetDropdowns}>
+                        <div className={styles.rangeDropdown}>
+                          <div
+                            className={styles.customSelect}
+                            onClick={() => setOpenDropdown(openDropdown === "min" ? null : "min")}
+                          >
+                            {/* {formatBudget(budgetRange[0])} <IoMdArrowDropdown /> */}
+                          </div>
+                          {/* {openDropdown === "min" && (
+                            <ul className={styles.dropdownMenuCustom}>
+                              <small>Min</small>
+                              {priceOptions.map((p) => (
+                                <li
+                                  key={p.value}
+                                  className={styles.menuList}
+                                  onClick={() => handleSelectBudget("min", p.value)}
+                                >
+                                  {p.label}
+                                </li>
+                              ))}
+                            </ul>
+                          )} */}
+                        </div>
+                        {/* <span>to</span> */}
+                        <div className={styles.rangeDropdown}>
+                          <div
+                            className={styles.customSelect}
+                            onClick={() => setOpenDropdown(openDropdown === "max" ? null : "max")}
+                          >
+                            {/* {formatBudget(budgetRange[1])} <IoMdArrowDropdown /> */}
+                          </div>
+                          {/* //</div> {openDropdown === "max" && (
+                          //   <ul className={styles.dropdownMenuCustom}>
+                          //     <small>Max</small>
+                          //     {priceOptions.map((p) => (
+                          //       <li
+                          //         key={p.value}
+                          //         className={styles.menuList}
+                          //         onClick={() => handleSelectBudget("max", p.value)}
+                          //       >
+                          //         {p.label}
+                          //       </li>
+                          //     ))}
+                          //   </ul>
+                          // )} */}
+                        </div>
+                      </div>
+                      <Slider
+                        range
+                        min={priceOptions[0].value}
+                        max={priceOptions[priceOptions.length - 1].value}
+                        step={50000}
+                        value={budgetRange}
+                        onChange={(val) => setBudgetRange(val)}
+                        trackStyle={[{ backgroundColor: "var(--Orange-Red)" }]}
+                        handleStyle={[
+                          { border: "4px solid var(--Orange-Red)", backgroundColor: "var(--White)" },
+                          { border: "4px solid var(--Orange-Red)", backgroundColor: "var(--White)" },
+                        ]}
+                        railStyle={{ backgroundColor: "var(--Gray)" }}
                       />
+                      <div className={styles.budgetDropdowns}>
+                        <div className={styles.rangeDropdown}>
+                          <div
+                            className={styles.customSelect}
+                            onClick={() => setOpenDropdown(openDropdown === "min" ? null : "min")}
+                          >
+                            ₹{formatBudget(budgetRange[0])}
+                          </div>
+                          {/* {openDropdown === "min" && (
+                            <ul className={styles.dropdownMenuCustom}>
+                              <small>Min</small>
+                              {priceOptions.map((p) => (
+                                <li
+                                  key={p.value}
+                                  className={styles.menuList}
+                                  onClick={() => handleSelectBudget("min", p.value)}
+                                >
+                                  {p.label}
+                                </li>
+                              ))}
+                            </ul>
+                          )} */}
+                        </div>
+                        {/* <span>to</span> */}
+                        <div className={styles.rangeDropdown}>
+                          <div
+                            className={styles.customSelect}
+                            onClick={() => setOpenDropdown(openDropdown === "max" ? null : "max")}
+                          >
+                            ₹{formatBudget(budgetRange[1])}
+                          </div>
+                          {/* //</div> {openDropdown === "max" && (
+                          //   <ul className={styles.dropdownMenuCustom}>
+                          //     <small>Max</small>
+                          //     {priceOptions.map((p) => (
+                          //       <li
+                          //         key={p.value}
+                          //         className={styles.menuList}
+                          //         onClick={() => handleSelectBudget("max", p.value)}
+                          //       >
+                          //         {p.label}
+                          //       </li>
+                          //     ))}
+                          //   </ul>
+                          // )} */}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -304,9 +625,8 @@ export default function PropertyFilters() {
             ref={(el) => (filterRefs.current["more"] = el)}
           >
             <button
-              className={`${styles.filterButton} ${
-                showMoreFilters ? styles.active : ""
-              }`}
+              className={`${styles.filterButton} ${showMoreFilters ? styles.active : ""
+                }`}
               onClick={toggleMoreFilters}
             >
               <small><FaSlidersH className={styles.icon} /> More Filters</small>

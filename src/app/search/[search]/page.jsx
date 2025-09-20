@@ -3,9 +3,9 @@
 // /app/search/page.jsx
 // /app/search/[slug]/page.jsx
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { parseSlug, validateSlug } from "@/utils/seoSlug";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import PropertyFilters from "@/Components/PropertyFilters/filtertabs";
 import ProjectFAQ from "@/Components/FAQAccordion/ProjectFAQ";
 import SingleListingWithTab from "./components/SingleTabs/SingleListingwithTabs";
@@ -15,33 +15,106 @@ import FAQAccordion from "@/Components/FAQAccordion/FAQAccordion";
 import CompanyAgent from "./components/CompanyAgent/CompanyAgent";
 
 export default function OuterPage() {
+  const { city } = useCity();
   const router = useRouter();
   const params = useParams();
+  const [searchResults,setSearchResults] =useState();
+  const searchParams = useSearchParams();
 
   const searchParam = params?.search;
   const slugString = Array.isArray(searchParam)
     ? searchParam.join("-")
     : searchParam;
 
-  const { valid, filters } = validateSlug(slugString);
-  console.log("Slug check:", slugString, valid, filters);
+  const filters = []
+
+
+  // const { valid, filters } = validateSlug(slugString);
+  console.log("Slug check:", slugString);
+
+  // useEffect(() => {
+  //   if (!valid) {
+  //     // router.push("/not-found");
+  //   }
+  // }, [valid, router]);
+
+  // ✅ Extract query params → payload
+  const payload = useMemo(() => {
+    if (!searchParams) return null;
+
+    // Get values from query string
+    const location = searchParams.get("location") || "";
+    const purpose = searchParams.get("purpose") || "";
+    const minPrice = searchParams.get("minPrice") || "";
+    const maxPrice = searchParams.get("maxPrice") || "";
+    const propertyId = searchParams.get("propertyId") || "";
+    const types = searchParams.get("propertyType") || [];
+
+    // Convert prices → numeric (strip ₹, commas, words like "Lac/Cr")
+    const normalizePrice = (price) => {
+      if (!price) return "";
+      let num = price.replace(/[^\d]/g, ""); // keep only digits
+      return parseInt(num, 10) || "";
+    };
+
+    return {
+      purpose: purpose, // fixed
+      property_id: propertyId.length ? propertyId : '', // static or dynamic?
+      property_type_id: types.length ? types : "", // take first type or join if needed
+      property_status_id: '', // static?
+      property_price_low: normalizePrice(minPrice),
+      property_price_high: normalizePrice(maxPrice),
+      keyword:'', // using location as keyword
+      country_id: city ? city.country_id : '',
+      state_id: city ? city.state_id : "",
+      city_id: city ? city.id : "",
+    };
+  }, [searchParams, city]);
+
   useEffect(() => {
-    if (!valid) {
-      // router.push("/not-found"); // ✅ runs only in browser
+    const fetchSearchResults = async () => {
+      try {
+        const res = await fetch(`/api/global-search-filter/global-search`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        console.log("Search API Response →", data);
+
+        if (data?.data) {
+          // ✅ if API returns data inside { data: [...] }
+          setSearchResults(data.data);
+        } else if (data) {
+          // ✅ if API returns an array directly
+          setSearchResults(data);
+        } else {
+          setSearchResults([]);
+        }
+      } catch (err) {
+        console.error("Error fetching search results:", err);
+      }
+    };
+
+    if (payload && city) {
+      fetchSearchResults();
     }
-  }, [valid, router]);
+  }, [payload,city]);
 
-  // if (!valid) {
-  //   return null; // prevent rendering until redirect finishes
-  // }
 
+
+  // if (!valid) return null;
+  console.log("Search Response →", searchResults);
   return (
     <div>
-      <PropertyFilters initialFilters={filters} />
+      <PropertyFilters initialFilters={payload}  />
       <div className="container">
         <div className={`row ${styles["tab-row"]}`}>
           <div className={`col-lg-9 col-12 ${styles["listing-col"]}`}>
-            <SingleListingWithTab filters={filters} />
+            <SingleListingWithTab filters={filters} searchResults={searchResults} />
           </div>
           <div className={`col-lg-3 col-12 ${styles["search-col"]}`}>
             <SearchAgentCard />

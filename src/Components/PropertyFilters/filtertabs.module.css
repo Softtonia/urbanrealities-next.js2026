@@ -202,6 +202,11 @@ font-family: var(--font-medium);
   font-size: clamp(12px, 1vw, 14px);
   font-family: var(--font-regular);
 }
+.pillOptionActive{
+  background: var(--Orange-Red);
+  color: var(--White);
+  border-color: var(--Orange-Red);
+}
 .pillOption:hover {
   background: var(--Orange-Red);
   color: var(--White);

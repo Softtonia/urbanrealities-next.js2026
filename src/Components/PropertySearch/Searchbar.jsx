@@ -52,7 +52,7 @@ export default function Searchbar() {
             // key={item.value}
             className={`active`}
           >
-            <PropertySearch onSearch={handleSearch}  />
+            <PropertySearch onSearch={handleSearch}  purpose={activeTab}/>
           </div>
         {/* ) : null */}
       {/* )} */}
