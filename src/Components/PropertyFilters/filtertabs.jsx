@@ -8,10 +8,13 @@ import Slider from "rc-slider";
 import MoreFiltersPanel from "./MoreFiltersPanel";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { useCity } from "@/utils/CityContext";
+import { useSearch } from "@/hooks/useSearch";
 
 
 export default function PropertyFilters({ initialFilters }) {
   const { city } = useCity();
+  const { globalFilters, setGlobalFilters, debouncedFilters } = useSearch({},{ autoPush: true });
+
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,6 +28,36 @@ export default function PropertyFilters({ initialFilters }) {
   const [budgetRange, setBudgetRange] = useState([0, 0]); // [min, max]
   const [openDropdown, setOpenDropdown] = useState(null);
   const [localities, setLocalities] = useState([])
+  // const [activePriceType, setActivePriceType] = useState("min");
+  // const [budgetDropdown, setBudgetDropdown] = useState(false);
+  // const [isLocationOpen, setIsLocationOpen] = useState(false);
+  // const [isTypeOpen, setIsTypeOpen] = useState(false);
+  const [selectedValues, setSelectedValues] = useState({
+    purpose:'',
+    topLocalities: "",
+    budget: "",
+    propertyType: "",
+    bhk: "",
+    postedBy: "",
+  });
+
+  console.log('global filter',globalFilters)
+
+  const [filter, setFilters] = useState({
+    minPrice: "",
+    maxPrice: "",
+    propertyId: "",
+    propertyType: "",
+    purpose: selectedValues.purpose || "",
+    location: "",
+
+  });
+  const handleFilterChange = (key, value) => {
+    // setFilter((prev) => ({ ...prev, [key]: value }));
+    setGlobalFilters((prev) => ({ ...prev, [key]: value }));
+  };
+  
+
   const priceOptions = [
     { label: "5 Lac", value: 500000 },
     { label: "10 Lac", value: 1000000 },
@@ -52,47 +85,69 @@ export default function PropertyFilters({ initialFilters }) {
     { label: "10 Cr", value: 100000000 },
     { label: "20 Cr", value: 200000000 },
   ];
+  console.log('==>', filter)
 
   // Format number to label
   const formatBudget = (val) => {
     const item = priceOptions.find((p) => p.value === val);
     return item ? item.label : val;
   };
+  // const selectPrice = (price, e) => {
+  //   e.stopPropagation();
+  //   if (activePriceType === "min") {
+  //     handleFilterChange("minPrice", price.value);
+  //   } else {
+  //     handleFilterChange("maxPrice", price.value);
+  //   }
+  // };
 
-  // Initialize budgetRange from initialFilters
+  // Initialize budgetRange fromglobalFilters
   useEffect(() => {
     if (initialFilters) {
       const min = Number(initialFilters.property_price_low) || priceOptions[0].value;
       const max = Number(initialFilters.property_price_high) || priceOptions[priceOptions.length - 1].value;
+
       setBudgetRange([min, max]);
     }
   }, [initialFilters]);
 
-  const handleSelectBudget = (type, value) => {
-    if (type === "min") {
-      // Ensure min < max
-      const max = budgetRange[1];
-      const newMin = value >= max ? priceOptions.find(p => p.value < value)?.value || max : value;
-      setBudgetRange([newMin, max]);
+  // const handleSelectBudget = (type, value) => {
+  //   if (type === "min") {
+  //     // Ensure min < max
+  //     const max = budgetRange[1];
+  //     const newMin = value >= max ? priceOptions.find(p => p.value < value)?.value || max : value;
+  //     setBudgetRange([newMin, max]);
+  //   } else {
+  //     const min = budgetRange[0];
+  //     const newMax = value <= min ? priceOptions.find(p => p.value > value)?.value || min : value;
+  //     setBudgetRange([min, newMax]);
+  //   }
+  // };
+  const handlePrice = (price) => {
+    e.stopPropagation();
+    handleFilterChange("maxPrice", price[0]);
+    handleFilterChange("minPrice", price[1]);
+
+    if (activePriceType === "min") {
+      setBudgetRange((prev) => [price.value, prev[1]]); // update min
     } else {
-      const min = budgetRange[0];
-      const newMax = value <= min ? priceOptions.find(p => p.value > value)?.value || min : value;
-      setBudgetRange([min, newMax]);
+      setBudgetRange((prev) => [prev[0], price.value]); // update max
     }
   };
 
 
-  const allCities = [
-    "Mumbai",
-    "Delhi",
-    "Bangalore",
-    "Pune",
-    "Hyderabad",
-    "Ahmedabad",
-    "Chennai",
-    "Kolkata",
-    "Jaipur",
-  ];
+
+  // const allCities = [
+  //   "Mumbai",
+  //   "Delhi",
+  //   "Bangalore",
+  //   "Pune",
+  //   "Hyderabad",
+  //   "Ahmedabad",
+  //   "Chennai",
+  //   "Kolkata",
+  //   "Jaipur",
+  // ];
 
   const filters = [
     {
@@ -150,12 +205,14 @@ export default function PropertyFilters({ initialFilters }) {
       options: ["Owner", "Broker", "Builder/Developer"],
     },
   ];
+  console.log('\\\>',globalFilters)
 
   useEffect(() => {
     if (initialFilters?.property_type_id && propertyType?.length) {
-      const typeIds = initialFilters.property_type_id
+      const typeIds =globalFilters.property_type_id
         .split(",")
         .map((id) => String(id).trim());
+
 
       const mappedSelections = {};
 
@@ -178,11 +235,11 @@ export default function PropertyFilters({ initialFilters }) {
     if (initialFilters) {
       setSelectedValues((prev) => ({
         ...prev,
-        purpose: initialFilters.purpose,
+        purpose:globalFilters.purpose,
       }))
     }
   }, [initialFilters])
-  console.log('-->', initialFilters)
+  console.log('-->',globalFilters)
 
 
   useEffect(() => {
@@ -202,12 +259,12 @@ export default function PropertyFilters({ initialFilters }) {
     fetchProperty();
   }, []);
 
-  
+
 
   useEffect(() => {
     const fetchLocalities = async () => {
       try {
-        const res = await fetch(`/api/global-search-filter/get-locality?${city?`city_id=${city.id}&state_id=${city.state_id}&country_id=${city.country_id}` : ''}&model=PropertyList`);
+        const res = await fetch(`/api/global-search-filter/get-locality?${city ? `city_id=${city.id}&state_id=${city.state_id}&country_id=${city.country_id}` : ''}&model=PropertyList`);
         const data = await res.json();
         if (Array.isArray(data)) {
           setLocalities(data);
@@ -264,16 +321,6 @@ export default function PropertyFilters({ initialFilters }) {
     fetchPropertyTypes();
   }, [properties]);
 
-  const [selectedValues, setSelectedValues] = useState({
-    purpose: initialFilters.purpose,
-    topLocalities: "",
-    budget: "",
-    propertyType: "",
-    bhk: "",
-    postedBy: "",
-  });
-
-
   // Toggle dropdown
   const toggleDropdown = (key) => {
     setActiveDropdown((prev) => (prev === key ? null : key));
@@ -289,42 +336,40 @@ export default function PropertyFilters({ initialFilters }) {
   //   setSelectedValues((prev) => ({ ...prev, [key]: value }));
   //   setActiveDropdown(null);
   // };
+  // Handle property type checkboxes
   const handleSelect = (typeId, propertyId) => {
-    const typeIdStr = String(typeId);
-    const propertyIdStr = String(propertyId);
+    typeId = String(typeId);
+    propertyId = String(propertyId);
 
     setSelectedTypes((prev) => {
-      const prevTypes = prev[propertyIdStr] || [];
+      const prevTypes = prev[propertyId] || [];
+      const updatedTypes = prevTypes.includes(typeId)
+        ? prevTypes.filter((id) => id !== typeId)
+        : [...prevTypes, typeId];
 
-      let updatedTypes;
-      if (prevTypes.includes(typeIdStr)) {
-        // remove the type if already selected
-        updatedTypes = prevTypes.filter((id) => id !== typeIdStr);
-      } else {
-        // add the type
-        updatedTypes = [...prevTypes, typeIdStr];
-      }
-
-      // if no types left for this property → remove propertyId entirely
-      if (updatedTypes.length === 0) {
-        const { [propertyIdStr]: _, ...rest } = prev;
-        return rest;
-      }
-
-      // otherwise update propertyId with new types
-      return {
+      const newSelection = {
         ...prev,
-        [propertyIdStr]: updatedTypes,
+        [propertyId]: updatedTypes.length > 0 ? updatedTypes : undefined,
       };
+
+      // cleanup empty
+      Object.keys(newSelection).forEach(
+        (k) => !newSelection[k] && delete newSelection[k]
+      );
+
+      return newSelection;
     });
   };
+
+
+
   const handleSelectPurpose = (type) => {
     setSelectedValues((prev) => ({
       ...prev,
       purpose: type
     }))
   }
-  console.log(selectedValues)
+  console.log("-=->", selectedTypes)
 
 
   const handleSearchChange = (e) => {
@@ -363,6 +408,13 @@ export default function PropertyFilters({ initialFilters }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // useEffect(() => {
+  //   setGlobalFilters((prev) => ({
+  //     ...prev,
+  //     filter
+  //   }))
+  // }, [filter]);
 
   return (
     <div className={styles.filterContainer}>
@@ -557,7 +609,10 @@ export default function PropertyFilters({ initialFilters }) {
                         max={priceOptions[priceOptions.length - 1].value}
                         step={50000}
                         value={budgetRange}
-                        onChange={(val) => setBudgetRange(val)}
+                        onChange={(val) => {
+                          setBudgetRange(val);        // update local state
+                          handlePrice(val)
+                        }}
                         trackStyle={[{ backgroundColor: "var(--Orange-Red)" }]}
                         handleStyle={[
                           { border: "4px solid var(--Orange-Red)", backgroundColor: "var(--White)" },

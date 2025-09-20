@@ -7,6 +7,7 @@ import { IoLocation, IoSearch } from "react-icons/io5";
 import { FaMapPin, FaHouse, FaRupeeSign, FaBuilding } from "react-icons/fa6";
 import { useCity } from "@/utils/CityContext";
 import { slugify } from "@/utils/slugify";
+import { useSearch } from "@/hooks/useSearch";
 
 export default function PropertySearch({ purpose }) {
   const [activePriceType, setActivePriceType] = useState("min");
@@ -16,12 +17,13 @@ export default function PropertySearch({ purpose }) {
   const [propertyType, setPropertyType] = useState(null);
   const [properties, setProperties] = useState(null);
   const [selectedTypes, setSelectedTypes] = useState([]);
-  const [budgetDropdown,  setBudgetDropdown] = useState(false);
-  const [isLocationOpen,setIsLocationOpen] = useState(false)
+  const [budgetDropdown, setBudgetDropdown] = useState(false);
+  const [isLocationOpen, setIsLocationOpen] = useState(false)
   const [isTypeOpen, setIsTypeOpen] = useState(false); // ✅ custom dropdown state
 
+
   const dropdownRef = useRef(null);
-  const locationRef =useRef(null)
+  const locationRef = useRef(null)
   const budgetDropdownRef = useRef(null);
   const router = useRouter();
   const { city } = useCity();
@@ -42,7 +44,7 @@ export default function PropertySearch({ purpose }) {
       ) {
         setBudgetDropdown(false);
       }
-         if (
+      if (
         locationRef.current &&
         !locationRef.current.contains(e.target)
       ) {
@@ -189,16 +191,17 @@ export default function PropertySearch({ purpose }) {
     // flatten all type ids
     const typeIds = Object.values(selectedTypes).flat();
 
-    const queryParams = new URLSearchParams({
+    const filters = {
       minPrice,
       maxPrice,
       propertyId: propertyIds.join(","),   // e.g. 65,70
       propertyType: typeIds.join(","),     // e.g. 1,2,3,4
       purpose,
       location: inputLocation || city?.name || "",
-    });
+    };
+    const {search} = useSearch(filters, { autoPush: false });
+    search(filters)
 
-    router.push(`/search/property-for-${purpose}?${queryParams.toString()}`);
   };
 
   // Min options → less than maxPrice (if maxPrice chosen)
@@ -212,10 +215,6 @@ export default function PropertySearch({ purpose }) {
   );
 
 
-
- 
-
-
   console.log(selectedTypes);
   return (
     <>
@@ -226,7 +225,7 @@ export default function PropertySearch({ purpose }) {
             <div className="dropdown full-click-area" ref={locationRef}>
               <div
                 className="dropdown-toggle d-flex align-items-center gap-2"
-                 onClick={() => setIsLocationOpen((prev) => !prev)}
+                onClick={() => setIsLocationOpen((prev) => !prev)}
               >
                 <IoLocation className={"icon-custom"} />
                 <span className="Add-city">{city && city.name}</span>
@@ -235,42 +234,42 @@ export default function PropertySearch({ purpose }) {
                   placeholder="Add more..."
                   className="search-input"
                   value={inputLocation}
-                   onClick={(e) => e.stopPropagation()}  
+                  onClick={(e) => e.stopPropagation()}
                   onChange={(e) => setInputLocation(e.target.value)}
                 />
               </div>
-              {isLocationOpen&&(
-              <ul
-                className="dropdown-menu body-text-14 custom-dropdown show"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <li>
-                  <a className="dropdown-item text-muted" href="#">
-                    <i>
-                      {" "}
-                      <IoLocation />
-                    </i>
-                    City,Locality
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item text-muted" href="#">
-                    <i>
-                      {" "}
-                      <FaMapPin />{" "}
-                    </i>
-                    Area (Like South Delhi)
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item text-muted" href="#">
-                    <i>
-                      <FaBuilding />
-                    </i>
-                    Project or builder name
-                  </a>
-                </li>
-              </ul>
+              {isLocationOpen && (
+                <ul
+                  className="dropdown-menu body-text-14 custom-dropdown show"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <li>
+                    <a className="dropdown-item text-muted" href="#">
+                      <i>
+                        {" "}
+                        <IoLocation />
+                      </i>
+                      City,Locality
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item text-muted" href="#">
+                      <i>
+                        {" "}
+                        <FaMapPin />{" "}
+                      </i>
+                      Area (Like South Delhi)
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item text-muted" href="#">
+                      <i>
+                        <FaBuilding />
+                      </i>
+                      Project or builder name
+                    </a>
+                  </li>
+                </ul>
               )}
             </div>
 
@@ -357,7 +356,7 @@ export default function PropertySearch({ purpose }) {
               <div
                 className="dropdown-toggle d-flex align-items-center gap-2"
                 onClick={() => setBudgetDropdown((prev) => !prev)}
-              
+
               >
                 <FaRupeeSign className="icon-custom" />
                 <div className="nav-text">

@@ -13,11 +13,14 @@ import styles from "./components/SingleTabs/SingleTabs.module.css";
 import SearchAgentCard from "./components/SearchAgentCard/SearchAgentCard";
 import FAQAccordion from "@/Components/FAQAccordion/FAQAccordion";
 import { useCity } from "@/utils/CityContext";
+import { useSearch } from "@/hooks/useSearch";
+
 
 
 export default function OuterPage() {
   const { city } = useCity();
   const router = useRouter();
+  const {payload}= useSearch({}, { autoPush: false })
   const params = useParams();
   const [searchResults,setSearchResults] =useState();
   const searchParams = useSearchParams();
@@ -40,37 +43,37 @@ export default function OuterPage() {
   // }, [valid, router]);
 
   // ✅ Extract query params → payload
-  const payload = useMemo(() => {
-    if (!searchParams) return null;
+  // const payload = useMemo(() => {
+  //   if (!searchParams) return null;
 
-    // Get values from query string
-    const location = searchParams.get("location") || "";
-    const purpose = searchParams.get("purpose") || "";
-    const minPrice = searchParams.get("minPrice") || "";
-    const maxPrice = searchParams.get("maxPrice") || "";
-    const propertyId = searchParams.get("propertyId") || "";
-    const types = searchParams.get("propertyType") || [];
+  //   // Get values from query string
+  //   const location = searchParams.get("location") || "";
+  //   const purpose = searchParams.get("purpose") || "";
+  //   const minPrice = searchParams.get("minPrice") || "";
+  //   const maxPrice = searchParams.get("maxPrice") || "";
+  //   const propertyId = searchParams.get("propertyId") || "";
+  //   const types = searchParams.get("propertyType") || [];
 
-    // Convert prices → numeric (strip ₹, commas, words like "Lac/Cr")
-    const normalizePrice = (price) => {
-      if (!price) return "";
-      let num = price.replace(/[^\d]/g, ""); // keep only digits
-      return parseInt(num, 10) || "";
-    };
+  //   // Convert prices → numeric (strip ₹, commas, words like "Lac/Cr")
+  //   const normalizePrice = (price) => {
+  //     if (!price) return "";
+  //     let num = price.replace(/[^\d]/g, ""); // keep only digits
+  //     return parseInt(num, 10) || "";
+  //   };
 
-    return {
-      purpose: purpose, // fixed
-      property_id: propertyId.length ? propertyId : '', // static or dynamic?
-      property_type_id: types.length ? types : "", // take first type or join if needed
-      property_status_id: '', // static?
-      property_price_low: normalizePrice(minPrice),
-      property_price_high: normalizePrice(maxPrice),
-      keyword:'', // using location as keyword
-      country_id: city ? city.country_id : '',
-      state_id: city ? city.state_id : "",
-      city_id: city ? city.id : "",
-    };
-  }, [searchParams, city]);
+  //   return {
+  //     purpose: purpose, // fixed
+  //     property_id: propertyId.length ? propertyId : '', // static or dynamic?
+  //     property_type_id: types.length ? types : "", // take first type or join if needed
+  //     property_status_id: '', // static?
+  //     property_price_low: normalizePrice(minPrice),
+  //     property_price_high: normalizePrice(maxPrice),
+  //     keyword:'', // using location as keyword
+  //     country_id: city ? city.country_id : '',
+  //     state_id: city ? city.state_id : "",
+  //     city_id: city ? city.id : "",
+  //   };
+  // }, [searchParams, city]);
 
   useEffect(() => {
     const fetchSearchResults = async () => {
