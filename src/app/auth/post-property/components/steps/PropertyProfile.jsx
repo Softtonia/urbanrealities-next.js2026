@@ -189,10 +189,11 @@ export default function PropertyProfileStep() {
 
   return (
     <div className={styles.selectedCategory}>
-      <div className={styles.backWrapper}>
-        <IoArrowBackSharp size={20} onClick={goBack} />
+         <div className={`${styles.backWrapper} d-flex gap-2 mb-3`}>
+        <IoArrowBackSharp size={20} onClick={goBack} className="back-btn" />
         <p className="m-0">Back</p>
       </div>
+
       <h3>Tell us about your property</h3>
 
       <div className="">
@@ -215,7 +216,7 @@ export default function PropertyProfileStep() {
                 <div key={field.id || fieldKey} className="">
                   <div className={`${field.field_type === "radio" ? styles.formRadio : styles.formGroup}`}>
                     <label
-                      className={`${field.field_type === "select" ? "d-flex" : ""}`}
+                      className={` ${styles.label} ${field.field_type === "select" ? "d-flex" : ""}`}
                       style={{
                         textTransform: "capitalize",
                         width: "fit-content"
@@ -265,7 +266,7 @@ export default function PropertyProfileStep() {
                     ) : field.field_type === "text" ? (
                       <input
                         type="text"
-                        placeholder={field.field_placeholder}
+                        placeholder={field.field_placeholder }
                         name={fieldKey}
                         value={fieldValue}
                         onChange={(e) => handleChange(fieldKey, e.target.value)}

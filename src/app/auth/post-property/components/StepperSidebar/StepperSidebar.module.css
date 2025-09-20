@@ -6,6 +6,7 @@
   border-radius: 12px;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .step {
@@ -75,9 +76,16 @@
   font-size: 0.9rem;
   color: #a0aec0;
 }
+.mobileActiveStepTitle {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  display: none;
+}
 
 /* ====== Mobile Responsive ====== */
- @media (max-width: 992px) {
+@media (max-width: 992px) {
   .sidebar {
     flex-direction: row;
     justify-content: space-between;
@@ -93,31 +101,64 @@
     align-items: center;
     position: relative;
     text-align: center;
+    flex-grow: 1;
   }
 
   .stepCircle {
     margin: 0 0 10px 0;
   }
-  .sidebar::before {
-    content: "";
+
+  .stepLine {
     position: absolute;
-    top: 10px; 
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: #cbd5e0;
-    z-index: 0;
-  }
-  .step::after {
-    content: "";
-    position: absolute;
-    top: 20px;
+    top: 10px;
     left: 50%;
+    width: 100%;
     height: 2px;
-     width: calc(var(--progress, 0) * 100%);
     background-color: #cbd5e0;
     z-index: 1;
   }
+
+  .step:last-child .stepLine {
+    display: none;
+  }
+
+  .stepLineFilled {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: var(--Orange-Red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .stepLineFilled.full {
+    transform: scaleX(1);
+  }
+  .sidebar::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 60px;
+    right: 60px;
+    height: 2px;
+    background-color: var(--Orange-Red);
+    z-index: 1;
+    width: var(--progress, 0%);
+    transition: width 0.3s ease;
+  }
+  /* .step::after {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: 60px;
+    height: 2px;
+    width: calc(var(--progress, 0) * 100%);
+    background-color: #cbd5e0;
+    z-index: 1;
+  } */
 
   .step:last-child::after {
     display: none;
@@ -127,26 +168,24 @@
   .completedStep::after {
     background-color: var(--Orange-Red);
   }
-
   .stepcontent {
     text-align: center;
-    white-space: normal;   
+    white-space: normal;
     word-break: break-word;
   }
 
-  
   .stepSub {
     font-size: 11px;
     color: #a0aec0;
   }
-  
+
   .stepTitle {
     display: none;
     font-size: 12px;
     line-height: 1.3;
   }
-  .stepLine,
-  .stepLineFilled {
-    display: none;
+  .mobileActiveStepTitle{
+    display: block;
   }
-} 
+}
+

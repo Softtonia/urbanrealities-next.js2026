@@ -3,8 +3,8 @@
 import styles from './SingleTabs.module.css';
 import { useState } from 'react';
 
-export default function SingleTabs() {
-  const [activeTab, setActiveTab] = useState('BUY');
+export default function SingleTabs({ activeTab, setActiveTab }) {
+  // const [activeTab, setActiveTab] = useState('BUY');
 
   const tabs = ['Properties (count)', 'New Project ', ' Top Agent'];
 

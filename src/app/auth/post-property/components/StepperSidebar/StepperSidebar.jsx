@@ -15,9 +15,17 @@ const steps = [
 export default function StepperSidebar({ currentStep = "basic-details" }) {
   const currentStepIndex = steps.findIndex((s) => s.path === currentStep);
 const activeStep = steps[currentStepIndex];
+
+ const progressPercentage =
+    currentStepIndex > 0
+      ? (currentStepIndex / (steps.length - 1)) * 100
+      : 0;
+
   return (
     <>
-    <div className={styles.sidebar}>
+    <div className={styles.sidebar}
+    style={{ "--progress": `${progressPercentage}%` }}
+     >
       {steps.map((step, index) => {
         const isActive = step.path === currentStep;
         const isCompleted = index < currentStepIndex;
@@ -52,7 +60,7 @@ const activeStep = steps[currentStepIndex];
         );
       })}
     </div>
-      <div className={styles.mobileActiveStepTitle}>{activeStep?.title}</div>
+      <div className={styles.mobileActiveStepTitle}><p className="m-0">Step - {activeStep?.step}</p>{activeStep?.title}</div>
       </>
   );
 }

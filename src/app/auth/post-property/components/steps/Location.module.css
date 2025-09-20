@@ -2,6 +2,12 @@
   background-color: var(--White);
   border-radius: 12px;
 }
+.title {
+  font-size: clamp(20px, 2vw, 26px);
+  font-family: var(--font-medium);
+  margin-bottom: 8px;
+}
+
 .inputField {
   border: 1px solid #9E9E9E;
   background-color: #fff;
@@ -11,7 +17,8 @@
   box-shadow: none;
   outline: none;
   width: 100%; /* keep it responsive */
-  font-size: 14px;
+  font-size: clamp(12px, 1.5vw, 14px);
+  font-family: var(--font-regular);
   padding-left:10px ;
   color: #000;
 }
@@ -26,13 +33,13 @@
   color: #000;
 }
 
-.title {
-  margin-bottom: 6px;
-}
 .subtitle {
+ font-size: clamp(14px, 1.5vw, 16px);
   margin-bottom: 24px;
 }
 .label {
+font-size: clamp(14px, 1.5vw, 16px);
+font-family: var(--font-regular);
   margin-bottom: 8px;
 }
 .formGroup{
@@ -41,7 +48,7 @@
 
 .error {
   color: var( --KU-Crimson);
-  font-size: 13px;
+  font-size: clamp(11px, 1.5vw, 13px);
   font-family: var(--font-regular);
   margin-top: 4px;
 }

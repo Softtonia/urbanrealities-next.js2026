@@ -2,7 +2,20 @@
     background: var(--White);
     border-radius: 8px;
 }
-
+.selectedCategory h3 {
+  font-size: clamp(20px, 2vw, 26px);
+  font-family: var(--font-medium);
+  margin-bottom: 8px;
+}
+.subPara {
+  margin-top: 24px;
+  font-size: clamp(14px, 1.5vw, 16px);
+}
+.optionBtn,
+.label {
+  font-size: clamp(14px, 1.5vw, 16px);
+  font-family: var(--font-regular);
+}
 .formGroup {
     display: flex;
     flex-direction: column;
@@ -71,6 +84,7 @@
 .input {
     padding: 8px 12px;
     font-size: 14px;
+    font-family: var(--font-regular);
     border: 1px solid #ccc;
     border-radius: 4px;
 }

@@ -1,0 +1,293 @@
+/* components/AgentCard/AgentCard.module.css */
+
+.agentCard {
+  background-color: #fff;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  margin-bottom: 25px ;
+  box-sizing: border-box; 
+}
+
+/* Header Section */
+.header {
+  display: flex;
+  flex-wrap: wrap; 
+  border-bottom: 1px solid #f0f0f0;
+  padding: 30px 20px 5px;
+
+}
+
+.profileSection {
+  /* display: flex; */
+  /* flex-grow: 1; */
+}
+
+.profileImageContainer {
+  border: 2px solid #f0f0f0;
+  padding: 10px 10px 8px;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.profileImage {
+  width: 127px;
+  height: 110px;
+  object-fit: cover;
+}
+
+.companyLogo {
+  width: 102px;
+  height: 67px;
+  object-fit: cover;
+  
+}
+
+.infowraper{
+    flex-grow: 1;
+  
+}
+.infocontent{
+    display: flex;
+    justify-content: space-between;
+
+}
+.info {
+  /* flex-grow: 1; */
+}
+
+.name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #777;
+  margin: 0;
+}
+
+.locationIcon {
+  margin-right: 6px;
+  color: #ff5722; /* Orange-Red for consistency */
+}
+
+.preferredAgent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-left: 16px; /* Space from profile info */
+  flex-shrink: 0; /* Prevents it from shrinking */
+}
+
+.badgeImage {
+  width: 92px; /* Adjust size as needed */
+  height: 108px;
+  object-fit: contain;
+  margin-bottom: 4px;
+}
+
+.badgeText {
+  font-size: 0.8rem;
+  color: #999;
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Stats Section */
+.stats {
+  display: flex;
+  padding: 16px 0;
+  flex-wrap: wrap; 
+}
+
+.statItem {
+  text-align: center;
+  flex: 1;
+  padding: 0 10px; /* Internal padding */
+  border-right: 1px solid #f0f0f0;
+}
+
+.statItem:last-child {
+  border-right: none; /* No border for the last item */
+}
+
+.statNumber {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #333;
+  display: block; /* Makes it a block for margin */
+  margin-bottom: 4px;
+}
+
+.statLabel {
+  font-size: 0.85rem;
+  color: #777;
+  margin: 0;
+}
+
+/* About Agent Section */
+.aboutSection {
+   display: flex;
+  justify-content: space-between;
+  /* align-items: flex-end; */
+  /* flex-wrap: wrap;  */
+  background-color: var(--Floral-White);
+  gap: 16px;
+  padding: 27px 20px;
+}
+
+.aboutTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 12px 0;
+}
+
+.aboutContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.description {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 60%; 
+}
+
+.readMore {
+  color: #ff5722; 
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0; 
+  margin-left: auto; 
+}
+
+.callBackButton,
+.visitPropertyButton {
+  /* padding: 10px 20px; */
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.callBackButton {
+  background-color: #ff5722; /* Orange-Red */
+  color: #fff;
+  border: 1px solid #ff5722;
+}
+
+.visitPropertyButton {
+  background-color: #fff;
+  color: #ff5722; /* Orange-Red */
+  border: 1px solid #ff5722;
+}
+
+.visitPropertyButton:hover {
+  background-color: var(--Orange-Red);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .agentCard {
+    padding: 16px;
+    margin: 10px auto;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profileSection {
+    flex-direction: column;
+    margin-bottom: 16px;
+  }
+
+  .profileImageContainer {
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+
+  .preferredAgent {
+    padding-left: 0;
+    margin-top: 16px;
+  }
+  
+  .name {
+    font-size: 1.5rem;
+  }
+  
+  .location {
+    font-size: 0.85rem;
+  }
+
+  .stats {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .statItem {
+    border-right: none;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 12px 0;
+  }
+
+  .statItem:last-child {
+    border-bottom: none;
+  }
+
+  .aboutContent {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .description {
+    max-width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .buttons {
+    flex-direction: column;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .callBackButton,
+  .visitPropertyButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .name {
+    font-size: 1.3rem;
+  }
+  .statNumber {
+    font-size: 1.4rem;
+  }
+  .statLabel {
+    font-size: 0.75rem;
+  }
+  .callBackButton,
+  .visitPropertyButton {
+    padding: 8px 15px;
+    font-size: 0.8rem;
+  }
+}

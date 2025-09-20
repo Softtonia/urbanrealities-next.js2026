@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
-import { useEffect } from 'react';
-import styles from './SingleListingwithTabs.module.css';
-import SingleList from "../SingleCard/SingleList" 
+import { useEffect } from "react";
+import styles from "./SingleListingwithTabs.module.css";
+import SingleList from "../SingleCard/SingleList";
 import SingleTabs from "./SingleTabs";
+import DeveloperList from "@/app/developer-detail/components/DeveloperCard/DeveloperList";
 
 function getPagination(currentPage, totalPages, maxVisible = 6) {
   const pages = [];
@@ -46,16 +47,22 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
   return pages;
 }
 
-
 const SingleListingWithTab = () => {
-  const totalProperties = Array(96).fill(1); // Dummy 24 cards
-  const cardsPerPage = 4;
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(totalProperties.length / cardsPerPage);
- const [isLoading, setIsLoading] = useState(false);
- 
- const pageNumbers = getPagination(currentPage, totalPages,6);
+  const dataByTab = {
+    "Properties (count)": Array(8).fill({ name: "Property Card" }),
+    "New Project": Array(5).fill({ name: "Developer Project" }),
+    "Top Agent": Array(3).fill({ name: "Agent Profile" }),
+  };
 
+  // const totalProperties = Array(96).fill(1); // Dummy 24 cards
+  const cardsPerPage = 4;
+  const [activeTab, setActiveTab] = useState("Properties (count)");
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalProperties = dataByTab[activeTab] || [];
+  const totalPages = Math.ceil(totalProperties.length / cardsPerPage);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const pageNumbers = getPagination(currentPage, totalPages, 6);
 
   useEffect(() => {
     setIsLoading(true);
@@ -66,42 +73,53 @@ const SingleListingWithTab = () => {
     return () => clearTimeout(timeout);
   }, [currentPage]);
 
-
   return (
     <div>
-    <div className={styles.listing}>
-      <h2>Properties in Mundeshwari Connaught One</h2>
-      <SingleTabs />
+      <div className={styles.listing}>
+        <h2> {activeTab}Properties in Mundeshwari Connaught One</h2>
+        <SingleTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* Property list + Loader wrapper */}
-  <div className={styles.propertyListWrapper}>
-    {isLoading ? (
-      <div className={styles.loader}>Loading properties...</div>
-    ) : (
-      <SingleList
-        currentPage={currentPage}
-        cardsPerPage={cardsPerPage}
-        totalProperties={totalProperties}
-      />
-    )}
-  </div>
-</div>
+        {/* Property list + Loader wrapper */}
+        <div className={styles.propertyListWrapper}>
+          {isLoading ? (
+            <div className={styles.loader}>Loading properties...</div>
+          ) : (
+            <>
+              {activeTab === "Properties (count)" && (
+                <SingleList
+                  currentPage={currentPage}
+                  cardsPerPage={cardsPerPage}
+                  totalProperties={dataByTab["Properties (count)"]}
+                />
+              )}
+
+              {activeTab === "New Project" && (
+                <DeveloperList
+                  currentPage={currentPage}
+                  cardsPerPage={cardsPerPage}
+                  totalProperties={dataByTab["New Project"]}
+                />
+              )}
+            </>
+          )}
+        </div>
+      </div>
 
       {/* Pagination ke buttons — YAHIN LIST KE BAAD HONGE */}
-    <div className={styles.pagination}>
-   {pageNumbers.map((page, index) => (
-    <button
-      key={index}
-      disabled={page === "..."}
-      className={`${styles.pageButton} ${currentPage === page ? styles.active : ''}`}
-      onClick={() => page !== "..." && setCurrentPage(page)}
-    >
-      {page}
-    </button>
-  ))}
- 
-</div>
-
+      <div className={styles.pagination}>
+        {pageNumbers.map((page, index) => (
+          <button
+            key={index}
+            disabled={page === "..."}
+            className={`${styles.pageButton} ${
+              currentPage === page ? styles.active : ""
+            }`}
+            onClick={() => page !== "..." && setCurrentPage(page)}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

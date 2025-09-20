@@ -2,7 +2,11 @@
   background-color: var(--White);
   border-radius: 12px;
 }
-
+.content h3 {
+  font-size: clamp(20px, 2vw, 26px);
+  font-family: var(--font-medium);
+  margin-bottom: 8px;
+}
 .optionButtons {
   display: flex;
   flex-wrap: wrap;
@@ -59,8 +63,13 @@
   border-radius: 50%;
 }
 
-.subPara{
+.subPara {
   margin-top: 24px;
+  font-size: clamp(14px, 1.5vw, 16px);
+}
+.optionBtn,
+.radioLabel {
+  font-size: clamp(14px, 1.5vw, 16px);
 }
 
 

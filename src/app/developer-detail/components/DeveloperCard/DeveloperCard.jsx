@@ -13,7 +13,7 @@ import { MdOutlineChair, MdOutlineCorporateFare } from "react-icons/md";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import styles from "./DeveloperCard.module.css";
 
-export default function ProjectCard() {
+export default function DeveloperCard() {
   return (
     <div className={styles.card}>
         <div className={styles.imageContainer}>
