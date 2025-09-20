@@ -28,46 +28,53 @@ const locationData = {
 
 const Location = () => {
   const { formData, updateFormData } = useContext(PostPropertyContext);
-  const { token } = useSiteSettings()
+  const { token } = useSiteSettings();
   const router = useRouter();
 
-  const [selectedCountry, setSelectedCountry] = useState(formData.locationDetails?.country || '');
-  const [selectedState, setSelectedState] = useState(formData.locationDetails?.state || '');
-  const [selectedCity, setSelectedCity] = useState(formData.locationDetails?.city || '');
-  const [selectedPinCode, setSelectedPinCode] = useState(formData.locationDetails?.pin_code || '');
+  const [selectedCountry, setSelectedCountry] = useState(
+    formData.locationDetails?.country || ""
+  );
+  const [selectedState, setSelectedState] = useState(
+    formData.locationDetails?.state || ""
+  );
+  const [selectedCity, setSelectedCity] = useState(
+    formData.locationDetails?.city || ""
+  );
+  const [selectedPinCode, setSelectedPinCode] = useState(
+    formData.locationDetails?.pin_code || ""
+  );
 
-
-  const [countries, setCountries] = useState([])
-  const [cities, setCities] = useState([])
-  const [states, setStates] = useState([])
+  const [countries, setCountries] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [states, setStates] = useState([]);
   const [errors, setErrors] = useState({});
-  const [isFetchingCountry, setIsFetchingCountry] = useState(false)
-  const [isFetchingState, setIsFetchingState] = useState(false)
-  const [isFetchingCity, setIsFetchingCity] = useState(false)
+  const [isFetchingCountry, setIsFetchingCountry] = useState(false);
+  const [isFetchingState, setIsFetchingState] = useState(false);
+  const [isFetchingCity, setIsFetchingCity] = useState(false);
 
-  console.log(selectedCountry)
+  console.log(selectedCountry);
   // fetch country  /api/countries
   useEffect(() => {
     const fetchPurpose = async () => {
-      setIsFetchingCountry(true)
+      setIsFetchingCountry(true);
       // console.log(token)
       try {
-        const res = await fetch('/api/post-property/location/country', {
-          method: 'GET',
+        const res = await fetch("/api/post-property/location/country", {
+          method: "GET",
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         const data = await res.json();
-        setIsFetchingCountry(false)
+        setIsFetchingCountry(false);
         if (Array.isArray(data)) {
           setCountries(data);
         } else if (data?.data) {
           setCountries(data.data);
         }
       } catch (err) {
-        setIsFetchingCountry(false)
-        console.error('Error fetching properties:', err);
+        setIsFetchingCountry(false);
+        console.error("Error fetching properties:", err);
       }
     };
     if (token) {
@@ -76,62 +83,64 @@ const Location = () => {
   }, [token]);
   useEffect(() => {
     const fetchPurpose = async () => {
-      setIsFetchingState(true)
+      setIsFetchingState(true);
       // console.log(token)
       try {
-        const res = await fetch(`/api/post-property/location/state/${selectedCountry}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          `/api/post-property/location/state/${selectedCountry}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const data = await res.json();
-        setIsFetchingState(false)
+        setIsFetchingState(false);
         if (Array.isArray(data)) {
           setStates(data);
         } else if (data?.data) {
           setStates(data.data);
         }
       } catch (err) {
-        setIsFetchingState(false)
-        console.error('Error fetching properties:', err);
+        setIsFetchingState(false);
+        console.error("Error fetching properties:", err);
       }
     };
-    if (token) {
+    if (token && selectedCountry) {
       fetchPurpose();
     }
   }, [selectedCountry]);
   useEffect(() => {
     const fetchPurpose = async () => {
-      setIsFetchingCity(true)
+      setIsFetchingCity(true);
       // console.log(token)
       try {
-        const res = await fetch(`/api/post-property/location/city/${selectedState}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          `/api/post-property/location/city/${selectedState}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const data = await res.json();
-        setIsFetchingCity(false)
+        setIsFetchingCity(false);
         if (Array.isArray(data)) {
           setCities(data);
         } else if (data?.data) {
           setCities(data.data);
         }
       } catch (err) {
-        setIsFetchingCity(false)
-        console.error('Error fetching properties:', err);
+        setIsFetchingCity(false);
+        console.error("Error fetching properties:", err);
       }
     };
-    if (token) {
+    if (token && selectedState) {
       fetchPurpose();
     }
   }, [selectedState]);
-
-
-
-
 
   const handleContinue = () => {
     const newErrors = {};
@@ -144,8 +153,6 @@ const Location = () => {
     } else if (selectedPinCode.length !== 6) {
       newErrors.pin_code = "Pin Code must be 6 digits";
     }
-    
-
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -156,7 +163,7 @@ const Location = () => {
       country_id: selectedCountry,
       state_id: selectedState,
       city_id: selectedCity,
-      pin_code: selectedPinCode
+      pin_code: selectedPinCode,
     });
 
     router.push("/auth/post-property/property-profile");
@@ -198,11 +205,12 @@ const Location = () => {
       border: "1px solid #9E9E9E",
       backgroundColor: "#fff",
       borderRadius: "8px",
-      paddingLeft: "4px",
-      minHeight: "42px",
+      // paddingLeft: "4px",
+      // minHeight: "42px",
       boxShadow: "none",
       outline: "none",
-      fontSize: "14px",
+      fontSize: "clamp(14px, 1.5vw, 16px)",
+      fontFamily: "var(--font-regular)",
       "&:hover": {
         border: "1px solid #9E9E9E",
       },
@@ -210,11 +218,13 @@ const Location = () => {
 
     option: (provided, state) => ({
       ...provided,
+      fontSize: "clamp(12px, 1.5vw, 14px)",
+      fontFamily: "var(--font-regular)",
       backgroundColor: state.isSelected
         ? "#fff"
         : state.isFocused
-          ? "#f0f0f0"
-          : "#fff",
+        ? "#f0f0f0"
+        : "#fff",
       color: "#000",
       cursor: "pointer",
 
@@ -223,6 +233,11 @@ const Location = () => {
         color: "#000",
       },
     }),
+  placeholder: (provided) => ({
+    ...provided,
+    fontSize: "clamp(12px, 1.5vw, 14px)",
+    fontFamily: "var(--font-regular)",
+   }),
 
     menu: (provided) => ({
       ...provided,
@@ -232,8 +247,8 @@ const Location = () => {
 
   return (
     <div className={styles.content}>
-      <div className={styles.backWrapper}>
-        <IoArrowBackSharp size={20} onClick={goBack} />
+      <div className={`${styles.backWrapper} d-flex gap-2 mb-3`}>
+        <IoArrowBackSharp size={20} onClick={goBack} className="back-btn" />
         <p className="m-0">Back</p>
       </div>
 
@@ -352,8 +367,10 @@ const Location = () => {
         {errors.pin_code && <p className={styles.error}>{errors.pin_code}</p>}
       </div>
 
-
-      <button className={` continueBtn ${styles.continueBtn}`} onClick={handleContinue}>
+      <button
+        className={` continueBtn ${styles.continueBtn}`}
+        onClick={handleContinue}
+      >
         Continue
       </button>
     </div>

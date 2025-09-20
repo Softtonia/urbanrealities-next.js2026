@@ -4,7 +4,7 @@ import React from "react";
 import DeveloperCard from "./DeveloperCard";
 import styles from "./DeveloperCard.module.css";
 
-export default function ProjectList({ currentPage, cardsPerPage, totalProperties }) {
+export default function DeveloperList({ currentPage, cardsPerPage, totalProperties }) {
   const startIndex = (currentPage - 1) * cardsPerPage;
   const visibleCards = totalProperties.slice(startIndex, startIndex + cardsPerPage);
 

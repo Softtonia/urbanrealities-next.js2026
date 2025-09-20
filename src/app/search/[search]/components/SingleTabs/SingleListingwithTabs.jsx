@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
-import { useEffect } from 'react';
-import styles from './SingleListingwithTabs.module.css';
-import SingleList from "../SingleCard/SingleList"
+import { useEffect } from "react";
+import styles from "./SingleListingwithTabs.module.css";
+import SingleList from "../SingleCard/SingleList";
 import SingleTabs from "./SingleTabs";
-import { useCity } from "@/utils/CityContext";
+import DeveloperList from "@/app/developer-detail/components/DeveloperCard/DeveloperList";
 
 function getPagination(currentPage, totalPages, maxVisible = 6) {
   const pages = [];
@@ -47,17 +47,22 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
   return pages;
 }
 
+const SingleListingWithTab = () => {
+  const dataByTab = {
+    "Properties (count)": Array(8).fill({ name: "Property Card" }),
+    "New Project": Array(5).fill({ name: "Developer Project" }),
+    "Top Agent": Array(3).fill({ name: "Agent Profile" }),
+  };
 
-const SingleListingWithTab = ({ searchResults }) => {
-  const { city } = useCity();
-  const totalProperties = searchResults ? searchResults.properties : []; // Dummy 24 cards
+  // const totalProperties = Array(96).fill(1); // Dummy 24 cards
   const cardsPerPage = 4;
+  const [activeTab, setActiveTab] = useState("Properties (count)");
   const [currentPage, setCurrentPage] = useState(1);
+  const totalProperties = dataByTab[activeTab] || [];
   const totalPages = Math.ceil(totalProperties.length / cardsPerPage);
   const [isLoading, setIsLoading] = useState(false);
 
   const pageNumbers = getPagination(currentPage, totalPages, 6);
-
 
   useEffect(() => {
     setIsLoading(true);
@@ -68,26 +73,34 @@ const SingleListingWithTab = ({ searchResults }) => {
     return () => clearTimeout(timeout);
   }, [currentPage]);
 
-  const count = searchResults? searchResults.total_count:''
-
-
   return (
     <div>
       <div className={styles.listing}>
-        <h2>Properties in {city &&city.name} </h2>
-        <SingleTabs count={count} />
+        <h2> {activeTab}Properties in Mundeshwari Connaught One</h2>
+        <SingleTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {/* Property list + Loader wrapper */}
         <div className={styles.propertyListWrapper}>
           {isLoading ? (
             <div className={styles.loader}>Loading properties...</div>
           ) : (
-            <SingleList
-              currentPage={currentPage}
-              cardsPerPage={cardsPerPage}
-              totalProperties={totalProperties}
-            // propertylist={searchResults.properties}
-            />
+            <>
+              {activeTab === "Properties (count)" && (
+                <SingleList
+                  currentPage={currentPage}
+                  cardsPerPage={cardsPerPage}
+                  totalProperties={dataByTab["Properties (count)"]}
+                />
+              )}
+
+              {activeTab === "New Project" && (
+                <DeveloperList
+                  currentPage={currentPage}
+                  cardsPerPage={cardsPerPage}
+                  totalProperties={dataByTab["New Project"]}
+                />
+              )}
+            </>
           )}
         </div>
       </div>
@@ -98,15 +111,15 @@ const SingleListingWithTab = ({ searchResults }) => {
           <button
             key={index}
             disabled={page === "..."}
-            className={`${styles.pageButton} ${currentPage === page ? styles.active : ''}`}
+            className={`${styles.pageButton} ${
+              currentPage === page ? styles.active : ""
+            }`}
             onClick={() => page !== "..." && setCurrentPage(page)}
           >
             {page}
           </button>
         ))}
-
       </div>
-
     </div>
   );
 };

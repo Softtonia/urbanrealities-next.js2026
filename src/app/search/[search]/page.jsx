@@ -12,9 +12,9 @@ import SingleListingWithTab from "./components/SingleTabs/SingleListingwithTabs"
 import styles from "./components/SingleTabs/SingleTabs.module.css";
 import SearchAgentCard from "./components/SearchAgentCard/SearchAgentCard";
 import FAQAccordion from "@/Components/FAQAccordion/FAQAccordion";
+import CompanyAgent from "./components/CompanyAgent/CompanyAgent";
 import { useCity } from "@/utils/CityContext";
 import { useSearch } from "@/hooks/useSearch";
-
 
 
 export default function OuterPage() {
@@ -139,6 +139,7 @@ export default function OuterPage() {
                 "What is Pradhan Mantri Awas Yojana?",
               ]}
             />
+            <CompanyAgent/>
           </div>
         </div>
       </div>
