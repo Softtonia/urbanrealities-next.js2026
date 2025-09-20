@@ -49,14 +49,14 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
 
 const SingleListingWithTab = () => {
   const dataByTab = {
-    "Properties (count)": Array(8).fill({ name: "Property Card" }),
+    "Properties": Array(8).fill({ name: "Property Card" }),
     "New Project": Array(5).fill({ name: "Developer Project" }),
     "Top Agent": Array(3).fill({ name: "Agent Profile" }),
   };
 
   // const totalProperties = Array(96).fill(1); // Dummy 24 cards
   const cardsPerPage = 4;
-  const [activeTab, setActiveTab] = useState("Properties (count)");
+  const [activeTab, setActiveTab] = useState("Properties");
   const [currentPage, setCurrentPage] = useState(1);
   const totalProperties = dataByTab[activeTab] || [];
   const totalPages = Math.ceil(totalProperties.length / cardsPerPage);
@@ -85,11 +85,11 @@ const SingleListingWithTab = () => {
             <div className={styles.loader}>Loading properties...</div>
           ) : (
             <>
-              {activeTab === "Properties (count)" && (
+              {activeTab === "Properties" && (
                 <SingleList
                   currentPage={currentPage}
                   cardsPerPage={cardsPerPage}
-                  totalProperties={dataByTab["Properties (count)"]}
+                  totalProperties={dataByTab["Properties"]}
                 />
               )}
 

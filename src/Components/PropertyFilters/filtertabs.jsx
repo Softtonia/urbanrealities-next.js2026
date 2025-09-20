@@ -14,6 +14,7 @@ import { useSearch } from "@/hooks/useSearch";
 export default function PropertyFilters({ initialFilters }) {
   const { city } = useCity();
   const { globalFilters, setGlobalFilters, debouncedFilters } = useSearch({},{ autoPush: true });
+  // const initialFilters = globalFilters
 
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showMoreFilters, setShowMoreFilters] = useState(false);
@@ -53,8 +54,10 @@ export default function PropertyFilters({ initialFilters }) {
 
   });
   const handleFilterChange = (key, value) => {
+    console.log(key,value)
     // setFilter((prev) => ({ ...prev, [key]: value }));
-    setGlobalFilters((prev) => ({ ...prev, [key]: value }));
+    setGlobalFilters((prev = {}) => ({ ...prev, [key]: value }));
+
   };
   
 

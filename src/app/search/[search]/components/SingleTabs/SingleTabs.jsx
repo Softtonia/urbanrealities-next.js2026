@@ -6,7 +6,7 @@ import { useState } from 'react';
 export default function SingleTabs({ activeTab, setActiveTab }) {
   // const [activeTab, setActiveTab] = useState('BUY');
 
-  const tabs = [`Properties (${count})`, 'New Project ', ' Top Agent'];
+  const tabs = [`Properties`, 'New Project ', ' Top Agent'];
 
   return (
     <div className={styles.filtersContainer}>

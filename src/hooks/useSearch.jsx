@@ -3,9 +3,15 @@
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 
-export const useSearch = (initialFilters={},{ autoPush = false, debounceDelay = 500, city } = {}) => {
+export const useSearch = ({
+    autoPush = false,
+    debounceDelay = 500,
+    city,
+    initialFilters = {},
+} = {}) => {
     const router = useRouter();
-    // const [initialFilters,setInitialFilters] =useState()
+
+    // Initialize with initialFilters or empty object
     const [globalFilters, setGlobalFilters] = useState(initialFilters);
     const [debouncedFilters, setDebouncedFilters] = useState(initialFilters);
 
@@ -17,12 +23,10 @@ export const useSearch = (initialFilters={},{ autoPush = false, debounceDelay = 
 
         return () => clearTimeout(handler);
     }, [globalFilters, debounceDelay]);
-    console.log('initial filter=>', initialFilters)
-    console.log('global filter=>', globalFilters)
 
     // Auto-push to URL
     useEffect(() => {
-        if (!autoPush) return;
+        if (!autoPush || !debouncedFilters) return;
 
         const params = new URLSearchParams();
         Object.entries(debouncedFilters).forEach(([key, value]) => {
@@ -31,14 +35,12 @@ export const useSearch = (initialFilters={},{ autoPush = false, debounceDelay = 
             }
         });
 
-        router.push(`/search/demo?${params.toString()}`);
+        router.replace(`/search/demo?${params.toString()}`, { shallow: true });
     }, [debouncedFilters, autoPush, router]);
 
-    // Search function (manual trigger)
-    const search = (filters) => {
-        console.log('initial filter',filters)
+    // Manual search function
+    const search = (filters = {}) => {
         setGlobalFilters(filters);
-
         if (!autoPush) {
             const params = new URLSearchParams();
             Object.entries(filters).forEach(([key, value]) => {
@@ -46,15 +48,31 @@ export const useSearch = (initialFilters={},{ autoPush = false, debounceDelay = 
                     params.set(key, String(value));
                 }
             });
-            router.push(`/search/demo?${params.toString()}`);
+            router.replace(`/search/demo?${params.toString()}`, { shallow: true });
         }
     };
 
-    // ✅ Payload derived from current debouncedFilters
+    // Debugging logs
+    useEffect(() => {
+        console.log("globalFilters:", globalFilters);
+    }, [globalFilters]);
+
+    useEffect(() => {
+        console.log("debouncedFilters:", debouncedFilters);
+    }, [debouncedFilters]);
+
+    // Derived payload
     const payload = useMemo(() => {
         if (!debouncedFilters) return null;
 
-        const { location = "", purpose = "", minPrice = "", maxPrice = "", propertyId = "", propertyType = "" } = debouncedFilters;
+        const {
+            location = "",
+            purpose = "",
+            minPrice = "",
+            maxPrice = "",
+            propertyId = "",
+            propertyType = "",
+        } = debouncedFilters;
 
         const normalizePrice = (price) => {
             if (!price) return "";
@@ -76,5 +94,5 @@ export const useSearch = (initialFilters={},{ autoPush = false, debounceDelay = 
         };
     }, [debouncedFilters, city]);
 
-    return { globalFilters, setGlobalFilters, debouncedFilters, search, payload,  };
+    return { globalFilters, setGlobalFilters, debouncedFilters, search, payload };
 };

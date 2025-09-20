@@ -183,7 +183,7 @@ export default function PropertySearch({ purpose }) {
   })();
 
 
-
+  const {search} = useSearch({}, { autoPush: false });
   const handleSearch = () => {
     // extract property ids
     const propertyIds = Object.keys(selectedTypes);
@@ -199,7 +199,6 @@ export default function PropertySearch({ purpose }) {
       purpose,
       location: inputLocation || city?.name || "",
     };
-    const {search} = useSearch(filters, { autoPush: false });
     search(filters)
 
   };
