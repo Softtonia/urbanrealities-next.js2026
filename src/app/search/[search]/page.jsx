@@ -13,6 +13,7 @@ import styles from "./components/SingleTabs/SingleTabs.module.css";
 import SearchAgentCard from "./components/SearchAgentCard/SearchAgentCard";
 import FAQAccordion from "@/Components/FAQAccordion/FAQAccordion";
 import CompanyAgent from "./components/CompanyAgent/CompanyAgent";
+import { useCity } from "@/utils/CityContext";
 
 export default function OuterPage() {
   const { city } = useCity();
