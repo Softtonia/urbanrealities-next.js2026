@@ -111,11 +111,23 @@ const SetPassword = () => {
         // );
       }
   
-      if (result.api_token) {
-        await login(result.api_token);
-      }
+      if (result) {
+        
+      
+        if (result.role === "company" || result.role === "consultancy"  || result.role === "agent" || result.role === "developer") {
+          // 🔑 store token in cookie (shared across subdomains)
+          // document.cookie = `authToken=${result.token}; path=/; domain=.urbanrealities.com; secure; SameSite=None`;
+      
+          // Redirect to business domain
+          window.location.href = `${process.env.NEXT_BUSINESS_DOMAIN}?authtoken=${result.token}&id=${result.user_id}`;
+        } else {
+          login(result.user_id, result.token);
+          router.push(`/auth/login/verify-otp?email=${formData.email}`);
+        }
+
+    }
       sessionStorage.setItem("registration_step", "2");
-      router.push(`/auth/login/verify-otp?email=${formData.email}`);
+      router.push(``);
 
     } catch (err) {
       setError(err.message);

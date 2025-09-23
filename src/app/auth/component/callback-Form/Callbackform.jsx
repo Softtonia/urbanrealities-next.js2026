@@ -5,7 +5,7 @@ import styles from "../loginform/Login.module.css"; // ✅ Using existing module
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { useRouter } from "next/navigation";
 
-export default function CallbackForm({roles=[]}) {
+export default function CallbackForm({ roles = [] }) {
     const router = useRouter();
     const { login } = useSiteSettings();
     const [roleId, setRoleId] = useState("");
@@ -23,7 +23,7 @@ export default function CallbackForm({roles=[]}) {
             if (codeParam) setCode(codeParam);
         }
     }, []);
-   
+
     // ✅ Fetch available roles
 
     const handleSubmit = async (e) => {
@@ -41,8 +41,19 @@ export default function CallbackForm({roles=[]}) {
                 throw new Error(result.message || "Request failed");
             }
             if (result) {
-                // Store token in sessionStorage
-                login(result.user.id,result.token)
+
+
+                if (result.role === "company" || result.role === "consultancy" || result.role === "agent" || result.role === "developer") {
+                    // 🔑 store token in cookie (shared across subdomains)
+                    // document.cookie = `authToken=${result.token}; path=/; domain=.urbanrealities.com; secure; SameSite=None`;
+
+                    // Redirect to business domain
+                    window.location.href = `${process.env.NEXT_BUSINESS_DOMAIN}?authtoken=${result.token}&id=${result.user_id}`;
+                } else {
+                    login(result.user_id, result.token);
+                    router.push(redirect);
+                }
+
             }
             // Redirect user or do something else
 

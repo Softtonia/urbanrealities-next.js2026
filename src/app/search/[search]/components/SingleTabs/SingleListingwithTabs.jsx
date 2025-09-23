@@ -6,6 +6,7 @@ import styles from "./SingleListingwithTabs.module.css";
 import SingleList from "../SingleCard/SingleList";
 import SingleTabs from "./SingleTabs";
 import DeveloperList from "@/app/developer-detail/components/DeveloperCard/DeveloperList";
+import { useCity } from "@/utils/CityContext";
 
 function getPagination(currentPage, totalPages, maxVisible = 6) {
   const pages = [];
@@ -47,12 +48,14 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
   return pages;
 }
 
-const SingleListingWithTab = () => {
+const SingleListingWithTab = ({ searchResults }) => {
+  const {city} = useCity()
   const dataByTab = {
-    "Properties": Array(8).fill({ name: "Property Card" }),
-    "New Project": Array(5).fill({ name: "Developer Project" }),
-    "Top Agent": Array(3).fill({ name: "Agent Profile" }),
+    "Properties": searchResults.properties || [],
+    "New Project": searchResults.projects || [],
+    "Top Agent": searchResults.agents || [],
   };
+  console.log('=>',searchResults)
 
   // const totalProperties = Array(96).fill(1); // Dummy 24 cards
   const cardsPerPage = 4;
@@ -76,8 +79,8 @@ const SingleListingWithTab = () => {
   return (
     <div>
       <div className={styles.listing}>
-        <h2> {activeTab}Properties in Mundeshwari Connaught One</h2>
-        <SingleTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+        <h2> {activeTab} in {city && city.name}</h2>
+        <SingleTabs activeTab={activeTab} setActiveTab={setActiveTab} searchResults={searchResults}/>
 
         {/* Property list + Loader wrapper */}
         <div className={styles.propertyListWrapper}>
@@ -89,7 +92,10 @@ const SingleListingWithTab = () => {
                 <SingleList
                   currentPage={currentPage}
                   cardsPerPage={cardsPerPage}
-                  totalProperties={dataByTab["Properties"]}
+                  totalProperties={
+                    dataByTab["Properties"]
+                    //  searchResults
+                  }
                 />
               )}
 
@@ -111,9 +117,8 @@ const SingleListingWithTab = () => {
           <button
             key={index}
             disabled={page === "..."}
-            className={`${styles.pageButton} ${
-              currentPage === page ? styles.active : ""
-            }`}
+            className={`${styles.pageButton} ${currentPage === page ? styles.active : ""
+              }`}
             onClick={() => page !== "..." && setCurrentPage(page)}
           >
             {page}

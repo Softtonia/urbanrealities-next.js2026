@@ -13,7 +13,11 @@ import { useSearch } from "@/hooks/useSearch";
 
 export default function PropertyFilters({ initialFilters }) {
   const { city } = useCity();
-  const { globalFilters, setGlobalFilters, debouncedFilters } = useSearch({},{ autoPush: true });
+  const { globalFilters, setGlobalFilters, debouncedFilters } = useSearch({
+    autoPush: true,
+    debounceDelay: 500
+  });
+
   // const initialFilters = globalFilters
 
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -34,7 +38,7 @@ export default function PropertyFilters({ initialFilters }) {
   // const [isLocationOpen, setIsLocationOpen] = useState(false);
   // const [isTypeOpen, setIsTypeOpen] = useState(false);
   const [selectedValues, setSelectedValues] = useState({
-    purpose:'',
+    purpose: '',
     topLocalities: "",
     budget: "",
     propertyType: "",
@@ -42,7 +46,7 @@ export default function PropertyFilters({ initialFilters }) {
     postedBy: "",
   });
 
-  console.log('global filter',globalFilters)
+  // console.log('initial filter', initialFilters)
 
   const [filter, setFilters] = useState({
     minPrice: "",
@@ -53,13 +57,26 @@ export default function PropertyFilters({ initialFilters }) {
     location: "",
 
   });
-  const handleFilterChange = (key, value) => {
-    console.log(key,value)
-    // setFilter((prev) => ({ ...prev, [key]: value }));
-    setGlobalFilters((prev = {}) => ({ ...prev, [key]: value }));
+  const handleFilterChange = (key, value, overwrite = false) => {
+    setGlobalFilters((prev) => {
+      // If overwrite is true (like for minPrice/maxPrice), just set the value
+      if (overwrite) {
+        return { ...prev, [key]: String(value) };
+      }
 
+      const existing = prev[key] ? String(prev[key]).split(",") : [];
+      const val = String(value);
+
+      const updated = existing.includes(val)
+        ? existing.filter((v) => v !== val) // remove if exists
+        : [...existing, val]; // add if not exists
+
+      return { ...prev, [key]: updated.join(",") };
+    });
   };
-  
+
+
+
 
   const priceOptions = [
     { label: "5 Lac", value: 500000 },
@@ -88,7 +105,7 @@ export default function PropertyFilters({ initialFilters }) {
     { label: "10 Cr", value: 100000000 },
     { label: "20 Cr", value: 200000000 },
   ];
-  console.log('==>', filter)
+  // console.log('==>', filter)
 
   // Format number to label
   const formatBudget = (val) => {
@@ -106,13 +123,14 @@ export default function PropertyFilters({ initialFilters }) {
 
   // Initialize budgetRange fromglobalFilters
   useEffect(() => {
-    if (initialFilters) {
-      const min = Number(initialFilters.property_price_low) || priceOptions[0].value;
-      const max = Number(initialFilters.property_price_high) || priceOptions[priceOptions.length - 1].value;
+    if (globalFilters) {
+      const min = Number(globalFilters.minPrice) ;
+      const max = Number(globalFilters.maxPrice);
 
       setBudgetRange([min, max]);
     }
-  }, [initialFilters]);
+  }, [globalFilters]);
+  // console.log("global Filters==>",globalFilters)
 
   // const handleSelectBudget = (type, value) => {
   //   if (type === "min") {
@@ -126,17 +144,18 @@ export default function PropertyFilters({ initialFilters }) {
   //     setBudgetRange([min, newMax]);
   //   }
   // };
-  const handlePrice = (price) => {
-    e.stopPropagation();
-    handleFilterChange("maxPrice", price[0]);
-    handleFilterChange("minPrice", price[1]);
-
-    if (activePriceType === "min") {
-      setBudgetRange((prev) => [price.value, prev[1]]); // update min
-    } else {
-      setBudgetRange((prev) => [prev[0], price.value]); // update max
-    }
+  const handlePrice = (range) => {
+    const [min, max] = range;
+  
+    // Update global filters (overwrite mode)
+    handleFilterChange("minPrice", min, true);
+    handleFilterChange("maxPrice", max, true);
+  
+    // Update local slider state
+    setBudgetRange([min, max]);
   };
+  // console.log('global data',globalFilters)
+  // console.log('debounce data', debouncedFilters)
 
 
 
@@ -208,11 +227,10 @@ export default function PropertyFilters({ initialFilters }) {
       options: ["Owner", "Broker", "Builder/Developer"],
     },
   ];
-  console.log('\\\>',globalFilters)
 
   useEffect(() => {
-    if (initialFilters?.property_type_id && propertyType?.length) {
-      const typeIds =globalFilters.property_type_id
+    if (initialFilters?.propertyType && propertyType?.length) {
+      const typeIds = globalFilters.propertyType
         .split(",")
         .map((id) => String(id).trim());
 
@@ -238,11 +256,11 @@ export default function PropertyFilters({ initialFilters }) {
     if (initialFilters) {
       setSelectedValues((prev) => ({
         ...prev,
-        purpose:globalFilters.purpose,
+        purpose: globalFilters.purpose,
       }))
     }
   }, [initialFilters])
-  console.log('-->',globalFilters)
+  // console.log('-->', globalFilters)
 
 
   useEffect(() => {
@@ -343,27 +361,48 @@ export default function PropertyFilters({ initialFilters }) {
   const handleSelect = (typeId, propertyId) => {
     typeId = String(typeId);
     propertyId = String(propertyId);
-
+  
     setSelectedTypes((prev) => {
       const prevTypes = prev[propertyId] || [];
       const updatedTypes = prevTypes.includes(typeId)
         ? prevTypes.filter((id) => id !== typeId)
         : [...prevTypes, typeId];
-
-      const newSelection = {
-        ...prev,
-        [propertyId]: updatedTypes.length > 0 ? updatedTypes : undefined,
-      };
-
-      // cleanup empty
-      Object.keys(newSelection).forEach(
-        (k) => !newSelection[k] && delete newSelection[k]
+  
+      const newSelection = { ...prev, [propertyId]: updatedTypes.length > 0 ? updatedTypes : undefined };
+  
+      // Update globalFilters
+      // 1. Gather all propertyType ids
+      const allSelectedTypeIds = Object.values(newSelection)
+        .filter(Boolean)
+        .flat()
+        .map(String);
+  
+      handleFilterChange("propertyType", allSelectedTypeIds.join(","), true);
+  
+      // 2. Gather all propertyIds that have at least one type selected
+      const allSelectedPropertyIds = Object.keys(newSelection).filter(
+        (pid) => newSelection[pid] && newSelection[pid].length > 0
       );
-
+      handleFilterChange("propertyId", allSelectedPropertyIds.join(","), true);
+  
       return newSelection;
     });
   };
 
+  const handleSelectMultiple = (filterKey, value) => {
+    setSelectedValues((prev) => {
+      const existing = prev[filterKey] || [];
+      const updated = existing.includes(value)
+        ? existing.filter((v) => v !== value) // remove if already selected
+        : [...existing, value]; // add if not selected
+  
+      // Call your external filter handler
+      handleFilterChange(filterKey, updated, true);
+  
+      return { ...prev, [filterKey]: updated };
+    });
+  };
+  
 
 
   const handleSelectPurpose = (type) => {
@@ -371,8 +410,9 @@ export default function PropertyFilters({ initialFilters }) {
       ...prev,
       purpose: type
     }))
+    handleFilterChange('purpose',type,true)
   }
-  console.log("-=->", selectedTypes)
+  // console.log("-=->", selectedTypes)
 
 
   const handleSearchChange = (e) => {
@@ -517,7 +557,7 @@ export default function PropertyFilters({ initialFilters }) {
                       <div
                         key={opt}
                         className={styles.pillOption}
-                        onClick={() => handleSelect(filter.key, opt)}
+                        onClick={() => handleSelectMultiple(filter.key, opt)}
                       >
                         {opt}
                       </div>
@@ -528,7 +568,7 @@ export default function PropertyFilters({ initialFilters }) {
                       <div
                         key={index}
                         className={styles.listOption}
-                        onClick={() => handleSelect(filter.key, opt)}
+                        onClick={() => handleSelectMultiple(filter.key, opt)}
                       >
                         <small>{opt}</small>
                       </div>
@@ -610,12 +650,9 @@ export default function PropertyFilters({ initialFilters }) {
                         range
                         min={priceOptions[0].value}
                         max={priceOptions[priceOptions.length - 1].value}
-                        step={50000}
+                        step={500000}
                         value={budgetRange}
-                        onChange={(val) => {
-                          setBudgetRange(val);        // update local state
-                          handlePrice(val)
-                        }}
+                        onChange={handlePrice} // pass the array directly
                         trackStyle={[{ backgroundColor: "var(--Orange-Red)" }]}
                         handleStyle={[
                           { border: "4px solid var(--Orange-Red)", backgroundColor: "var(--White)" },
@@ -623,6 +660,7 @@ export default function PropertyFilters({ initialFilters }) {
                         ]}
                         railStyle={{ backgroundColor: "var(--Gray)" }}
                       />
+
                       <div className={styles.budgetDropdowns}>
                         <div className={styles.rangeDropdown}>
                           <div

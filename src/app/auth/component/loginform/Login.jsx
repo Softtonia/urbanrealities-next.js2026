@@ -91,14 +91,23 @@ export default function LoginPage() {
       }
 
       // ✅ Success: store token + redirect
+      
       if (result) {
-        login(result.user_id,result.token)
-      }
-      console.log(redirect)
+        
+      // const role = 'company'
+        if (result.role === "company" || result.role === "consultancy"  || result.role === "agent" || result.role === "developer") {
+          // 🔑 store token in cookie (shared across subdomains)
+          // document.cookie = `authToken=${result.token}; path=/; domain=.urbanrealities.com; secure; SameSite=None`;
+      
+          // Redirect to business domain
+          window.location.href = `${process.env.NEXT_PUBLIC_BUSINESS_DOMAIN}?authtoken=${result.token}&id=${result.user_id}`;
+        } else {
+          login(result.user_id, result.token);
+          router.push(redirect);
+        }
 
-      router.push(redirect);
-
-    } catch (err) {
+    }
+  } catch (err) {
       setError("Something went wrong. Please try again later.");
     } finally {
       setLoading(false);

@@ -20,9 +20,9 @@ import { useSearch } from "@/hooks/useSearch";
 export default function OuterPage() {
   const { city } = useCity();
   const router = useRouter();
-  const {payload}= useSearch({}, { autoPush: false })
+  const {payload,debouncedFilters,searchResults}= useSearch({ autoPush: false })
   const params = useParams();
-  const [searchResults,setSearchResults] =useState();
+  // const [searchResults,setSearchResults] =useState();
   const searchParams = useSearchParams();
 
   const searchParam = params?.search;
@@ -34,7 +34,7 @@ export default function OuterPage() {
 
 
   // const { valid, filters } = validateSlug(slugString);
-  console.log("Slug check:", slugString);
+  // console.log("Slug check:", slugString);
 
   // useEffect(() => {
   //   if (!valid) {
@@ -75,38 +75,8 @@ export default function OuterPage() {
   //   };
   // }, [searchParams, city]);
 
-  useEffect(() => {
-    const fetchSearchResults = async () => {
-      try {
-        const res = await fetch(`/api/global-search-filter/global-search`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
+ 
 
-        const data = await res.json();
-        console.log("Search API Response →", data);
-
-        if (data?.data) {
-          // ✅ if API returns data inside { data: [...] }
-          setSearchResults(data.data);
-        } else if (data) {
-          // ✅ if API returns an array directly
-          setSearchResults(data);
-        } else {
-          setSearchResults([]);
-        }
-      } catch (err) {
-        console.error("Error fetching search results:", err);
-      }
-    };
-
-    if (payload && city) {
-      fetchSearchResults();
-    }
-  }, [payload,city]);
 
 
 
@@ -114,7 +84,7 @@ export default function OuterPage() {
   console.log("Search Response →", searchResults);
   return (
     <div>
-      <PropertyFilters initialFilters={payload}  />
+      <PropertyFilters initialFilters={debouncedFilters}  />
       <div className="container">
         <div className={`row ${styles["tab-row"]}`}>
           <div className={`col-lg-9 col-12 ${styles["listing-col"]}`}>

@@ -183,7 +183,7 @@ export default function PropertySearch({ purpose }) {
   })();
 
 
-  const {search} = useSearch({}, { autoPush: false });
+  const { search } = useSearch({}, { autoPush: false });
   const handleSearch = () => {
     // extract property ids
     const propertyIds = Object.keys(selectedTypes);
@@ -227,7 +227,9 @@ export default function PropertySearch({ purpose }) {
                 onClick={() => setIsLocationOpen((prev) => !prev)}
               >
                 <IoLocation className={"icon-custom"} />
-                <span className="Add-city">{city && city.name}</span>
+                {city &&
+                  <span className="Add-city">{city && city.name}</span>
+                }
                 <input
                   type="text"
                   placeholder="Add more..."
