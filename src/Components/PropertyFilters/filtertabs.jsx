@@ -124,13 +124,19 @@ export default function PropertyFilters({ initialFilters }) {
   // Initialize budgetRange fromglobalFilters
   useEffect(() => {
     if (globalFilters) {
-      const min = Number(globalFilters.minPrice) ;
-      const max = Number(globalFilters.maxPrice);
-
+      const min = globalFilters.minPrice
+        ? Number(globalFilters.minPrice)
+        : Number(priceOptions[0]?.value || priceOptions[0]?.label);
+  
+      const max = globalFilters.maxPrice
+        ? Number(globalFilters.maxPrice)
+        : Number(priceOptions[priceOptions.length - 1]?.value || priceOptions[priceOptions.length - 1]?.label);
+  
       setBudgetRange([min, max]);
     }
-  }, [globalFilters]);
-  // console.log("global Filters==>",globalFilters)
+  }, []);
+  
+  console.log("global Filters==>",purposes)
 
   // const handleSelectBudget = (type, value) => {
   //   if (type === "min") {
@@ -146,11 +152,11 @@ export default function PropertyFilters({ initialFilters }) {
   // };
   const handlePrice = (range) => {
     const [min, max] = range;
-  
+
     // Update global filters (overwrite mode)
     handleFilterChange("minPrice", min, true);
     handleFilterChange("maxPrice", max, true);
-  
+
     // Update local slider state
     setBudgetRange([min, max]);
   };
@@ -309,10 +315,14 @@ export default function PropertyFilters({ initialFilters }) {
         const res = await fetch(`/api/post-property/get-purpose`);
         const data = await res.json();
         if (Array.isArray(data)) {
-          setPurpose(data);
+          const updated = data.map(item =>
+            item?.name === "Sell" ? { ...item, name: "Buy",slug:'buy' } : item
+          );
+          setPurpose(updated);
         } else if (data?.data) {
           setPurpose(data.data);
         }
+
       } catch (err) {
         console.error("Error fetching purpose:", err);
       }
@@ -361,30 +371,30 @@ export default function PropertyFilters({ initialFilters }) {
   const handleSelect = (typeId, propertyId) => {
     typeId = String(typeId);
     propertyId = String(propertyId);
-  
+
     setSelectedTypes((prev) => {
       const prevTypes = prev[propertyId] || [];
       const updatedTypes = prevTypes.includes(typeId)
         ? prevTypes.filter((id) => id !== typeId)
         : [...prevTypes, typeId];
-  
+
       const newSelection = { ...prev, [propertyId]: updatedTypes.length > 0 ? updatedTypes : undefined };
-  
+
       // Update globalFilters
       // 1. Gather all propertyType ids
       const allSelectedTypeIds = Object.values(newSelection)
         .filter(Boolean)
         .flat()
         .map(String);
-  
+
       handleFilterChange("propertyType", allSelectedTypeIds.join(","), true);
-  
+
       // 2. Gather all propertyIds that have at least one type selected
       const allSelectedPropertyIds = Object.keys(newSelection).filter(
         (pid) => newSelection[pid] && newSelection[pid].length > 0
       );
       handleFilterChange("propertyId", allSelectedPropertyIds.join(","), true);
-  
+
       return newSelection;
     });
   };
@@ -395,14 +405,14 @@ export default function PropertyFilters({ initialFilters }) {
       const updated = existing.includes(value)
         ? existing.filter((v) => v !== value) // remove if already selected
         : [...existing, value]; // add if not selected
-  
+
       // Call your external filter handler
       handleFilterChange(filterKey, updated, true);
-  
+
       return { ...prev, [filterKey]: updated };
     });
   };
-  
+
 
 
   const handleSelectPurpose = (type) => {
@@ -410,7 +420,7 @@ export default function PropertyFilters({ initialFilters }) {
       ...prev,
       purpose: type
     }))
-    handleFilterChange('purpose',type,true)
+    handleFilterChange('purpose', type, true)
   }
   // console.log("-=->", selectedTypes)
 
