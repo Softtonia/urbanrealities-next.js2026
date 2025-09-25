@@ -9,8 +9,9 @@ export const useSearch = ({
 } = {}) => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [searchResults,setSearchResults] = useState([])
-    const {city} =useCity()
+    const [searchResults, setSearchResults] = useState([])
+    const { city } = useCity()
+   
 
     const parseParams = () => {
         const params = {};
@@ -47,7 +48,7 @@ export const useSearch = ({
             }
         });
 
-        router.replace(`/search/demo?${params.toString()}`, { shallow: true });
+        router.replace(`/search/query?${params.toString()}`, { shallow: true });
     }, [debouncedFilters, autoPush, router]);
 
     // Manual search
@@ -60,10 +61,10 @@ export const useSearch = ({
                     params.set(key, String(value));
                 }
             });
-            router.replace(`/search/demo?${params.toString()}`, { shallow: true });
+            router.replace(`/search/query?${params.toString()}`, { shallow: true });
         }
     };
-
+   
     // Derived payload
     const payload = useMemo(() => {
         console.log("outside")
@@ -78,7 +79,7 @@ export const useSearch = ({
             maxPrice = "",
             propertyId = "",
             propertyType = "",
-            topLocalities="",
+            topLocalities = "",
         } = debouncedFilters;
 
         const normalizePrice = (price) => {
@@ -95,7 +96,7 @@ export const useSearch = ({
             property_price_low: normalizePrice(minPrice),
             property_price_high: normalizePrice(maxPrice),
             keyword: "",
-            area_locality:topLocalities,
+            area_locality: topLocalities,
             country_id: city?.country_id || "",
             state_id: city?.state_id || "",
             city_id: city?.id || "",
@@ -117,9 +118,10 @@ export const useSearch = ({
                 console.error(err);
             }
         };
-
-        fetchSearchResults();
-    }, [payload]);
+        if (payload, city) {
+            fetchSearchResults();
+        }
+    }, [payload,city]);
 
     return { globalFilters, setGlobalFilters, debouncedFilters, search, searchResults };
 };

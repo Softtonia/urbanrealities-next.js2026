@@ -8,6 +8,7 @@ import { FaMapPin, FaHouse, FaRupeeSign, FaBuilding } from "react-icons/fa6";
 import { useCity } from "@/utils/CityContext";
 import { slugify } from "@/utils/slugify";
 import { useSearch } from "@/hooks/useSearch";
+import Search from "antd/es/transfer/search";
 
 export default function PropertySearch({ purpose }) {
   const [activePriceType, setActivePriceType] = useState("min");
@@ -185,6 +186,7 @@ export default function PropertySearch({ purpose }) {
 
   const { search } = useSearch({}, { autoPush: false });
   const handleSearch = () => {
+
     // extract property ids
     const propertyIds = Object.keys(selectedTypes);
 
@@ -214,7 +216,7 @@ export default function PropertySearch({ purpose }) {
   );
 
 
-  console.log(selectedTypes);
+  // console.log('==>', );
   return (
     <>
       <div className="container">
@@ -362,11 +364,15 @@ export default function PropertySearch({ purpose }) {
                 <FaRupeeSign className="icon-custom" />
                 <div className="nav-text">
                   <span className="text-muted nav-text">
-                    {" "}
-                    {minPrice || maxPrice
-                      ? minPrice + "-" + maxPrice
-                      : "Budget"}
+                    {minPrice && maxPrice
+                      ? `${minPrice}-${maxPrice}`
+                      : minPrice
+                        ? `${minPrice}+`
+                        : maxPrice
+                          ? `Up to ${maxPrice}`
+                          : "Budget"}
                   </span>
+
                 </div>
               </div>
               {budgetDropdown && (
@@ -451,6 +457,7 @@ export default function PropertySearch({ purpose }) {
               className="btn search-btn text-white"
             >
               <IoSearch />
+
               Search
             </button>
           </div>
@@ -471,6 +478,7 @@ export default function PropertySearch({ purpose }) {
               className="btn circle-btn text-white "
               onClick={handleViewsearch}
             >
+
               <IoSearch />
             </div>
           </div>
