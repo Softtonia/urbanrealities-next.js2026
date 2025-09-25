@@ -92,6 +92,7 @@ export default function OuterPage() {
           </div>
           <div className={`col-lg-3 col-12 ${styles["search-col"]}`}>
             <SearchAgentCard />
+             <SearchAgentCard />
           </div>
           <div className={`col-lg-9 col-12 ${styles["faq-col"]}`}>
             <FAQAccordion

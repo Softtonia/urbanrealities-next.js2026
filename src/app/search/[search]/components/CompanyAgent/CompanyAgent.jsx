@@ -9,6 +9,7 @@ export default function CompanyAgent() {
   return (
     <div className={styles.agentCard}>
       {/* Top Section */}
+      <div className={styles.topSection}>
       <div className={styles.header}>
           <div className={styles.profileImageContainer}>
             <div className="">
@@ -26,7 +27,6 @@ export default function CompanyAgent() {
           </div>
         <div className={styles.preferredAgent}>
           <img src="/prefered.png" alt="Preferred Agent" className={styles.badgeImage} /> 
-          {/* <p className={styles.badgeText}>Trusted by <br /> Many Users</p> */}
         </div>
 </div>
 
@@ -50,6 +50,26 @@ export default function CompanyAgent() {
         </div>
       </div>
 </div>
+</div>
+    <div className={styles.mobilestats}>
+        <div className={styles.statItem}>
+          <span className={styles.statNumber}>1</span>
+          <p className={styles.statLabel}>Properties For Sale</p>
+        </div>
+        <div className={styles.statItem}>
+          <span className={styles.statNumber}>33</span>
+          <p className={styles.statLabel}>Properties For Rent</p>
+        </div>
+        <div className={styles.statItem}>
+          <span className={styles.statNumber}>33</span>
+          <p className={styles.statLabel}>Deals Closed</p>
+        </div>
+        <div className={styles.statItem}>
+          <span className={styles.statNumber}>2</span>
+          <p className={styles.statLabel}>Team Members</p>
+        </div>
+      </div>
+
       </div>
 
       {/* About Agent Section */}
