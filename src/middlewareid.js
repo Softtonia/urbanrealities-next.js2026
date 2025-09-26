@@ -2,6 +2,8 @@
 import { NextResponse } from "next/server";
 
 export function middlewareIp(request) {
+
+    console.log("hello ip")
     // ✅ Extract client IP
     const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0] || "0.0.0.0";
 

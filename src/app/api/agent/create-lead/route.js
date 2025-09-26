@@ -11,12 +11,7 @@ export async function POST(req) {
         const token = req.headers.get('authorization') || '';
 
         // Pass token in Authorization header
-        const response = await post('/api/leads', body, {
-            headers: {
-                Authorization: token ? `Bearer ${token}` : '',
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await post('/api/leads', body,req);
 
         return NextResponse.json(response.data);
     } catch (error) {

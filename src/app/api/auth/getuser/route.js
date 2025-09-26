@@ -68,24 +68,19 @@ import { cookies } from "next/headers";
 export async function GET(req) {
     try {
         // ✅ No need for await here
-        const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+        // const token = req.headers.get("Authorization")?.replace("Bearer ", "");
         const userId = req.nextUrl.searchParams.get("id");
-        
+
         console.log("Token:", token, "User ID:", userId);
 
-        if (!token || !userId) {
+        if (!userId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
         // Call Laravel server via Axios wrapper
         const res = await get(
             `${process.env.LARAVEL_API_BASE_URL}/api/get-details-byuserid?id=${userId}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                cache: "no-store",
-            }
+            req
         );
 
         console.log("Response data:", res.data);

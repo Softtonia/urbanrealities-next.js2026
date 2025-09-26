@@ -6,9 +6,9 @@ import { get } from "@/lib/api";
 const cache = new Map();
 const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
 
-export async function POST(request) {
+export async function POST(req) {
     try {
-        const payload = await request.json();
+        const payload = await req.json();
 
         // Build query params safely
         const params = new URLSearchParams();
@@ -25,7 +25,7 @@ export async function POST(request) {
         }
 
         // 🚀 Fetch from Laravel
-        const response = await get(url);
+        const response = await get(url,req);
 
         // ✅ Save to cache
         cache.set(url, { data: response.data, expiry: Date.now() + CACHE_TTL });

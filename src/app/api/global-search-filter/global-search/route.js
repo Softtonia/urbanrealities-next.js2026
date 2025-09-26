@@ -3,12 +3,12 @@
 import { NextResponse } from 'next/server';
 import { post } from '@/lib/api'; // This should be your axios/fetch wrapper
 
-export async function POST(request) {
+export async function POST(req) {
     try {
-        const body = await request.json();
+        const body = await req.json();
 
         console.log(body)
-        const response = await post(`/api/globle-search-engine`, body);
+        const response = await post(`/api/globle-search-engine`, body,req);
 
         return NextResponse.json(response.data); // return Laravel's response to frontend
     } catch (error) {

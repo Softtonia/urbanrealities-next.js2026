@@ -10,6 +10,7 @@ const VerifyOTP = () => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const finalToken = token || localStorage.getItem("tempAuthToken");
   console.log("tokens", sessionStorage.getItem('token'))
 
   const data = {
@@ -38,17 +39,31 @@ const VerifyOTP = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email_otp: otp, token }),
+        body: JSON.stringify({ email_otp: otp, token:finalToken }),
       });
   
       const result = await res.json();
   
       if (res.ok) {
-        // OTP is correct
-        router.push("/");
+        // ✅ clear localStorage token if it was used
+        localStorage.removeItem("tempAuthToken");
+
+        if (
+          result.role === "company" ||
+          result.role === "consultancy" ||
+          result.role === "agent" ||
+          result.role === "developer"
+        ) {
+          // 🔑 business flow → redirect to external domain
+          window.location.href = `${process.env.NEXT_PUBLIC_BUSINESS_DOMAIN}?authtoken=${result.token}&id=${result.user_id}`;
+        } else {
+          // 🔑 normal flow → redirect inside app
+          router.push("/");
+        }
       } else {
         setError(result.message || "Invalid OTP");
       }
+
     } catch (err) {
       setError("Something went wrong. Try again.");
     } finally {

@@ -112,22 +112,25 @@ const SetPassword = () => {
       }
   
       if (result) {
-        
+        if (
+          result.role === "company" ||
+          result.role === "consultancy" ||
+          result.role === "agent" ||
+          result.role === "developer"
+        ) {
+          // Store token temporarily in localStorage
+          localStorage.setItem("tempAuthToken", result.api_token);
       
-        if (result.role === "company" || result.role === "consultancy"  || result.role === "agent" || result.role === "developer") {
-          // 🔑 store token in cookie (shared across subdomains)
-          // document.cookie = `authToken=${result.token}; path=/; domain=.urbanrealities.com; secure; SameSite=None`;
-      
-          // Redirect to business domain
-          window.location.href = `${process.env.NEXT_BUSINESS_DOMAIN}?authtoken=${result.token}&id=${result.user_id}`;
+          // Redirect to verify OTP page (with user id or email)
+          router.push(`/auth/login/verify-otp?email=${formData.email}&id=${result.user_id}`);
         } else {
-          login(result.user_id, result.token);
+          login(result.user_id, result.api_token);
           router.push(`/auth/login/verify-otp?email=${formData.email}`);
         }
-
-    }
+      }
+      
       sessionStorage.setItem("registration_step", "2");
-      router.push(``);
+      // router.push(``);
 
     } catch (err) {
       setError(err.message);

@@ -8,6 +8,10 @@ export async function GET(req) {
     const city_id = searchParams.get("city_id") || "";
     const search = searchParams.get("search") || "";
 
+    
+
+    // console.log('ip',{req})
+
     try {
         // Forward request to Laravel backend
         const queryParams = new URLSearchParams();
@@ -16,7 +20,7 @@ export async function GET(req) {
         if (search) queryParams.append("search", search);
 
         const res = await get(
-            `/api/locations?${queryParams.toString()}`
+            `/api/locations?${queryParams.toString()}`,req
         );
         return NextResponse.json(res.data);
     } catch (err) {
@@ -34,7 +38,7 @@ export async function GET(req) {
 
         // Otherwise, fallback to generic error
         return NextResponse.json(
-            { error: err.message || "Failed to fetch cities" },
+            { error: err.response.data?.message },
             { status: 500 }
         );
     }
