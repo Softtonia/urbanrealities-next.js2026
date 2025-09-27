@@ -17,7 +17,7 @@ export async function GET(req) {
         }
 
         // Forward to Laravel API with query params
-        const response = await get(`/api/auth/google/callback?code=${code}&role_id=${role_id}`);
+        const response = await get(`/api/auth/google/callback?code=${code}&role_id=${role_id}`,req);
         
         return NextResponse.json(response.data);
     } catch (error) {

@@ -10,11 +10,7 @@ export async function POST(req) {
     }
 
     // Call Laravel API
-    const apiResponse = await post(`/api/logout`, null, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const apiResponse = await post(`/api/logout`, null,req);
 
     let data;
 

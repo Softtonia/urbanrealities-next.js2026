@@ -7,11 +7,7 @@ export async function POST(request) {
         
         const token = body.token;
 
-        const response = await post(`/api/verify-email-otp`, body, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
+        const response = await post(`/api/verify-email-otp`, body,req);
 
         // console.log(response)
 

@@ -7,11 +7,7 @@ export async function GET(req) {
         const authHeader = req.headers.get('authorization');//get token from header
         console.log("token",authHeader)
 
-        const response = await get(`/api/user-properties`, {
-            headers: {
-                'Authorization': authHeader,
-            },
-        });
+        const response = await get(`/api/user-properties`,req);
         // console.log(response)
 
         return NextResponse.json(response.data);

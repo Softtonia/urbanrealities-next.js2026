@@ -70,7 +70,7 @@ export const putssr = async (url, data, config = {}) => {
   if (token) {
     config.headers = {
       ...config.headers,
-      Authorization: `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`,
       'X-Nextjs-Build-Key': process.env.NEXTJS_INTERNAL_KEY,
     };
   }

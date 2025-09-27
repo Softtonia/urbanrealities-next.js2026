@@ -7,7 +7,7 @@ export async function POST(req) {
     try {
         const body = await req.json();
 
-        const response = await post("/api/login", body);
+        const response = await post("/api/login", body,req);
 
         const token = response?.data?.token;
 
