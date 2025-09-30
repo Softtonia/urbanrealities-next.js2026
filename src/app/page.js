@@ -52,7 +52,7 @@ const fetchDeveloper = async ()=> {
     return [];
   } catch (err) {
     console.log(err.response)
-    console.error("Error fetching properties", err);
+    console.error("Error fetching Developer", err);
     return [];
   }
 }

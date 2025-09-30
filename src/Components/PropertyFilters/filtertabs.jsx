@@ -280,7 +280,7 @@ export default function PropertyFilters({ initialFilters }) {
           setProperties(data.data);
         }
       } catch (err) {
-        console.error("Error fetching properties:", err);
+        console.error("Error fetching properties lisying:", err);
       }
     };
     fetchProperty();

@@ -41,51 +41,48 @@ export const del = async (url, req, config = {}) => {
 
 export const getssr = async (url, config = {}) => {
   const token = await getToken();
+  config.headers = {
+    ...config.headers,
+    'X-Nextjs-Build-Key': process.env.NEXTJS_INTERNAL_KEY,
+  };
   if (token) {
-    config.headers = {
-      ...config.headers,
-      Authorization: `Bearer ${token}`,
-      'X-Nextjs-Build-Key': process.env.NEXTJS_INTERNAL_KEY,
-    };
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return axiosInstance.get(url, config);
 };
 
-// ✅ post request
 export const postssr = async (url, data, config = {}) => {
   const token = await getToken();
+  config.headers = {
+    ...config.headers,
+    'X-Nextjs-Build-Key': process.env.NEXTJS_INTERNAL_KEY,
+  };
   if (token) {
-    config.headers = {
-      ...config.headers,
-      Authorization: `Bearer ${token}`,
-      'X-Nextjs-Build-Key': process.env.NEXTJS_INTERNAL_KEY,
-    };
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return axiosInstance.post(url, data, config);
 };
 
-// ✅ put request
 export const putssr = async (url, data, config = {}) => {
   const token = await getToken();
+  config.headers = {
+    ...config.headers,
+    'X-Nextjs-Build-Key': process.env.NEXTJS_INTERNAL_KEY,
+  };
   if (token) {
-    config.headers = {
-      ...config.headers,
-      'Authorization': `Bearer ${token}`,
-      'X-Nextjs-Build-Key': process.env.NEXTJS_INTERNAL_KEY,
-    };
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return axiosInstance.put(url, data, config);
 };
 
-// ✅ delete request
 export const delssr = async (url, config = {}) => {
   const token = await getToken();
+  config.headers = {
+    ...config.headers,
+    'X-Nextjs-Build-Key': process.env.NEXTJS_INTERNAL_KEY,
+  };
   if (token) {
-    config.headers = {
-      ...config.headers,
-      Authorization: `Bearer ${token}`,
-      'X-Nextjs-Build-Key': process.env.NEXTJS_INTERNAL_KEY,
-    };
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return axiosInstance.delete(url, config);
 };
