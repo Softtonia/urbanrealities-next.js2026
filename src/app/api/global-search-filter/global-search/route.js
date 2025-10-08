@@ -8,7 +8,7 @@ export async function POST(req) {
         const body = await req.json();
 
         console.log(body)
-        const response = await post(`/api/globle-search-engine`, body,req);
+        const response = await post(`/api/global-search`, body,req);
 
         return NextResponse.json(response.data); // return Laravel's response to frontend
     } catch (error) {

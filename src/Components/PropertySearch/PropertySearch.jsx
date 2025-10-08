@@ -202,6 +202,7 @@ export default function PropertySearch({ purpose }) {
       location: inputLocation || city?.name || "",
     };
     search(filters)
+    
 
   };
 

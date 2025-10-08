@@ -16,7 +16,7 @@ export async function checkAuth() {
             },
         });
 
-        return { isAuthenticated: true, user: res.data?.name };
+        return { isAuthenticated: true, user: res.data?.name,is_otp_verified: res.data?.is_otp_verified };
     } catch (error) {
         console.error("Auth check failed:", error.response?.data || error.message);
         sessionStorage.removeItem("token");
@@ -29,6 +29,6 @@ export async function checkAuth() {
             // Option 2: Redirect to login page
             // window.location.href = "/auth/login";
         }
-        return { isAuthenticated: false, user: null };
+        return { isAuthenticated: false, user: null, is_otp_verified: false};
     }
 }

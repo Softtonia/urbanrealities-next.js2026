@@ -4,7 +4,7 @@ import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 
-const MoreFiltersPanel = ({})   => {
+const MoreFiltersPanel = ({ }) => {
   const [activeFilter, setActiveFilter] = useState("Covered Area");
   const [expandedSections, setExpandedSections] = useState({
     "Covered Area": true,
@@ -140,7 +140,7 @@ const MoreFiltersPanel = ({})   => {
                 </div>
                 {openDropdown === "max" && (
                   <ul className={styles.dropdownMenuCustom}>
-                   <small>Max</small>
+                    <small>Max</small>
 
                     {budgetOptions.map((val) => (
                       <li
@@ -186,9 +186,8 @@ const MoreFiltersPanel = ({})   => {
               {data.possessionStatus.map((item) => (
                 <button
                   key={item}
-                  className={`${styles.filterOption} ${
-                    selectedPossessionStatus.includes(item) ? styles.active : ""
-                  }`}
+                  className={`${styles.filterOption} ${selectedPossessionStatus.includes(item) ? styles.active : ""
+                    }`}
                   onClick={() =>
                     handleToggle(
                       selectedPossessionStatus,
@@ -214,11 +213,10 @@ const MoreFiltersPanel = ({})   => {
                 {group.items.map((item) => (
                   <button
                     key={item}
-                    className={`${styles.filterOption} ${
-                      selectedSubPropertyType.includes(item)
+                    className={`${styles.filterOption} ${selectedSubPropertyType.includes(item)
                         ? styles.active
                         : ""
-                    }`}
+                      }`}
                     onClick={() =>
                       handleToggle(
                         selectedSubPropertyType,
@@ -243,9 +241,8 @@ const MoreFiltersPanel = ({})   => {
               {data.saleType.map((item) => (
                 <button
                   key={item}
-                  className={`${styles.filterOption} ${
-                    selectedSaleType.includes(item) ? styles.active : ""
-                  }`}
+                  className={`${styles.filterOption} ${selectedSaleType.includes(item) ? styles.active : ""
+                    }`}
                   onClick={() =>
                     handleToggle(selectedSaleType, setSelectedSaleType, item)
                   }
@@ -265,9 +262,8 @@ const MoreFiltersPanel = ({})   => {
               {data.postedBy.map((item) => (
                 <button
                   key={item}
-                  className={`${styles.filterOption} ${
-                    selectedPostedBy.includes(item) ? styles.active : ""
-                  }`}
+                  className={`${styles.filterOption} ${selectedPostedBy.includes(item) ? styles.active : ""
+                    }`}
                   onClick={() =>
                     handleToggle(selectedPostedBy, setSelectedPostedBy, item)
                   }
@@ -293,32 +289,31 @@ const MoreFiltersPanel = ({})   => {
         {isMobile ? (
           // 📱 Mobile = Accordion
           <>
-          <div className={styles.accordionWrapper}>
-            {filtersMenu.map((item) => (
-              <div key={item} className={styles.accordionSection}>
-                <div
-                  className={`${styles.accordionHeader} ${
-                    expandedSections[item] ? styles.active : ""
-                  }`}
-                  onClick={() => toggleAccordion(item)}
-                >
-                  {item}
-                  {expandedSections[item] ? (
-                    <IoMdArrowDropup className={styles.arrowIcon} />
-                  ) : (
-                    <IoMdArrowDropdown className={styles.arrowIcon} />
+            <div className={styles.accordionWrapper}>
+              {filtersMenu.map((item) => (
+                <div key={item} className={styles.accordionSection}>
+                  <div
+                    className={`${styles.accordionHeader} ${expandedSections[item] ? styles.active : ""
+                      }`}
+                    onClick={() => toggleAccordion(item)}
+                  >
+                    {item}
+                    {expandedSections[item] ? (
+                      <IoMdArrowDropup className={styles.arrowIcon} />
+                    ) : (
+                      <IoMdArrowDropdown className={styles.arrowIcon} />
+                    )}
+                  </div>
+
+                  {expandedSections[item] && (
+                    <div className={styles.accordionContent}>
+                      {renderFilterContent(item)}
+                    </div>
                   )}
                 </div>
-
-                {expandedSections[item] && (
-                  <div className={styles.accordionContent}>
-                    {renderFilterContent(item)}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-                         <div className={styles.footerButtons}>
+              ))}
+            </div>
+            <div className={styles.footerButtons}>
               <button
                 className={`${styles.clearBtn} btn-small`}
                 onClick={() => {
@@ -335,7 +330,7 @@ const MoreFiltersPanel = ({})   => {
                 Apply Filters
               </button>
             </div>
-            </>
+          </>
         ) : (
           // 💻 Desktop = Left + Right panel
           <>
@@ -355,14 +350,14 @@ const MoreFiltersPanel = ({})   => {
 
             <div className={styles.rightPanel}>
               {renderFilterContent(activeFilter)}
-                 </div>
-                 </>
-               )}
-               </div>  
+            </div>
+          </>
+        )}
+      </div>
 
 
-         
-     
+
+
     </div>
   );
 };

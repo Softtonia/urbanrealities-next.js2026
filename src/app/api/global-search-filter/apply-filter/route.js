@@ -1,4 +1,4 @@
-// app/api/register/route.js
+// app/api/globle-search-engine/route.js
 
 import { NextResponse } from 'next/server';
 import { post } from '@/lib/api'; // This should be your axios/fetch wrapper
@@ -8,14 +8,14 @@ export async function POST(req) {
         const body = await req.json();
 
         console.log(body)
-        const response = await post(`/api/register`, body,req);
+        const response = await post(`/api/apply-filter`, body,req);
 
         return NextResponse.json(response.data); // return Laravel's response to frontend
     } catch (error) {
-        console.error("Registration Error:", error?.response);
+        console.error("filter Error:", error?.response);
         return NextResponse.json(
             { error: error?.response?.data?.errors},
-            { status: error.status }
+            { status: error.status  }
         );
     }
 }

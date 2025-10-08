@@ -67,15 +67,15 @@ const SetPassword = () => {
       );
       return;
     }
-  
+
     if (formData.password !== formData.confirm_password) {
       setError("Passwords do not match");
       return;
     }
-  
+
     setLoading(true);
     setError("");
-  
+
     try {
       const response = await fetch("/api/auth/user-register", {
         method: "POST",
@@ -92,9 +92,9 @@ const SetPassword = () => {
           password: formData.password,
         }),
       });
-  
+
       const result = await response.json();
-  
+
       if (!response.ok) {
         // ✅ Check if all 3 duplicate errors are present
         if (
@@ -104,13 +104,13 @@ const SetPassword = () => {
         ) {
           throw new Error("User already got created");
         }
-  
+
         // fallback for other validation errors
         // throw new Error(
         //   Object.values(result).flat().join(", ") || "Registration failed"
         // );
       }
-  
+
       if (result) {
         if (
           result.role === "company" ||
@@ -120,7 +120,7 @@ const SetPassword = () => {
         ) {
           // Store token temporarily in localStorage
           localStorage.setItem("tempAuthToken", result.api_token);
-      
+
           // Redirect to verify OTP page (with user id or email)
           router.push(`/auth/login/verify-otp?email=${formData.email}&id=${result.user_id}`);
         } else {
@@ -128,7 +128,7 @@ const SetPassword = () => {
           router.push(`/auth/login/verify-otp?email=${formData.email}`);
         }
       }
-      
+
       sessionStorage.setItem("registration_step", "2");
       // router.push(``);
 
@@ -138,7 +138,7 @@ const SetPassword = () => {
       setLoading(false);
     }
   };
-  
+
 
   const EyeIcon = ({ open }) => (
     open ? (
