@@ -15,6 +15,8 @@ import styles from "./components/developer-listing.module.css";
 import DeveloperStats from "./components/DeveloperStats/DeveloperStats";
 import DeveloperListingwithTabs from "./components/DeveloperCardTabs/DeveloperListingwithTabs";
 import ProjectFAQ from "@/Components/FAQAccordion/ProjectFAQ";
+import DeveloperList from "./components/DeveloperCard/DeveloperList";
+import DeveloperCard from "./components/DeveloperCard/DeveloperCard";
 
 async function fetchDeveloper(id) {
   try {
@@ -29,6 +31,13 @@ async function fetchDeveloper(id) {
 }
 
 const DeveloperPage = async ({ searchParams }) => {
+  // const totalProperties = Array(96).fill(1); // Dummy 24 cards
+  // const cardsPerPage = 4;
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const totalPages = Math.ceil(totalProperties.length / cardsPerPage);
+
+  // const pageNumbers = getPagination(currentPage, totalPages, 6);
+
   const { id } = await searchParams;
 
   const developer = await fetchDeveloper(id);
@@ -62,9 +71,15 @@ const DeveloperPage = async ({ searchParams }) => {
                 <DeveloperInfoMobile />
               </section>
               <section id="ongoing-projects">
-                <ProjectTileData
+                {/* <ProjectTileData
                   headingText={`Ongoing Project by ${developer.name}`}
-                />
+                /> */}
+                {/* <DeveloperList
+                  currentPage={currentPage}
+                  cardsPerPage={cardsPerPage}
+                  totalProperties={totalProperties}
+                /> */}
+                <DeveloperCard/>
               </section>
               <section id="nearby-projects">
                 <OtherBuilders />
