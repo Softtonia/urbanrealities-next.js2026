@@ -139,7 +139,6 @@
   background-color: var(--Orange-Red);
   color: var(--White);
   border: none;
-  /* padding: 6px 20px; */
   padding: clamp(6px, 1.5vw, 8px) clamp(16px, 3vw, 20px);
   border-radius: 8px;
   font-size: clamp(14px, 1vw, 16px);
@@ -159,10 +158,7 @@
   .image-card {
     width: 230px;
   }
-  /* .button {
-    font-size: clamp(11px, 2vw, 14px);
-    padding: 6px 10px;
-  } */
+
 }
 @media (max-width: 768px) {
   .card {
@@ -187,8 +183,8 @@
   }
 
   .tagsAndButton {
-    flex-direction: column;
-    align-items: stretch;
+    align-self: flex-start;
+    flex-wrap: wrap;
     gap: 12px;
   }
 
@@ -196,7 +192,5 @@
     flex-wrap: wrap;
   }
 
-  .viewProjectButton {
-    width: 100%;
-  }
+
 }

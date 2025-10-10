@@ -15,8 +15,6 @@ import styles from "./components/developer-listing.module.css";
 import DeveloperStats from "./components/DeveloperStats/DeveloperStats";
 import DeveloperListingwithTabs from "./components/DeveloperCardTabs/DeveloperListingwithTabs";
 import ProjectFAQ from "@/Components/FAQAccordion/ProjectFAQ";
-import DeveloperList from "./components/DeveloperCard/DeveloperList";
-import DeveloperCard from "./components/DeveloperCard/DeveloperCard";
 
 async function fetchDeveloper(id) {
   try {
@@ -54,16 +52,30 @@ const DeveloperPage = async ({ searchParams }) => {
             <div className={`col-9 ${styles.largeTabCol}`}>
               <DeveloperStats />
               <DeveloperListingwithTabs />
-              {/* <ProjectFAQ />
-               <HomeLoanOffers /> */}
+            </div>
+
+            <div className={`col-12 p-0 ${styles.mobileCol}`}>
+              <section id="all-project">
+                <DeveloperStats />
+                <DeveloperListingwithTabs />
+              </section>
+              <section id="nearby-projects">
+                <DeveloperListingwithTabs
+                  DevHeading={`other Project `}
+                />
+              </section>
+              <section id="completed-projects">
+                <DeveloperListingwithTabs
+                  DevHeading={`complete Project`}
+                />
+              </section>
             </div>
 
             <div className={`col-12 ${styles.smallTabCol}`}>
-              {" "}
               <ProjectFAQ />
               <HomeLoanOffers />
             </div>
-            <div className={`col-12 p-0 ${styles.mobileCol}`}>
+            {/* <div className={`col-12 p-0 ${styles.mobileCol}`}>
               <section id="all-project">
                 <AllProjects />
               </section>
@@ -71,15 +83,10 @@ const DeveloperPage = async ({ searchParams }) => {
                 <DeveloperInfoMobile />
               </section>
               <section id="ongoing-projects">
-                {/* <ProjectTileData
+                <ProjectTileData
                   headingText={`Ongoing Project by ${developer.name}`}
-                /> */}
-                {/* <DeveloperList
-                  currentPage={currentPage}
-                  cardsPerPage={cardsPerPage}
-                  totalProperties={totalProperties}
-                /> */}
-                <DeveloperCard/>
+                />
+
               </section>
               <section id="nearby-projects">
                 <OtherBuilders />
@@ -93,7 +100,7 @@ const DeveloperPage = async ({ searchParams }) => {
               <section id="home-loan">
                 <HomeLoanOffers />
               </section>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

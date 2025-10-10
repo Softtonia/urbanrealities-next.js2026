@@ -4,7 +4,7 @@
 
 
 @media (max-width:991.99px){
-    .smallTabCol,
+    /* .smallTabCol, */
     .largeTabCol{
         display: none !important;
     }

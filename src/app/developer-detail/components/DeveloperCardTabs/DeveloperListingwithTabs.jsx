@@ -47,7 +47,7 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
 }
 
 
-const SingleListingWithTab = () => {
+const SingleListingWithTab = ({DevHeading="Ongoing Project"}) => {
   const totalProperties = Array(96).fill(1); // Dummy 24 cards
   const cardsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
@@ -70,7 +70,7 @@ const SingleListingWithTab = () => {
   return (
     <div>
     <div className={styles.listing}>
-      <h2>Ongoing Project</h2>
+      <h2>{DevHeading}</h2>
       <DeveloperCardTabs />
 
       {/* Property list + Loader wrapper */}
