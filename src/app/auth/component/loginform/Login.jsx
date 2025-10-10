@@ -28,7 +28,7 @@ export default function LoginPage() {
       router.replace("/");
     }
   }, []);
-  console.log('==>',redirect)
+  console.log('==>', redirect)
 
   const data = {
     heading: "Login your account",
@@ -91,14 +91,14 @@ export default function LoginPage() {
       }
 
       // ✅ Success: store token + redirect
-      
+
       if (result) {
-        
-      // const role = 'company'
-        if (result.role === "company" || result.role === "consultancy"  || result.role === "agent" || result.role === "developer") {
+
+        // const role = 'company'
+        if (result.role === "company" || result.role === "consultancy" || result.role === "agent" || result.role === "developer") {
           // 🔑 store token in cookie (shared across subdomains)
           // document.cookie = `authToken=${result.token}; path=/; domain=.urbanrealities.com; secure; SameSite=None`;
-      
+
           // Redirect to business domain
           window.location.href = `${process.env.NEXT_PUBLIC_BUSINESS_DOMAIN}?authtoken=${result.token}&id=${result.user_id}`;
         } else {
@@ -106,8 +106,8 @@ export default function LoginPage() {
           router.push(redirect);
         }
 
-    }
-  } catch (err) {
+      }
+    } catch (err) {
       setError("Something went wrong. Please try again later.");
     } finally {
       setLoading(false);

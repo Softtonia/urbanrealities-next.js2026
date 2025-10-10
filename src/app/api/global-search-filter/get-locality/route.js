@@ -18,7 +18,7 @@ export async function GET(req) {
         if (model) queryParams.append("model", model);
 
         const res = await get(
-            `/api/get-localities-filter-by-location-id?${queryParams.toString()}`
+            `/api/get-localities-filter-by-location-id?${queryParams.toString()}`,req
         );
         return NextResponse.json(res.data);
     } catch (err) {

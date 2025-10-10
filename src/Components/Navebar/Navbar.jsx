@@ -154,9 +154,8 @@ export default function Navbar() {
         {citiesArray.map((city) => (
           <div
             key={city.id}
-            className={`city-nametext mb-2 px-4 py-2 ${
-              activeCity === city.id ? "active" : ""
-            }`}
+            className={`city-nametext mb-2 px-4 py-2 ${activeCity === city.id ? "active" : ""
+              }`}
             onClick={() => handleSuggestionClick(city)}
           >
             {city.name}
@@ -173,7 +172,7 @@ export default function Navbar() {
   const [showHelp, setShowHelp] = useState(false);
   const { settings } = useSiteSettings();
   const [siteData, setSiteData] = useState(settings);
-  const { token, logout } = useSiteSettings();
+  const { token, logout, } = useSiteSettings();
   const [activeDropdown, setActiveDropdown] = useState(null); // "buy" | "rent" | "sell" | null
 
   const toggleDropdown = (menu) => {
@@ -251,6 +250,8 @@ export default function Navbar() {
     window.location.href = "/auth/login";
   };
 
+
+
   return (
     <>
       {/* Desktop Navbar */}
@@ -277,11 +278,10 @@ export default function Navbar() {
                 <FaMapMarkerAlt className="icon-nav-loc me-1" />
               </div>
               <div
-                className={`transition-opacity duration-300 ${
-                  activeDropdown === "location"
+                className={`transition-opacity duration-300 ${activeDropdown === "location"
                     ? "opacity-100 visible"
                     : "opacity-0 invisible"
-                } position-absolute top-100 start-0`}
+                  } position-absolute top-100 start-0`}
                 style={{ marginTop: "15px" }}
               >
                 <LocationDropdown cities={cities} />
@@ -298,9 +298,8 @@ export default function Navbar() {
                 Buy <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${
-                  activeDropdown === "buy" ? "show" : ""
-                }`}
+                className={`dropdown-menu mega-menu p-3 ${activeDropdown === "buy" ? "show" : ""
+                  }`}
                 style={{ width: "50vw", marginTop: "15px" }}
               >
                 <DropdownMegaMenu />
@@ -316,9 +315,8 @@ export default function Navbar() {
                 Rent <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${
-                  activeDropdown === "rent" ? "show" : ""
-                }`}
+                className={`dropdown-menu mega-menu p-3 ${activeDropdown === "rent" ? "show" : ""
+                  }`}
                 style={{ width: "50vw", marginTop: "15px" }}
               >
                 <DropdownMegaMenu />
@@ -333,9 +331,8 @@ export default function Navbar() {
                 Sell <GoChevronDown />
               </div>
               <div
-                className={`dropdown-menu mega-menu p-3 ${
-                  activeDropdown === "sell" ? "show" : ""
-                }`}
+                className={`dropdown-menu mega-menu p-3 ${activeDropdown === "sell" ? "show" : ""
+                  }`}
                 style={{ width: "60vw", marginTop: "15px" }}
               >
                 <SellerDropdown />
@@ -383,9 +380,8 @@ export default function Navbar() {
                   Help
                 </button>
                 <ul
-                  className={`dropdown-menu  ${
-                    activeDropdown === "help" ? "show" : ""
-                  }`}
+                  className={`dropdown-menu  ${activeDropdown === "help" ? "show" : ""
+                    }`}
                   style={{
                     top: "100%",
                     right: 0,
@@ -620,8 +616,8 @@ export default function Navbar() {
                     siteData?.website_logo?.startsWith("http")
                       ? siteData.website_logo
                       : siteData?.mobile_logo?.startsWith("http")
-                      ? siteData.mobile_logo
-                      : "/logo.png"
+                        ? siteData.mobile_logo
+                        : "/logo.png"
                   }
                   alt="Urbanrealities"
                   width={100}

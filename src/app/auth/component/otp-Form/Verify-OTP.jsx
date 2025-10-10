@@ -10,7 +10,11 @@ const VerifyOTP = () => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  console.log("tokens", sessionStorage.getItem('token'))
+  const [timer, setTimer] = useState(60);
+  const [isResendVisible, setIsResendVisible] = useState(false);
+
+  const finalToken = token || localStorage.getItem("tempAuthToken");
+  console.log('finalToken', token)
 
   const data = {
     heading: "Verification",
@@ -20,32 +24,68 @@ const VerifyOTP = () => {
     nextButton: "Verify",
   };
 
+  // ------------------ TIMER LOGIC ------------------
+  useEffect(() => {
+    if (timer > 0) {
+      const countdown = setInterval(() => setTimer((t) => t - 1), 1000);
+      return () => clearInterval(countdown);
+    } else {
+      setIsResendVisible(true);
+    }
+  }, [timer]);
+
+  const handleResendOtp = async () => {
+    try {
+      setIsResendVisible(false);
+      setTimer(60);
+      // 🔁 Call your Laravel resend API here
+      await fetch("/api/auth/resend-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: finalToken }),
+      });
+    } catch (err) {
+      console.error("Failed to resend OTP", err);
+      setError("Unable to resend OTP. Try again later.");
+    }
+  };
+
+  // ------------------ VERIFY OTP ------------------
   const handleVerify = async (e) => {
     e.preventDefault();
-  
-    // ✅ check if OTP is missing
+
     if (!otp || otp.trim() === "") {
       setError("Please enter the OTP");
       return;
     }
-  
+
     setLoading(true);
     setError("");
-  
+
     try {
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${finalToken}`,
         },
-        body: JSON.stringify({ email_otp: otp, token }),
+        body: JSON.stringify({ email_otp: otp, }),
       });
-  
+
       const result = await res.json();
-  
+
       if (res.ok) {
-        // OTP is correct
-        router.push("/");
+        localStorage.removeItem("tempAuthToken");
+
+        if (
+          ["company", "consultancy", "agent", "developer"].includes(result.role)
+        ) {
+          window.location.href = `${process.env.NEXT_PUBLIC_BUSINESS_DOMAIN}?authtoken=${result.token}&id=${result.user_id}`;
+        } else {
+          router.push("/");
+        }
       } else {
         setError(result.message || "Invalid OTP");
       }
@@ -61,12 +101,12 @@ const VerifyOTP = () => {
     if (step !== "2") {
       router.replace("/auth/login/register");
     }
-  }, []);
-  
+  }, [router]);
 
+  // ------------------ UI ------------------
   return (
     <div>
-      <h2 className={`formHeading  ${styles.formHeading}`}>{data.heading}</h2>
+      <h2 className={`formHeading ${styles.formHeading}`}>{data.heading}</h2>
       <p className={`formSubHeading ${styles.formSubHeading}`}>{data.subText}</p>
 
       <form onSubmit={handleVerify}>
@@ -74,6 +114,7 @@ const VerifyOTP = () => {
           <label htmlFor="otp" className={`formLabel ${styles.formLabel}`}>
             {data.otpLabel}
           </label>
+
           <input
             type="text"
             id="otp"
@@ -81,10 +122,36 @@ const VerifyOTP = () => {
             onChange={(e) => setOtp(e.target.value)}
             className={`formInput ${styles.formInput}`}
             placeholder={data.otpPlaceholder}
-          />{error && <p className="formLabel" style={{ color: "red", marginBottom: "10px" }}>{error}</p>}
+          />
+
+          {error && (
+            <p
+              className="formLabel"
+              style={{ color: "red", marginBottom: "10px" }}
+            >
+              {error}
+            </p>
+          )}
+
+          {/* TIMER / RESEND TEXT */}
+          {/* {isResendVisible ? (
+            <span
+              onClick={handleResendOtp}
+              style={{
+                color: 'var(--primary-color)',
+                cursor: "pointer",
+                textDecoration: "underline",
+                fontSize: "14px",
+              }}
+            >
+              Resend OTP
+            </span>
+          ) : (
+            <span style={{ color: "#777", fontSize: "14px" }}>
+              Resend OTP in {timer}s
+            </span>
+          )} */}
         </div>
-
-
 
         <button
           type="submit"

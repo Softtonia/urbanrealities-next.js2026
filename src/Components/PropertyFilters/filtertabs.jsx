@@ -13,7 +13,7 @@ import { useSearch } from "@/hooks/useSearch";
 
 export default function PropertyFilters({ initialFilters }) {
   const { city } = useCity();
-  const { globalFilters, setGlobalFilters, debouncedFilters } = useSearch({
+  const { globalFilters, setGlobalFilters, debouncedFilters, dynamicFilter } = useSearch({
     autoPush: true,
     debounceDelay: 500
   });
@@ -127,16 +127,16 @@ export default function PropertyFilters({ initialFilters }) {
       const min = globalFilters.minPrice
         ? Number(globalFilters.minPrice)
         : Number(priceOptions[0]?.value || priceOptions[0]?.label);
-  
+
       const max = globalFilters.maxPrice
         ? Number(globalFilters.maxPrice)
         : Number(priceOptions[priceOptions.length - 1]?.value || priceOptions[priceOptions.length - 1]?.label);
-  
+
       setBudgetRange([min, max]);
     }
   }, []);
-  
-  console.log("global Filters==>",purposes)
+
+  console.log("global Filters==>", purposes)
 
   // const handleSelectBudget = (type, value) => {
   //   if (type === "min") {
@@ -280,7 +280,7 @@ export default function PropertyFilters({ initialFilters }) {
           setProperties(data.data);
         }
       } catch (err) {
-        console.error("Error fetching properties:", err);
+        console.error("Error fetching properties lisying:", err);
       }
     };
     fetchProperty();
@@ -316,7 +316,7 @@ export default function PropertyFilters({ initialFilters }) {
         const data = await res.json();
         if (Array.isArray(data)) {
           const updated = data.map(item =>
-            item?.name === "Sell" ? { ...item, name: "Buy",slug:'buy' } : item
+            item?.name === "Sell" ? { ...item, name: "Buy", slug: 'sell' } : item
           );
           setPurpose(updated);
         } else if (data?.data) {
@@ -461,6 +461,68 @@ export default function PropertyFilters({ initialFilters }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  // inside your hook or component
+
+  const [uiFilters, setUiFilters] = useState([]);
+
+  useEffect(() => {
+    if (dynamicFilter?.filters) {
+      const mapped = buildFilters(dynamicFilter.filters);
+      setUiFilters(mapped);
+    }
+  }, [dynamicFilter]);
+
+  console.log('filters=>', uiFilters)
+
+  const buildFilters = (filtersData) => {
+    if (!filtersData) return [];
+
+    const filters = [];
+
+    if (filtersData.property_types?.length) {
+      filters.push({
+        key: "property_types",
+        label: "Property Type",
+        type: "pills",
+        options: filtersData.property_types.map((t) => ({ id: t.id, name: t.name })),
+      });
+    }
+
+    if (filtersData.property_statuses?.length) {
+      filters.push({
+        key: "property_statuses",
+        label: "Status",
+        type: "pills",
+        options: filtersData.property_statuses.map((s) => ({ id: s.id, name: s.name })),
+      });
+    }
+
+    if (filtersData.bedrooms?.length) {
+      filters.push({
+        key: "bedrooms",
+        label: "Bedrooms",
+        type: "pills",
+        options: filtersData.bedrooms,
+      });
+    }
+
+    // Price slider
+    if (filtersData.price_min !== undefined && filtersData.price_max !== undefined) {
+      filters.push({
+        key: "price",
+        label: "Budget",
+        type: "slider",
+        min: filtersData.price_min,
+        max: filtersData.price_max,
+      });
+    }
+
+    // Custom fields
+
+
+    return filters;
+  };
+
 
   // useEffect(() => {
   //   setGlobalFilters((prev) => ({
@@ -493,7 +555,7 @@ export default function PropertyFilters({ initialFilters }) {
                     key={option}
                     className={`${styles.option} ${selectedValues.purpose === option.name ? styles.pillOptionActive : ''}`}
 
-                    onClick={() => handleSelectPurpose(option.name)}
+                    onClick={() => handleSelectPurpose(option.slug)}
                   >
                     {option.name}
                   </div>
@@ -535,7 +597,7 @@ export default function PropertyFilters({ initialFilters }) {
 
         {/* Other filters */}
         <div className={styles.filtersWrapper}>
-          {filters.slice(1).map((filter) => (
+          {uiFilters.map((filter) => (
             <div
               key={filter.key}
               ref={(el) => (filterRefs.current[filter.key] = el)}
@@ -561,17 +623,29 @@ export default function PropertyFilters({ initialFilters }) {
                     }`}
                 >
                   <div className={styles.dropdownHeading}>{filter.heading}</div>
-
                   {filter.type === "pills" &&
-                    filter.options.map((opt) => (
-                      <div
-                        key={opt}
-                        className={styles.pillOption}
-                        onClick={() => handleSelectMultiple(filter.key, opt)}
-                      >
-                        {opt}
-                      </div>
-                    ))}
+                    filter.options.map((opt, index) => {
+                      // 🟢 handle both string and object options
+                      const isObject = typeof opt === "object";
+                      const label = isObject ? opt.label || opt.name : opt;
+                      const value = isObject ? opt.value || opt.name : opt;
+
+                      const isSelected =
+                        Array.isArray(selectedFilters[filter.key]) &&
+                        selectedFilters[filter.key].includes(value);
+
+                      return (
+                        <div
+                          key={index}
+                          className={`${styles.pillOption} ${isSelected ? styles.activePill : ""
+                            }`}
+                          onClick={() => handleSelectMultiple(filter.key, opt)}
+                        >
+                          {label}
+                        </div>
+                      );
+                    })}
+
 
                   {filter.type === "list" &&
                     localities.map((opt, index) => (

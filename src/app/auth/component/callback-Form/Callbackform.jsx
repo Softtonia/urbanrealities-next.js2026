@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "../loginform/Login.module.css"; // ✅ Using existing module styles
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function CallbackForm({ roles = [] }) {
     const router = useRouter();
@@ -13,6 +13,8 @@ export default function CallbackForm({ roles = [] }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+      const searchParams = useSearchParams();
+      const redirect = searchParams.get("redirect") || "/";
     // const [roles, setRoles] = useState([]);
 
     // ✅ Get `code` from URL on client
@@ -43,7 +45,7 @@ export default function CallbackForm({ roles = [] }) {
             if (result) {
 
 
-                if (result.role === "company" || result.role === "consultancy" || result.role === "agent" || result.role === "developer") {
+                if (result.role === "company" || result.role === "consultancy" || result.role === "developer"||  result.role === "agent" ) {
                     // 🔑 store token in cookie (shared across subdomains)
                     // document.cookie = `authToken=${result.token}; path=/; domain=.urbanrealities.com; secure; SameSite=None`;
 

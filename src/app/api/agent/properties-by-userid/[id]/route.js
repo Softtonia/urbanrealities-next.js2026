@@ -9,7 +9,7 @@ export async function GET(req, { params }) {
 
     try {
         const response = await get(
-            `/api/get-property-by-user-id-filter-by-purpose/${id}?purpose_id=${purpose_id}`
+            `/api/get-property-by-user-id-filter-by-purpose/${id}?purpose_id=${purpose_id}`,req
         );
         // console.log(response)
         return NextResponse.json(response.data);

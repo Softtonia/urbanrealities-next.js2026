@@ -33,7 +33,7 @@ async function fetchProperties() {
     if (data?.data) return data.data;
     return [];
   } catch (err) {
-    console.error("Error fetching properties:", err);
+    console.error("Error fetching property listing:", err);
     return [];
   }
 }

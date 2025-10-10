@@ -1,18 +1,20 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCity } from "@/utils/CityContext";
 
 export const useSearch = ({
     autoPush = false,
     debounceDelay = 500,
-    initialFilters = {},
 } = {}) => {
+    const [initialSearch, setInitialSearch] = useState(false);
+    const [searchResults, setSearchResults] = useState([]);
+    const [dynamicFilter, setDynamicFilter] = useState([]);
+    const { city } = useCity();
+
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [searchResults, setSearchResults] = useState([])
-    const { city } = useCity()
-   
 
+    // --- Helpers ---
     const parseParams = () => {
         const params = {};
         searchParams.forEach((value, key) => {
@@ -21,15 +23,15 @@ export const useSearch = ({
         return params;
     };
 
+    // --- Filters ---
     const [globalFilters, setGlobalFilters] = useState(() => {
-        // 1. Use query params if present, else fallback to initialFilters
         const urlFilters = parseParams();
-        return Object.keys(urlFilters).length && urlFilters;
+        return Object.keys(urlFilters).length ? urlFilters : {};
     });
 
     const [debouncedFilters, setDebouncedFilters] = useState(globalFilters);
 
-    // Debounce updates
+    // Debounce filter updates
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedFilters(globalFilters);
@@ -37,23 +39,22 @@ export const useSearch = ({
         return () => clearTimeout(handler);
     }, [globalFilters, debounceDelay]);
 
-    // Auto push URL
+    // --- Sync with URL ---
     useEffect(() => {
         if (!autoPush || !debouncedFilters) return;
-
         const params = new URLSearchParams();
         Object.entries(debouncedFilters).forEach(([key, value]) => {
             if (value !== undefined && value !== "") {
                 params.set(key, String(value));
             }
         });
-
         router.replace(`/search/query?${params.toString()}`, { shallow: true });
     }, [debouncedFilters, autoPush, router]);
 
-    // Manual search
+    // --- Search trigger ---
     const search = (filters = {}) => {
         setGlobalFilters(filters);
+        setInitialSearch(true);
         if (!autoPush) {
             const params = new URLSearchParams();
             Object.entries(filters).forEach(([key, value]) => {
@@ -64,13 +65,10 @@ export const useSearch = ({
             router.replace(`/search/query?${params.toString()}`, { shallow: true });
         }
     };
-   
-    // Derived payload
-    const payload = useMemo(() => {
-        console.log("outside")
 
+    // --- Build Payload ---
+    const payload = useMemo(() => {
         if (!debouncedFilters) return null;
-        console.log("inside", debouncedFilters)
 
         const {
             location = "",
@@ -89,12 +87,12 @@ export const useSearch = ({
         };
 
         return {
-            purpose: purpose || "",
+            purpose,
             property_id: propertyId || "",
             property_type_id: propertyType || "",
             property_status_id: "",
-            property_price_low: normalizePrice(minPrice),
-            property_price_high: normalizePrice(maxPrice),
+            rent_price_low: normalizePrice(minPrice),
+            rent_price_high: normalizePrice(maxPrice),
             keyword: "",
             area_locality: topLocalities,
             country_id: city?.country_id || "",
@@ -102,26 +100,61 @@ export const useSearch = ({
             city_id: city?.id || "",
         };
     }, [debouncedFilters, city]);
-    console.log('payload=>', payload)
+
+    // --- Prevent duplicate fetches ---
+    // const prevPayloadRef = useRef(null);
+
     useEffect(() => {
-        const fetchSearchResults = async () => {
+        const fetchSearchResults = async (type = "later") => {
             if (!payload) return;
+
             try {
-                const res = await fetch(`/api/global-search-filter/global-search`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                });
+                const [res2, res] = await Promise.all([
+                    fetch(
+                        type === "initial"
+                            ? `/api/global-search-filter/global-search`
+                            : `/api/global-search-filter/global-filter`,
+                        {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(payload),
+                        }
+                    ),
+                    fetch(`/api/global-search-filter/apply-filter`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload),
+                    }),
+                ]);
+
                 const data = await res.json();
-                setSearchResults(data?.data || data || []);
+                const data2 = await res2.json();
+
+                setDynamicFilter(data2?.data || data2 || []);
+                setSearchResults(data);
+                setInitialSearch(false);
             } catch (err) {
                 console.error(err);
             }
         };
-        if (payload, city) {
+
+        // const serialized = JSON.stringify(payload);
+        // if (serialized === prevPayloadRef.current) return; // skip if same
+        // prevPayloadRef.current = serialized;
+
+        if (initialSearch) {
+            fetchSearchResults("initial");
+        } else {
             fetchSearchResults();
         }
-    }, [payload,city]);
+    }, [payload, initialSearch]);
 
-    return { globalFilters, setGlobalFilters, debouncedFilters, search, searchResults };
+    return {
+        globalFilters,
+        setGlobalFilters,
+        debouncedFilters,
+        search,
+        searchResults,
+        dynamicFilter,
+    };
 };

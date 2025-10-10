@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { post } from '@/lib/api';
 
-export async function POST(request) {
+export async function POST(req) {
     try {
         // Read JSON data directly from the request body
-        const payload = await request.json();
+        const payload = await req.json();
 
         // Pass the JSON payload to your Laravel API
-        const response = await post(`/api/contact-us-leads`, payload);
+        const response = await post(`/api/contact-us-leads`, payload,req);
 
         return NextResponse.json(response.data);
     } catch (error) {

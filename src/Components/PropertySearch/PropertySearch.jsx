@@ -140,7 +140,7 @@ export default function PropertySearch({ purpose }) {
           setProperties(data.data);
         }
       } catch (err) {
-        console.error("Error fetching properties:", err);
+        console.error("Error fetching properties listing:", err);
       }
     };
     fetchProperty();
@@ -202,6 +202,7 @@ export default function PropertySearch({ purpose }) {
       location: inputLocation || city?.name || "",
     };
     search(filters)
+    
 
   };
 

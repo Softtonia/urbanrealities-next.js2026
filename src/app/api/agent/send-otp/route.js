@@ -8,7 +8,7 @@ export async function POST(req) {
     try {
         const body = await req.json();
 
-        const response = await post('/api/leads/send-otp', body);
+        const response = await post('/api/leads/send-otp', body,req);
         // console.log(response.data)
         return NextResponse.json(response.data);
     } catch (error) {

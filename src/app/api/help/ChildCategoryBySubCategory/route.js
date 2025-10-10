@@ -6,9 +6,9 @@ import { post } from "@/lib/api";
 const cache = new Map();
 const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
 
-export async function POST(request) {
+export async function POST(req) {
     try {
-        const payload = await request.json();
+        const payload = await req.json();
         const key = JSON.stringify(payload);
 
         // ✅ Check cache first
@@ -18,7 +18,7 @@ export async function POST(request) {
         }
 
         // 🚀 Call Laravel API if cache miss
-        const response = await post(`/api/help-childcategory-by-subcategoryid`, payload);
+        const response = await post(`/api/help-childcategory-by-subcategoryid`, payload,req);
 
         // ✅ Save to cache
         cache.set(key, { data: response.data, expiry: Date.now() + CACHE_TTL });

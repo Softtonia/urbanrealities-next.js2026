@@ -9,8 +9,14 @@ import {
 import { MdOutlineChair, MdOutlineCorporateFare } from "react-icons/md";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import styles from "./SingleCard.module.css";
+import { useRouter } from "next/navigation";
 
 export default function SingleCard({ property }) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/propertydetails/${property.id}`); // navigate to dynamic route
+  };
   return (
     <div className={styles.card}>
       {/* Left Side - Image */}
@@ -90,7 +96,7 @@ export default function SingleCard({ property }) {
           <button className={`${styles.button} ${styles.outlineButton}`}>
             Request Call-back
           </button>
-          <button className={styles.button}>Visit Property</button>
+          <button className={styles.button} onClick={handleClick}>Visit Property</button>
         </div>
 
       </div>
@@ -103,7 +109,7 @@ export default function SingleCard({ property }) {
             <button className={`${styles.button} ${styles.outlineButton}`}>
               Request Call-back
             </button>
-            <button className={styles.button}>Visit Property</button>
+            <button className={styles.button} onClick={handleClick}>Visit Property</button>
           </div>
         </div>
       </div>

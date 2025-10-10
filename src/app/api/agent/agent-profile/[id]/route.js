@@ -9,11 +9,7 @@ export async function GET(req, { params }) {
     const authHeader = req.headers.get('authorization');//get token from header
     console.log("token",authHeader)
     // Forward token if available
-    const response = await get(`/api/get-user-details-by-id?id=${id}`, {
-        headers: {
-            'Authorization': authHeader,
-        },
-    });
+    const response = await get(`/api/get-user-details-by-id?id=${id}`, req);
 
     return NextResponse.json(response.data);
   } catch (error) {

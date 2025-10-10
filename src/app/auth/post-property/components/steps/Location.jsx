@@ -74,7 +74,7 @@ const Location = () => {
         }
       } catch (err) {
         setIsFetchingCountry(false);
-        console.error("Error fetching properties:", err);
+        console.error("Error fetching country:", err);
       }
     };
     if (token) {
@@ -104,7 +104,7 @@ const Location = () => {
         }
       } catch (err) {
         setIsFetchingState(false);
-        console.error("Error fetching properties:", err);
+        console.error("Error fetching states:", err);
       }
     };
     if (token && selectedCountry) {
@@ -134,7 +134,7 @@ const Location = () => {
         }
       } catch (err) {
         setIsFetchingCity(false);
-        console.error("Error fetching properties:", err);
+        console.error("Error fetching city:", err);
       }
     };
     if (token && selectedState) {

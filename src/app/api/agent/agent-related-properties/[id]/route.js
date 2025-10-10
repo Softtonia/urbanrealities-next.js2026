@@ -9,7 +9,7 @@ export async function GET(req,{params}) {
     // console.log(id)
 
     try {
-        const response = await get(`/api/get-related-properties-id/${id}`)
+        const response = await get(`/api/get-related-properties-id/${id}`,req)
         // console.log(response);
         return NextResponse.json(response.data);
     } catch (error) {

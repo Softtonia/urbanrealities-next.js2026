@@ -2,10 +2,10 @@ import { get } from '@/lib/api';
 import { NextResponse } from 'next/server';
 
 
-export async function GET() {
+export async function GET(req) {
 
     try {
-        const response = await get(`/api/about-us`)
+        const response = await get(`/api/about-us`,req)
         // console.log(response);
         return NextResponse.json(response.data);
     } catch (error) {

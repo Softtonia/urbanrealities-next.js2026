@@ -8,10 +8,12 @@ const AuthContext = createContext(null)
 
 export const SiteSettingsProvider = ({ initialSettings, children }) => {
     const [settings, setSettings] = useState(initialSettings)
-    const [user,setUser] = useState('')
+    const [user, setUser] = useState('')
     const [token, setToken] = useState(null)
     const [isLoadingToken, setIsLoadingToken] = useState(true) // NEW
     const [isLogeIn, setIsLogeIn] = useState(false)
+    const [isOtpVerified, setIsOtpVerified] = useState(1);
+
 
     // On load, read token from sessionStorage
     useEffect(() => {
@@ -23,11 +25,16 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     }, [])
 
     console.log(token)
+    const[fetchingUser,setFetchingUser]=useState(true)
 
     useEffect(() => {
         const initAuth = async () => {
-            const { isAuthenticated, user} = await checkAuth();
+            setFetchingUser(true)
+            const { isAuthenticated, user, is_otp_verified } = await checkAuth();
             if (isAuthenticated) setUser(user);
+
+            setIsOtpVerified(is_otp_verified);
+            setFetchingUser(false)
             // setLoading(false);
             console.log("hello inside")
         };
@@ -38,7 +45,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
 
 
     // Save to sessionStorage and state
-    const login = (userId,token) => {
+    const login = (userId, token) => {
 
         sessionStorage.setItem('token', token)
         sessionStorage.setItem('userId', userId)
@@ -58,7 +65,8 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
             const res = await fetch('/api/auth/logout', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify({ token }),
             });
@@ -76,7 +84,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ token, login, logout, settings, isLoadingToken, isLogeIn }} // pass isLoadingToken
+            value={{ token, login, logout, settings, isLoadingToken, isLogeIn,isOtpVerified, fetchingUser }} // pass isLoadingToken
         >
             {children}
         </AuthContext.Provider>

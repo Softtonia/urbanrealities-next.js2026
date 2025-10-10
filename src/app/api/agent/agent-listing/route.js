@@ -4,9 +4,9 @@ import { get } from '@/lib/api';
 import { NextResponse } from 'next/server';
 
 
-export async function GET() {
+export async function GET(req) {
     try {
-        const response = await get(`/api/get-all-users-by-role?role_id=3&per_page&page`)
+        const response = await get(`/api/get-all-users-by-role?role_id=3&per_page&page`,req)
         // console.log(response);
         return NextResponse.json(response.data);
     } catch (error) {

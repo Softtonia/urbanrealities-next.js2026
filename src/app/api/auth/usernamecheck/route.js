@@ -2,11 +2,11 @@
 import { NextResponse } from "next/server";
 import { post } from "@/lib/api"; // Axios helper
 
-export async function POST(request) {
+export async function POST(req) {
     try {
-        const body = await request.json(); // { user_name: "..." }
+        const body = await req.json(); // { user_name: "..." }
 
-        const response = await post("/api/check-unique", body);
+        const response = await post("/api/check-unique", body,req);
 
         return NextResponse.json(response.data); // Send Laravel response to frontend
     } catch (error) {
