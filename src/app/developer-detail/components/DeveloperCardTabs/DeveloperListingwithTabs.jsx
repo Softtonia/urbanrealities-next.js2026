@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useEffect } from 'react';
 import styles from './DeveloperListingwithTabs.module.css';
-import DeveloperList from "../DeveloperCard/DeveloperList" 
+import DeveloperList from "../DeveloperCard/DeveloperList"
 import DeveloperCardTabs from "./DeveloperCardTabs";
 
 function getPagination(currentPage, totalPages, maxVisible = 6) {
@@ -52,9 +52,9 @@ const SingleListingWithTab = () => {
   const cardsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(totalProperties.length / cardsPerPage);
- const [isLoading, setIsLoading] = useState(false);
- 
- const pageNumbers = getPagination(currentPage, totalPages,6);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const pageNumbers = getPagination(currentPage, totalPages, 6);
 
 
   useEffect(() => {
@@ -69,38 +69,38 @@ const SingleListingWithTab = () => {
 
   return (
     <div>
-    <div className={styles.listing}>
-      <h2>Ongoing Project</h2>
-      <DeveloperCardTabs />
+      <div className={styles.listing}>
+        <h2>Ongoing Project</h2>
+        <DeveloperCardTabs />
 
-      {/* Property list + Loader wrapper */}
-  <div className={styles.propertyListWrapper}>
-    {isLoading ? (
-      <div className={styles.loader}>Loading properties...</div>
-    ) : (
-      <DeveloperList
-        currentPage={currentPage}
-        cardsPerPage={cardsPerPage}
-        totalProperties={totalProperties}
-      />
-    )}
-  </div>
-</div>
+        {/* Property list + Loader wrapper */}
+        <div className={styles.propertyListWrapper}>
+          {isLoading ? (
+            <div className={styles.loader}>Loading properties...</div>
+          ) : (
+            <DeveloperList
+              currentPage={currentPage}
+              cardsPerPage={cardsPerPage}
+              totalProperties={totalProperties}
+            />
+          )}
+        </div>
+      </div>
 
       {/* Pagination ke buttons — YAHIN LIST KE BAAD HONGE */}
-    <div className={styles.pagination}>
-   {pageNumbers.map((page, index) => (
-    <button
-      key={index}
-      disabled={page === "..."}
-      className={`${styles.pageButton} ${currentPage === page ? styles.active : ''}`}
-      onClick={() => page !== "..." && setCurrentPage(page)}
-    >
-      {page}
-    </button>
-  ))}
- 
-</div>
+      <div className={styles.pagination}>
+        {pageNumbers.map((page, index) => (
+          <button
+            key={index}
+            disabled={page === "..."}
+            className={`${styles.pageButton} ${currentPage === page ? styles.active : ''}`}
+            onClick={() => page !== "..." && setCurrentPage(page)}
+          >
+            {page}
+          </button>
+        ))}
+
+      </div>
 
     </div>
   );

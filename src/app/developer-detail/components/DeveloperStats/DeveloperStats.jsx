@@ -1,6 +1,8 @@
+'use client'
 import React from "react";
 import styles from "./DeveloperStats.module.css";
 import { MdOutlineArrowOutward } from "react-icons/md";
+import { useDeveloper } from "../../context/DeveloperContext";
 
 const projectsData = [
   { number: "3+", label: "Total Project" },
@@ -9,14 +11,16 @@ const projectsData = [
 ];
 
 const DeveloperStats = () => {
+  const developer = useDeveloper();
+  console.log("Developer in Stats:", developer);
+
   return (
     <div className={styles.statssection}>
       <div className={styles.header}>
-        <div className={styles.title}>About DLF Builder/Developer</div>
-        <div className={styles.description}>
-          Exclusive housing welcomes the ultra modern families to come and
-          experience the life changing space where it brings high rising towers
-          to capture the city’s bigger and uninterrupted view from the balcony.
+        <div className={styles.title}>About {developer?.name}</div>
+        <div className={styles.description}
+          dangerouslySetInnerHTML={{ __html: developer?.description }}
+        >
         </div>
       </div>
 

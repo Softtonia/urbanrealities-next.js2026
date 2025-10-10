@@ -223,8 +223,8 @@ const Location = () => {
       backgroundColor: state.isSelected
         ? "#fff"
         : state.isFocused
-        ? "#f0f0f0"
-        : "#fff",
+          ? "#f0f0f0"
+          : "#fff",
       color: "#000",
       cursor: "pointer",
 
@@ -233,11 +233,11 @@ const Location = () => {
         color: "#000",
       },
     }),
-  placeholder: (provided) => ({
-    ...provided,
-    fontSize: "clamp(12px, 1.5vw, 14px)",
-    fontFamily: "var(--font-regular)",
-   }),
+    placeholder: (provided) => ({
+      ...provided,
+      fontSize: "clamp(12px, 1.5vw, 14px)",
+      fontFamily: "var(--font-regular)",
+    }),
 
     menu: (provided) => ({
       ...provided,
@@ -355,10 +355,12 @@ const Location = () => {
       <div className={styles.formGroup}>
         <label className={styles.label}>PIN Code</label>
         <input
-          type="number"
+          type="text"
+          inputMode="numeric"
           value={selectedPinCode}
           onChange={(e) => {
-            setSelectedPinCode(e.target.value);
+            const numericValue = e.target.value.replace(/\D/g, "").slice(0, 6);
+            setSelectedPinCode(numericValue);
             setErrors((prev) => ({ ...prev, pin_code: null }));
           }}
           placeholder="Enter PIN code"

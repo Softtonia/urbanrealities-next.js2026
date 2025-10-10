@@ -14,16 +14,16 @@ const Propertyareadata = ({ property }) => {
   const [showMore, setShowMore] = useState(false);
 
   // Filter repeater fields
-  const areaFields = property.repeater_fields?.filter(
+  const areaFields = property?.repeater_fields?.filter(
     (f) =>
-      f.template.name.startsWith("property.area") ||
-      f.template.name.startsWith("property.furnishing")
+      f?.template?.name?.startsWith("property.area") ||
+      f?.template?.name?.startsWith("property.furnishing")
   ) || [];
 
   // Map filtered fields to displayable structure
   const repeaterData = areaFields.map((f) => ({
     label: f.field_label,
-    value: f.template.name.startsWith("property.area") ? (
+    value: f?.template?.name?.startsWith("property.area") ? (
       <AreaUnitDropdown baseSqft={f.field_value} />
     ) : (
       f.field_value

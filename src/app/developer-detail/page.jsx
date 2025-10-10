@@ -59,6 +59,8 @@ const DeveloperPage = async ({ searchParams }) => {
                 <AllProjects />
               </section>
               <section id="developer-mobile">
+              <DeveloperStats />
+
                 <DeveloperInfoMobile />
               </section>
               <section id="ongoing-projects">

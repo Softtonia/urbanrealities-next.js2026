@@ -6,20 +6,42 @@ import styles from "./DeveloperBanner.module.css";
 const DeveloperBanner = () => {
   const project = useDeveloper();
 
-  // ✅ Extract RERA number safely
-  const reraNumber = project?.repeater_fields?.find(
-    (val) => val.template?.name === "developer.rera-number"
+  // ✅ Extract RERA number 
+
+  const heroSectionFields = project?.repeater_fields?.filter(
+    (val) =>
+      val?.template?.slug?.startsWith("herosection") &&
+      (val.template.slug.includes("experience") ||
+        val.template.slug.includes("rera") ||
+        val.template.slug.includes("banner") ||
+        val.template.slug.includes("logo"))
+  ) || [];
+
+  // Extract individual ones if needed
+  const heroExperience = heroSectionFields.find(val =>
+    val.template.slug.includes("experience")
   )?.field_value;
-  const experience = project?.repeater_fields?.find(
-    (val) => val.template?.name === "developer.experience"
+
+  const heroRera = heroSectionFields.find(val =>
+    val.template.slug.includes("rera")
   )?.field_value;
+
+  const heroBanner = heroSectionFields.find(val =>
+    val.template.slug.includes("banner")
+  )?.field_value;
+
+  const heroLogo = heroSectionFields.find(val =>
+    val.template.slug.includes("logo")
+  )?.field_value;
+
+  console.log("Hero Section Fields:", heroLogo);
 
   return (
     <>
       <div
         className={styles.projectdetailsherosection}
         style={{
-          backgroundImage: `url(${project.featured_image})`,
+          backgroundImage: `url(${heroBanner ? encodeURI(heroBanner) : "/banner-placeholder.png"})`,
         }}
       >
         <div className={`${styles.herosection} container`}>
@@ -27,20 +49,21 @@ const DeveloperBanner = () => {
 
             <div className={styles.infowraper}>
               <div className={styles.info}>
-                <h6 className={styles.rarea}>Rera No. - {reraNumber}</h6>
+                {heroRera && (
+                <h6 className={styles.rarea}>Rera No. - {heroRera ? heroRera : ''}</h6>
+                  )}
                 <h6 className={styles.name}>{project?.name}</h6>
-                {experience && (
-                  <h6 className={styles.builder}>{experience} Years</h6>
+                {heroExperience && (
+                  <h6 className={styles.builder}>{heroExperience} Years</h6>
                 )}
               </div>
               <div
                 className={styles.logosection}
                 style={{
-                  backgroundImage: `url(${
-                    project?.featured_image
-                      ? project.featured_image
-                      : "/salford_logo.png"
-                  })`,
+                  backgroundImage: `url(${heroLogo
+                    ? encodeURI(heroLogo)
+                    : "/logo-placeholder.png"
+                    })`,
                 }}
               ></div>
             </div>

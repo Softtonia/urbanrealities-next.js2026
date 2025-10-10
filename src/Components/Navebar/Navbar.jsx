@@ -172,7 +172,7 @@ export default function Navbar() {
   const [showHelp, setShowHelp] = useState(false);
   const { settings } = useSiteSettings();
   const [siteData, setSiteData] = useState(settings);
-  const { token, logout, } = useSiteSettings();
+  const { token, logout, isLoadingToken } = useSiteSettings();
   const [activeDropdown, setActiveDropdown] = useState(null); // "buy" | "rent" | "sell" | null
 
   const toggleDropdown = (menu) => {
@@ -279,8 +279,8 @@ export default function Navbar() {
               </div>
               <div
                 className={`transition-opacity duration-300 ${activeDropdown === "location"
-                    ? "opacity-100 visible"
-                    : "opacity-0 invisible"
+                  ? "opacity-100 visible"
+                  : "opacity-0 invisible"
                   } position-absolute top-100 start-0`}
                 style={{ marginTop: "15px" }}
               >
@@ -428,77 +428,78 @@ export default function Navbar() {
                 </ul>
               </div>
 
-              {token ? (
-                <div
-                  className="dropdown"
-                  onMouseEnter={() => setIsOpen(true)}
-                  onMouseLeave={() => setIsOpen(false)}
-                  style={{ position: "relative" }}
-                >
-                  <button
-                    className="btn btn-link text-white text-decoration-none dropdown-toggle nav-items-name"
-                    type="button"
+              {!isLoadingToken && (
+                token ? (
+                  <div
+                    className="dropdown"
+                    onMouseEnter={() => setIsOpen(true)}
+                    onMouseLeave={() => setIsOpen(false)}
+                    style={{ position: "relative" }}
                   >
-                    My Account
-                  </button>
-                  {isOpen && (
-                    <ul
-                      className="dropdown-menu show"
-                      style={{
-                        display: "block",
-                        position: "absolute",
-                        top: "100%",
-                        left: -20,
-                        backgroundColor: "#fff",
-                        padding: "0.5rem 0",
-                        borderRadius: "0.25rem",
-                        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-                        minWidth: "150px",
-                      }}
+                    <button
+                      className="btn btn-link text-white text-decoration-none dropdown-toggle nav-items-name"
+                      type="button"
                     >
-                      <li>
-                        <Link
-                          className="dropdown-item"
-                          href="/auth/user/account"
-                          style={{
-                            backgroundColor: "transparent",
-                            color: "inherit",
-                          }}
-                        >
-                          Dashboard
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          className="dropdown-item"
-                          href="/auth/user/setting"
-                          style={{
-                            backgroundColor: "transparent",
-                            color: "inherit",
-                          }}
-                        >
-                          My Profile
-                        </Link>
-                      </li>
-                      <li>
-                        <button
-                          className="dropdown-item text-danger"
-                          onClick={logout}
-                        >
-                          Logout
-                        </button>
-                      </li>
-                    </ul>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  className="text-white text-decoration-none"
-                  href="/auth/login"
-                >
-                  Sign In
-                </Link>
-              )}
+                      My Account
+                    </button>
+                    {isOpen && (
+                      <ul
+                        className="dropdown-menu show"
+                        style={{
+                          display: "block",
+                          position: "absolute",
+                          top: "100%",
+                          left: -20,
+                          backgroundColor: "#fff",
+                          padding: "0.5rem 0",
+                          borderRadius: "0.25rem",
+                          boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                          minWidth: "150px",
+                        }}
+                      >
+                        <li>
+                          <Link
+                            className="dropdown-item"
+                            href="/auth/user/account"
+                            style={{
+                              backgroundColor: "transparent",
+                              color: "inherit",
+                            }}
+                          >
+                            Dashboard
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            className="dropdown-item"
+                            href="/auth/user/setting"
+                            style={{
+                              backgroundColor: "transparent",
+                              color: "inherit",
+                            }}
+                          >
+                            My Profile
+                          </Link>
+                        </li>
+                        <li>
+                          <button
+                            className="dropdown-item text-danger"
+                            onClick={logout}
+                          >
+                            Logout
+                          </button>
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    className="text-white text-decoration-none"
+                    href="/auth/login"
+                  >
+                    Sign In
+                  </Link>
+                ))}
             </div>
           </div>
         </div>
@@ -517,7 +518,7 @@ export default function Navbar() {
             </div>
           </div>
           <div className="nav-items-name d-flex align-items-center gap-3 m-0">
-            {token ? (
+            {!isLoadingToken && (token ? (
               <div
                 className="dropdown"
                 onMouseEnter={() => setIsOpen(true)}
@@ -587,7 +588,7 @@ export default function Navbar() {
               >
                 Sign In
               </Link>
-            )}
+            ))}
           </div>
         </div>
 

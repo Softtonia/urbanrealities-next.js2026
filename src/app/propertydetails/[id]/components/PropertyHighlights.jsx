@@ -23,8 +23,8 @@ const PropertyHighlights = ({ property }) => {
       // normalize template name
       const templateName = templateLabel.replace(/\s+/g, ".");
 
-      const field = property.repeater_fields.find(
-        (f) => f.template.name === templateName
+      const field = property?.repeater_fields?.find(
+        (f) => f?.template?.name === templateName
       );
 
       if (!field) return null;

@@ -26,18 +26,20 @@ const PropertygalleryBreadcrum = ({ property }) => {
       setPopupLink(fullUrl);
     }
   }, [pathname]);
-  console.log(popupLink)
+  console.log(property)
 
-  const priceField = property.repeater_fields.find(
-    (field) => field.template.name === "Property.price"
+  const priceField = property?.repeater_fields?.find(
+    (field) => field?.template?.name === "Property.price"
   );
 
-  const sqftField = property.repeater_fields.find(
-    (field) => field.template.name === "Area.sq.ft"
+  const sqftField = property?.repeater_fields?.find(
+    (field) => field?.template?.name === "Area.sq.ft"
   );
-  const galleryField = property.repeater_fields.find(
-    (field) => field.template.name === "Property.gallery"
+
+  const galleryField = property?.repeater_fields?.find(
+    (field) => field?.template?.name === "Property.gallery"
   );
+
   // store it in a variable
   const sqft = sqftField ? sqftField.field_value : null;
   const price = priceField ? priceField.field_value : null;
@@ -58,10 +60,11 @@ const PropertygalleryBreadcrum = ({ property }) => {
 
             <div className="label-desc d-flex flex-direction-column">
               <span className="rent-label body-text-14">
-                For {property.purpose_id_name}
+                For {property?.purpose_id_name}
               </span>
               <span className="description"> {`${sqft}  `}</span>
-              <span className="state"> {"sqft " + property.city.name + " " + property.state.name}</span>
+              {property?.state?.name || property?.city?.name &&
+                <span className="state"> {"sqft " + property?.city?.name + " " + property?.state?.name}</span>}
             </div>
           </div>
 

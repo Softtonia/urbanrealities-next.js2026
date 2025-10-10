@@ -43,16 +43,16 @@ export default function CallbackForm({ roles = [] }) {
                 throw new Error(result.message || "Request failed");
             }
             if (result) {
+                console.log("Callback Result:", result);
 
-
-                if (result.role === "company" || result.role === "consultancy" || result.role === "developer"||  result.role === "agent" ) {
+                if (result.data.role === "company" || result.data.role === "consultancy" || result.data.role === "developer"||  result.data.role === "agent" ) {
                     // 🔑 store token in cookie (shared across subdomains)
                     // document.cookie = `authToken=${result.token}; path=/; domain=.urbanrealities.com; secure; SameSite=None`;
 
                     // Redirect to business domain
-                    window.location.href = `${process.env.NEXT_BUSINESS_DOMAIN}?authtoken=${result.token}&id=${result.user_id}`;
+                    window.location.href = `${process.env.NEXT_BUSINESS_DOMAIN}?authtoken=${result.data.token}&id=${result.data.user_id}`;
                 } else {
-                    login(result.user_id, result.token);
+                    login(result.data.user_id, result.data.token);
                     router.push(redirect);
                 }
 
