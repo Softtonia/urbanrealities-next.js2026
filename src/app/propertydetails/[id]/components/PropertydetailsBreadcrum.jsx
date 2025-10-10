@@ -4,7 +4,8 @@ import Link from "next/link";
 import "./PropertydetailsBreadcrum.css";
 import { FaChevronRight } from "react-icons/fa";
 
-const PropertydetailsBreadcrum = ({}) => {
+const PropertydetailsBreadcrum = () => {
+  
   return (
     <>
       <div className="breadcrumb-container">

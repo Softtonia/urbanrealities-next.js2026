@@ -18,7 +18,7 @@ const DeveloperInfoMobile = () => {
   const words = plainText.split(/\s+/);
   const experience = project?.repeater_fields?.find(
     (val) => val.template?.name === "developer.experience"
-)?.field_value;
+  )?.field_value;
 
   // Take first 20 words only
   const shortText = words.slice(0, 20).join(" ") + "...";
@@ -28,27 +28,27 @@ const DeveloperInfoMobile = () => {
       <div className={`text-dark ${styles.devInfoBox}`}>
         <h5 className={styles.title}>About {project.name}</h5>
         <div className={styles.devContent}>
-        <div className={styles.description}>
-      <p
-        className={`${styles["aboutProject-desc"]} body-text-16`}
-        dangerouslySetInnerHTML={{
-          __html: expanded
-            ? project.description
-            : words.length > 20
-            ? shortText
-            : project.description,
-        }}
-      ></p>
+          <div className={styles.description}>
+            <p
+              className={`${styles["aboutProject-desc"]} body-text-16`}
+              dangerouslySetInnerHTML={{
+                __html: expanded
+                  ? project.description
+                  : words.length > 20
+                    ? shortText
+                    : project.description,
+              }}
+            ></p>
 
-      {words.length > 20 && !expanded && (
-        <span
-          className={styles.readMore}
-          onClick={() => setExpanded(true)}
-        >
-          Read More
-        </span>
-      )}
-    </div>
+            {words.length > 20 && !expanded && (
+              <span
+                className={styles.readMore}
+                onClick={() => setExpanded(true)}
+              >
+                Read More
+              </span>
+            )}
+          </div>
 
 
           <hr className={styles.divider} />

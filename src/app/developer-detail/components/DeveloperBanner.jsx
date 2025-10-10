@@ -17,10 +17,16 @@ const DeveloperBanner = () => {
         val.template.slug.includes("logo"))
   ) || [];
 
-  // Extract individual ones if needed
-  const heroExperience = heroSectionFields.find(val =>
+  const overview = project?.repeater_fields?.filter(
+    (val) =>
+      val?.template?.slug?.startsWith("overview") &&
+      (val.template.slug.includes("experience"))
+  ) || [];
+
+  const overviewExperience = overview.find(val =>
     val.template.slug.includes("experience")
   )?.field_value;
+  // Extract individual ones if needed
 
   const heroRera = heroSectionFields.find(val =>
     val.template.slug.includes("rera")
@@ -34,7 +40,7 @@ const DeveloperBanner = () => {
     val.template.slug.includes("logo")
   )?.field_value;
 
-  console.log("Hero Section Fields:", heroLogo);
+  console.log("Hero Section Fields:", project);
 
   return (
     <>
@@ -50,11 +56,11 @@ const DeveloperBanner = () => {
             <div className={styles.infowraper}>
               <div className={styles.info}>
                 {heroRera && (
-                <h6 className={styles.rarea}>Rera No. - {heroRera ? heroRera : ''}</h6>
-                  )}
+                  <h6 className={styles.rarea}>Rera No. - {heroRera ? heroRera : ''}</h6>
+                )}
                 <h6 className={styles.name}>{project?.name}</h6>
-                {heroExperience && (
-                  <h6 className={styles.builder}>{heroExperience} Years</h6>
+                {overviewExperience && (
+                  <h6 className={styles.builder}>{overviewExperience} Years</h6>
                 )}
               </div>
               <div

@@ -15,6 +15,9 @@ import styles from "./components/developer-listing.module.css";
 import DeveloperStats from "./components/DeveloperStats/DeveloperStats";
 import DeveloperListingwithTabs from "./components/DeveloperCardTabs/DeveloperListingwithTabs";
 import ProjectFAQ from "@/Components/FAQAccordion/ProjectFAQ";
+import PropertydetailsBreadcrum from './../propertydetails/[id]/components/PropertydetailsBreadcrum';
+import DeveloperBreadcrumb from "./components/developerBreadcrumb/DeveloperBreadcrumb";
+import DeveloperVision from "./components/Developervision/DeveloperVision";
 
 async function fetchDeveloper(id) {
   try {
@@ -29,6 +32,13 @@ async function fetchDeveloper(id) {
 }
 
 const DeveloperPage = async ({ searchParams }) => {
+  // const totalProperties = Array(96).fill(1); // Dummy 24 cards
+  // const cardsPerPage = 4;
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const totalPages = Math.ceil(totalProperties.length / cardsPerPage);
+
+  // const pageNumbers = getPagination(currentPage, totalPages, 6);
+
   const { id } = await searchParams;
 
   const developer = await fetchDeveloper(id);
@@ -36,6 +46,7 @@ const DeveloperPage = async ({ searchParams }) => {
   return (
     <DeveloperProvider value={developer}>
       <div>
+        <DeveloperBreadcrumb />
         <DeveloperBanner />
         <div style={{ position: "sticky", top: "0", zIndex: "20" }}>
           <DeveloperTabs />
@@ -45,16 +56,31 @@ const DeveloperPage = async ({ searchParams }) => {
             <div className={`col-9 ${styles.largeTabCol}`}>
               <DeveloperStats />
               <DeveloperListingwithTabs />
-              {/* <ProjectFAQ />
-               <HomeLoanOffers /> */}
+            </div>
+
+            <div className={`col-12 p-0 ${styles.mobileCol}`}>
+              <section id="all-project">
+                <DeveloperStats />
+                <DeveloperListingwithTabs />
+              </section>
+              <section id="nearby-projects">
+                <DeveloperListingwithTabs
+                  DevHeading={`other Project `}
+                />
+              </section>
+              <section id="completed-projects">
+                <DeveloperListingwithTabs
+                  DevHeading={`complete Project`}
+                />
+              </section>
             </div>
 
             <div className={`col-12 ${styles.smallTabCol}`}>
-              {" "}
               <ProjectFAQ />
+              <DeveloperVision/>
               <HomeLoanOffers />
             </div>
-            <div className={`col-12 p-0 ${styles.mobileCol}`}>
+            {/* <div className={`col-12 p-0 ${styles.mobileCol}`}>
               <section id="all-project">
                 <AllProjects />
               </section>
@@ -67,6 +93,7 @@ const DeveloperPage = async ({ searchParams }) => {
                 <ProjectTileData
                   headingText={`Ongoing Project by ${developer.name}`}
                 />
+
               </section>
               <section id="nearby-projects">
                 <OtherBuilders />
@@ -80,7 +107,7 @@ const DeveloperPage = async ({ searchParams }) => {
               <section id="home-loan">
                 <HomeLoanOffers />
               </section>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
