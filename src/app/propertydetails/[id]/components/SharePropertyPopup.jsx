@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal } from "react-bootstrap";
+import Modal from "react-bootstrap/Modal";
 import { FaTimes, FaCopy, FaShareAlt } from "react-icons/fa";
 import styles from "./SharePropertyPopup.module.css"
 

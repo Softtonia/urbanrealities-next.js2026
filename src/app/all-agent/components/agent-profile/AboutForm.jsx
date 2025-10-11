@@ -3,13 +3,14 @@
 import React, { useEffect, useState } from "react";
 import styles from "./AgentProfile.module.css";
 import { FaPhoneAlt } from "react-icons/fa";
-import { Modal, Form } from "react-bootstrap";
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { useParams, useRouter } from "next/navigation";
 
 
 
-const AboutForm = ({data}) => {
+const AboutForm = ({ data }) => {
   const { token } = useSiteSettings();
   const router = useRouter();
   const params = useParams(); // get id from URL

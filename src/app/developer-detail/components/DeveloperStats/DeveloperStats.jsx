@@ -49,7 +49,7 @@ const DeveloperStats = () => {
         </div>
         {overviewExperience &&
           <div className={styles.section}>
-            <span>Experiences :-</span> <span>{overviewExperience}+ yrs</span>
+            <span>Experiences :-</span> <span>{overviewExperience} yrs</span>
           </div>
         }
         {overviewoperatingin &&

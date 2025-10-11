@@ -18,6 +18,7 @@ import ProjectFAQ from "@/Components/FAQAccordion/ProjectFAQ";
 import PropertydetailsBreadcrum from './../propertydetails/[id]/components/PropertydetailsBreadcrum';
 import DeveloperBreadcrumb from "./components/developerBreadcrumb/DeveloperBreadcrumb";
 import DeveloperVision from "./components/Developervision/DeveloperVision";
+import DeveloperPhotos from "./components/DeveloperPhotos/DeveloperPhotos";
 
 async function fetchDeveloper(id) {
   try {
@@ -76,6 +77,7 @@ const DeveloperPage = async ({ searchParams }) => {
             </div>
 
             <div className={`col-12 ${styles.smallTabCol}`}>
+              <DeveloperPhotos/>
               <ProjectFAQ />
               <DeveloperVision/>
               <HomeLoanOffers />

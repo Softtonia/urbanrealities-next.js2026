@@ -3,7 +3,9 @@ import React, { useState } from "react";
 import Image from "next/image";
 import styles from "./AgentCard.module.css";
 import Link from "next/link";
-import { Modal, Form } from "react-bootstrap";
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
+
 
 export default function AgentCard({ agent }) {
   const [show, setShow] = useState(false);

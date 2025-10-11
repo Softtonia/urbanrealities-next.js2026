@@ -47,7 +47,7 @@ const DeveloperBanner = () => {
       <div
         className={styles.projectdetailsherosection}
         style={{
-          backgroundImage: `url(${heroBanner ? encodeURI(heroBanner) : "/banner-placeholder.png"})`,
+          backgroundImage: `url(${heroBanner ? encodeURI(heroBanner) : "/banner-placeholder.jpg"})`,
         }}
       >
         <div className={`${styles.herosection} container`}>

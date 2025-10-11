@@ -6,7 +6,7 @@ import { FaSortDown } from "react-icons/fa";
 
 
 const faqData = [
-  "How can I sell my property faster?",
+  "How can I sell my property faster2?",
   "How can I sell my property faster?",
   "How can I sell my property faster?",
   "How can I sell my property faster?",

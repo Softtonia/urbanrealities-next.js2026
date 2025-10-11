@@ -62,7 +62,7 @@ const DeveloperInfoMobile = () => {
           </div>
 
           <div className={styles.section}>
-            <span>Experiences :-</span> <span>{experience}+ yrs</span>
+            <span>Experiences :-</span> <span>{experience} yrs</span>
           </div>
 
           <div className={styles.section}>

@@ -34,57 +34,63 @@ const DeveloperVision = () => {
         val?.template?.slug.includes("values")
     )?.field_value;
 
+    
+
     return (
-        <div className={styles.statssection}>
-            <div className={styles.header}>
-                {/* Chairman Message */}
-                {chairmanMessage && (
-                    <>
-                        <div className={styles.title}>Chairman Message</div>
-                        <div
-                            className={styles.description}
-                            dangerouslySetInnerHTML={{ __html: chairmanMessage }}
-                        />
-                        <hr className={styles.divider} />
-                    </>
-                )}
+        <>
+            {(chairmanMessage || vision || mission || values) &&
+                <div className={styles.statssection}>
+                    <div className={styles.header}>
+                        {/* Chairman Message */}
+                        {chairmanMessage && (
+                            <>
+                                <div className={styles.title}>Chairman Message</div>
+                                <div
+                                    className={styles.description}
+                                    dangerouslySetInnerHTML={{ __html: chairmanMessage }}
+                                />
+                                <hr className={styles.divider} />
+                            </>
+                        )}
 
-                {/* Vision */}
-                {vision && (
-                    <>
-                        <div className={styles.title}>Vision</div>
-                        <div
-                            className={styles.description}
-                            dangerouslySetInnerHTML={{ __html: vision }}
-                        />
-                        <hr className={styles.divider} />
-                    </>
-                )}
+                        {/* Vision */}
+                        {vision && (
+                            <>
+                                <div className={styles.title}>Vision</div>
+                                <div
+                                    className={styles.description}
+                                    dangerouslySetInnerHTML={{ __html: vision }}
+                                />
+                                <hr className={styles.divider} />
+                            </>
+                        )}
 
-                {/* Mission */}
-                {mission && (
-                    <>
-                        <div className={styles.title}>Mission</div>
-                        <div
-                            className={styles.description}
-                            dangerouslySetInnerHTML={{ __html: mission }}
-                        />
-                        <hr className={styles.divider} />
-                    </>
-                )}
+                        {/* Mission */}
+                        {mission && (
+                            <>
+                                <div className={styles.title}>Mission</div>
+                                <div
+                                    className={styles.description}
+                                    dangerouslySetInnerHTML={{ __html: mission }}
+                                />
+                                <hr className={styles.divider} />
+                            </>
+                        )}
 
-                {/* Values */}
-                {values && (
-                    <>
-                        <div className={styles.title}>Values</div>
-                        <div
-                            className={styles.description}
-                            dangerouslySetInnerHTML={{ __html: values }}
-                        />
-                    </>
-                )}
-            </div>
-        </div>
+                        {/* Values */}
+                        {values && (
+                            <>
+                                <div className={styles.title}>Values</div>
+                                <div
+                                    className={styles.description}
+                                    dangerouslySetInnerHTML={{ __html: values }}
+                                />
+                            </>
+                        )}
+                    </div>
+                </div>
+            }
+        </>
     );
 };
 

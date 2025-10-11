@@ -47,4 +47,5 @@ margin-bottom: 11px;
 .name {
 color: var(--Eerie-Black);
 margin: 0;
+text-decoration: none;;
 }

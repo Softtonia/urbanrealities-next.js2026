@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import "./PropertyEnquiryFrom.css";
-import { Modal, Form } from "react-bootstrap";
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { useParams } from "next/navigation";
 
