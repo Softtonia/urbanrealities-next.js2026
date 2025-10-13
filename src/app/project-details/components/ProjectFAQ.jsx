@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './ProjectFAQ.module.css';
+import { useProject } from '../context/ProjectContext';
 const faqs = [
   {
     question: 'Is Mundeshwari Connaught One a good place to live?',
@@ -30,36 +31,84 @@ const faqs = [
   },
 ];
 const ProjectFAQ = () => {
-      const [activeIndex, setActiveIndex] = useState(null);
+  //     const [activeIndex, setActiveIndex] = useState(null);
+
+  // const toggleAccordion = (index) => {
+  //   setActiveIndex(prev => (prev === index ? null : index));
+  // };
+  // return (
+  //   <div>
+  //      <section className={styles.faqWrapper}>
+  //     <h2 className={styles.title}>Frequently asked questions</h2>
+  //     <div className={styles.accordion}>
+  //       {faqs.map((faq, index) => (
+  //         <div key={index} className={styles.faqItem}>
+  //           <button
+  //             className={styles.faqHeader}
+  //             onClick={() => toggleAccordion(index)}
+  //           >
+  //             <span className={styles.quesBadge}>Ques</span>
+  //             <span className={styles.question}>{faq.question}</span>
+  //             <span className={styles.toggleIcon}>{activeIndex === index ? '-' : '+'}</span>
+  //           </button>
+  //           {activeIndex === index && (
+  //             <div className={styles.faqContent}>
+  //               <span className={styles.ansBadge}>Ans</span>
+  //               <p className={styles.answer}>{faq.answer}</p>
+  //             </div>
+  //           )}
+  //         </div>
+  //       ))}
+  //     </div>
+  //   </section>
+  //   </div>
+  // );
+
+  const developer = useProject();
+  console.log("Developer in Stats:", developer);
+
+  const home = developer?.repeater_fields?.filter(
+    (val) =>
+      val?.template?.slug?.startsWith("faq") &&
+      (val?.template?.slug.includes("faq")) || []);
+
+  const faqs = home.find(val =>
+    val?.template?.slug.includes("faq")
+  )?.field_value;
+  // console.log("FAQ Data:", faqs);
+  const [activeIndex, setActiveIndex] = useState(null);
 
   const toggleAccordion = (index) => {
     setActiveIndex(prev => (prev === index ? null : index));
   };
   return (
     <div>
-       <section className={styles.faqWrapper}>
-      <h2 className={styles.title}>Frequently asked questions</h2>
-      <div className={styles.accordion}>
-        {faqs.map((faq, index) => (
-          <div key={index} className={styles.faqItem}>
-            <button
-              className={styles.faqHeader}
-              onClick={() => toggleAccordion(index)}
-            >
-              <span className={styles.quesBadge}>Ques</span>
-              <span className={styles.question}>{faq.question}</span>
-              <span className={styles.toggleIcon}>{activeIndex === index ? '-' : '+'}</span>
-            </button>
-            {activeIndex === index && (
-              <div className={styles.faqContent}>
-                <span className={styles.ansBadge}>Ans</span>
-                <p className={styles.answer}>{faq.answer}</p>
+      {faqs && faqs.length > 0 && (
+        <section className={styles.faqWrapper}>
+          <h2 className={styles.title}>Frequently asked questions</h2>
+          <div className={styles.accordion}>
+            {faqs.map((faq, index) => (
+              <div key={index} className={styles.faqItem}>
+                <button
+                  className={styles.faqHeader}
+                  onClick={() => toggleAccordion(index)}
+                >
+                  <span className={styles.quesBadge}>Ques</span>
+                  <span className={styles.question}>{faq[0].field_value}</span>
+                  <span className={styles.toggleIcon}>{activeIndex === index ? '-' : '+'}</span>
+                </button>
+                {activeIndex === index && (
+                  <div className={styles.faqContent}>
+                    <span className={styles.ansBadge}>Ans</span>
+                    <div className={styles.answer}
+                      dangerouslySetInnerHTML={{ __html: faq[1].field_value }}
+                    />
+                  </div>
+                )}
               </div>
-            )}
+            ))}
           </div>
-        ))}
-      </div>
-    </section>
+        </section>)}
     </div>
   );
 }

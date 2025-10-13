@@ -28,6 +28,32 @@ const PropertygalleryBreadcrum = ({ property }) => {
   }, [pathname]);
   console.log(property)
 
+  const hero =
+    property?.repeater_fields?.filter(
+      (val) =>
+        (val?.template?.slug?.startsWith("herosection") ||
+          val?.template?.slug?.startsWith("overview")) &&
+        (val?.template?.slug?.includes("price") ||
+          val?.template?.slug?.includes("gallery") ||
+          val?.template?.slug?.includes("built-up-area"))
+    ) || [];
+
+
+  const price = hero.find(val =>
+    val?.template?.slug.includes("price")
+  )?.field_value;
+
+  const editgallery = hero.find(val =>
+    val?.template?.slug.includes("gallery")
+  )?.field_value;
+
+  const sqft = hero.find(val =>
+    val?.template?.slug.includes("built-up-area")
+  )?.field_value;
+
+  console.log(sqft, editgallery)
+
+
   const priceField = property?.repeater_fields?.find(
     (field) => field?.template?.name === "Property.price"
   );
@@ -41,11 +67,10 @@ const PropertygalleryBreadcrum = ({ property }) => {
   );
 
   // store it in a variable
-  const sqft = sqftField ? sqftField.field_value : null;
-  const price = priceField ? priceField.field_value : null;
-  const gallery = galleryField ? galleryField.field_value : null;
-  const editgallery = gallery ? gallery.map((url) => url.replace(/^127\.0\.0\.1:8000/, 'https://api.urbanrealities.com')) : [];
-  console.log("==>", editgallery)
+  // const price = priceField ? priceField.field_value : null;
+  // console.log(gallery)
+  // const editgallery = gallery
+  console.log("==>", hero)
 
   return (
     <div className="property-wrapper">
@@ -62,9 +87,17 @@ const PropertygalleryBreadcrum = ({ property }) => {
               <span className="rent-label body-text-14">
                 For {property?.purpose_id_name}
               </span>
-              <span className="description"> {`${sqft}  `}</span>
-              {property?.state?.name || property?.city?.name &&
-                <span className="state"> {"sqft " + property?.city?.name + " " + property?.state?.name}</span>}
+              {/* <span className="description">{sqft} sqft </span> */}
+              <span className="description">
+                {sqft} sqft{" "}
+                {property.propertyType
+                  ?.map((value) => value.property_type_name)
+                  .join(", ")}{" "}
+                {property?.city?.name ? `${property.city.name}, ` : ""}
+                {property?.state?.name ?? ""}
+              </span>
+
+
             </div>
           </div>
 
@@ -96,7 +129,7 @@ const PropertygalleryBreadcrum = ({ property }) => {
           <div className="gallery-content">
             <div className="main-image">
               <img
-                src={property.featured_image ? property.featured_image : "/living.png"}
+                src={property?.featured_image ? property.featured_image : "/living.png"}
                 alt="Main"
                 width={832}
                 height={493}
@@ -104,6 +137,7 @@ const PropertygalleryBreadcrum = ({ property }) => {
               />
             </div>
             <div className="side-images">
+
               <img
                 src={editgallery[0] ? editgallery[0] : "/kitchen.png"}
                 alt="img"
@@ -130,7 +164,7 @@ const PropertygalleryBreadcrum = ({ property }) => {
                     height={227}
                     className="project-thumb-img"
                   />
-                  <span className="overlay-text">View All 15 Photos</span>
+                  {/* <span className="overlay-text">View All 15 Photos</span> */}
                 </div>
               </div>
             </div>

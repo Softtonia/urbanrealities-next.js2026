@@ -19,7 +19,7 @@ const PropertyDetails = ({property,leadTypes}) => {
 
   return (
     <div>
-      <PropertydetailsBreadcrum />
+      <PropertydetailsBreadcrum property={property}/>
       <PropertygalleryBreadcrum property={property} />
       <div className="project-highlight-background">
         <div className="container">

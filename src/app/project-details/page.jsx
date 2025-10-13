@@ -10,6 +10,7 @@ import ProjectDeveloperInfo from "./components/ProjectDeveloperInfo";
 import FloorPlanSection from "./components/FloorPlanSection";
 import { get, getssr } from "@/lib/api";
 import { ProjectProvider } from "./context/ProjectContext";
+import ProjectBreadcrumb from "./components/ProjectBreadcrumb/ProjectBreadcrumb";
 
 async function fetchProject(id) {
   try {
@@ -30,11 +31,12 @@ async function fetchProject(id) {
 const Page = async ({ searchParams }) => {
   const { id } = searchParams;
   const project = await fetchProject(id);
-  
+
 
   return (
     <ProjectProvider value={project}>
       <div>
+        <ProjectBreadcrumb />
         <ProjectBanner />
         <div style={{ position: 'sticky', top: '0', zIndex: '20' }}>
           <ProjectTabs />

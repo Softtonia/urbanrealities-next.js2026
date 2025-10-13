@@ -3,31 +3,60 @@
 import React from "react";
 import styles from "./ProjectBanner.module.css";
 import { useProject } from "../context/ProjectContext";
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 const ProjectBanner = () => {
   const project = useProject();
+
+
+  const heroSectionFields = project?.repeater_fields?.filter(
+    (val) =>
+      val?.template?.slug?.startsWith("herosection") &&
+      (val.template.slug.includes("banner"))
+  ) || [];
+
+  // const overview = project?.repeater_fields?.filter(
+  //   (val) =>
+  //     val?.template?.slug?.startsWith("overview") &&
+  //     (val.template.slug.includes("experience"))
+  // ) || [];
+
+  // const overviewExperience = overview.find(val =>
+  //   val.template.slug.includes("experience")
+  // )?.field_value;
+  // // Extract individual ones if needed
+
+  // const heroRera = heroSectionFields.find(val =>
+  //   val.template.slug.includes("rera")
+  // )?.field_value;
+
+  const heroBanner = heroSectionFields.find(val =>
+    val.template.slug.includes("banner")
+  )?.field_value;
+
+
   console.log(project)
 
   // ✅ Extract RERA number safely
-  const reraNumber = project?.repeater_fields?.find(
-    (val) => val.template?.name === "project.rera-number"
-  )?.field_value;
-  const totalPrice = project?.repeater_fields?.find(
-    (val) => val.template?.name === "project.price.total_price"
-  )?.field_value;
+  // const reraNumber = project?.repeater_fields?.find(
+  //   (val) => val.template?.name === "project.rera-number"
+  // )?.field_value;
+  // const totalPrice = project?.repeater_fields?.find(
+  //   (val) => val.template?.name === "project.price.total_price"
+  // )?.field_value;
 
-  const superArea = project?.repeater_fields?.find(
-    (val) => val.template?.name === "project.area.super_area"
-  )?.field_value;
-  const possessionData = project?.repeater_fields?.find(
-    (val) => val.template?.name === "project.possession-date"
-  )?.field_value;
-  const brochure = project?.repeater_fields?.find(
-    (val) => val.template?.name === "project.brochure"
-  )?.field_value;
-  const propertyConfigurations = project?.repeater_fields?.find(
-    (val) => val.template?.name === "project.property-configuration"
-  )?.field_value;
+  // const superArea = project?.repeater_fields?.find(
+  //   (val) => val.template?.name === "project.area.super_area"
+  // )?.field_value;
+  // const possessionData = project?.repeater_fields?.find(
+  //   (val) => val.template?.name === "project.possession-date"
+  // )?.field_value;
+  // const brochure = project?.repeater_fields?.find(
+  //   (val) => val.template?.name === "project.brochure"
+  // )?.field_value;
+  // const propertyConfigurations = project?.repeater_fields?.find(
+  //   (val) => val.template?.name === "project.property-configuration"
+  // )?.field_value;
 
   const handleDownload = () => {
     if (!brochure) {
@@ -49,35 +78,35 @@ const ProjectBanner = () => {
       <div
         className={styles.projectdetailsherosection}
         style={{
-          backgroundImage: `url(${project.featured_image})`,
+          backgroundImage: `url(${heroBanner ? heroBanner : "/banner-placeholder.jpg"})`,
         }}
       >
         <div className={`${styles.herosection} container`}>
 
           <div className={styles.contentsection}>
             <div className={styles.infowraper}>
-            <div className={styles.info}>
-              <h6 className={styles.rarea}>Rera No. - {reraNumber}</h6>
-              <h6 className={styles.name}>{project?.name}</h6>
-              <h6 className={styles.builder}>
-                {project.area_locality}, {project?.city_name},{" "}
-                {project?.state_name}
-              </h6>               
-            </div>
-          <div
-            className={styles.logosection}
-            style={{
-              backgroundImage: `url(${
-                project?.featured_image
-                  ? project.featured_image
-                  : "/salford_logo.png"
-              })`,
-            }}
-          >            
-          </div>
+              <div className={styles.info}>
+                {/* <h6 className={styles.rarea}>Rera No. - {reraNumber}</h6> */}
+                <h6 className={styles.name}>{project?.name}</h6>
+                <h6 className={styles.builder}>
+                  <FaMapMarkerAlt className={styles.icon} />
+                  {project.area_locality && `${project.area_locality},`} {project?.city_name},{" "}
+                  {project?.state_name}
+                </h6>
+              </div>
+              {/* <div
+                className={styles.logosection}
+                style={{
+                  backgroundImage: `url(${project?.featured_image
+                      ? project.featured_image
+                      : "/salford_logo.png"
+                    })`,
+                }}
+              >
+              </div> */}
             </div>
 
-            <div className={styles.info1}>
+            {/* <div className={styles.info1}>
               <h6 className={styles.price}>Price ₹ {totalPrice}</h6>
               <h6 className={styles.bhk}>
                 {propertyConfigurations && propertyConfigurations.join(", ")}
@@ -87,15 +116,15 @@ const ProjectBanner = () => {
               <h6 className={styles.posession}>
                 Possession on:- {possessionData}
               </h6>
-            </div>
-            {brochure && (
+            </div> */}
+            {/* {brochure && (
               <button
                 onClick={handleDownload}
                 className={`${styles.contentbtn} ${styles["btn-subscribe"]}`}
               >
                 Download Brochure
               </button>
-            )}
+            )} */}
           </div>
 
         </div>

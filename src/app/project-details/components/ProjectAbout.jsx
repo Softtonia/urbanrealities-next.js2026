@@ -27,6 +27,49 @@ export default function AboutProject() {
   const [expanded, setExpanded] = useState(false);
   const [expandedwhyus, setExpandedwhyus] = useState(false);
 
+  const overview = project?.repeater_fields?.filter(
+    (val) =>
+      val?.template?.slug?.startsWith("overview") &&
+      (val.template.slug.includes("tower")
+        || val.template.slug.includes("units")
+        || val.template.slug.includes("size")
+        || val.template.slug.includes("bhk")
+        || val.template.slug.includes("launch")
+        || val.template.slug.includes("brochure")
+        || val.template.slug.includes("price")
+        || val.template.slug.includes("rent")
+      )) || [];
+  console.log("overview", project)
+  const tower = overview.find(val =>
+    val.template.slug.includes("tower")
+  )?.field_value;
+
+  const units = overview.find(val =>
+    val.template.slug.includes("units")
+  )?.field_value;
+
+  const size = overview.find(val =>
+    val.template.slug.includes("size")
+  )?.field_value;
+
+  const bhk = overview.find(val =>
+    val.template.slug.includes("bhk")
+  )?.field_value;
+
+  const launchDate = overview.find(val =>
+    val.template.slug.includes("launch")
+  )?.field_value;
+  const brochure = overview.find(val =>
+    val.template.slug.includes("brochure")
+  )?.field_value;
+
+  const price = overview.find(val =>
+    val.template.slug.includes("price")
+  )?.field_value;
+  const rent = overview.find(val =>
+    val.template.slug.includes("rent")
+  )?.field_value;
+
 
   const features = project?.repeater_fields
     ?.filter((val) => val.template?.name?.startsWith("project.furnishing"))
@@ -34,9 +77,9 @@ export default function AboutProject() {
   const certificates = project?.repeater_fields
     ?.filter((val) => val.template?.name?.startsWith("project.certificates"))
 
-  const brochure = project?.repeater_fields?.find(
-    (val) => val.template?.name === "project.brochure"
-  )?.field_value;
+  // const brochure = project?.repeater_fields?.find(
+  //   (val) => val.template?.slug.include("brochure")
+  // )?.field_value;
 
   const WhyUs = project?.repeater_fields?.find(
     (val) => val.template?.name === "project.why-us"
@@ -116,92 +159,108 @@ export default function AboutProject() {
 
       <div className={styles["aboutProject-highlights"]}>
         {features && features.map((val) => (
-          <div  key={val.field_label} className={styles["aboutProject-box"]}>
+          <div key={val.field_label} className={styles["aboutProject-box"]}>
             <p className="" style={{ textTransform: 'capitalize' }}>{val.field_label}</p>
             <span>{val.field_value}</span>
             {iconMap[val.field_label] || null}
             {/* <FaRulerCombined className={styles["aboutProject-icon"]} /> */}
           </div>
         ))}
-
-        {/* <div className={styles["aboutProject-box"]}>
-          <p>Launch Date</p>
-          <span>May 22</span>
-          <FaCalendarAlt className={styles["aboutProject-icon"]} />
-        </div>
-        <div className={styles["aboutProject-box"]}>
-          <p>Total Units</p>
-          <span>46</span>
-          <FaKey className={styles["aboutProject-icon"]} />
-        </div>
-        <div className={styles["aboutProject-box"]}>
-          <p>Total Towers</p>
-          <span>1</span>
-          <FaBuilding className={styles["aboutProject-icon"]} />
-        </div>
-        <div className={styles["aboutProject-box"]}>
-          <p>BHK</p>
-          <span>3,4</span>
-          <MdOutlineChair className={styles["aboutProject-icon"]} />
-        </div> */}
+        {launchDate || units || tower || bhk ?
+          <>
+            <div className={styles["aboutProject-box"]}>
+              <p>Launch Date</p>
+              <span>{launchDate}</span>
+              <FaCalendarAlt className={styles["aboutProject-icon"]} />
+            </div>
+            <div className={styles["aboutProject-box"]}>
+              <p>Total Units</p>
+              <span>{units}</span>
+              <FaKey className={styles["aboutProject-icon"]} />
+            </div>
+            <div className={styles["aboutProject-box"]}>
+              <p>Total Towers</p>
+              <span>{tower}</span>
+              <FaBuilding className={styles["aboutProject-icon"]} />
+            </div>
+            <div className={styles["aboutProject-box"]}>
+              <p>BHK</p>
+              <span>{bhk}</span>
+              <MdOutlineChair className={styles["aboutProject-icon"]} />
+            </div>
+          </>
+          : null}
       </div>
+      {project.property_status.legth > 0 || price &&
+        <div className={styles["aboutProject-certificates"]}>
+          <p className={styles["aboutProject-whybuy-title"]}>₹{price}</p>
+          <p className={styles["aboutProject-para-box"]}>Rent: ₹{rent} </p>
+          <p className={styles["aboutProject-para-box"]}>{bhk} Flats</p>
+          <p className={styles["aboutProject-para-box"]}>
+            {project?.property_status?.map((status) => status?.property_status_name).join(", ")}
+          </p>
 
-      <div className={styles["aboutProject-certificates"]}>
-        <div className={styles["aboutProject-cert-list"]}>
-          {visibleCertificates && visibleCertificates.map((val) => (
-            <div  key={val.field_label} className={styles["aboutProject-cert-box"]}>
-              {/* {val.field_label} */}
-              <p className={styles["aboutProject-para-box"]}> {val.field_label}</p>
-              <div
-                onClick={() => handleDownload(val.field_value)} // 👈 pass file link
-                style={{ cursor: "pointer" }}
-              >
-                <FaDownload className={styles["cert-icon"]} />
-              </div>
-            </div>))}
-
-        </div>
-        {certificates?.length > 3 && (
-          <button
-            className={styles["aboutProject-view-all"]}
-            style={{ border: 'none', backgroundColor: 'transparent' }}
-            onClick={() => setExpanded(!expanded)}
+        </div>}
+{
+  visibleCertificates && visibleCertificates.length > 0 &&
+  <div className={styles["aboutProject-certificates"]}>
+    <div className={styles["aboutProject-cert-list"]}>
+      {visibleCertificates && visibleCertificates.map((val) => (
+        <div key={val.field_label} className={styles["aboutProject-cert-box"]}>
+          {/* {val.field_label} */}
+          <p className={styles["aboutProject-para-box"]}> {val.field_label}</p>
+          <div
+            onClick={() => handleDownload(val.field_value)} // 👈 pass file link
+            style={{ cursor: "pointer" }}
           >
-            {expanded
-              ? "Hide"
-              : `View All`}
-          </button>
-        )}
-      </div>
+            <FaDownload className={styles["cert-icon"]} />
+          </div>
+        </div>))}
 
-      <div className={styles["aboutProject-whybuy"]}>
-        <h3 className={styles["aboutProject-whybuy-title"]}>
-          Why Buy in {project.name}?
-        </h3>
-        <ul className={styles["aboutProject-whybuy-list"]}>
-          {visibleItems.map((clean, index) => (
-            <li
-              key={index}
-              className={styles["whybuy-li"]}
-              dangerouslySetInnerHTML={{ __html: clean }}
-            />
-          ))}
-        </ul>
-        {items.length > 3 && (
-          <button
-            className={`${styles["aboutProject-more-link"]} body-text-rg16`}
-            style={{ border: 'none', backgroundColor: 'transparent' }}
-
-            onClick={() => setExpandedwhyus(!expandedwhyus)}
-          >
-            {expandedwhyus ? "less" : `+${items.length - 3} More`}
-          </button>
-        )}
-        {brochure &&
-          <button className={styles["aboutProject-brochure-btn"]} onClick={handleDownloadBrochure}>
-            <FaDownload /> Download Brochure
-          </button>}
-      </div>
     </div>
+    {certificates?.length > 3 && (
+      <button
+        className={styles["aboutProject-view-all"]}
+        style={{ border: 'none', backgroundColor: 'transparent' }}
+        onClick={() => setExpanded(!expanded)}
+      >
+        {expanded
+          ? "Hide"
+          : `View All`}
+      </button>
+    )}
+  </div>
+}
+
+<div className={styles["aboutProject-whybuy"]}>
+  <h3 className={styles["aboutProject-whybuy-title"]}>
+    Why Buy in {project.name}?
+  </h3>
+  <ul className={styles["aboutProject-whybuy-list"]}>
+    {visibleItems.map((clean, index) => (
+      <li
+        key={index}
+        className={styles["whybuy-li"]}
+        dangerouslySetInnerHTML={{ __html: clean }}
+      />
+    ))}
+  </ul>
+  {items.length > 3 && (
+    <button
+      className={`${styles["aboutProject-more-link"]} body-text-rg16`}
+      style={{ border: 'none', backgroundColor: 'transparent' }}
+
+      onClick={() => setExpandedwhyus(!expandedwhyus)}
+    >
+      {expandedwhyus ? "less" : `+${items.length - 3} More`}
+    </button>
+  )}
+  {brochure &&
+    <button className={styles["aboutProject-brochure-btn"]} onClick={handleDownloadBrochure}>
+      <FaDownload /> Download Brochure
+    </button>
+  }
+</div>
+    </div >
   );
 }
