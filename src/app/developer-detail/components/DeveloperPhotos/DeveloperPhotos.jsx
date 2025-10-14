@@ -43,6 +43,7 @@ const DeveloperPhotos = () => {
         const imageField = group.find((f) =>
             f.field_label?.toLowerCase().includes("image")
         );
+        if (!imageField?.field_value?.length) return null;
 
         return {
             name: `${nameField?.field_value}(${imageField?.field_value.length})` || "",
@@ -53,8 +54,8 @@ const DeveloperPhotos = () => {
     // ✅ 3. Flatten all images for Swiper with mapping to section
     const flatPhotos = useMemo(() => {
         const arr = [];
-        photos.forEach((section, sectionIdx) => {
-            section.images.forEach((img, imgIdx) => {
+        photos?.forEach((section, sectionIdx) => {
+            section?.images?.forEach((img, imgIdx) => {
                 arr.push({
                     sectionName: section.name,
                     image: img,
@@ -72,13 +73,13 @@ const DeveloperPhotos = () => {
         let counter = 0;
         photos.forEach((section) => {
             startIndexes.push(counter);
-            counter += section.images.length;
+            counter += section?.images?.length;
         });
         return startIndexes;
     }, [photos]);
 
     // ✅ 5. Carousel logic for main view
-    const totalSlides = photos.length;
+    const totalSlides = photos?.length;
     const maxIndex = Math.max(totalSlides - visibleCount, 0);
 
     const nextSlide = () => {
@@ -88,8 +89,11 @@ const DeveloperPhotos = () => {
     const prevSlide = () => {
         setCurrentIndex((prev) => (prev > 0 ? prev - 1 : maxIndex));
     };
+    console.log("photos", photos);
+    if (!photos || (Array.isArray(photos) && photos.length === 1 && photos[0] === null)) {
+        return null;
+    }
 
-    if (!photos.length) return null;
 
     return (
         <div className={styles.projectSection}>
@@ -104,12 +108,12 @@ const DeveloperPhotos = () => {
                             transform: `translateX(-${(currentIndex * 100) / visibleCount}%)`,
                         }}
                     >
-                        {photos.map((photo, idx) => (
+                        {photos.length > 0 && photos?.map((photo, idx) => (
                             <div key={idx} className={styles.carouselItem}>
                                 <div className={styles.imageContainer}>
                                     <img
-                                        src={photo.images[0]}
-                                        alt={photo.name || `photo`}
+                                        src={photo?.images[0]}
+                                        alt={photo?.name || `photo`}
                                         className={styles.carouselImg}
                                         onClick={() => openModal(idx)}
                                     />
@@ -161,19 +165,18 @@ const DeveloperPhotos = () => {
                         {photos.map((section, idx) => (
                             <button
                                 key={idx}
-                                className={`${styles.nameItem} ${
-                                    activeIndex >= sectionStartIndexes[idx] &&
+                                className={`${styles.nameItem} ${activeIndex >= sectionStartIndexes[idx] &&
                                     (idx === photos.length - 1 || activeIndex < sectionStartIndexes[idx + 1])
-                                        ? styles.activeName
-                                        : ""
-                                }`}
+                                    ? styles.activeName
+                                    : ""
+                                    }`}
                                 onClick={() => {
                                     const slideToIndex = sectionStartIndexes[idx];
                                     swiperRef.current?.slideTo(slideToIndex);
                                     setActiveIndex(slideToIndex);
                                 }}
                             >
-                                {section.name || `Photo ${idx + 1}`}
+                                {section?.name || `Photo ${idx + 1}`}
                             </button>
                         ))}
                     </div>

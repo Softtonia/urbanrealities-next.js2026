@@ -31,7 +31,7 @@ const Projectagent = () => {
           <button className="report-btn">Report</button>
         </div>
       </div>
-      <button className="download-btn body-text-sb18">Download Brochure</button>
+      {/* <button className="download-btn body-text-sb18">Download Brochure</button> */}
     </div>
   );
 };

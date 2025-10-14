@@ -33,15 +33,36 @@ async function fetchLeadType() {
     return [];
   }
 }
+async function fetchUser(id) {
+  try {
+    // ✅ Directly call backend API, not your Next.js API route
+    const response = await getssr(`/api/get-userdata-by-id?id=${id}`);
+    const data = response?.data;
+    console.log("=>", data)
 
-const PropertyDetailspage =async ({params}) => {
-  const id = params.id;
+    if (data) return data;
+    return [];
+  } catch (err) {
+    console.log(err.response)
+    console.error("Error fetching related properties:", err);
+    return [];
+  }
+}
+
+const PropertyDetailspage =async  ({ searchParams }) => {
+  const id = await searchParams.id; // ✅ Get ID from query string (?id=123)
+console.log(id)
   const property =await fetchProperty(id)
+  let userDetail = null;
+  if (property?.user_id) {
+    userDetail = await fetchUser(property.user_id);
+  }
   const leadTypes =await fetchLeadType()
+  console.log("userDetail:", userDetail);
  
   return (
     <div>
-      <PropertyAllDetails property={property} leadTypes={leadTypes}/>
+      <PropertyAllDetails property={property} leadTypes={leadTypes} userDetail={userDetail}/>
     </div>
   );
 }

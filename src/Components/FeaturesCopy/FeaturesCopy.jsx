@@ -125,6 +125,7 @@ const FeaturesCopy = ({ projects }) => {
         return "slide-hidden";
     }
   };
+  console.log("slides", slides);
 
   return (
     <div className="features-copy-section">

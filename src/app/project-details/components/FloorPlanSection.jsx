@@ -23,7 +23,7 @@ const FloorPlanSection = () => {
       (val.template.slug.includes("plan"))
   ) || [];
   
-  const floorPlan = floorPlans.find(val =>
+  const floorPlan = floorPlans?.find(val =>
     val.template.slug.includes("floor")
   )?.field_value;
   
@@ -45,7 +45,7 @@ const FloorPlanSection = () => {
   //     images: ["/image-255.png", "/image-254.png"],
   //   },
   // ];
-  const formattedFloors = floorPlan.map((floor) => {
+  const formattedFloors = floorPlan?.map((floor) => {
     const floorObj = {};
     floor.forEach((item) => {
       if (item.field_type === "media") {

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import "./PropertyListing.css";
 import { useRouter } from "next/navigation";
 import SubHero from "./../SubHero/SubHero";
+import { slugify } from "@/utils/slugify";
 // import axios from "axios";
 // import {get} from "@/lib/api";
 // const properties = Array.from({ length: 8 }, (_, index) => ({
@@ -18,15 +19,21 @@ import SubHero from "./../SubHero/SubHero";
 
 export const PropertyCard = ({ property, handleViewProjectlist }) => {
 
+console.log("property", property)
+  const handleNavigate = async () => {
+   const slug = await slugify(`${bedroom} ${areasqft} ${property.propertyType[0]?.property_type_name}-for-${property?.purpose_id_name}-in-${property?.state.name}`)
+    handleViewProjectlist(`${slug}?id=${property?.id}`);
+  }
+
   const bedroom = property.custom_field_values?.find(
     (field) => field.field_label === "Bedrooms"
   )?.field_value;
   const areasqft = property.custom_field_values?.find(
     (field) => field.field_label === "Area Sq Ft"
   )?.field_value;
-const furnishStatus =  property.custom_field_values?.find(
-  (field) => field.field_label === "Furnishing Status"
-)?.field_value;
+  const furnishStatus = property.custom_field_values?.find(
+    (field) => field.field_label === "Furnishing Status"
+  )?.field_value;
   return (
     <div className="property-card">
       <img
@@ -76,20 +83,20 @@ const furnishStatus =  property.custom_field_values?.find(
 
 
         <div className="property-details body-text-14 bord-bottom">
-          {property.property_status_id_name && 
-          <span className="property-status-1">
-            {property.property_status_id_name}
-          </span>}
+          {property.property_status_id_name &&
+            <span className="property-status-1">
+              {property.property_status_id_name}
+            </span>}
           {furnishStatus &&
-          <span className="property-carpet-area">
-            {furnishStatus}
-          </span>}
+            <span className="property-carpet-area">
+              {furnishStatus}
+            </span>}
         </div>
       </div>
 
       <div
         className="btn-property-detail btn-more-details"
-        onClick={handleViewProjectlist}
+        onClick={handleNavigate}
       >
         More Details
       </div>
@@ -104,8 +111,8 @@ const PropertyListing = ({ propertyList }) => {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const handleViewProjectlist = (id) => {
-    router.push(`/propertydetails/${id}`);
+  const handleViewProjectlist = (slug) => {
+    router.push(`/propertydetails/${slug}`);
   };
   // console.log("env",process.env.LARAVEL_API_BASE_URL)
 
@@ -145,7 +152,7 @@ const PropertyListing = ({ propertyList }) => {
                 <PropertyCard
                   key={property.id}
                   property={property}
-                  handleViewProjectlist={() => handleViewProjectlist(property.id)}
+                  handleViewProjectlist={handleViewProjectlist}
                 />
               ))
             ) : (

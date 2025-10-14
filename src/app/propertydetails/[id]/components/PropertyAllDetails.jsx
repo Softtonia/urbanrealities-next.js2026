@@ -15,7 +15,8 @@ import PropertyAmenities from "./PropertyAmenities";
 
 
 
-const PropertyDetails = ({property,leadTypes}) => {
+const PropertyDetails = ({property,leadTypes,userDetail}) => {
+  console.log("property details",userDetail)
 
   return (
     <div>
@@ -33,7 +34,7 @@ const PropertyDetails = ({property,leadTypes}) => {
             </div>
             <div className="col-4 small-col">
               <Projectactive />
-              <Projectagent property={property}/>
+              <Projectagent property={property} userDetail={userDetail} />
               <PropertyEnquiryFrom  property={property} leadTypes={leadTypes}/>
             </div>
 

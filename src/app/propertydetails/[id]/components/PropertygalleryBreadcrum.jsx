@@ -28,15 +28,16 @@ const PropertygalleryBreadcrum = ({ property }) => {
   }, [pathname]);
   console.log(property)
 
-  const hero =
-    property?.repeater_fields?.filter(
+const hero = Array.isArray(property?.repeater_fields)
+  ? property.repeater_fields.filter(
       (val) =>
         (val?.template?.slug?.startsWith("herosection") ||
           val?.template?.slug?.startsWith("overview")) &&
         (val?.template?.slug?.includes("price") ||
           val?.template?.slug?.includes("gallery") ||
           val?.template?.slug?.includes("built-up-area"))
-    ) || [];
+    )
+  : [];
 
 
   const price = hero.find(val =>
@@ -54,17 +55,7 @@ const PropertygalleryBreadcrum = ({ property }) => {
   console.log(sqft, editgallery)
 
 
-  const priceField = property?.repeater_fields?.find(
-    (field) => field?.template?.name === "Property.price"
-  );
-
-  const sqftField = property?.repeater_fields?.find(
-    (field) => field?.template?.name === "Area.sq.ft"
-  );
-
-  const galleryField = property?.repeater_fields?.find(
-    (field) => field?.template?.name === "Property.gallery"
-  );
+  
 
   // store it in a variable
   // const price = priceField ? priceField.field_value : null;
@@ -89,7 +80,7 @@ const PropertygalleryBreadcrum = ({ property }) => {
               </span>
               {/* <span className="description">{sqft} sqft </span> */}
               <span className="description">
-                {sqft} sqft{" "}
+                {sqft} {sqft && `sqft `}
                 {property.propertyType
                   ?.map((value) => value.property_type_name)
                   .join(", ")}{" "}
@@ -129,7 +120,7 @@ const PropertygalleryBreadcrum = ({ property }) => {
           <div className="gallery-content">
             <div className="main-image">
               <img
-                src={property?.featured_image ? property.featured_image : "/living.png"}
+                src={property?.featured_image ? property?.featured_image : "/living.png"}
                 alt="Main"
                 width={832}
                 height={493}
@@ -137,37 +128,48 @@ const PropertygalleryBreadcrum = ({ property }) => {
               />
             </div>
             <div className="side-images">
-
+              {/* Main Image */}
               <img
-                src={editgallery[0] ? editgallery[0] : "/kitchen.png"}
-                alt="img"
+                src={editgallery?.[0] || "/kitchen.png"}
+                alt="Main"
                 width={584}
                 height={246}
                 className="project-img"
               />
-              <div className="overlay-view d-flex">
-                <div className="side-sub-image">
-                  <img
-                    src={editgallery[1] ? editgallery[1] : "/patio.png"}
-                    alt="img"
-                    width={274}
-                    height={227}
-                    className="project-thumb-img"
-                  />
-                </div>
 
-                <div className="view-more">
-                  <img
-                    src={editgallery[2] ? editgallery[2] : "/pool.png"}
-                    alt="img"
-                    width={274}
-                    height={227}
-                    className="project-thumb-img"
-                  />
-                  {/* <span className="overlay-text">View All 15 Photos</span> */}
+              {/* Sub Images */}
+              {editgallery?.length > 1 && (
+                <div className="overlay-view d-flex">
+                  {/* Second Image */}
+                  {editgallery?.[1] && (
+                    <div className="side-sub-image">
+                      <img
+                        src={editgallery[1]}
+                        alt="Sub Image"
+                        width={274}
+                        height={227}
+                        className="project-thumb-img"
+                      />
+                    </div>
+                  )}
+
+                  {/* Third Image */}
+                  {editgallery?.[2] && (
+                    <div className="view-more">
+                      <img
+                        src={editgallery[2]}
+                        alt="Sub Image"
+                        width={274}
+                        height={227}
+                        className="project-thumb-img"
+                      />
+                      {/* <span className="overlay-text">View All {editgallery.length} Photos</span> */}
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
             </div>
+
           </div>
         </div>
       </div>

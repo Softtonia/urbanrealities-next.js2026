@@ -191,7 +191,7 @@ export default function AboutProject() {
           </>
           : null}
       </div>
-      {project.property_status.legth > 0 || price &&
+      {project?.propertyStatus?.length > 0 || price &&
         <div className={styles["aboutProject-certificates"]}>
           <p className={styles["aboutProject-whybuy-title"]}>₹{price}</p>
           <p className={styles["aboutProject-para-box"]}>Rent: ₹{rent} </p>

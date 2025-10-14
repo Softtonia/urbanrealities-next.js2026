@@ -14,16 +14,30 @@ const Propertyareadata = ({ property }) => {
   const [showMore, setShowMore] = useState(false);
 
   // Filter repeater fields
-  const areaFields = property?.repeater_fields?.filter(
-    (f) =>
-      f?.template?.name?.startsWith("property.area") ||
-      f?.template?.name?.startsWith("property.furnishing")
-  ) || [];
+ const areaFields = Array.isArray(property?.repeater_fields)
+  ? property.repeater_fields.filter(
+      (val) =>
+        val?.template?.slug?.startsWith("overview") &&
+        // val?.template?.slug?.includes("area") &&
+        !val?.template?.slug?.includes("bedroom") &&
+        !val?.template?.slug?.includes("bathroom") &&
+        !val?.template?.slug?.includes("balconies") &&
+        !val?.template?.slug?.includes("lift") &&
+         !val?.template?.slug?.includes("furnish") &&
+        !val?.template?.slug?.includes("parking") &&
+        !val?.template?.slug?.includes("price")
+    )
+  : [];
+  // const areaFields = Array.isArray(property?.repeater_fields) ? property?.repeater_fields?.filter(
+  //   (f) =>
+  //     f?.template?.name?.startsWith("property.area") ||
+  //     f?.template?.name?.startsWith("property.furnishing")
+  // ) || [] : [];
 
   // Map filtered fields to displayable structure
   const repeaterData = areaFields.map((f) => ({
     label: f.field_label,
-    value: f?.template?.name?.startsWith("property.area") ? (
+    value: f?.template?.slug?.includes("area") ? (
       <AreaUnitDropdown baseSqft={f.field_value} />
     ) : (
       f.field_value
@@ -32,9 +46,9 @@ const Propertyareadata = ({ property }) => {
 
   // Always include project, developer, and location
   const staticData = [
-    { label: "Project", value: property?.project_id_name, link: `/project-details?id=${property?.project_id }` },
+    { label: "Project", value: property?.project_id_name, link: `/project-details?name=${property?.project_id_name}&id=${property?.project_id}` },
     { label: "Developer", value: property?.Developer_id_name },
-    { 
+    {
       label: "Address",
       value: (
         <>
@@ -60,7 +74,7 @@ const Propertyareadata = ({ property }) => {
           <div key={index}>
             <p className={styles.label}>{item.label}</p>
             <div className={styles.value}>
-              {item.link ? <Link href={item.link}>{item.value}</Link> : item.value}
+              {item.link ? <Link href={item.link} style={{color:'black'}}>{item.value}</Link> : item.value}
             </div>
           </div>
         ))}

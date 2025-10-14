@@ -5,12 +5,12 @@ import "./PropertyEnquiryFrom.css";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
 const PropertyEnquiryFrom = ({ property, leadTypes }) => {
   const { token } = useSiteSettings();
-  const params = useParams();
-  const id = params?.id;
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
 
   const [showOTP, setShowOTP] = useState(false);
   const [otp, setOtp] = useState("");
@@ -54,6 +54,7 @@ const PropertyEnquiryFrom = ({ property, leadTypes }) => {
       user_ids: [property.created_by.id],
       lead_type_id: '1', // add lead type id here
     };
+
     setFormValues(payload);
 
     try {
@@ -158,7 +159,7 @@ const PropertyEnquiryFrom = ({ property, leadTypes }) => {
         {errors.phone && <p style={{ color: "red", fontSize: "12px" }}>{errors.phone}</p>}
 
         {/* Dropdown for lead type */}
-        
+
         <textarea name="message" placeholder="Message" rows="4" className="enquiry-form__textarea"></textarea>
 
         <div className=" d-flex justify-content-center">
