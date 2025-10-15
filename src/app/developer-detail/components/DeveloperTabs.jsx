@@ -1,21 +1,23 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import styles from './DeveloperTabs.module.css'
+import { useDeveloper } from '../context/DeveloperContext';
 
-const tabs = [
-    "About Project",
-    "Properties",
-    "Top Advertiser",
-    "Floor Plan & Unit",
-    "Project Details",
-    "Property Rate",
-    "About Developer",
-    "Near By Project",
-    "Others Project"
-  ];
+const multiTabs = [
+    "Overview",
+    "Ongoing Project",
+    // "Completed Project",
+    "Photos",
+    "FAQ",
+    "Vision",
+    "Home Loan Offers",
+    // "Near By Project",
+    // "Others Project"
+];
 
 const DeveloperTabs = () => {
-    const [activeTab, setActiveTab] = useState("about-project");
+    const [activeTab, setActiveTab] = useState("overview");
+    const {section} =useDeveloper()
 
     useEffect(() => {
         const handleScroll = () => {
@@ -42,6 +44,8 @@ const DeveloperTabs = () => {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, [activeTab]);
+
+    const tabs = multiTabs.filter(tab => section[tab]);
 
     return (
         <div className={styles.tabContainer}>

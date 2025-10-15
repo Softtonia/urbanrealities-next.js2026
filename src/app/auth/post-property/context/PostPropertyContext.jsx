@@ -14,8 +14,8 @@ export function PostPropertyProvider({ children }) {
             basicDetails: {
               purpose_id: "",
               property_id: "",
-              property_type_id: "",
-              property_status_id: "",
+              property_type_id: [],
+              property_status_id: [],
             },
             locationDetails: {
               country_id: null,

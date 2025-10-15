@@ -19,21 +19,45 @@ import { slugify } from "@/utils/slugify";
 
 export const PropertyCard = ({ property, handleViewProjectlist }) => {
 
-console.log("property", property)
+  console.log("property", property)
   const handleNavigate = async () => {
-   const slug = await slugify(`${bedroom} ${areasqft} ${property.propertyType[0]?.property_type_name}-for-${property?.purpose_id_name}-in-${property?.state.name}`)
+    const slug = await slugify(`${bedroom && bedroom} ${area && area} ${property.propertyType[0]?.property_type_name}-for-${property?.purpose_id_name}-in-${property?.state.name}`)
     handleViewProjectlist(`${slug}?id=${property?.id}`);
   }
 
-  const bedroom = property.custom_field_values?.find(
-    (field) => field.field_label === "Bedrooms"
+  const hero = Array.isArray(property?.custom_field_values)
+    ? property.custom_field_values.filter(
+      (val) =>
+        (val?.template?.slug?.startsWith("herosection") ||
+          val?.template?.slug?.startsWith("overview")) &&
+        (val?.template?.slug?.includes("bhk") ||
+          val?.template?.slug?.includes("furnished") ||
+          val?.template?.slug?.includes("built-up-area"))
+    )
+    : [];
+
+  console.log("herroo", hero)
+  const bedroom = hero.find(val =>
+    val?.template?.slug.includes("bhk")
   )?.field_value;
-  const areasqft = property.custom_field_values?.find(
-    (field) => field.field_label === "Area Sq Ft"
+
+  const furnished = hero.find(val =>
+    val?.template?.slug.includes("furnished")
   )?.field_value;
-  const furnishStatus = property.custom_field_values?.find(
-    (field) => field.field_label === "Furnishing Status"
+
+  const area = hero.find(val =>
+    val?.template?.slug.includes("built-up-area")
   )?.field_value;
+
+  // const area = property.custom_field_values?.find(
+  //   (field) => field.field_label === "Bedrooms"
+  // )?.field_value;
+  // const areasqft = property.custom_field_values?.find(
+  //   (field) => field.field_label === "Area Sq Ft"
+  // )?.field_value;
+  // const furnishStatus = property.custom_field_values?.find(
+  //   (field) => field.field_label === "Furnishing Status"
+  // )?.field_value;
   return (
     <div className="property-card">
       <img
@@ -64,9 +88,9 @@ console.log("property", property)
               </span>
               <span className="pipe-divider"> | </span>
             </>
-            }{areasqft &&
+            }{area &&
               <span >
-                {areasqft}sq.ft
+                {area}sq.ft
               </span>
             }
 
@@ -87,9 +111,9 @@ console.log("property", property)
             <span className="property-status-1">
               {property.property_status_id_name}
             </span>}
-          {furnishStatus &&
+          {furnished &&
             <span className="property-carpet-area">
-              {furnishStatus}
+              {furnished}
             </span>}
         </div>
       </div>

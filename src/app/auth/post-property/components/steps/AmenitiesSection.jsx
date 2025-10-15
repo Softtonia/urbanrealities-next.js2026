@@ -19,8 +19,8 @@ const AmenitiesSection = () => {
 
     const aminityFields = (Array.isArray(formData.custom_field) ? formData.custom_field : []).filter(field => {
         return field.template?.name?.toLowerCase().startsWith("project.features.");
-      });
-      
+    });
+
 
     console.log("fields", aminityFields)
     const { token } = useSiteSettings();
@@ -104,8 +104,15 @@ const AmenitiesSection = () => {
 
             // Add basicDetails
             Object.entries(formData.basicDetails || {}).forEach(([key, value]) => {
-                formDataToSend.append(key, value);
+                if (Array.isArray(value)) {
+                    // For arrays, append each value
+                    value.forEach((v) => formDataToSend.append(`${key}[]`, v));
+                } else {
+                    // For single values, append directly
+                    formDataToSend.append(key, value ?? "");
+                }
             });
+
 
             // Add locationDetails
             Object.entries(formData.locationDetails || {}).forEach(([key, value]) => {
@@ -139,7 +146,6 @@ const AmenitiesSection = () => {
 
             // Append extra fields
             formDataToSend.append('featured_image', formData.featured_image.file)
-            formDataToSend.append('token', token);
             formDataToSend.append('live_status', "Under Review");
             formDataToSend.append('temporary_status', "Active");
 
@@ -151,6 +157,9 @@ const AmenitiesSection = () => {
             // 3. Send API request
             const response = await fetch("/api/post-property/add-property", {
                 method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
                 body: formDataToSend,
             });
 

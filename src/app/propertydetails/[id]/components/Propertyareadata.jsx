@@ -14,8 +14,11 @@ const Propertyareadata = ({ property }) => {
   const [showMore, setShowMore] = useState(false);
 
   // Filter repeater fields
- const areaFields = Array.isArray(property?.repeater_fields)
-  ? property.repeater_fields.filter(
+  const repeaterFields = property?.repeater_fields
+  ? Object.values(property.repeater_fields)
+  : [];
+ const areaFields = Array.isArray(repeaterFields)
+  ? repeaterFields?.filter(
       (val) =>
         val?.template?.slug?.startsWith("overview") &&
         // val?.template?.slug?.includes("area") &&

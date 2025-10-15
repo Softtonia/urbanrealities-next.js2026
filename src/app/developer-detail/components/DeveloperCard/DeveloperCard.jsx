@@ -12,42 +12,114 @@ import {
 import { MdOutlineChair, MdOutlineCorporateFare } from "react-icons/md";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import styles from "./DeveloperCard.module.css";
+import DeveloperDescription from "@/Components/Truncate/Truncate";
+import { useRouter } from "next/navigation";
 
-export default function DeveloperCard() {
+export default function DeveloperCard({ project }) {
+  const router  = useRouter();
+  const heroSectionFields = project?.custom_field_values?.filter(
+    (val) =>
+      val?.template?.slug?.startsWith("herosection") &&
+      (val.template.slug.includes("banner"))
+  ) || [];
+  const overview = project?.custom_field_values?.filter(
+    (val) =>
+      val?.template?.slug?.startsWith("overview") &&
+      (val.template.slug.includes("tower")
+        || val.template.slug.includes("bhk")
+        || val.template.slug.includes("launch")
+        || val.template.slug.includes("price")
+      )) || [];
+  console.log("overview", project)
+
+  const tower = overview.find(val =>
+    val.template.slug.includes("tower")
+  )?.field_value;
+
+
+
+  const bhk = overview.find(val =>
+    val.template.slug.includes("bhk")
+  )?.field_value;
+
+  const launchDate = overview.find(val =>
+    val.template.slug.includes("launch")
+  )?.field_value;
+
+  const price = overview.find(val =>
+    val.template.slug.includes("price")
+  )?.field_value;
+
+
+  const heroBanner = heroSectionFields?.find(val =>
+    val.template.slug.includes("banner")
+  )?.field_value;
+
+
+  const tags = [
+    {
+      icon: <MdOutlineChair className={styles["card-icon"]} />,
+      label: bhk,
+    },
+    {
+      icon: <MdOutlineCorporateFare className={styles["card-icon"]} />,
+      label: tower,
+    },
+    {
+      icon: <FaRulerCombined className={styles["card-icon"]} />,
+      label: price,
+    },
+    // {
+    //   icon: <FaBuilding className={styles["card-icon"]} />,
+    //   label: "Extra Tag",
+    // },
+  ]
+    .filter((val) => {
+      const label = val?.label;
+      if (Array.isArray(label)) return label.length > 0;
+      if (typeof label === "string") return label.trim().length > 0;
+      if (typeof label === "number") return true;
+      return false;
+    })
+    .slice(0, 3);
+
+
+  const handleNavigate = () => {
+    router.push(`/project-details?name=${project.name}&property-name=${project.property_id_name}&id=${project.id}`);
+  }
+
+
   return (
     <div className={styles.card}>
-        <div className={styles.imageContainer}>
-          <span className={styles.badge}>Featured</span>
-          <FaRegBookmark className={styles.tagIconOnImage} />
-          <img
-            src="/image-card.png"
-            alt="Property"
-            className={`${styles["image-card"]}`}
-          />
-        </div>
+      <div className={styles.imageContainer}>
+        <span className={styles.badge}>Featured</span>
+        <FaRegBookmark className={styles.tagIconOnImage} />
+        <img
+          src={heroBanner ? heroBanner : '/image-card.png'}
+          alt="Property"
+          className={`${styles["image-card"]}`}
+        />
+      </div>
       {/* Right Side - Content */}
       <div className={styles.cardContent}>
-            <h3 className={styles.title}>NEW Ganesh Property Pvt Ltd</h3>
+        <h3 className={styles.title}>{project.name}</h3>
         {/* Top Section */}
         <div className={styles.cardHeader}>
           <div className={styles.headerLeft}>
             <p className={styles.location}>
-              <FaMapMarkerAlt className={styles.locationIcon} /> Ernakulam,
-              Kerla
+              <FaMapMarkerAlt className={styles.locationIcon} /> {project?.city?.name} {project?.state?.name}
             </p>
-            <p className={styles.price}>3 cr onwards</p>
+            <p className={styles.price}>{price} onwards</p>
           </div>
           <div className={styles.headerRight}>
-            <p className={styles.developerInfo}>By: DLF Developer Pvt. ltd</p>
-            <p className={styles.possessionInfo}>Possession in: 2025</p>
+            <p className={styles.developerInfo}>By: {project?.developer?.name}</p>
+            <p className={styles.possessionInfo}>Possession in: {launchDate}</p>
           </div>
         </div>
         {/* Pricing & Description */}
         <div className={styles.pricingAndDescription}>
           <p className={styles.description}>
-            Exclusive housing welcomes the ultra modern and experience space
-            rising towers to capture the city's bigger and uninterrupted view
-            from the balcony.
+            <DeveloperDescription description={project?.description} />
           </p>
         </div>
 
@@ -55,36 +127,15 @@ export default function DeveloperCard() {
         <div className={styles.tagsAndButton}>
           <div className={styles.tagContainer}>
             <div className={styles.cardtags}>
-              {[
-                {
-                  icon: <MdOutlineChair className={styles["card-icon"]} />,
-                  label: "3BHK",
-                },
-                {
-                  icon: (
-                    <MdOutlineCorporateFare className={styles["card-icon"]} />
-                  ),
-                  label: "4–5 Floor",
-                },
-                {
-                  icon: <FaRulerCombined className={styles["card-icon"]} />,
-                  label: "2.82Cr - 3.65Cr",
-                },
-                {
-                  icon: <FaBuilding className={styles["card-icon"]} />,
-                  label: "Extra Tag",
-                },
-              ]
-                .slice(0, 3)
-                .map((tag, index) => (
-                  <span key={index} className={styles.cardtag}>
-                    {tag.icon}
-                    {tag.label}
-                  </span>
-                ))}
+              {tags?.map((tag, index) => (
+                <span key={index} className={styles.cardtag}>
+                  {tag.icon}
+                  {tag.label}
+                </span>
+              ))}
             </div>
           </div>
-          <button className={styles.viewProjectButton}>View Project</button>
+          <button className={styles.viewProjectButton} onClick={handleNavigate}>View Project</button>
         </div>
       </div>
     </div>

@@ -14,7 +14,7 @@ export default function PropertyProfileStep() {
   const [errors, setErrors] = useState({});
   const router = useRouter();
 
-  const model_fields = Object.entries(formData.basicDetails).map(([key, value]) => {
+  const model_fields = Object.entries(formData.basicDetails || {}).map(([key, value]) => {
     let modelName = key;
 
     // Special case: if it's purpose_id → make it "purpose"
@@ -27,9 +27,10 @@ export default function PropertyProfileStep() {
 
     return {
       model: modelName,
-      condition: [value]
+      condition: Array.isArray(value) ? value : [value]
     };
   });
+
 
 
   useEffect(() => {
@@ -189,7 +190,7 @@ export default function PropertyProfileStep() {
 
   return (
     <div className={styles.selectedCategory}>
-         <div className={`${styles.backWrapper} d-flex gap-2 mb-3`}>
+      <div className={`${styles.backWrapper} d-flex gap-2 mb-3`}>
         <IoArrowBackSharp size={20} onClick={goBack} className="back-btn" />
         <p className="m-0">Back</p>
       </div>
@@ -223,7 +224,7 @@ export default function PropertyProfileStep() {
                       }}
                     >
                       {field.field_label}{" "}
-                      <span style={{ color: "red" }}>{field.required ==="yes" ? "*" : ""}</span>
+                      <span style={{ color: "red" }}>{field.required === "yes" ? "*" : ""}</span>
                     </label>
 
                     {/* Units field */}
@@ -266,7 +267,7 @@ export default function PropertyProfileStep() {
                     ) : field.field_type === "text" ? (
                       <input
                         type="text"
-                        placeholder={field.field_placeholder }
+                        placeholder={field.field_placeholder}
                         name={fieldKey}
                         value={fieldValue}
                         onChange={(e) => handleChange(fieldKey, e.target.value)}

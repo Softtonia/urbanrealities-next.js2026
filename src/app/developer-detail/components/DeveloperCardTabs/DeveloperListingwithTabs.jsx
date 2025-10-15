@@ -48,18 +48,32 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
 }
 
 
-const SingleListingWithTab = ({DevHeading="Ongoing Project"}) => {
-  const {ongoingProjects} =useDeveloper();
+const SingleListingWithTab = ({DevHeading="Ongoing Project",listingFor="ongoing"}) => {
+  const {ongoingProjects,completedProjects} = useDeveloper();
+  const [listing,setListing] = useState([]);
+
+useEffect(() => {
+    if (listingFor === "ongoing") {
+      setListing(ongoingProjects || []);
+    }else if (listingFor === "completed") {
+      setListing(completedProjects || []);
+    }else {
+      setListing([]);
+    }
+  }, [listingFor]);
+
+  console.log("listingFor", listing);
+
   const totalProperties = Array(96).fill(1); // Dummy 24 cards
   const cardsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(totalProperties.length / cardsPerPage);
+  const totalPages = Math.ceil(listing.length / cardsPerPage);
   const [isLoading, setIsLoading] = useState(false);
 
   const pageNumbers = getPagination(currentPage, totalPages, 6);
 
   
-  console.log("ongoingProjects", ongoingProjects)
+  console.log("ongoingProjects", listing)
 
 
   useEffect(() => {
@@ -71,12 +85,14 @@ const SingleListingWithTab = ({DevHeading="Ongoing Project"}) => {
     return () => clearTimeout(timeout);
   }, [currentPage]);
 
+  // if(!listing.length()>0) return null
+
 
   return (
     <div>
     <div className={styles.listing}>
       <h2>{DevHeading}</h2>
-      <DeveloperCardTabs />
+      {/* <DeveloperCardTabs /> */}
 
         {/* Property list + Loader wrapper */}
         <div className={styles.propertyListWrapper}>
@@ -86,7 +102,7 @@ const SingleListingWithTab = ({DevHeading="Ongoing Project"}) => {
             <DeveloperList
               currentPage={currentPage}
               cardsPerPage={cardsPerPage}
-              totalProperties={totalProperties}
+              totalProperties={listing}
             />
           )}
         </div>

@@ -27,7 +27,7 @@ const page = () => {
           <FAQAccordion />
         </div>
         <div className={styles.projectFAQ}>
-          <ProjectFAQ />
+          {/* <ProjectFAQ /> */}
         </div>
 
       </div>

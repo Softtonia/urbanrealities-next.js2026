@@ -21,12 +21,14 @@ const iconMap = {
 
 const PropertyHighlights = ({ property }) => {
   // list of all templates you want to show
-  const templates = ["bedroom", "bathrooms", "balconies", "furnished","lift","built-up","parking"];
-
-  const overview = Array.isArray(property?.repeater_fields)
-    ? property.repeater_fields.filter(
+  const templates = ["bedroom", "bathrooms", "balconies", "furnished", "lift", "built-up", "parking"];
+  const repeaterFields = property?.repeater_fields
+    ? Object.values(property.repeater_fields)
+    : [];
+  const overview = Array.isArray(repeaterFields)
+    ? repeaterFields.filter(
       (val) =>
-        (val?.template?.slug?.startsWith("overview")) )
+        (val?.template?.slug?.startsWith("overview")))
     : [];
 
 

@@ -27,9 +27,11 @@ const PropertygalleryBreadcrum = ({ property }) => {
     }
   }, [pathname]);
   console.log(property)
-
-const hero = Array.isArray(property?.repeater_fields)
-  ? property.repeater_fields.filter(
+  const repeaterFields = property?.repeater_fields
+    ? Object.values(property.repeater_fields)
+    : [];
+  const hero = Array.isArray(repeaterFields)
+    ? repeaterFields?.filter(
       (val) =>
         (val?.template?.slug?.startsWith("herosection") ||
           val?.template?.slug?.startsWith("overview")) &&
@@ -37,7 +39,7 @@ const hero = Array.isArray(property?.repeater_fields)
           val?.template?.slug?.includes("gallery") ||
           val?.template?.slug?.includes("built-up-area"))
     )
-  : [];
+    : [];
 
 
   const price = hero.find(val =>
@@ -52,10 +54,10 @@ const hero = Array.isArray(property?.repeater_fields)
     val?.template?.slug.includes("built-up-area")
   )?.field_value;
 
-  console.log(sqft, editgallery)
+  console.log("heroo", property?.repeater_fields)
 
 
-  
+
 
   // store it in a variable
   // const price = priceField ? priceField.field_value : null;

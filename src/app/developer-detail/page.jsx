@@ -50,6 +50,24 @@ async function fetchProject(id) {
   }
 }
 
+async function fetchCompletedProject(id) {
+  try {
+    const response = await getssr(`/api/get-all-completed-projects-by-developer?developer_id=${id}`);
+
+    // Handle non-200 responses
+    if (!response || response.status >= 400) {
+      console.error(`❌ API Error ${response?.status}: ${response?.statusText}`);
+      return { error: true, status: response?.status || 500 };
+    }
+
+    const data = response?.data?.data;
+    return data || { error: true, status: 404 };
+  } catch (err) {
+    console.error("Error fetching project:", err);
+    return { error: true, status: err?.response?.status || 500 };
+  }
+}
+
 const DeveloperPage = async ({ searchParams }) => {
 
 
@@ -60,13 +78,34 @@ const DeveloperPage = async ({ searchParams }) => {
 
   // Fetch ongoing projects only if developer exists
   const ongoingProjects = developer?.id ? await fetchProject(developer.id) : [];
+  const completedProjects = developer?.id ? await fetchCompletedProject(developer.id) : [];
 
-  const DevHeading = developer?.name
+  const ongoing = developer?.name
     ? `Ongoing Projects by ${developer.name}`
     : "Ongoing Projects";
-console.log("developer", ongoingProjects);
+  const completed = developer?.name
+    ? `Completed Projects by ${developer.name}`
+    : "Completed Projects";
+  console.log("developer", completedProjects);
+  const section = {
+    Overview: true,
+    "Ongoing Project": true,
+    "Completed Project": true,
+    Photos: true,
+    FAQ: true,
+    Vision: true,
+    "Home Loan Offers": true,
+  };
+
+  if (!completedProjects) {
+    section["Completed Project"] = false;
+  }
+  //  if (!completedProjects) {
+  //   section["Ongoing Project"] = false;
+  // }
+
   return (
-    <DeveloperProvider value={{developer,ongoingProjects}}>
+    <DeveloperProvider value={{ developer, ongoingProjects, completedProjects, section }}>
       <div>
         <DeveloperBreadcrumb />
         <DeveloperBanner />
@@ -76,32 +115,62 @@ console.log("developer", ongoingProjects);
         <div className="container">
           <div className="row tab-row">
             <div className={`col-9 ${styles.largeTabCol}`}>
-              <DeveloperStats />
-              <DeveloperListingwithTabs DevHeading={DevHeading} />
+              <section id="overview">
+                <DeveloperStats />
+              </section>
+              
+              {ongoingProjects.length > 0 && (
+                <section id="ongoing-project">
+
+                  <DeveloperListingwithTabs DevHeading={ongoing} listingFor="ongoing" />
+                </section>
+              )}
+
+              {completedProjects.length > 0 && (
+                <section id="completed-project">
+                  <DeveloperListingwithTabs DevHeading={completed} listingFor="completed" />
+                </section>
+              )}
             </div>
 
+
             <div className={`col-12 p-0 ${styles.mobileCol}`}>
-              <section id="all-project">
+              <section id="overview">
                 <DeveloperStats />
-                <DeveloperListingwithTabs />
               </section>
-              <section id="nearby-projects">
+              {ongoingProjects.length > 0 && (
+                <section id="ongoing-project">
+                  <DeveloperListingwithTabs DevHeading={ongoing} listingFor="ongoing" />
+                </section>
+              )}
+
+              {completedProjects.length > 0 && (
+                <section id="completed-project">
+                  <DeveloperListingwithTabs DevHeading={completed} listingFor="completed" />
+                </section>
+              )}
+              {/* <section id="nearby-projects">
                 <DeveloperListingwithTabs
                   DevHeading={`other Project `}
                 />
-              </section>
-              <section id="completed-projects">
-                <DeveloperListingwithTabs
-                  DevHeading={`complete Project`}
-                />
-              </section>
+              </section> */}
+
             </div>
 
             <div className={`col-12 ${styles.smallTabCol}`}>
-              <DeveloperPhotos />
-              <ProjectFAQ />
-              <DeveloperVision />
-              <HomeLoanOffers />
+              <section id="photos">
+                <DeveloperPhotos />
+              </section>
+              <section id="faq">
+                <ProjectFAQ />
+              </section>
+              <section id="vision">
+                <DeveloperVision />
+              </section>
+              <section id="home-loan-offers">
+
+                <HomeLoanOffers />
+              </section>
             </div>
             {/* <div className={`col-12 p-0 ${styles.mobileCol}`}>
               <section id="all-project">

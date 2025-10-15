@@ -17,7 +17,7 @@ const multiTabs = [
 ];
 
 const ProjectTabs = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("Overview");
   const { section } = useProject();
   console.log("check",section)
   useEffect(() => {

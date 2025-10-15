@@ -22,7 +22,7 @@ export async function proxyToLaravel(req, endpoint, method = "GET", body = null)
             "x-forwarded-for": req.headers.get("x-forwarded-for"),
             "content-type": req.headers.get("content-type"),
         };
-
+        console.log(body)
         const safeHeaders = {};
         Object.entries(possibleHeaders).forEach(([key, value]) => {
             if (value) safeHeaders[key] = value;

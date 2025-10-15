@@ -188,8 +188,8 @@ export default function StepContent({purposeList,propertyListing}) {
                   checked={selectedProperty === type.id}
                   onChange={() => {
                     setSelectedProperty(type.id);
-                    setSelectedPropertyType("");
-                    setSelectedPropertyStatus("");
+                    setSelectedPropertyType([]);
+                    setSelectedPropertyStatus([]);
                   }}
                   className={styles.radioInput}
                 />
@@ -209,9 +209,9 @@ export default function StepContent({purposeList,propertyListing}) {
         {propertyType.map((cat) => (
           <button
             key={cat.id}
-            className={`${styles.optionBtn} ${selectedPropertyType === cat.id ? styles.selected : ""}`}
+            className={`${styles.optionBtn} ${selectedPropertyType[0] === cat.id ? styles.selected : ""}`}
             onClick={() => {
-              setSelectedPropertyType(cat.id);
+              setSelectedPropertyType([cat.id]);
             }}
           >
             {cat.name}
@@ -228,9 +228,9 @@ export default function StepContent({purposeList,propertyListing}) {
             {propertyStatus.map((cat) => (
               <button
                 key={cat.id}
-                className={`${styles.optionBtn} ${selectedPropertyStatus === cat.id ? styles.selected : ""}`}
+                className={`${styles.optionBtn} ${selectedPropertyStatus[0] === cat.id ? styles.selected : ""}`}
                 onClick={() => {
-                  setSelectedPropertyStatus(cat.id);
+                  setSelectedPropertyStatus([cat.id]);
                 }}
               >
                 {cat.name}

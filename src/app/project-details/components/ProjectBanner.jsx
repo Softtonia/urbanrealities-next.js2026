@@ -15,6 +15,11 @@ const ProjectBanner = () => {
       (val.template.slug.includes("banner"))
   ) || [];
 
+  
+  const heroBanner = heroSectionFields.find(val =>
+    val.template.slug.includes("banner")
+  )?.field_value;
+  
   // const overview = project?.repeater_fields?.filter(
   //   (val) =>
   //     val?.template?.slug?.startsWith("overview") &&
@@ -29,11 +34,6 @@ const ProjectBanner = () => {
   // const heroRera = heroSectionFields.find(val =>
   //   val.template.slug.includes("rera")
   // )?.field_value;
-
-  const heroBanner = heroSectionFields.find(val =>
-    val.template.slug.includes("banner")
-  )?.field_value;
-
 
   console.log(project)
 
