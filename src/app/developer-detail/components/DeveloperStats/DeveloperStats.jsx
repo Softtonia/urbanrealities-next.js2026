@@ -11,7 +11,7 @@ const projectsData = [
 ];
 
 const DeveloperStats = () => {
-  const developer = useDeveloper();
+  const {developer} = useDeveloper();
   console.log("Developer in Stats:", developer);
 
   const overview = developer?.repeater_fields?.filter(

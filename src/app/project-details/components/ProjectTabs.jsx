@@ -19,6 +19,7 @@ const multiTabs = [
 const ProjectTabs = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const { section } = useProject();
+  console.log("check",section)
   useEffect(() => {
     const handleScroll = () => {
       const sections = tabs.map((tab) =>

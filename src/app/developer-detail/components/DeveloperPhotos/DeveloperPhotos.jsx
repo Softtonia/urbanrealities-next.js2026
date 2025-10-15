@@ -13,7 +13,7 @@ import { useDeveloper } from "../../context/DeveloperContext";
 const visibleCount = 3;
 
 const DeveloperPhotos = () => {
-    const developer = useDeveloper();
+    const {developer} = useDeveloper();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [modalOpen, setModalOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);

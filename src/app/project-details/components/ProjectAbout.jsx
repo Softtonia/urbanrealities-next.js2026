@@ -168,26 +168,30 @@ export default function AboutProject() {
         ))}
         {launchDate || units || tower || bhk ?
           <>
+          {launchDate &&
             <div className={styles["aboutProject-box"]}>
               <p>Launch Date</p>
               <span>{launchDate}</span>
               <FaCalendarAlt className={styles["aboutProject-icon"]} />
-            </div>
+            </div>}
+            {units &&
             <div className={styles["aboutProject-box"]}>
               <p>Total Units</p>
               <span>{units}</span>
               <FaKey className={styles["aboutProject-icon"]} />
-            </div>
+            </div>}
+            {tower &&
             <div className={styles["aboutProject-box"]}>
               <p>Total Towers</p>
               <span>{tower}</span>
               <FaBuilding className={styles["aboutProject-icon"]} />
-            </div>
+            </div>}
+            {bhk &&
             <div className={styles["aboutProject-box"]}>
               <p>BHK</p>
               <span>{bhk}</span>
               <MdOutlineChair className={styles["aboutProject-icon"]} />
-            </div>
+            </div>}
           </>
           : null}
       </div>

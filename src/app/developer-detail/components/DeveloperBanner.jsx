@@ -4,11 +4,11 @@ import { useDeveloper } from "../context/DeveloperContext";
 import styles from "./DeveloperBanner.module.css";
 
 const DeveloperBanner = () => {
-  const project = useDeveloper();
+  const {developer} = useDeveloper();
 
   // ✅ Extract RERA number 
 
-  const heroSectionFields = project?.repeater_fields?.filter(
+  const heroSectionFields = developer?.repeater_fields?.filter(
     (val) =>
       val?.template?.slug?.startsWith("herosection") &&
       (val.template.slug.includes("experience") ||
@@ -17,7 +17,7 @@ const DeveloperBanner = () => {
         val.template.slug.includes("logo"))
   ) || [];
 
-  const overview = project?.repeater_fields?.filter(
+  const overview = developer?.repeater_fields?.filter(
     (val) =>
       val?.template?.slug?.startsWith("overview") &&
       (val.template.slug.includes("experience"))
@@ -40,7 +40,7 @@ const DeveloperBanner = () => {
     val.template.slug.includes("logo")
   )?.field_value;
 
-  console.log("Hero Section Fields:", project);
+  console.log("Hero Section Fields:", developer);
 
   return (
     <>
@@ -58,7 +58,7 @@ const DeveloperBanner = () => {
                 {heroRera && (
                   <h6 className={styles.rarea}>Rera No. - {heroRera ? heroRera : ''}</h6>
                 )}
-                <h6 className={styles.name}>{project?.name}</h6>
+                <h6 className={styles.name}>{developer?.name}</h6>
                 {overviewExperience && (
                   <h6 className={styles.builder}>{overviewExperience} Years</h6>
                 )}

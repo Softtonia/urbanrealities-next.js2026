@@ -4,7 +4,7 @@ import styles from "./DeveloperVision.module.css";
 import { useDeveloper } from "../../context/DeveloperContext";
 
 const DeveloperVision = () => {
-    const developer = useDeveloper();
+    const {developer} = useDeveloper();
     console.log("Developer in Stats:", developer);
 
     // ✅ Filter all repeater fields related to builder (vision, mission, values, chairman message)

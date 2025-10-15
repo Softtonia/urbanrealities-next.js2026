@@ -64,7 +64,7 @@ const ProjectFAQ = () => {
   //   </div>
   // );
 
-  const { project } = useProject();
+  const { project,setSection } = useProject();
   console.log("project in Stats:", project);
 
   const home = project?.repeater_fields?.filter(
@@ -84,6 +84,7 @@ const ProjectFAQ = () => {
   const faqs = faqslist?.filter(item => item[0].field_value !== null && item[0].field_value !== undefined);
   console.log("faqs", faqs)
   if (!faqs || faqs?.length === 0) {
+    setSection(prevSection => ({ ...prevSection, FAQ: false }));
     return null; // Don't render the FAQ section if there are no FAQs
   }
   return (

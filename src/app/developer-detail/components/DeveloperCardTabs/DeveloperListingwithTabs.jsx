@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import styles from './DeveloperListingwithTabs.module.css';
 import DeveloperList from "../DeveloperCard/DeveloperList"
 import DeveloperCardTabs from "./DeveloperCardTabs";
+import { useDeveloper } from "../../context/DeveloperContext";
 
 function getPagination(currentPage, totalPages, maxVisible = 6) {
   const pages = [];
@@ -48,6 +49,7 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
 
 
 const SingleListingWithTab = ({DevHeading="Ongoing Project"}) => {
+  const {ongoingProjects} =useDeveloper();
   const totalProperties = Array(96).fill(1); // Dummy 24 cards
   const cardsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,6 +57,9 @@ const SingleListingWithTab = ({DevHeading="Ongoing Project"}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const pageNumbers = getPagination(currentPage, totalPages, 6);
+
+  
+  console.log("ongoingProjects", ongoingProjects)
 
 
   useEffect(() => {

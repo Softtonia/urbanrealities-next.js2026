@@ -66,6 +66,8 @@ const Page = async ({ searchParams }) => {
   };
 
 
+
+
   return (
     <ProjectProvider value={{ project, section }}>
       <div>
@@ -77,7 +79,7 @@ const Page = async ({ searchParams }) => {
         <div className="container">
           <div className="row tab-row">
             <div className={`col-9 ${styles.largeTabCol}`}>
-              <section id="about-project">
+              <section id="overview">
                 <ProjectAbout />
               </section>
 

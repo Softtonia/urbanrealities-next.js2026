@@ -21,7 +21,7 @@ const loans = [
 ];
 const repeatedLoans = Array.from({ length: 9 }, (_, i) => loans[i % loans.length]);
 const HomeLoanOffers = () => {
-  const developer = useDeveloper();
+  const {developer} = useDeveloper();
   console.log("Developer in Stats:", developer);
 
   const home = (developer?.repeater_fields || []).filter((val) => {

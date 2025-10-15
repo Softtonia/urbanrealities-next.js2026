@@ -30,7 +30,7 @@ import { useDeveloper } from '@/app/developer-detail/context/DeveloperContext';
 //   },
 // ];
 const ProjectFAQ = () => {
-  const developer = useDeveloper();
+  const {developer} = useDeveloper();
   console.log("Developer in Stats:", developer);
 
   const home = developer?.repeater_fields?.filter(

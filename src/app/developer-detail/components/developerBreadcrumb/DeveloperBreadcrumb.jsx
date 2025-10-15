@@ -8,7 +8,7 @@ import { useCity } from "@/utils/CityContext";
 
 
 const DeveloperBreadcrumb = () => {
-    const developer = useDeveloper();
+    const {developer} = useDeveloper();
     const { city } = useCity();
     return (
         <>

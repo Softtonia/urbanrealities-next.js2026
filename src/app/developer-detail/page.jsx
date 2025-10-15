@@ -32,20 +32,41 @@ async function fetchDeveloper(id) {
   }
 }
 
-const DeveloperPage = async ({ searchParams }) => {
-  // const totalProperties = Array(96).fill(1); // Dummy 24 cards
-  // const cardsPerPage = 4;
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const totalPages = Math.ceil(totalProperties.length / cardsPerPage);
+async function fetchProject(id) {
+  try {
+    const response = await getssr(`/api/get-all-ongoing-projects-by-developer?developer_id=${id}`);
 
-  // const pageNumbers = getPagination(currentPage, totalPages, 6);
+    // Handle non-200 responses
+    if (!response || response.status >= 400) {
+      console.error(`❌ API Error ${response?.status}: ${response?.statusText}`);
+      return { error: true, status: response?.status || 500 };
+    }
+
+    const data = response?.data?.data;
+    return data || { error: true, status: 404 };
+  } catch (err) {
+    console.error("Error fetching project:", err);
+    return { error: true, status: err?.response?.status || 500 };
+  }
+}
+
+const DeveloperPage = async ({ searchParams }) => {
+
 
   const { id } = await searchParams;
 
+  // Fetch developer details
   const developer = await fetchDeveloper(id);
 
+  // Fetch ongoing projects only if developer exists
+  const ongoingProjects = developer?.id ? await fetchProject(developer.id) : [];
+
+  const DevHeading = developer?.name
+    ? `Ongoing Projects by ${developer.name}`
+    : "Ongoing Projects";
+console.log("developer", ongoingProjects);
   return (
-    <DeveloperProvider value={developer}>
+    <DeveloperProvider value={{developer,ongoingProjects}}>
       <div>
         <DeveloperBreadcrumb />
         <DeveloperBanner />
@@ -56,7 +77,7 @@ const DeveloperPage = async ({ searchParams }) => {
           <div className="row tab-row">
             <div className={`col-9 ${styles.largeTabCol}`}>
               <DeveloperStats />
-              <DeveloperListingwithTabs />
+              <DeveloperListingwithTabs DevHeading={DevHeading} />
             </div>
 
             <div className={`col-12 p-0 ${styles.mobileCol}`}>
@@ -77,9 +98,9 @@ const DeveloperPage = async ({ searchParams }) => {
             </div>
 
             <div className={`col-12 ${styles.smallTabCol}`}>
-              <DeveloperPhotos/>
+              <DeveloperPhotos />
               <ProjectFAQ />
-              <DeveloperVision/>
+              <DeveloperVision />
               <HomeLoanOffers />
             </div>
             {/* <div className={`col-12 p-0 ${styles.mobileCol}`}>
