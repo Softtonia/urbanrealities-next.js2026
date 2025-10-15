@@ -64,16 +64,16 @@ const ProjectFAQ = () => {
   //   </div>
   // );
 
-  const developer = useProject();
-  console.log("Developer in Stats:", developer);
+  const { project } = useProject();
+  console.log("project in Stats:", project);
 
-  const home = developer?.repeater_fields?.filter(
+  const home = project?.repeater_fields?.filter(
     (val) =>
       val?.template?.slug?.startsWith("faq") &&
-      (val?.template?.slug.includes("faq")) || []);
+      (val?.template?.slug?.includes("faq")) || []);
 
-  const faqs = home.find(val =>
-    val?.template?.slug.includes("faq")
+  const faqslist = home?.find(val =>
+    val?.template?.slug?.includes("faq")
   )?.field_value;
   // console.log("FAQ Data:", faqs);
   const [activeIndex, setActiveIndex] = useState(null);
@@ -81,6 +81,11 @@ const ProjectFAQ = () => {
   const toggleAccordion = (index) => {
     setActiveIndex(prev => (prev === index ? null : index));
   };
+  const faqs = faqslist?.filter(item => item[0].field_value !== null && item[0].field_value !== undefined);
+  console.log("faqs", faqs)
+  if (!faqs || faqs?.length === 0) {
+    return null; // Don't render the FAQ section if there are no FAQs
+  }
   return (
     <div>
       {faqs && faqs.length > 0 && (

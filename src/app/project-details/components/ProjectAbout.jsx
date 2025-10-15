@@ -23,7 +23,7 @@ import { useProject } from "../context/ProjectContext";
 import { useState } from "react";
 
 export default function AboutProject() {
-  const project = useProject();
+  const {project} = useProject();
   const [expanded, setExpanded] = useState(false);
   const [expandedwhyus, setExpandedwhyus] = useState(false);
 

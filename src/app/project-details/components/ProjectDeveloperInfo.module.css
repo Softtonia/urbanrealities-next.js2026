@@ -1,15 +1,21 @@
 .infocontainer {
-border: 1px solid var(--Platnium);
-border-radius: 8px;
-background-color: var(--White);
-padding: 20px;
-margin-top: 50px;
+  border: 1px solid var(--Platnium);
+  border-radius: 8px;
+  background-color: var(--White);
+  padding: 20px;
+  margin-top: 50px;
 }
 
 .heading {
   font-size: clamp(16px, 2.22vw, 33px);
-font-family: var(--font-semibold); 
- margin-bottom: 16px;
+  font-family: var(--font-semibold);
+  margin-bottom: 16px;
+}
+
+.logo {
+  object-fit: contain;
+  width: 80px;
+  margin-bottom: 11px;
 }
 
 .headerRow {
@@ -23,16 +29,16 @@ font-family: var(--font-semibold);
 }
 
 .name {
-font-size: clamp(14px, 2vw, 19px);
-font-family: var(--font-semibold); 
+  font-size: clamp(14px, 2vw, 19px);
+  font-family: var(--font-semibold);
   margin-bottom: 10px;
 }
 
 .experience {
-  margin:0;
-font-size: clamp(14px, 1vw, 16px);
-  font-family: var(--font-regular); 
-  color: var( --Eerie-Black);
+  margin: 0;
+  font-size: clamp(14px, 1vw, 16px);
+  font-family: var(--font-regular);
+  color: var(--Eerie-Black);
 }
 
 
@@ -45,7 +51,7 @@ font-size: clamp(14px, 1vw, 16px);
 }
 
 .statBox {
-    padding: 0px 10px;
+  padding: 0px 10px;
 }
 
 .borderRight {
@@ -57,9 +63,9 @@ font-size: clamp(14px, 1vw, 16px);
 }
 
 .infoBorder {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid var(--Platnium);
   padding: 10px 0;
 }
@@ -68,22 +74,22 @@ font-size: clamp(14px, 1vw, 16px);
 
 .label {
   margin: 0;
-font-size: clamp(14px, 1vw, 16px);
-  font-family: var(--font-regular); 
+  font-size: clamp(14px, 1vw, 16px);
+  font-family: var(--font-regular);
   color: var(--Eerie-Black);
 }
 
 .value {
-font-size: clamp(14px, 1vw, 16px);
-  font-family: var(--font-regular); 
+  font-size: clamp(14px, 1vw, 16px);
+  font-family: var(--font-regular);
   display: block;
   margin-top: 4px;
 }
 
 .plus {
-font-size: clamp(14px, 1vw, 16px);
-font-family: var(--font-regular); 
-color: var(--Orange-Red);
+  font-size: clamp(14px, 1vw, 16px);
+  font-family: var(--font-regular);
+  color: var(--Orange-Red);
 }
 
 
@@ -93,8 +99,8 @@ color: var(--Orange-Red);
 .description {
   border: 1px solid var(--Platnium);
   padding: 12px;
-font-size: clamp(14px, 1vw, 16px);
-  font-family: var(--font-regular); 
+  font-size: clamp(14px, 1vw, 16px);
+  font-family: var(--font-regular);
   line-height: 1.5;
   border-radius: 6px;
   margin-bottom: 15px;
@@ -117,29 +123,31 @@ font-size: clamp(14px, 1vw, 16px);
   padding: 8px 16px;
   border-radius: 24px;
   cursor: pointer;
-font-size: clamp(14px, 1vw, 16px);
-  font-family: var(--font-regular); 
+  font-size: clamp(14px, 1vw, 16px);
+  font-family: var(--font-regular);
 }
 
 .primaryBtn {
   background-color: var(--Orange-Red);
-  color:var(--White);
+  color: var(--White);
   border: none;
   padding: 8px 16px;
   border-radius: 24px;
   cursor: pointer;
-font-size: clamp(14px, 1vw, 16px);
-  font-family: var(--font-regular); 
+  font-size: clamp(14px, 1vw, 16px);
+  font-family: var(--font-regular);
 }
+
 @media (min-width: 992px) {
+
   .statBox:nth-child(3) .infoBorder,
   .statBox:nth-child(4) .infoBorder {
     border-bottom: none;
   }
 }
 
-@media (max-width:991.99px){
-    .statBox:nth-child(4) .infoBorder {
-  border-bottom: none;
-}
+@media (max-width:991.99px) {
+  .statBox:nth-child(4) .infoBorder {
+    border-bottom: none;
+  }
 }

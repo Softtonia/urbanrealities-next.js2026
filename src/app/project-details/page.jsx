@@ -53,9 +53,21 @@ const Page = async ({ searchParams }) => {
       </div>
     );
   }
+  const section = {
+    Overview: true,
+    Properties: true,
+    "Top Advertiser": true,
+    "Floor Plan & Unit": true,
+    "Project Details": true,
+    "About Developer": true,
+    FAQ: true,
+    "Near By Project": true,
+    "Others Project": true,
+  };
+
 
   return (
-    <ProjectProvider value={project}>
+    <ProjectProvider value={{ project, section }}>
       <div>
         <ProjectBreadcrumb />
         <ProjectBanner />

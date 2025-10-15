@@ -8,7 +8,7 @@ import { useProject } from "../../context/ProjectContext";
 
 
 const ProjectBreadcrumb = () => {
-    const developer = useProject();
+    const {project} = useProject();
     const { city } = useCity();
     return (
         <>
@@ -20,15 +20,15 @@ const ProjectBreadcrumb = () => {
                             <FaChevronRight />
                             {/* <Link className="ms-3" href="/newly-listed ">Newly Listed Properties</Link> */}
                             {/* <FaChevronRight /> */}
-                            <span className="body-text-rg16 ms-3">{developer?.name} </span>
-                            {developer?.city_name && developer?.state_name &&
-                                <span className="body-text-rg16">in {developer.city_name} ,{developer.state_name}</span>
+                            <span className="body-text-rg16 ms-3">{project?.name} </span>
+                            {project?.city_name && project?.state_name &&
+                                <span className="body-text-rg16">in {project.city_name} ,{project.state_name}</span>
                             }
                         </div>
                         <div className="right-info  m-0">
-                            <span className="body-text-rg16 me-1">Posted on : {developer.date}</span>
+                            <span className="body-text-rg16 me-1">Posted on : {project.date}</span>
                             <FaChevronRight />
-                            <span className="body-text-rg16 ms-3">Project ID : {developer.project_unique_id}</span>
+                            <span className="body-text-rg16 ms-3">Project ID : {project.project_unique_id}</span>
                         </div>
                     </div>
                 </div>

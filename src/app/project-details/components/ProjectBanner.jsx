@@ -6,7 +6,7 @@ import { useProject } from "../context/ProjectContext";
 import { FaMapMarkerAlt } from "react-icons/fa";
 
 const ProjectBanner = () => {
-  const project = useProject();
+  const {project} = useProject();
 
 
   const heroSectionFields = project?.repeater_fields?.filter(

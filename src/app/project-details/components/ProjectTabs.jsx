@@ -1,22 +1,24 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import styles from './ProjectTabs.module.css';
+import { useProject } from '../context/ProjectContext';
 
-const tabs = [
-  "About Project",
+const multiTabs = [
+  "Overview",
   "Properties",
   "Top Advertiser",
   "Floor Plan & Unit",
   "Project Details",
-  "Property Rate",
+  // "Property Rate",
   "About Developer",
+  "FAQ",
   "Near By Project",
   "Others Project"
 ];
 
 const ProjectTabs = () => {
-  const [activeTab, setActiveTab] = useState("about-project");
-
+  const [activeTab, setActiveTab] = useState("overview");
+  const { section } = useProject();
   useEffect(() => {
     const handleScroll = () => {
       const sections = tabs.map((tab) =>
@@ -43,6 +45,8 @@ const ProjectTabs = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [activeTab]);
 
+  const tabs= multiTabs.filter(tab => section[tab]);
+
   return (
     <div className={styles.tabContainer}>
       <div className={`${styles["tab-crum"]} container`}>
@@ -52,9 +56,8 @@ const ProjectTabs = () => {
             <a
               key={index}
               href={`#${sectionId}`}
-              className={`${styles.tabItem} body-text-rg16 ${
-                activeTab === sectionId ? styles.active : ""
-              }`}
+              className={`${styles.tabItem} body-text-rg16 ${activeTab === sectionId ? styles.active : ""
+                }`}
             >
               {tab}
             </a>

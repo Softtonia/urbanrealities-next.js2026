@@ -16,7 +16,7 @@ import PropertyAmenities from "./PropertyAmenities";
 
 
 const PropertyDetails = ({property,leadTypes,userDetail}) => {
-  console.log("property details",userDetail)
+  console.log(" details",userDetail)
 
   return (
     <div>
