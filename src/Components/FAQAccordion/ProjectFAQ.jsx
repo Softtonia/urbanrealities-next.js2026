@@ -1,34 +1,8 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './ProjectFAQ.module.css';
 import { useDeveloper } from '@/app/developer-detail/context/DeveloperContext';
-// const faqs = [
-//   {
-//     question: 'Is Mundeshwari Connaught One a good place to live?',
-//     answer:
-//       'Mundeshwari Connaught One is one of the best projects in Connaught Place to live in. With great transportation connectivity and impeccable modern amenities, this project will delight you in every way. Most of the offices and shopping complexes are also located nearby.',
-//   },
-//   {
-//     question: 'What is the RERA number of Mundeshwari Connaught One?',
-//     answer:
-//       'The RERA number of Mundeshwari Connaught One is DLERA2022P0001-1. You can easily find it on RERA official website.',
-//   },
-//   {
-//     question: 'How many flats are available for sale in Mundeshwari Connaught One on Magicbricks?',
-//     answer:
-//       'There are a total of 5 flats available for sale on Magicbricks. These flats offer prime facilities such as 24hour water, 24hour security, 100% power backup and maintenance staff making it a fine residential destination.',
-//   },
-//   {
-//     question: 'What is the address of Mundeshwari Connaught One?',
-//     answer:
-//       'The address of Mundeshwari Connaught One is Godrej Connaught One, Shaheed Bhagat Singh Marg, Connaught Place, New Delhi - 110001, 110001.',
-//   },
-//   {
-//     question: 'Which is nearest bus stop to Godrej Connaught One?',
-//     answer:
-//       'Palika Kendra Bus Stop is located near to the Godrej Connaught One. It is the only nearest bus stop & is located at a distance of 0.0 Kms.',
-//   },
-// ];
+
 const ProjectFAQ = () => {
   const { developer, setSection } = useDeveloper();
   console.log("Developer in Stats:", developer);
@@ -36,24 +10,30 @@ const ProjectFAQ = () => {
   const home = developer?.repeater_fields?.filter(
     (val) =>
       val?.template?.slug?.startsWith("builder") &&
-      (val?.template?.slug.includes("faq")) || []);
+      val?.template?.slug.includes("faq")
+  ) || [];
 
   const faqs = home.find(val =>
     val?.template?.slug.includes("faq")
   )?.field_value;
+
   console.log("FAQ Data:", faqs);
   const [activeIndex, setActiveIndex] = useState(null);
 
   const toggleAccordion = (index) => {
     setActiveIndex(prev => (prev === index ? null : index));
   };
-  if (faqs) {
-    setSection((prev) => ({
-      ...prev,
-      FAQ: false
-    }))
 
-  }
+  // ✅ FIXED: Move setSection to useEffect
+  useEffect(() => {
+    if (!faqs && faqs.length < 0) {
+      setSection(prev => ({
+        ...prev,
+        FAQ: false
+      }));
+    }
+  }, [faqs, setSection]); // run only when faqs changes
+
   return (
     <div>
       {faqs && faqs.length > 0 && (
@@ -73,7 +53,8 @@ const ProjectFAQ = () => {
                 {activeIndex === index && (
                   <div className={styles.faqContent}>
                     <span className={styles.ansBadge}>Ans</span>
-                    <div className={styles.answer}
+                    <div
+                      className={styles.answer}
                       dangerouslySetInnerHTML={{ __html: faq[1].field_value }}
                     />
                   </div>
@@ -81,9 +62,10 @@ const ProjectFAQ = () => {
               </div>
             ))}
           </div>
-        </section>)}
+        </section>
+      )}
     </div>
   );
-}
+};
 
 export default ProjectFAQ;

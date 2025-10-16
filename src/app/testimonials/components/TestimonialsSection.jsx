@@ -90,28 +90,28 @@ const testimonialsData = [
 ];
 
 
-const TestimonialsSection = () => {
+const TestimonialsSection = ({ reviews }) => {
   return (
     <section className={styles['testimonials-section']}> {/* Use styles.className */}
       <div className={styles['section-header']}>
-        <CompanyBg/>
+        <CompanyBg />
         <h2>Customer Stories</h2>
       </div>
 
       <div className={styles['testimonials-content']}>
         <div className={styles['testimonials-grid']}>
-          {testimonialsData.map((testimonial) => (
+          {reviews.length > 0 && reviews?.map((testimonial) => (
             <TestimonialCard
               key={testimonial.id}
-              avatarSrc={testimonial.avatarSrc}
-            name={testimonial.name}
-            location={testimonial.location}
-            rating={testimonial.rating}
-            text={testimonial.text}
-          />
-        ))}
-      </div>
+              avatarSrc={testimonial.client_photo}
+              name={testimonial.title}
+              location={testimonial.short_description}
+              rating={testimonial.rating}
+              text={testimonial.review}
+            />
+          ))}
         </div>
+      </div>
     </section>
   );
 };

@@ -9,7 +9,7 @@ import OtherBuilders from "./components/project-details-mobile/OtherBuilders";
 import CompletedProjectTiles from "./components/project-details-mobile/CompletedProjectTiles";
 import FAQAccordion from "./components/project-details-mobile/FAQAccordion";
 import HomeLoanOffers from "./components/project-details-mobile/HomeLoanOffers";
-import { get, getssr } from "@/lib/api";
+import {  getssr } from "@/lib/api";
 import styles from "./components/developer-listing.module.css";
 // for desktop
 import DeveloperStats from "./components/DeveloperStats/DeveloperStats";
@@ -19,6 +19,7 @@ import PropertydetailsBreadcrum from './../propertydetails/[id]/components/Prope
 import DeveloperBreadcrumb from "./components/developerBreadcrumb/DeveloperBreadcrumb";
 import DeveloperVision from "./components/Developervision/DeveloperVision";
 import DeveloperPhotos from "./components/DeveloperPhotos/DeveloperPhotos";
+import DeveloperDetail from "./DeveloperDetail";
 
 async function fetchDeveloper(id) {
   try {
@@ -80,13 +81,8 @@ const DeveloperPage = async ({ searchParams }) => {
   const ongoingProjects = developer?.id ? await fetchProject(developer.id) : [];
   const completedProjects = developer?.id ? await fetchCompletedProject(developer.id) : [];
 
-  const ongoing = developer?.name
-    ? `Ongoing Projects by ${developer.name}`
-    : "Ongoing Projects";
-  const completed = developer?.name
-    ? `Completed Projects by ${developer.name}`
-    : "Completed Projects";
-  console.log("developer", completedProjects);
+
+  // console.log("developer", completedProjects);
   const section = {
     Overview: true,
     "Ongoing Project": true,
@@ -105,105 +101,111 @@ const DeveloperPage = async ({ searchParams }) => {
   // }
 
   return (
-    <DeveloperProvider value={{ developer, ongoingProjects, completedProjects, section }}>
-      <div>
-        <DeveloperBreadcrumb />
-        <DeveloperBanner />
-        <div style={{ position: "sticky", top: "0", zIndex: "20" }}>
-          <DeveloperTabs />
-        </div>
-        <div className="container">
-          <div className="row tab-row">
-            <div className={`col-9 ${styles.largeTabCol}`}>
-              <section id="overview">
-                <DeveloperStats />
-              </section>
-              
-              {ongoingProjects.length > 0 && (
-                <section id="ongoing-project">
+    <DeveloperDetail
+      developer={developer}
+      ongoingProjects={ongoingProjects}
+      completedProjects={completedProjects}
+      section={section}
+    />
+    // <DeveloperProvider value={{ developer, ongoingProjects, completedProjects, section }}>
+    //   <div>
+    //     <DeveloperBreadcrumb />
+    //     <DeveloperBanner />
+    //     <div style={{ position: "sticky", top: "0", zIndex: "20" }}>
+    //       <DeveloperTabs />
+    //     </div>
+    //     <div className="container">
+    //       <div className="row tab-row">
+    //         <div className={`col-9 ${styles.largeTabCol}`}>
+    //           <section id="overview">
+    //             <DeveloperStats />
+    //           </section>
 
-                  <DeveloperListingwithTabs DevHeading={ongoing} listingFor="ongoing" />
-                </section>
-              )}
+    //           {ongoingProjects.length > 0 && (
+    //             <section id="ongoing-project">
 
-              {completedProjects.length > 0 && (
-                <section id="completed-project">
-                  <DeveloperListingwithTabs DevHeading={completed} listingFor="completed" />
-                </section>
-              )}
-            </div>
+    //               <DeveloperListingwithTabs DevHeading={ongoing} listingFor="ongoing" />
+    //             </section>
+    //           )}
+
+    //           {completedProjects.length > 0 && (
+    //             <section id="completed-project">
+    //               <DeveloperListingwithTabs DevHeading={completed} listingFor="completed" />
+    //             </section>
+    //           )}
+    //         </div>
 
 
-            <div className={`col-12 p-0 ${styles.mobileCol}`}>
-              <section id="overview">
-                <DeveloperStats />
-              </section>
-              {ongoingProjects.length > 0 && (
-                <section id="ongoing-project">
-                  <DeveloperListingwithTabs DevHeading={ongoing} listingFor="ongoing" />
-                </section>
-              )}
+    //         <div className={`col-12 p-0 ${styles.mobileCol}`}>
+    //           <section id="overview">
+    //             <DeveloperStats />
+    //           </section>
+    //           {ongoingProjects.length > 0 && (
+    //             <section id="ongoing-project">
+    //               <DeveloperListingwithTabs DevHeading={ongoing} listingFor="ongoing" />
+    //             </section>
+    //           )}
 
-              {completedProjects.length > 0 && (
-                <section id="completed-project">
-                  <DeveloperListingwithTabs DevHeading={completed} listingFor="completed" />
-                </section>
-              )}
-              {/* <section id="nearby-projects">
-                <DeveloperListingwithTabs
-                  DevHeading={`other Project `}
-                />
-              </section> */}
+    //           {completedProjects.length > 0 && (
+    //             <section id="completed-project">
+    //               <DeveloperListingwithTabs DevHeading={completed} listingFor="completed" />
+    //             </section>
+    //           )}
+    //           {/* <section id="nearby-projects">
+    //             <DeveloperListingwithTabs
+    //               DevHeading={`other Project `}
+    //             />
+    //           </section> */}
 
-            </div>
+    //         </div>
 
-            <div className={`col-12 ${styles.smallTabCol}`}>
-              <section id="photos">
-                <DeveloperPhotos />
-              </section>
-              <section id="faq">
-                <ProjectFAQ />
-              </section>
-              <section id="vision">
-                <DeveloperVision />
-              </section>
-              <section id="home-loan-offers">
+    //         <div className={`col-12 ${styles.smallTabCol}`}>
+    //           <section id="photos">
+    //             <DeveloperPhotos />
+    //           </section>
+    //           <section id="faq">
+    //             <ProjectFAQ />
+    //           </section>
+    //           <section id="vision">
+    //             <DeveloperVision />
+    //           </section>
+    //           <section id="home-loan-offers">
 
-                <HomeLoanOffers />
-              </section>
-            </div>
-            {/* <div className={`col-12 p-0 ${styles.mobileCol}`}>
-              <section id="all-project">
-                <AllProjects />
-              </section>
-              <section id="developer-mobile">
-              <DeveloperStats />
+    //             <HomeLoanOffers />
+    //           </section>
+    //         </div>
+    //         {/* <div className={`col-12 p-0 ${styles.mobileCol}`}>
+    //           <section id="all-project">
+    //             <AllProjects />
+    //           </section>
+    //           <section id="developer-mobile">
+    //           <DeveloperStats />
 
-                <DeveloperInfoMobile />
-              </section>
-              <section id="ongoing-projects">
-                <ProjectTileData
-                  headingText={`Ongoing Project by ${developer.name}`}
-                />
+    //             <DeveloperInfoMobile />
+    //           </section>
+    //           <section id="ongoing-projects">
+    //             <ProjectTileData
+    //               headingText={`Ongoing Project by ${developer.name}`}
+    //             />
 
-              </section>
-              <section id="nearby-projects">
-                <OtherBuilders />
-              </section>
-              <section id="completed-projects">
-                <CompletedProjectTiles />
-              </section>
-              <section id="other-faq">
-                <FAQAccordion />
-              </section>
-              <section id="home-loan">
-                <HomeLoanOffers />
-              </section>
-            </div> */}
-          </div>
-        </div>
-      </div>
-    </DeveloperProvider>
+    //           </section>
+    //           <section id="nearby-projects">
+    //             <OtherBuilders />
+    //           </section>
+    //           <section id="completed-projects">
+    //             <CompletedProjectTiles />
+    //           </section>
+    //           <section id="other-faq">
+    //             <FAQAccordion />
+    //           </section>
+    //           <section id="home-loan">
+    //             <HomeLoanOffers />
+    //           </section>
+    //         </div> */}
+    //       </div>
+    //     </div>
+    //   </div>
+    // </DeveloperProvider>
   );
 };
 

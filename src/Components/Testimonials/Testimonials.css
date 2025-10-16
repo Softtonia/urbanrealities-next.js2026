@@ -33,7 +33,7 @@
 .testimonialcard {
     width: 100%;
     max-width: 460px;
-    flex: 1 1 300px;
+    flex: 1 1 00px;
     padding: 60px;
     display: flex;
     flex-direction: column;
@@ -75,7 +75,7 @@
 
 .persondiv {
     width: 100%;
-    max-width: 171px;
+    max-width: 200px;
     height: auto;
     display: flex;
     flex-direction: column;

@@ -5,7 +5,7 @@ import "./Testimonials.css";
 import "../../app/globals.css";
 import SubHero from "../SubHero/SubHero";
 import axios from "axios";
-
+import { FaStar } from 'react-icons/fa';
 const testimonialsData = [
   {
     name: "Lilly Bennett",
@@ -27,24 +27,8 @@ const testimonialsData = [
   },
 ];
 
-const Testimonials = () => {
-  const [reviews, setReviews] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchReviews = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `${process.env.NEXT_PUBLIC_API_BASE_URL}api/get-client-review`
-  //       );
-  //       const data = response.data; // ✅ access actual data
-  //       setReviews(data);
-  //     } catch (error) {
-  //       console.error("Error fetching reviews:", error);
-  //     }
-  //   };
-
-  //   fetchReviews();
-  // }, []);
+const Testimonials = ({reviews}) => {
+ 
 
   return (
     <div className="testimonialsssection">
@@ -62,17 +46,17 @@ const Testimonials = () => {
             {reviews.map((testimonial, index) => (
               <div className="testimonialcard" key={index}>
                 <div className="ratingdiv">
-                  <div className="starsdiv">
+                  {/* <div className="starsdiv">
                     {[...Array(5)].map((_, i) => (
                       <div key={i} className="star">
                         <FaStar
                           className={
-                            i < testimonial.rating ? "filled" : "unfilled"
+                            i < testimonial?.rating ? "filled" : "unfilled"
                           }
                         />
                       </div>
                     ))}
-                  </div>
+                  </div> */}
                   <h6 className="ratingtext">{testimonial.review}</h6>
                 </div>
 
@@ -84,14 +68,14 @@ const Testimonials = () => {
             ))}
           </div>
 
-          <div className="navigationdiv">
+          {/* <div className="navigationdiv">
             <button className="navigationbtn left-btn">
               <img src="/arrowvector.svg" alt="left arrow" />
             </button>
             <button className="navigationbtn">
               <img src="/arrowvector.svg" alt="right arrow" />
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

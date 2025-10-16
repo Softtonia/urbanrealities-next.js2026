@@ -10,12 +10,12 @@ import PopularCities from "@/Components/PopularCities/PopularCities";
 import Testimonials from "@/Components/Testimonials/Testimonials";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
-import { get } from "@/lib/api";
+import { get, getssr } from "@/lib/api";
 
-const fetchProject = async ()=> {
+const fetchProject = async () => {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await get(`/api/get-all-project-listing-no-auth?per_page=10`);
+    const response = await getssr(`/api/get-all-project-listing-no-auth?per_page=10`);
     const data = response?.data;
 
     if (data) return data.data;
@@ -26,10 +26,10 @@ const fetchProject = async ()=> {
     return [];
   }
 }
-const fetchProperties = async ()=> {
+const fetchProperties = async () => {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await get(`/api/get-all-properties-listing-no-auth?per_page=10`);
+    const response = await getssr(`/api/get-all-properties-listing-no-auth?per_page=10`);
     const data = response?.data;
     console.log("=>", data)
 
@@ -41,10 +41,10 @@ const fetchProperties = async ()=> {
     return [];
   }
 }
-const fetchDeveloper = async ()=> {
+const fetchDeveloper = async () => {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await get(`/api/fetch-all-developer-listing-no-auth?per_page=5`);
+    const response = await getssr(`/api/fetch-all-developer-listing-no-auth?per_page=5`);
     const data = response?.data;
     console.log("=>", data)
 
@@ -56,24 +56,39 @@ const fetchDeveloper = async ()=> {
     return [];
   }
 }
+const fetchReviews = async () => {
+  try {
+    const response = await getssr(`api/get-client-review`);
+    const data = response?.data;
+    console.log("=>", data)
+
+    if (data) return data;
+    return [];
+  } catch (error) {
+    console.log(err.response)
+    console.error("Error fetching reviews", err);
+    return [];
+  }
+};
 
 
 export default async function Home() {
-  const projects =await fetchProject()
+  const projects = await fetchProject()
   const propertyList = await fetchProperties()
   const developer = await fetchDeveloper()
+  const reviews = await fetchReviews()
   return (
     <>
       <SearchPropertySection />
-      <FeaturesCopy projects={projects}/>
-      <PropertyListing propertyList={propertyList}/>
-      <SponsoredProperty developer={developer}/>
+      <FeaturesCopy projects={projects} />
+      <PropertyListing propertyList={propertyList} />
+      <SponsoredProperty developer={developer} />
       <ProjectCarousel projects={projects} />
       <AdviceAndTools />
       <PropertyServices />
       <WhyChooseus />
       <PopularCities />
-      <Testimonials />
+      <Testimonials reviews={reviews} />
     </>
   );
 }
