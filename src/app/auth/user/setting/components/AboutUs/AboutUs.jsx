@@ -3,18 +3,14 @@ import React from "react";
 import { HiShieldCheck } from "react-icons/hi";
 import styles from "./AboutUs.module.css";
 
-const AboutUs = () => {
+const AboutUs = ({ profile }) => {
   return (
     <div className={styles.aboutUsSection}>
       <h3 className={styles.aboutUsheading}>About Us</h3>
+      {/* {profile?.about && */}
       <div className={styles.bioText}>
-        <strong>Bio:-</strong> Cumsan at ultricies a, laoreet eu tellus.
-        Etiam porttitor, sem non feugiat pharetra, libero risus dictum lacus,
-        eget sollicitudin est enim id libero. Nullam eget dolor accumsan, semper
-        odio quis, iaculis leo. Vivamus vitae congue est. Pellentesque habitant
-        morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-        Nam diam mi, congue vel suscipit a, convallis vitae metus. Duis
-        condimentum lacus vel libero dignissi
+        <strong>Bio:-</strong>{profile.about}
+
         <div className={styles.infoGrid}>
           {[...Array(4)].map((_, i) => (
             <div key={i} className={styles.infoItem}>
@@ -27,6 +23,7 @@ const AboutUs = () => {
           ))}
         </div>
       </div>
+      {/* } */}
     </div>
   );
 };

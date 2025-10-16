@@ -12,7 +12,7 @@ const data = {
   nextButton: "Send Message",
 };
 
-export default function ContactFormWithInfo() {
+export default function ContactFormWithInfo({contactData}) {
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -27,6 +27,7 @@ export default function ContactFormWithInfo() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  console.log("conatact data",contactData)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -147,18 +148,23 @@ const res = await fetch(`/api/contact-us-leads`, {
 
       <div className={styles.infoWrapper}>
         <h2 className={styles.title}>Get in Touch</h2>
+        {contactData.mobile_number &&
         <div className={styles.infoItem}>
           <FaPhoneAlt className={styles.icon} />
-          <p>Phone number <span>123-456-7890</span></p>
+          <p>Phone number <span>{contactData.mobile_number}</span></p>
         </div>
+        }
+        {contactData.email &&
         <div className={styles.infoItem}>
           <FaEnvelope className={styles.icon} />
-          <p>Email <span>info@yoursite.com</span></p>
+          <p>Email <span>{contactData.email}</span></p>
         </div>
+        }
+        {contactData.address &&
         <div className={styles.infoItem}>
           <FaMapMarkerAlt className={styles.icon} />
-          <p>Location <span>123 Homes Street Chicago, IL 60606</span></p>
-        </div>
+          <p>Location <span>{contactData.address}</span></p>
+        </div>}
       </div>
     </section>
   );

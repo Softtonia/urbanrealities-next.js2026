@@ -21,8 +21,32 @@ export default function MyAccountlisting({ data }) {
         : field.field_value,
     };
   }).filter(Boolean);
+  
+  const hero = Array.isArray(data?.custom_field_values)
+    ? data.custom_field_values.filter(
+      (val) =>
+        (val?.template?.slug?.startsWith("herosection") ||
+          val?.template?.slug?.startsWith("overview")) &&
+        (val?.template?.slug?.includes("bhk") ||
+          val?.template?.slug?.includes("furnished") ||
+          val?.template?.slug?.includes("built-up-area"))
+    )
+    : [];
 
-  console.log(fieldData)
+  console.log("herroo", hero)
+  const bedroom = hero.find(val =>
+    val?.template?.slug.includes("bhk")
+  )?.field_value;
+
+  const furnished = hero.find(val =>
+    val?.template?.slug.includes("furnished")
+  )?.field_value;
+
+  const area = hero.find(val =>
+    val?.template?.slug.includes("built-up-area")
+  )?.field_value;
+
+  console.log("data",data)
   return (
     <div className={` ${styles.card} `}>
       {/* Image with Verified tag */}
@@ -45,15 +69,17 @@ export default function MyAccountlisting({ data }) {
         <div className={styles.price}>{fieldData.value}</div>
 
         <p className={styles.infoLine}>
-          <strong>{data.bhk}</strong> &nbsp; {data.type} &nbsp; {data.size}
+          {data.name}
+          {/* <strong>{bedroom}</strong> &nbsp; {data.type} &nbsp; {data.size} */}
         </p>
 
         <p className={styles.infoLine}>
-          {data.location} <span className={styles.projectName}>{data.projectName}</span>
+          {data.city.name}, {data.state.name}
+           {/* <span className={styles.projectName}>{data.name}</span> */}
         </p>
 
         <p className={styles.infoLine}>
-          Available for <span className={styles.highlight}>{data.availableFor}</span>
+          Available for<span className={styles.highlight}>{data.purpose_id_name}</span>
         </p>
 
         <p className={styles.infoLine}>

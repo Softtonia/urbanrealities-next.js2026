@@ -33,7 +33,7 @@
 .testimonialcard {
     width: 100%;
     max-width: 460px;
-    flex: 1 1 00px;
+    flex: 1 1 300px;
     padding: 60px;
     display: flex;
     flex-direction: column;

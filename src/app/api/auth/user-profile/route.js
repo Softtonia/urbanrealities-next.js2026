@@ -3,10 +3,11 @@ import { proxyToLaravel } from '@/lib/laravelProxy';
 import { NextResponse } from 'next/server';
 
 export async function GET(req) {
-
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
 
     // Forward to Laravel API with query params
-    const url = `/api/purpose-listing`;
+    const url = `/api/get-details-byuserid?id=${id}`;
 
     // Forward request to Laravel via proxy
     const response = await proxyToLaravel(req, url, "GET");

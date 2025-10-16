@@ -1,131 +1,117 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import styles from '../components/All-list-Dashboard.module.css'; // same layout CSS
+import styles from '../components/All-list-Dashboard.module.css';
 import MyAccountListing from './components/My-Account-listing';
 import ProtectedRoute from '@/Components/protectedRoute';
-import { SiteSettingsProvider, useSiteSettings } from '@/Components/mycontext/siteSettingContext';
+import {  useSiteSettings } from '@/Components/mycontext/siteSettingContext';
 
 const ListingPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [properties,setProperties] = useState([])
-  const itemsPerPage = 6;
-  const {token } = useSiteSettings()
+  const [properties, setProperties] = useState([]);
+  const [meta, setMeta] = useState(null);
+  const { token } = useSiteSettings();
 
-  useEffect(() => {
-    const fetchProperties = async () => {
-      // setLoading(true)
-      // console.log(token)
-      try {
-        const res = await fetch('/api/auth/property-listing', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
-        // setLoading(false)
-        if (Array.isArray(data)) {
-          setProperties(data);
-        } else if (data?.data) {
-          setProperties(data.data);
-        }
-      } catch (err) {
-        // setLoading(false)
-        console.error('Error fetching roles:', err);
+  const fetchProperties = async (page = 1) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/auth/property-listing?page=${page}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      setLoading(false);
+
+      if (data?.data) {
+        setProperties(data.data);
+        setMeta(data.meta);
+      } else {
+        setProperties([]);
+        setMeta(null);
       }
-    };
-    if (token) {
-      fetchProperties();
+    } catch (err) {
+      console.error('Error fetching properties:', err);
+      setLoading(false);
     }
-  }, [token]);
-  console.log(properties)
-
-  const dummyListings = Array.from({ length: 30 }, (_, i) => ({
-    id: `listing-${i}`,
-    imageUrl: '/image-card.png',
-    price: `₹ ${3 + i} Crore`,
-    bhk: `${2 + (i % 3)} BHK`,
-    type: 'Apartment',
-    size: `${1500 + i * 10} sqft`,
-    location: 'Bangalore, Karnataka',
-    projectName: 'Dream Towers',
-    availableFor: 'Sale',
-    carpetArea: `${1200 + i * 5} sqft`,
-  }));
-
-  const totalPages = Math.ceil(properties.length / itemsPerPage);
+  };
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 600);
-    return () => clearTimeout(timer);
-  }, [currentPage]);
+    if (token) {
+      fetchProperties(currentPage);
+    }
+  }, [token, currentPage]);
+
+  const totalPages = meta?.last_page || 1;
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
-      setLoading(true);
     }
   };
 
-  const paginatedListings = properties && properties.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-  console.log("==>",paginatedListings)
-
   return (
     <ProtectedRoute>
-    <>
-      {loading ? (
-        <div className={styles.loaderWrapper}>
-          <div className={styles.spinner}></div>
-        </div>
-      ) : (
-        <>
+      <>
+        {loading ? (
+          <div className={styles.loaderWrapper}>
+            <div className={styles.spinner}></div>
+          </div>
+        ) : (
+          <>
             <section className={styles.listingcard}>
-              {paginatedListings.length > 0 ? paginatedListings.map((listing) => (
-                <MyAccountListing key={listing.id} data={listing} />
-              )):<p>Properties not Found</p>}
+              {properties?.length > 0 ? (
+                properties.map((listing) => (
+                  <MyAccountListing key={listing.id} data={listing} />
+                ))
+              ) : (
+                <p>Properties not Found</p>
+              )}
             </section>
 
-          <nav className={styles.pagination}>
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              &lt;
-            </button>
-
-            {Array.from({ length: 5 }, (_, index) => {
-              const pageNumber =
-                Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + index;
-
-              if (pageNumber > totalPages) return null;
-
-              return (
+            {totalPages > 1 && (
+              <nav className={styles.pagination}>
                 <button
-                  key={pageNumber}
-                  onClick={() => handlePageChange(pageNumber)}
-                  className={
-                    currentPage === pageNumber ? styles.activePage : ""
-                  }
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
                 >
-                  {pageNumber}
+                  &lt;
                 </button>
-              );
-            })}
 
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              &gt;
-            </button>
-          </nav>
-        </>
-      )}
-    </>
+                {Array.from({ length: 5 }, (_, index) => {
+                  const startPage = Math.max(
+                    1,
+                    Math.min(totalPages - 4, currentPage - 2)
+                  );
+                  const pageNumber = startPage + index;
+                  if (pageNumber > totalPages) return null;
+
+                  return (
+                    <button
+                      key={pageNumber}
+                      onClick={() => handlePageChange(pageNumber)}
+                      className={
+                        currentPage === pageNumber ? styles.activePage : ''
+                      }
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                })}
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  &gt;
+                </button>
+              </nav>
+            )}
+          </>
+        )}
+      </>
     </ProtectedRoute>
   );
 };

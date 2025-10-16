@@ -9,7 +9,7 @@ async function getContactUsData() {
   try {
     const response = await getssr(`/api/site-setting`);
     // console.log(response.data);
-    return response.data; // Axios response format
+    return response.data.data; // Axios response format
     
   } catch (error) {
     console.error("API ERROR:", error.message, error.response?.data);
@@ -35,8 +35,8 @@ export default async function ContactUsPage() {
         </div>
       </div>
       <div className="container">
-        <ContactAgent />
-        <ContactFormWithInfo  />
+        <ContactAgent contactData={contactData}/>
+        <ContactFormWithInfo contactData={contactData} />
       </div>
     </>
   );

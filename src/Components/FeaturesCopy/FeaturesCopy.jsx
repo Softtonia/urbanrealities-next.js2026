@@ -12,7 +12,21 @@ const FeaturesCopy = ({ projects }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const scrollRef = useRef(null);
-  const slides = projects
+  const slides = projects?.map((val) => {
+    const banner = val?.custom_field_values?.find((f) =>
+      f?.template?.slug?.includes("banner")
+    );
+
+    return {
+      banner: banner?.field_value[0] || null, // assuming banner data is stored in field_value
+      name: val?.name || "Untitled",
+      views: val?.total_view,
+      property_status: val?.["property_status"]?.map(s => s?.property_status_name)?.join(", ") || ""
+    };
+  });
+
+  console.log("project", slides);
+
 
   // const slides = [
   //   {
@@ -150,14 +164,14 @@ const FeaturesCopy = ({ projects }) => {
                 key={i}
               >
                 <img
-                  src={slide.featured_image ? slide.featured_image : "https://images.unsplash.com/photo-1666846795617-5a79453e6f6c?q=80&w=3402&auto=format&fit=crop"}
+                  src={slide.banner ? slide.banner : "https://images.unsplash.com/photo-1666846795617-5a79453e6f6c?q=80&w=3402&auto=format&fit=crop"}
                   alt={`Property ${i + 1}`}
                   className="slide-image"
                 />
                 <div className="property-overlay">
                   <div className="property-info">
-                    <span className="property-count">{slide.total_view}+</span>
-                    <span className="property-status">{slide.property_status_id_name}</span>
+                    <span className="property-count">{slide.views}+</span>
+                    <span className="property-status">{slide.property_status}</span>
                   </div>
                   <div className="property-action">
                     <a

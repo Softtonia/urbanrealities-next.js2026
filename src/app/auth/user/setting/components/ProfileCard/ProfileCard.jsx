@@ -5,7 +5,7 @@ import { FiMoreVertical } from "react-icons/fi";
 import styles from "./ProfileCard.module.css";
 import Link from "next/link";
 
-const ProfileCard = () => {
+const ProfileCard = ({ profile }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -40,7 +40,7 @@ const ProfileCard = () => {
           <FiMoreVertical />
           {dropdownOpen && (
             <div className={styles.dropdownMenu}>
-              <Link href="/auth/user/setting/edit-profile" className={styles.dropdownItem} role="button">
+              <Link href={`/auth/user/setting/edit-profile?id=${profile.id}`} className={styles.dropdownItem} role="button">
                 Edit Profile
               </Link>
             </div>
@@ -48,37 +48,44 @@ const ProfileCard = () => {
         </div>
         <div className={styles.profileImageContainer}>
           <Image
-            src="/albert-camus.png"
+            src={profile?.profile_photo ? profile?.profile_photo : "/albert-camus.png"}
             alt="Albert Camus"
             width={90}
             height={90}
             className={styles.profileImage}
           />
         </div>
-        <h3 className={styles.profileName}>Albert Camus</h3>
+        <h3 className={styles.profileName}>{profile.first_name}</h3>
       </div>
 
       <div className={styles.profileDetails}>
-        <div className={styles.detailItem}>
+        {/* <div className={styles.detailItem}>
           <span className={styles.label}>Age:</span>
           <span className={styles.value}>76</span>
-        </div>
-        <div className={styles.detailItem}>
-          <span className={styles.label}>Phone Number:</span>
-          <span className={styles.value}>7789898576</span>
-        </div>
-        <div className={styles.detailItem}>
-          <span className={styles.label}>Email:</span>
-          <span className={styles.value}>example45@gmail.com</span>
-        </div>
-        <div className={styles.detailItem}>
-          <span className={styles.label}>State:</span>
-          <span className={styles.value}>Delhi</span>
-        </div>
-        <div className={styles.detailItem}>
-          <span className={styles.label}>Country:</span>
-          <span className={styles.value}>India</span>
-        </div>
+        </div> */}
+        {profile.phone &&
+          <div className={styles.detailItem}>
+            <span className={styles.label}>Phone Number:</span>
+            <span className={styles.value}>{profile.phone}</span>
+          </div>
+        }
+        {profile.email &&
+          <div className={styles.detailItem}>
+            <span className={styles.label}>Email:</span>
+            <span className={styles.value}>{profile.email}</span>
+          </div>
+        }
+        {profile?.state?.name &&
+          <div className={styles.detailItem}>
+            <span className={styles.label}>State:</span>
+            <span className={styles.value}>{profile?.state?.name}</span>
+          </div>
+          }
+        {profile?.country?.name &&
+          <div className={styles.detailItem}>
+            <span className={styles.label}>Country:</span>
+            <span className={styles.value}>{profile?.country?.name}</span>
+          </div>}
       </div>
     </div>
   );

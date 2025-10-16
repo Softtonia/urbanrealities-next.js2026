@@ -9,6 +9,7 @@ const AuthContext = createContext(null)
 export const SiteSettingsProvider = ({ initialSettings, children }) => {
     const [settings, setSettings] = useState(initialSettings)
     const [user, setUser] = useState('')
+    const [userId, setUserId] = useState(null)
     const [token, setToken] = useState(null)
     const [isLoadingToken, setIsLoadingToken] = useState(true) // NEW
     const [isLogeIn, setIsLogeIn] = useState(false)
@@ -18,14 +19,16 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     // On load, read token from sessionStorage
     useEffect(() => {
         const savedToken = sessionStorage.getItem('token')
+        const user_id = sessionStorage.getItem('userId')
         if (savedToken) {
             setToken(savedToken)
+            setUserId(user_id)
         }
         setIsLoadingToken(false) // done loading
     }, [])
 
     console.log(token)
-    const[fetchingUser,setFetchingUser]=useState(true)
+    const [fetchingUser, setFetchingUser] = useState(true)
 
     useEffect(() => {
         const initAuth = async () => {
@@ -50,8 +53,12 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
         sessionStorage.setItem('token', token)
         sessionStorage.setItem('userId', userId)
         setToken(token)
+        setUserId(userId)
+
         console.log(userId)
     }
+
+    console.log(userId)
     useEffect(() => {
         setIsLogeIn(token ? true : false)
     }, [token]);
@@ -74,6 +81,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
             if (res) {
                 sessionStorage.removeItem('token');
                 setToken(null);
+                setUserId(null)
             } else {
                 console.error('Logout failed');
             }
@@ -84,7 +92,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ token, login, logout, settings, isLoadingToken, isLogeIn,isOtpVerified, fetchingUser }} // pass isLoadingToken
+            value={{ token, login, logout, settings, isLoadingToken, isLogeIn, isOtpVerified, fetchingUser, userId }} // pass isLoadingToken
         >
             {children}
         </AuthContext.Provider>

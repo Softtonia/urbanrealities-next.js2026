@@ -4,6 +4,9 @@ import './SponsoredProperty.css';
 
 const SponsoredProperty = ({ developer }) => {
   console.log("Developer list:", developer);
+  const developers= developer.map((dev)=>{
+    
+  })
 
 
   return (
@@ -35,11 +38,11 @@ const SponsoredProperty = ({ developer }) => {
                     <div className="sponsored-property-description text-gray body-text-14">
                       {
                         val?.custom_field_values?.find(
-                          (temp) => temp?.template?.name === "developer.bedrooms"
+                          (temp) => temp?.template?.slug.includes("bedroom")
                       )?.field_value?.join(", ") 
                       } {
                         val?.custom_field_values?.find(
-                          (temp) => temp?.template?.name === "developer.area-sqft"
+                          (temp) => temp?.template?.slug.includes("area")
                         )?.field_value
                       } sqft.
                     </div>
@@ -49,7 +52,7 @@ const SponsoredProperty = ({ developer }) => {
                     <div className="sponsored-property-price body-text-14">
                       ₹{
                         val?.custom_field_values?.find(
-                          (temp) => temp?.template?.name === "developer.price"
+                          (temp) => temp?.template?.slug?.includes("price")
                         )?.field_value
                       }
                     </div>
