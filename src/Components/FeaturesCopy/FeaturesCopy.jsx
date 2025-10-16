@@ -18,9 +18,11 @@ const FeaturesCopy = ({ projects }) => {
     );
 
     return {
+      id: val?.id,
       banner: banner?.field_value[0] || null, // assuming banner data is stored in field_value
       name: val?.name || "Untitled",
       views: val?.total_view,
+      property_id_name: val?.property_id_name,
       property_status: val?.["property_status"]?.map(s => s?.property_status_name)?.join(", ") || ""
     };
   });
