@@ -161,8 +161,7 @@ const FeaturesCopy = ({ projects }) => {
           >
             {slides.map((slide, i) => (
               <div
-                className={`slide-card ${isMobile ? "mobile-slide-card" : getSlideClass(i)
-                  }`}
+                className={`slide-card ${isMobile ? "mobile-slide-card" : getSlideClass(i)}`}
                 key={i}
               >
                 <img

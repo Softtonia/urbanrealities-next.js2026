@@ -1,12 +1,18 @@
 "use client";
 import { createContext, useContext, useState } from "react";
 
-const ProjectContext = createContext();
+const ProjectContext = createContext(null);
 
-export const useProject = () => useContext(ProjectContext);
+export const useProject = () => {
+    const context = useContext(ProjectContext);
+    if (!context) {
+        throw new Error("useProject must be used within a ProjectProvider");
+    }
+    return context;
+};
 
-export const ProjectProvider = ({ value, children }) => {
-    const { project, section: initialSection } = value || {};
+export const ProjectProvider = ({ value = {}, children }) => {
+    const { project, section: initialSection } = value;
 
     const [section, setSection] = useState(initialSection || {});
 

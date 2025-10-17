@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styles from './ProjectFAQ.module.css';
 import { useProject } from '../context/ProjectContext';
 const faqs = [
@@ -82,11 +82,16 @@ const ProjectFAQ = () => {
     setActiveIndex(prev => (prev === index ? null : index));
   };
   const faqs = faqslist?.filter(item => item[0].field_value !== null && item[0].field_value !== undefined);
-  console.log("faqs", faqs)
-  if (!faqs || faqs?.length === 0) {
-    setSection(prevSection => ({ ...prevSection, FAQ: false }));
-    return null; // Don't render the FAQ section if there are no FAQs
-  }
+ // ✅ FIXED: Move setSection to useEffect
+  useEffect(() => {
+    if (!faqs && faqs?.length < 0) {
+      setSection(prev => ({
+        ...prev,
+        FAQ: false
+      }));
+    }
+  }, [faqs, setSection]); // run only when faqs changes
+
   return (
     <div>
       {faqs && faqs.length > 0 && (

@@ -11,6 +11,9 @@ import FloorPlanSection from "./components/FloorPlanSection";
 import { getssr } from "@/lib/api";
 import { ProjectProvider } from "./context/ProjectContext";
 import ProjectBreadcrumb from "./components/ProjectBreadcrumb/ProjectBreadcrumb";
+import { useCity } from "@/utils/CityContext";
+import NearByProjectList from "./components/NearByProjects/NearByProjectList";
+import ProjectDetail from "./Project-detail";
 
 async function fetchProject(id) {
   try {
@@ -29,12 +32,33 @@ async function fetchProject(id) {
     return { error: true, status: err?.response?.status || 500 };
   }
 }
+// async function fetchOtherProject(id, country_id, state_id, city_id) {
+//   try {
+//     const response = await getssr(`/api/get-other-projects/${id}?country_id=${country_id}&state_id=${state_id}&city_id=${city_id}`);
+
+//     // Handle non-200 responses
+//     if (!response || response.status >= 400) {
+//       console.error(`❌ API Error ${response?.status}: ${response?.statusText}`);
+//       return { error: true, status: response?.status || 500 };
+//     }
+
+//     const data = response?.data;
+//     return data || { error: true, status: 404 };
+//   } catch (err) {
+//     console.error("Error fetching project:", err);
+//     return { error: true, status: err?.response?.status || 500 };
+//   }
+// }
+
 
 const Page = async ({ searchParams }) => {
   const { id } = searchParams;
+  // const {city} = useCity();
 
   // Fetch project data
   const project = await fetchProject(id);
+  // console.log(city)
+  console.log("Project Page SSR running...");
 
   // ✅ Error handling: show fallback UI
   if (project?.error) {
@@ -69,60 +93,7 @@ const Page = async ({ searchParams }) => {
 
 
   return (
-    <ProjectProvider value={{ project, section }}>
-      <div>
-        <ProjectBreadcrumb />
-        <ProjectBanner />
-        <div style={{ position: "sticky", top: "0", zIndex: "20" }}>
-          <ProjectTabs />
-        </div>
-        <div className="container">
-          <div className="row tab-row">
-            <div className={`col-9 ${styles.largeTabCol}`}>
-              <section id="overview">
-                <ProjectAbout />
-              </section>
-
-              <section id="properties">
-                <ProjectListingWithTab />
-              </section>
-
-              <section id="top-advertiser">
-                <ProjectTopAdvertisers />
-              </section>
-
-              <section id="floor-plan-&-unit">
-                <FloorPlanSection />
-              </section>
-
-              <section id="project-details">
-                <ProjectPhotosAndReviews />
-              </section>
-
-              <section id="about-developer">
-                <ProjectDeveloperInfo />
-              </section>
-
-              <section id="faq">
-                <ProjectFAQ />
-              </section>
-            </div>
-
-            <div className={`col-3 ${styles.smallTabCol}`}></div>
-
-            <div className={`col-12 ${styles.mobileCol}`}>
-              <ProjectAbout />
-              <ProjectListingWithTab />
-              <ProjectTopAdvertisers />
-              <FloorPlanSection />
-              <ProjectPhotosAndReviews />
-              <ProjectDeveloperInfo />
-              <ProjectFAQ />
-            </div>
-          </div>
-        </div>
-      </div>
-    </ProjectProvider>
+    <ProjectDetail section={section} project={project} />
   );
 };
 

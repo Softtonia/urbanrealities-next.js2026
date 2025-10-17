@@ -58,16 +58,16 @@ const Dashboard = () => {
         <ProfileCard profile={profile} />
         <div className={styles.mainContent}>
           <AboutUs profile={profile} />
-          <div className={styles.propertiesGrid}>
+          {/* <div className={styles.propertiesGrid}>
             <PropertyCard count={58} label="Properties Rent" percentage={40} color="#37D159" />
             <PropertyCard count={48} label="Properties Sell" percentage={80} color="#2B98D6" />
-          </div>
+          </div> */}
         </div>
       </div>
-      <div className={styles.propertiesGridmedia}>
+      {/* <div className={styles.propertiesGridmedia}>
         <PropertyCard count={58} label="Properties Rent" percentage={40} color="#37D159" />
         <PropertyCard count={48} label="Properties Sell" percentage={80} color="#2B98D6" />
-      </div>
+      </div> */}
       {/* <FilesSection />
       <OtherFilesSection /> */}
     </div>

@@ -48,14 +48,16 @@ const ProfileCard = ({ profile }) => {
         </div>
         <div className={styles.profileImageContainer}>
           <Image
-            src={profile?.profile_photo ? profile?.profile_photo : "/albert-camus.png"}
-            alt="Albert Camus"
+            src={profile?.profile_photo ? profile?.profile_photo : "/profile-placeholder.png"}
+            alt="Profile Image"
             width={90}
             height={90}
             className={styles.profileImage}
           />
         </div>
         <h3 className={styles.profileName}>{profile.first_name}</h3>
+        <span className={styles.value}>({profile.user_name})</span><br/>
+        <span className={styles.value}>{profile.role_name}</span>
       </div>
 
       <div className={styles.profileDetails}>
@@ -75,16 +77,16 @@ const ProfileCard = ({ profile }) => {
             <span className={styles.value}>{profile.email}</span>
           </div>
         }
-        {profile?.state?.name &&
+        {profile?.state &&
           <div className={styles.detailItem}>
             <span className={styles.label}>State:</span>
-            <span className={styles.value}>{profile?.state?.name}</span>
+            <span className={styles.value}>{profile.state}</span>
           </div>
-          }
-        {profile?.country?.name &&
+        }
+        {profile?.country &&
           <div className={styles.detailItem}>
             <span className={styles.label}>Country:</span>
-            <span className={styles.value}>{profile?.country?.name}</span>
+            <span className={styles.value}>{profile.country}</span>
           </div>}
       </div>
     </div>

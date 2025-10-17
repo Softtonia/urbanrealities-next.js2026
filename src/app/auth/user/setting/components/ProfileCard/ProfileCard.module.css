@@ -28,7 +28,7 @@
 .profileName {
   font-size: 16px;
   font-family: var(--font-medium);
-  margin-bottom: 27px;
+  /* margin-bottom: 27px; */
 }
 
 .profileDetails {

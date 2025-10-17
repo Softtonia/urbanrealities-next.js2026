@@ -10,7 +10,7 @@ export default function DeveloperList({ currentPage, cardsPerPage, totalProperti
 
   return (
     <div className={styles.propertyListContainer}>
-      {visibleCards.map((project, index) => (
+      {visibleCards?.length>0 && visibleCards.map((project, index) => (
         <DeveloperCard key={startIndex + index} project={project} />
       ))}
     </div>

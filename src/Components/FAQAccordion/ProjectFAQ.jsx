@@ -5,7 +5,7 @@ import { useDeveloper } from '@/app/developer-detail/context/DeveloperContext';
 
 const ProjectFAQ = () => {
   const { developer, setSection } = useDeveloper();
-  console.log("Developer in Stats:", developer);
+  // console.log("Developer in Stats:", developer);
 
   const home = developer?.repeater_fields?.filter(
     (val) =>
