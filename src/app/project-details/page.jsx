@@ -86,7 +86,7 @@ const Page = async ({ searchParams }) => {
     "About Developer": true,
     FAQ: true,
     "Near By Project": true,
-    "Others Project": true,
+    "Other Project": true,
   };
 
 

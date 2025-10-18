@@ -3,14 +3,22 @@
 import React, { useState } from "react";
 import styles from "./ProjectDeveloperInfo.module.css";
 import { useProject } from "../context/ProjectContext";
+import { useRouter } from "next/navigation";
+// import {useRouter} from ""
 
 const ProjectDeveloperInfo = () => {
-  const {project} = useProject();
+  const { project } = useProject();
   const [expanded, setExpanded] = useState(false);
   const [describeExpanded, setDescribeExpanded] = useState(false);
+  const router = useRouter()
+
+  const developer = project.developer
+
+  const handleNavigate = () => {
+    router.push(`/developer-detail?name=${developer?.name}&id=${developer?.id}`)
+  }
 
   // Limit to first 3 if not expanded
-  const developer = project.developer
   console.log("developer", developer)
   const overview = developer?.
     developer_repeater_fields
@@ -41,7 +49,7 @@ const ProjectDeveloperInfo = () => {
 
   console.log("opering cities", operatingCities)
 
-  if(!developer) return null;
+  if (!developer) return null;
   return (
     <div className={styles.infocontainer}>
       <h2 className={styles.heading}>About Developer</h2>
@@ -50,8 +58,8 @@ const ProjectDeveloperInfo = () => {
       <div className={styles.headerRow}>
         <div>
           <h3 className={styles.name}>{developer.name}</h3>
-          {experience && 
-          <p className={styles.experience}>Years of Experience - {experience}</p>
+          {experience &&
+            <p className={styles.experience}>Years of Experience - {experience}</p>
           }
         </div>
         <img
@@ -127,7 +135,9 @@ const ProjectDeveloperInfo = () => {
       </div>
 
       <div className={styles.buttons}>
-        <button className={styles.outlineBtn}>Explore Builder</button>
+        <button className={styles.outlineBtn}
+         onClick={handleNavigate}
+        >Explore Builder</button>
         <button className={styles.primaryBtn}>Contact Seller</button>
       </div>
     </div>

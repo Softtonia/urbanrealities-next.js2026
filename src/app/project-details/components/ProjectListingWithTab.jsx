@@ -49,7 +49,7 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
 }
 
 
-const ProjectListingWithTab = ({projects, heading, isLoading}) => {
+const ProjectListingWithTab = ({ projects, heading, isLoading }) => {
   // const { project } = useProject();
   console.log(projects)
   // const totalProperties = Array(96).fill(1); // Dummy 24 cards
@@ -64,7 +64,7 @@ const ProjectListingWithTab = ({projects, heading, isLoading}) => {
     (currentPage - 1) * cardsPerPage,
     currentPage * cardsPerPage
   );
-  // if(!(currentProjects?.length>0)) return null
+  if(!(currentProjects?.length > 0 )&& !isLoading) return null
 
   return (
     <div>
@@ -73,7 +73,9 @@ const ProjectListingWithTab = ({projects, heading, isLoading}) => {
         {/* Property list + Loader wrapper */}
         <div className={styles.propertyListWrapper}>
           {isLoading ? (
-            <div className={styles.loader}>Loading properties...</div>
+            <div className={styles.loader}>
+              Loading Project...
+            </div>
           ) : (
             <DeveloperList
               currentPage={currentPage}
