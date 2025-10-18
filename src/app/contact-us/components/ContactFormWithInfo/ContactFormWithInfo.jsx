@@ -17,7 +17,7 @@ export default function ContactFormWithInfo({contactData}) {
     first_name: "",
     last_name: "",
     email: "",
-    phone: "",
+    phone_no: "",
     message: "",
   });
 
@@ -39,8 +39,8 @@ export default function ContactFormWithInfo({contactData}) {
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,
-        country_code: "+91",
-        phone_number: formData.phone,
+        // country_code: "+91",
+        phone_no: formData.phone_no,
         message: formData.message,
       };
 
@@ -52,12 +52,12 @@ const res = await fetch(`/api/contact-us-leads`, {
         body: JSON.stringify(payload),
       });
       if (res.ok) {
-        setStatus("✅ Your message has been sent successfully!");
+        setStatus("✅ Your Enquiry has been sent successfully!");
         setFormData({
           first_name: "",
           last_name: "",
           email: "",
-          phone: "",
+          phone_no: "",
           message: "",
         });
         window.location.reload();
@@ -104,11 +104,11 @@ const res = await fetch(`/api/contact-us-leads`, {
           <div className={styles.formGroup}>
             <input
               type="tel"
-              name="phone"
-              value={formData.phone}
+              name="phone_no"
+              value={formData.phone_no}
               onChange={handleChange}
               className={`enquiryInput ${styles.formInput}`}
-              placeholder={data.phonePlaceholder}
+              placeholder={`${data.phonePlaceholder}*`}
               required
             />
             <input
@@ -164,7 +164,8 @@ const res = await fetch(`/api/contact-us-leads`, {
         <div className={styles.infoItem}>
           <FaMapMarkerAlt className={styles.icon} />
           <p>Location <span>{contactData.address}</span></p>
-        </div>}
+        </div>
+        }
       </div>
     </section>
   );

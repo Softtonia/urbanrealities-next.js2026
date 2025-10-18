@@ -13,15 +13,79 @@ import { MdOutlineChair, MdOutlineCorporateFare } from "react-icons/md";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import styles from "./ProjectCard.module.css";
 
-export default function ProjectCard() {
+export default function ProjectCard({ property }) {
+  const decodeHTMLEntities = (text) => {
+    const textarea = document.createElement("textarea");
+    textarea.innerHTML = text;
+    return textarea.value;
+  };
+
+  const heroSectionFields = property?.custom_field_values?.filter(
+    (val) =>
+      val?.template?.slug?.startsWith("herosection") &&
+      (val.template.slug.includes("banner")
+        || val.template.slug.includes("price"))
+  ) || [];
+  const overview = property?.custom_field_values?.filter(
+    (val) =>
+      val?.template?.slug?.startsWith("overview") &&
+      (val.template.slug.includes("tower")
+        || val.template.slug.includes("bhk")
+        || val.template.slug.includes("built-up-area")
+      )) || [];
+
+  const area = overview.find(val =>
+    val.template.slug.includes("built-up-area")
+  )?.field_value;
+
+
+
+  const bhk = overview.find(val =>
+    val.template.slug.includes("bhk")
+  )?.field_value;
+
+  const launchDate = overview.find(val =>
+    val.template.slug.includes("launch")
+  )?.field_value;
+
+  const price = heroSectionFields.find(val =>
+    val.template.slug.includes("price")
+  )?.field_value;
+
+
+
+  const tags = [
+    {
+      icon: <MdOutlineChair className={styles["card-icon"]} />,
+      label: bhk,
+    },
+    {
+      icon: <FaRulerCombined className={styles["card-icon"]} />,
+      label: price,
+    },
+    // {
+    //   icon: <FaBuilding className={styles["card-icon"]} />,
+    //   label: "Extra Tag",
+    // },
+  ]
+    .filter((val) => {
+      const label = val?.label;
+      if (Array.isArray(label)) return label.length > 0;
+      if (typeof label === "string") return label.trim().length > 0;
+      if (typeof label === "number") return true;
+      return false;
+    })
+    .slice(0, 3);
+
+
   return (
     <div className={styles.card}>
       <div className={styles.cardleft}>
         <div className={styles.imageContainer}>
-          <span className={styles.badge}>Featured</span>
+          {/* <span className={styles.badge}>Featured</span> */}
           <FaRegBookmark className={styles.tagIconOnImage} />
           <img
-            src="/image-card.png"
+            src={property?.featured_image ? property.featured_image : "/image-card.png"}
             alt="Property"
             className={`${styles["image-card"]}`}
           />
@@ -29,12 +93,12 @@ export default function ProjectCard() {
       </div>
       <div className={styles.cardCenter}>
         <div className={styles.titleRow}>
-          <h3>3BHK Flat for Sale in New Delhi</h3>
+          <h3>{property?.property_name} in {property?.city?.name}</h3>
           <FaShareAlt className={styles.shareIcon} />
         </div>
         <p className={styles.location}>
-          <FaMapMarkerAlt className={styles.locationIcon} /> New Ashok Nagar,
-          Near Metro Station
+          <FaMapMarkerAlt className={styles.locationIcon} /> {property?.area_locality},
+          {property?.city?.name}
         </p>
         <div className={styles.cardtags}>
           {[
@@ -48,42 +112,57 @@ export default function ProjectCard() {
             },
             {
               icon: <FaRulerCombined className={styles["card-icon"]} />,
-              label: "1700sqft."
+              label: area && `${area} sqft.`
             },
             {
               icon: <FaBuilding className={styles["card-icon"]} />,
               label: "Extra Tag"
             }
-          ].slice(0, 3).map((tag, index) => (
+          ].filter.slice(0, 3).map((tag, index) => (
             <span key={index} className={styles.cardtag}>
               {tag.icon}
               {tag.label}
             </span>
           ))}
+          {/* {tags?.map((tag, index) => (
+                <span key={index} className={styles.cardtag}>
+                  {tag.icon}
+                  {tag.label}
+                </span>
+              ))} */}
         </div>
 
-        <p className={styles.owner}>Ganesh Property</p>
+        <p className={styles.owner}>{property?.project_id_name}</p>
         <div className={styles.details}>
-          <p>
-            <FaRegCircleCheck className={styles["card-check"]} />  Sell
-          </p>
-          <p>
-            <FaRegCircleCheck className={styles["card-check"]} /> Residentials
-          </p>
-          <p>
+          {property?.purpose_id_name &&
+            <p>
+              <FaRegCircleCheck className={styles["card-check"]} />  {property?.purpose_id_name}
+            </p>
+          }
+          {property?.property_id_name &&
+            <p>
+              <FaRegCircleCheck className={styles["card-check"]} /> {property?.property_id_name}
+            </p>}
+          {/* <p>
             <FaRegCircleCheck className={styles["card-check"]} />  Flats
           </p>
           <p>
             <FaRegCircleCheck className={styles["card-check"]} /> Newly Constructed Property
-          </p>
+          </p> */}
         </div>
         <p className={styles.description}>
-          3 bhk newly constructed semi furnished flat with modular kitchen
+          {property?.description
+            ? decodeHTMLEntities(
+              property.description.replace(/<[^>]+>/g, "").slice(0, 100)
+            ) + "..."
+            : ""}
+
         </p>
+
       </div>
       <div className={styles.cardright}>
         <div className={styles.pricesection}>
-          <p className={styles.price}>$ 56000</p>
+          <p className={styles.price}>{price}</p>
           <button className={styles.button}>Contact Agent</button>
         </div>
       </div>

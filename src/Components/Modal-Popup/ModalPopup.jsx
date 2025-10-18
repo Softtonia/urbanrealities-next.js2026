@@ -8,12 +8,12 @@ const ModalPopup = ({ show, handleClose, popupData, agentName }) => {
     <div>
       <Modal show={show} onHide={handleClose} centered >
         {/* closeButton prop ko Modal.Header mein daalein */}
-        <Modal.Header  className={` ${styles.borderNone} borderNone`}>
+        <Modal.Header className={` ${styles.borderNone} borderNone`}>
           <Modal.Title className={styles.enquiryHeading}>
             {popupData.heading} {agentName}
-                 <button onClick={handleClose} className={styles.customCloseBtn}>
-            <FaTimes />
-          </button>
+            <button onClick={handleClose} className={styles.customCloseBtn}>
+              <FaTimes />
+            </button>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className={styles.quickEnquiry}>
@@ -43,8 +43,13 @@ const ModalPopup = ({ show, handleClose, popupData, agentName }) => {
                 id="phone"
                 className={`enquiryInput ${styles.formInput}`}
                 placeholder={popupData.phonePlaceholder}
+                maxLength={10} // optional limit
+                onInput={(e) => {
+                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                }}
               />
             </div>
+
             <div className={styles.formGroup}>
               <textarea
                 type="text"

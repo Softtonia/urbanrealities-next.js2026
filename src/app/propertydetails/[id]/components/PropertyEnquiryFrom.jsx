@@ -149,14 +149,27 @@ const PropertyEnquiryFrom = ({ property, leadTypes }) => {
       </div>
 
       <form className="enquiry-form" onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder="Name" className="enquiry-form__input" />
+        <input type="text" name="name" placeholder="Name*" className="enquiry-form__input" />
         {errors.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>}
 
-        <input type="email" name="email" placeholder="Email Address" className="enquiry-form__input" />
+        <input type="email" name="email" placeholder="Email Address*" className="enquiry-form__input" />
         {errors.email && <p style={{ color: "red", fontSize: "12px" }}>{errors.email}</p>}
 
-        <input type="text" name="phone" placeholder="Contact number" className="enquiry-form__input" />
-        {errors.phone && <p style={{ color: "red", fontSize: "12px" }}>{errors.phone}</p>}
+        <input
+          type="text"
+          name="phone"
+          placeholder="Contact number*"
+          className="enquiry-form__input"
+          maxLength={10} // optional (10 digits for mobile)
+          onInput={(e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, "");
+          }}
+        />
+        {errors.phone && (
+          <p style={{ color: "red", fontSize: "12px" }}>{errors.phone}</p>
+        )}
+
+
 
         {/* Dropdown for lead type */}
 

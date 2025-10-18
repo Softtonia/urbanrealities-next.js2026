@@ -10,8 +10,8 @@ export default function ProjectList({ currentPage, cardsPerPage, totalProperties
 
   return (
     <div className={styles.propertyListContainer}>
-      {visibleCards.map((_, index) => (
-        <ProjectCard key={startIndex + index} />
+      {visibleCards.map((property, index) => (
+        <ProjectCard key={startIndex + index} property={property} />
       ))}
     </div>
   );

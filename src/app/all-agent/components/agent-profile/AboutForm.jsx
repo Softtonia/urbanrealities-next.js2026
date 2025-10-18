@@ -41,6 +41,7 @@ const AboutForm = ({ data }) => {
     const phone = form.phone?.value.trim() || "";
     const email = form.email?.value.trim() || "";
     const message = form.message?.value.trim() || "";
+    const lead_type_id = 9;
 
     const newErrors = {};
     if (!name) newErrors.name = "Name is required";
@@ -50,7 +51,7 @@ const AboutForm = ({ data }) => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    const payload = { name, phone, email, message, user_ids: [id] };
+    const payload = { name, phone, email, message, user_ids: [id] ,lead_type_id};
     setFormValues(payload);
 
     try {
@@ -101,7 +102,7 @@ const AboutForm = ({ data }) => {
       const res = await fetch(`/api/agent/create-lead`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formValues, otp }),
+        body: JSON.stringify({ ...formValues, otp, lead_type_id:9}),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || "Submission failed");
@@ -149,7 +150,7 @@ const AboutForm = ({ data }) => {
                 type="text"
                 name="name"
                 className={`enquiryInput ${styles.formInput}`}
-                placeholder={data.usernamePlaceholder}
+                placeholder={`${data.usernamePlaceholder}*`}
               />
               {errors.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>}
             </div>
@@ -159,7 +160,7 @@ const AboutForm = ({ data }) => {
                 type="email"
                 name="email"
                 className={`enquiryInput ${styles.formInput}`}
-                placeholder={data.emailPlaceholder}
+                placeholder={`${data.emailPlaceholder}*`}
               />
               {errors.email && <p style={{ color: "red", fontSize: "12px" }}>{errors.email}</p>}
             </div>
@@ -169,10 +170,15 @@ const AboutForm = ({ data }) => {
                 type="tel"
                 name="phone"
                 className={`enquiryInput ${styles.formInput}`}
-                placeholder={data.phonePlaceholder}
+                placeholder={`${data.phonePlaceholder}*`}
+                maxLength={10}
+                onInput={(e) => {
+                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                }}
               />
               {errors.phone && <p style={{ color: "red", fontSize: "12px" }}>{errors.phone}</p>}
             </div>
+
 
             <div className={styles.formGroup}>
               <textarea

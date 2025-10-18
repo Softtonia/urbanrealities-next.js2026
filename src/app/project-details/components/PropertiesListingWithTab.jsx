@@ -51,31 +51,61 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
 
 const PropertiesListingWithTab = () => {
     const { project } = useProject();
+
+    const [properties, setProperties] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        if (!project.id) return; // only fetch if we have required data
+
+        const getProject = async () => {
+            setIsLoading(true);
+            try {
+                const res = await fetch(
+                    `/api/project-list/property-list-by-project-id?id=${project?.id}`,
+                    {
+                        method: "GET",
+                        headers: { "Content-Type": "application/json" },
+                    }
+                );
+                const result = await res.json();
+                setProperties(result?.data || []);
+            } catch (err) {
+                console.error("Failed to fetch projects", err);
+                setProperties([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        // if (projectId) {
+        getProject();
+        // }
+    }, [project?.id]); // run when projectId or city changes
+
     const totalProperties = Array(96).fill(1); // Dummy 24 cards
     const cardsPerPage = 4;
     const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = Math.ceil(totalProperties.length / cardsPerPage);
-    const [isLoading, setIsLoading] = useState(false);
+    const totalPages = Math.ceil(properties.length / cardsPerPage);
 
     const pageNumbers = getPagination(currentPage, totalPages, 6);
 
-
+    if(!properties && !isLoading) return null
     return (
         <div>
             <div className={styles.listing}>
                 <h2>Properties in {project.name}</h2>
-                <PropertyTabs />
+                {/* <PropertyTabs /> */}
 
                 {/* Property list + Loader wrapper */}
                 <div className={styles.propertyListWrapper}>
                     {isLoading ? (
                         <div className={styles.loader}>Loading properties...</div>
                     ) : (
-                        
+
                         <ProjectList
-                          currentPage={currentPage}
-                          cardsPerPage={cardsPerPage}
-                          totalProperties={totalProperties}
+                            currentPage={currentPage}
+                            cardsPerPage={cardsPerPage}
+                            totalProperties={properties}
                         />
                     )}
                 </div>

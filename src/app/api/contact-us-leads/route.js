@@ -1,20 +1,30 @@
-import { NextResponse } from 'next/server';
-import { post } from '@/lib/api';
+// import { NextResponse } from 'next/server';
+// import { post } from '@/lib/api';
+
+// export async function POST(req) {
+//     try {
+//         // Read JSON data directly from the request body
+//         const payload = await req.json();
+
+//         // Pass the JSON payload to your Laravel API
+//         const response = await post(`/api/contact-us-leads`, payload,req);
+
+//         return NextResponse.json(response.data);
+//     } catch (error) {
+//         console.error("Contact Form Error:", error?.response?.data || error.message);
+//         return NextResponse.json(
+//             { error: error?.response?.data?.message || error.message },
+//             { status: error?.response?.status || 500 }
+//         );
+//     }
+// }
+
+import { proxyToLaravel } from "@/lib/laravelProxy";
 
 export async function POST(req) {
-    try {
-        // Read JSON data directly from the request body
-        const payload = await req.json();
+    const payload = await req.json();
 
-        // Pass the JSON payload to your Laravel API
-        const response = await post(`/api/contact-us-leads`, payload,req);
-
-        return NextResponse.json(response.data);
-    } catch (error) {
-        console.error("Contact Form Error:", error?.response?.data || error.message);
-        return NextResponse.json(
-            { error: error?.response?.data?.message || error.message },
-            { status: error?.response?.status || 500 }
-        );
-    }
+    // Forward request to Laravel via proxy
+    return proxyToLaravel(req, "/api/business-enquiries", "POST", payload);
 }
+

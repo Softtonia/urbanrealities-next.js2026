@@ -134,7 +134,7 @@ const AgentProfileLayout = ({agentProfile,relatedProperties,userProperties}) => 
 
       <div className={styles.AboutAgentsection}>
         <div className={` ${styles.aboutAgentWrapper} container `}>
-          <div className={` ${styles.col} col-12 `}> <AboutAgent /> </div>
+          <div className={` ${styles.col} col-12 `}> <AboutAgent agentProfile={agentProfile} /> </div>
         </div>
       </div>
 
