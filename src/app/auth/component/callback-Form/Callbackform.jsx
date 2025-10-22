@@ -13,8 +13,8 @@ export default function CallbackForm({ roles = [] }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-      const searchParams = useSearchParams();
-      const redirect = searchParams.get("redirect") || "/";
+    const searchParams = useSearchParams();
+    const redirect = searchParams.get("redirect") || "/";
     // const [roles, setRoles] = useState([]);
 
     // ✅ Get `code` from URL on client
@@ -45,7 +45,7 @@ export default function CallbackForm({ roles = [] }) {
             if (result) {
                 console.log("Callback Result:", result);
 
-                if (result.data.role === "company" || result.data.role === "consultancy" || result.data.role === "developer"||  result.data.role === "agent" ) {
+                if (result.data.role_name === "company" || result.data.role_name === "consultancy" || result.data.role_name === "developer" || result.data.role_name === "agent") {
                     // 🔑 store token in cookie (shared across subdomains)
                     // document.cookie = `authToken=${result.token}; path=/; domain=.urbanrealities.com; secure; SameSite=None`;
 

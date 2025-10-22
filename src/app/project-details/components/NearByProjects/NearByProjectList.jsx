@@ -15,7 +15,7 @@ const NearByProjectList = ({ projectId }) => {
             setIsLoading(true);
             try {
                 const res = await fetch(
-                    `/api/project-list/get-nearby-projects?id=${projectId}&countryId=${city.country_id}&stateId=${city.state_id}&cityId=${city.id}`,
+                    `/api/project-list/get-nearby-projects?id=${projectId}&countryId=${city?.country_id}&stateId=${city?.state_id}&cityId=${city?.id}`,
                     {
                         method: "GET",
                         headers: { "Content-Type": "application/json" },

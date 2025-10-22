@@ -7,6 +7,7 @@ const OtherProjects = ({ projectId }) => {
     const { city } = useCity();
     const [properties, setProperties] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    console.log("location",city)
 
     useEffect(() => {
         const getProject = async (id) => {
@@ -15,7 +16,7 @@ const OtherProjects = ({ projectId }) => {
             setIsLoading(true);
             try {
                 const res = await fetch(
-                    `/api/project-list/get-other-projects?id=${id}&countryId=${city.country_id}&stateId=${city.state_id}&cityId=${city.id}`,
+                    `/api/project-list/get-other-projects?id=${id}&countryId=${city?.country_id}&stateId=${city?.state_id}&cityId=${city?.id}`,
                     {
                         method: "GET",
                         headers: {

@@ -54,28 +54,29 @@ export default function ProjectCard({ property }) {
 
 
 
-  const tags = [
-    {
-      icon: <MdOutlineChair className={styles["card-icon"]} />,
-      label: bhk,
-    },
-    {
-      icon: <FaRulerCombined className={styles["card-icon"]} />,
-      label: price,
-    },
-    // {
-    //   icon: <FaBuilding className={styles["card-icon"]} />,
-    //   label: "Extra Tag",
-    // },
-  ]
-    .filter((val) => {
-      const label = val?.label;
-      if (Array.isArray(label)) return label.length > 0;
-      if (typeof label === "string") return label.trim().length > 0;
-      if (typeof label === "number") return true;
-      return false;
-    })
-    .slice(0, 3);
+  // const tags = [
+  //   {
+  //     icon: <MdOutlineChair className={styles["card-icon"]} />,
+  //     label: bhk,
+  //   },
+  //   {
+  //     icon: <FaRulerCombined className={styles["card-icon"]} />,
+  //     label: price,
+  //   },
+  //   // {
+  //   //   icon: <FaBuilding className={styles["card-icon"]} />,
+  //   //   label: "Extra Tag",
+  //   // },
+  // ]
+  //   // ✅ Properly wrapped parentheses before chaining
+  //   .filter((val) => {
+  //     const label = val?.label;
+  //     if (Array.isArray(label)) return label.length > 0;
+  //     if (typeof label === "string") return label.trim().length > 0;
+  //     if (typeof label === "number") return true;
+  //     return false;
+  //   })
+  //   .slice(0, 3);
 
 
   return (
@@ -104,26 +105,36 @@ export default function ProjectCard({ property }) {
           {[
             {
               icon: <MdOutlineChair className={styles["card-icon"]} />,
-              label: "3BHK"
+              label: bhk,
             },
-            {
-              icon: <MdOutlineCorporateFare className={styles["card-icon"]} />,
-              label: "4–5 Floor"
-            },
+            // {
+            //   icon: <MdOutlineCorporateFare className={styles["card-icon"]} />,
+            //   label: "4–5 Floor",
+            // },
             {
               icon: <FaRulerCombined className={styles["card-icon"]} />,
-              label: area && `${area} sqft.`
+              label: area && `${area} sqft.`,
             },
-            {
-              icon: <FaBuilding className={styles["card-icon"]} />,
-              label: "Extra Tag"
-            }
-          ].filter.slice(0, 3).map((tag, index) => (
-            <span key={index} className={styles.cardtag}>
-              {tag.icon}
-              {tag.label}
-            </span>
-          ))}
+            // {
+            //   icon: <FaBuilding className={styles["card-icon"]} />,
+            //   label: "Extra Tag",
+            // },
+          ]
+            .filter((tag) => {
+              const label = tag?.label;
+              if (Array.isArray(label)) return label.length > 0;
+              if (typeof label === "string") return label.trim().length > 0;
+              if (typeof label === "number") return true;
+              return false;
+            })
+            .slice(0, 3)
+            .map((tag, index) => (
+              <span key={index} className={styles.cardtag}>
+                {tag.icon}
+                {tag.label}
+              </span>
+            ))}
+
           {/* {tags?.map((tag, index) => (
                 <span key={index} className={styles.cardtag}>
                   {tag.icon}

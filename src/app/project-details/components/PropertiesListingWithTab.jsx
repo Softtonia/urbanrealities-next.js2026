@@ -89,7 +89,13 @@ const PropertiesListingWithTab = () => {
 
     const pageNumbers = getPagination(currentPage, totalPages, 6);
 
-    if(!properties && !isLoading) return null
+
+
+    // 🔹 Hide component only if loading is finished AND no properties
+    if (!isLoading && (!properties || properties.length === 0)) {
+        return null;
+    }
+
     return (
         <div>
             <div className={styles.listing}>

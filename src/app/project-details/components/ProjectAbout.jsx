@@ -1,5 +1,4 @@
 'use client';
-
 import styles from "./ProjectAbout.module.css";
 import {
   FaRulerCombined,
@@ -8,14 +7,13 @@ import {
   FaBuilding,
   FaBed,
   FaDownload,
+  FaCar,
+  FaBath,
 } from "react-icons/fa";
-import { MdCheckCircle } from "react-icons/md";   // Status
-import { MdWeekend } from "react-icons/md";        // Furnished (sofa)
-import { FaCar } from "react-icons/fa";           // Parking (car)
-import { FaBath } from "react-icons/fa";          // Bathrooms
-import { MdBalcony } from "react-icons/md";       // Balconies (balcony icon)
-
 import {
+  MdCheckCircle,
+  MdWeekend,
+  MdBalcony,
   MdOutlineChair,
   MdOutlineCorporateFare,
 } from "react-icons/md";
@@ -23,70 +21,72 @@ import { useProject } from "../context/ProjectContext";
 import { useState } from "react";
 
 export default function AboutProject() {
-  const {project} = useProject();
+  const { project } = useProject();
   const [expanded, setExpanded] = useState(false);
-  const [expandedwhyus, setExpandedwhyus] = useState(false);
+  const [expandedWhyUs, setExpandedWhyUs] = useState(false);
 
-  const overview = project?.repeater_fields?.filter(
-    (val) =>
-      val?.template?.slug?.startsWith("overview") &&
-      (val.template.slug.includes("tower")
-        || val.template.slug.includes("units")
-        || val.template.slug.includes("size")
-        || val.template.slug.includes("bhk")
-        || val.template.slug.includes("launch")
-        || val.template.slug.includes("brochure")
-        || val.template.slug.includes("price")
-        || val.template.slug.includes("rent")
-      )) || [];
-  console.log("overview", project)
-  const tower = overview.find(val =>
+  // 🧩 Prevent hydration issues — wait until project data is loaded
+  if (!project || Object.keys(project).length === 0) {
+    return null; // Nothing rendered on SSR or client until project is ready
+  }
+
+  const overview =
+    project?.repeater_fields?.filter(
+      (val) =>
+        val?.template?.slug?.startsWith("overview") &&
+        (val.template.slug.includes("tower") ||
+          val.template.slug.includes("units") ||
+          val.template.slug.includes("size") ||
+          val.template.slug.includes("bhk") ||
+          val.template.slug.includes("launch") ||
+          val.template.slug.includes("brochure") ||
+          val.template.slug.includes("price") ||
+          val.template.slug.includes("rent"))
+    ) || [];
+
+  const tower = overview.find((val) =>
     val.template.slug.includes("tower")
   )?.field_value;
 
-  const units = overview.find(val =>
+  const units = overview.find((val) =>
     val.template.slug.includes("units")
   )?.field_value;
 
-  const size = overview.find(val =>
+  const size = overview.find((val) =>
     val.template.slug.includes("size")
   )?.field_value;
 
-  const bhk = overview.find(val =>
+  const bhk = overview.find((val) =>
     val.template.slug.includes("bhk")
   )?.field_value;
 
-  const launchDate = overview.find(val =>
+  const launchDate = overview.find((val) =>
     val.template.slug.includes("launch")
   )?.field_value;
-  const brochure = overview.find(val =>
+
+  const brochure = overview.find((val) =>
     val.template.slug.includes("brochure")
   )?.field_value;
 
-  const price = overview.find(val =>
+  const price = overview.find((val) =>
     val.template.slug.includes("price")
   )?.field_value;
-  const rent = overview.find(val =>
+
+  const rent = overview.find((val) =>
     val.template.slug.includes("rent")
   )?.field_value;
 
+  const features = project?.repeater_fields?.filter((val) =>
+    val.template?.name?.startsWith("project.furnishing")
+  );
 
-  const features = project?.repeater_fields
-    ?.filter((val) => val.template?.name?.startsWith("project.furnishing"))
-
-  const certificates = project?.repeater_fields
-    ?.filter((val) => val.template?.name?.startsWith("project.certificates"))
-
-  // const brochure = project?.repeater_fields?.find(
-  //   (val) => val.template?.slug.include("brochure")
-  // )?.field_value;
+  const certificates = project?.repeater_fields?.filter((val) =>
+    val.template?.name?.startsWith("project.certificates")
+  );
 
   const WhyUs = project?.repeater_fields?.find(
     (val) => val.template?.name === "project.why-us"
   )?.field_value;
-
-
-  console.log(features); // 👉 array of field_value
 
   const handleDownloadBrochure = () => {
     if (!brochure) {
@@ -94,10 +94,9 @@ export default function AboutProject() {
       return;
     }
 
-    // Create a temporary <a> element to trigger download
     const link = document.createElement("a");
     link.href = brochure;
-    link.setAttribute("download", "brochure.pdf"); // 👈 force download (name optional)
+    link.setAttribute("download", "brochure.pdf");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -107,164 +106,180 @@ export default function AboutProject() {
     if (!link) return;
     const a = document.createElement("a");
     a.href = link;
-    a.download = link.split("/").pop(); // take filename from URL
+    a.download = link.split("/").pop() || "file";
     a.click();
   };
 
-  // ✅ Limit shown certificates if not expanded
   const visibleCertificates = expanded
     ? certificates
     : certificates?.slice(0, 3);
 
-
   const items = WhyUs
     ? WhyUs.split(/<\/p>/)
       .map((item) =>
-        item
-          .replace(/<p[^>]*>/g, "")
-          .replace(/&nbsp;/g, " ")
-          .trim()
+        item.replace(/<p[^>]*>/g, "").replace(/&nbsp;/g, " ").trim()
       )
       .filter(Boolean)
     : [];
 
-  // ✅ Show only first 3 if not expanded
-  const visibleItems = expandedwhyus ? items : items.slice(0, 3);
+  const visibleItems = expandedWhyUs ? items : items.slice(0, 3);
 
   const iconMap = {
-    "status": <MdCheckCircle className={styles["aboutProject-icon"]} />,
-    "furnished": <MdWeekend className={styles["aboutProject-icon"]} />,
-    "parking": <FaCar className={styles["aboutProject-icon"]} />,
-    "bedrooms": <FaBed className={styles["aboutProject-icon"]} />,
-    "bathrooms": <FaBath className={styles["aboutProject-icon"]} />,
-    "balconies": <MdBalcony className={styles["aboutProject-icon"]} />,
+    status: <MdCheckCircle className={styles["aboutProject-icon"]} />,
+    furnished: <MdWeekend className={styles["aboutProject-icon"]} />,
+    parking: <FaCar className={styles["aboutProject-icon"]} />,
+    bedrooms: <FaBed className={styles["aboutProject-icon"]} />,
+    bathrooms: <FaBath className={styles["aboutProject-icon"]} />,
+    balconies: <MdBalcony className={styles["aboutProject-icon"]} />,
   };
 
-
-
-
-
-
-  // const highlight = project.repeater_field_value.filter((temp)=>temp.)
   return (
     <div className={styles["aboutProject-container"]}>
-      <h2 className={styles["aboutProject-title"]}>
-        About {project.name}
-      </h2>
-      <p
-        className={`${styles["aboutProject-desc"]} body-text-16`}
-        dangerouslySetInnerHTML={{ __html: project.description }}
-      ></p>
+      {project?.name && (
+        <h2 className={styles["aboutProject-title"]}>
+          About {project.name}
+        </h2>
+      )}
 
+      {/* ✅ Render description only when data exists */}
+      {project?.description ? (
+        <div
+          suppressHydrationWarning
+          className={`${styles["aboutProject-desc"]} body-text-16`}
+          dangerouslySetInnerHTML={{ __html: project.description || "" }}
+        />
+
+      ) : null}
 
       <div className={styles["aboutProject-highlights"]}>
-        {features && features.map((val) => (
+        {features?.map((val) => (
           <div key={val.field_label} className={styles["aboutProject-box"]}>
-            <p className="" style={{ textTransform: 'capitalize' }}>{val.field_label}</p>
+            <p style={{ textTransform: "capitalize" }}>{val.field_label}</p>
             <span>{val.field_value}</span>
             {iconMap[val.field_label] || null}
-            {/* <FaRulerCombined className={styles["aboutProject-icon"]} /> */}
           </div>
         ))}
-        {launchDate || units || tower || bhk ?
+
+        {(launchDate || units || tower || bhk) && (
           <>
-          {launchDate &&
-            <div className={styles["aboutProject-box"]}>
-              <p>Launch Date</p>
-              <span>{launchDate}</span>
-              <FaCalendarAlt className={styles["aboutProject-icon"]} />
-            </div>}
-            {units &&
-            <div className={styles["aboutProject-box"]}>
-              <p>Total Units</p>
-              <span>{units}</span>
-              <FaKey className={styles["aboutProject-icon"]} />
-            </div>}
-            {tower &&
-            <div className={styles["aboutProject-box"]}>
-              <p>Total Towers</p>
-              <span>{tower}</span>
-              <FaBuilding className={styles["aboutProject-icon"]} />
-            </div>}
-            {bhk &&
-            <div className={styles["aboutProject-box"]}>
-              <p>BHK</p>
-              <span>{bhk}</span>
-              <MdOutlineChair className={styles["aboutProject-icon"]} />
-            </div>}
+            {launchDate && (
+              <div className={styles["aboutProject-box"]}>
+                <p>Launch Date</p>
+                <span>{launchDate}</span>
+                <FaCalendarAlt className={styles["aboutProject-icon"]} />
+              </div>
+            )}
+            {units && (
+              <div className={styles["aboutProject-box"]}>
+                <p>Total Units</p>
+                <span>{units}</span>
+                <FaKey className={styles["aboutProject-icon"]} />
+              </div>
+            )}
+            {tower && (
+              <div className={styles["aboutProject-box"]}>
+                <p>Total Towers</p>
+                <span>{tower}</span>
+                <FaBuilding className={styles["aboutProject-icon"]} />
+              </div>
+            )}
+            {bhk && (
+              <div className={styles["aboutProject-box"]}>
+                <p>BHK</p>
+                <span>{bhk}</span>
+                <MdOutlineChair className={styles["aboutProject-icon"]} />
+              </div>
+            )}
           </>
-          : null}
+        )}
       </div>
-      {project?.propertyStatus?.length > 0 || price &&
+
+      {(price || rent || bhk || project?.property_status?.length > 0) && (
         <div className={styles["aboutProject-certificates"]}>
-          <p className={styles["aboutProject-whybuy-title"]}>₹{price}</p>
-          <p className={styles["aboutProject-para-box"]}>Rent: ₹{rent} </p>
-          <p className={styles["aboutProject-para-box"]}>{bhk} Flats</p>
-          <p className={styles["aboutProject-para-box"]}>
-            {project?.property_status?.map((status) => status?.property_status_name).join(", ")}
-          </p>
+          {price && (
+            <p className={styles["aboutProject-whybuy-title"]}>₹{price}</p>
+          )}
+          {rent && (
+            <p className={styles["aboutProject-para-box"]}>Rent: ₹{rent}</p>
+          )}
+          {bhk && (
+            <p className={styles["aboutProject-para-box"]}>{bhk} Flats</p>
+          )}
+          {project?.property_status?.length > 0 && (
+            <p className={styles["aboutProject-para-box"]}>
+              {project.property_status
+                .map((status) => status?.property_status_name)
+                .join(", ")}
+            </p>
+          )}
+        </div>
+      )}
 
-        </div>}
-{
-  visibleCertificates && visibleCertificates.length > 0 &&
-  <div className={styles["aboutProject-certificates"]}>
-    <div className={styles["aboutProject-cert-list"]}>
-      {visibleCertificates && visibleCertificates.map((val) => (
-        <div key={val.field_label} className={styles["aboutProject-cert-box"]}>
-          {/* {val.field_label} */}
-          <p className={styles["aboutProject-para-box"]}> {val.field_label}</p>
-          <div
-            onClick={() => handleDownload(val.field_value)} // 👈 pass file link
-            style={{ cursor: "pointer" }}
-          >
-            <FaDownload className={styles["cert-icon"]} />
+      {visibleCertificates?.length > 0 && (
+        <div className={styles["aboutProject-certificates"]}>
+          <div className={styles["aboutProject-cert-list"]}>
+            {visibleCertificates.map((val) => (
+              <div
+                key={val.field_label}
+                className={styles["aboutProject-cert-box"]}
+              >
+                <p className={styles["aboutProject-para-box"]}>
+                  {val.field_label}
+                </p>
+                <div
+                  onClick={() => handleDownload(val.field_value)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <FaDownload className={styles["cert-icon"]} />
+                </div>
+              </div>
+            ))}
           </div>
-        </div>))}
+          {certificates?.length > 3 && (
+            <button
+              className={styles["aboutProject-view-all"]}
+              style={{ border: "none", backgroundColor: "transparent" }}
+              onClick={() => setExpanded(!expanded)}
+            >
+              {expanded ? "Hide" : "View All"}
+            </button>
+          )}
+        </div>
+      )}
 
+      {items?.length > 0 && (
+        <div className={styles["aboutProject-whybuy"]}>
+          <h3 className={styles["aboutProject-whybuy-title"]}>
+            Why Buy in {project.name}?
+          </h3>
+          <ul className={styles["aboutProject-whybuy-list"]}>
+            {visibleItems.map((clean, index) => (
+              <li
+                key={index}
+                className={styles["whybuy-li"]}
+                dangerouslySetInnerHTML={{ __html: clean }}
+              />
+            ))}
+          </ul>
+          {items.length > 3 && (
+            <button
+              className={`${styles["aboutProject-more-link"]} body-text-rg16`}
+              style={{ border: "none", backgroundColor: "transparent" }}
+              onClick={() => setExpandedWhyUs(!expandedWhyUs)}
+            >
+              {expandedWhyUs ? "Less" : `+${items.length - 3} More`}
+            </button>
+          )}
+          {brochure && (
+            <button
+              className={styles["aboutProject-brochure-btn"]}
+              onClick={handleDownloadBrochure}
+            >
+              <FaDownload /> Download Brochure
+            </button>
+          )}
+        </div>
+      )}
     </div>
-    {certificates?.length > 3 && (
-      <button
-        className={styles["aboutProject-view-all"]}
-        style={{ border: 'none', backgroundColor: 'transparent' }}
-        onClick={() => setExpanded(!expanded)}
-      >
-        {expanded
-          ? "Hide"
-          : `View All`}
-      </button>
-    )}
-  </div>
-}
-
-<div className={styles["aboutProject-whybuy"]}>
-  <h3 className={styles["aboutProject-whybuy-title"]}>
-    Why Buy in {project.name}?
-  </h3>
-  <ul className={styles["aboutProject-whybuy-list"]}>
-    {visibleItems.map((clean, index) => (
-      <li
-        key={index}
-        className={styles["whybuy-li"]}
-        dangerouslySetInnerHTML={{ __html: clean }}
-      />
-    ))}
-  </ul>
-  {items.length > 3 && (
-    <button
-      className={`${styles["aboutProject-more-link"]} body-text-rg16`}
-      style={{ border: 'none', backgroundColor: 'transparent' }}
-
-      onClick={() => setExpandedwhyus(!expandedwhyus)}
-    >
-      {expandedwhyus ? "less" : `+${items.length - 3} More`}
-    </button>
-  )}
-  {brochure &&
-    <button className={styles["aboutProject-brochure-btn"]} onClick={handleDownloadBrochure}>
-      <FaDownload /> Download Brochure
-    </button>
-  }
-</div>
-    </div >
   );
 }
