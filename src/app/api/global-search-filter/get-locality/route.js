@@ -1,44 +1,68 @@
 // app/api/locations/route.js
-import { get } from "@/lib/api";
-import { NextResponse } from "next/server";
+// import { get } from "@/lib/api";
+// import { NextResponse } from "next/server";
+
+// export async function GET(req) {
+//     const { searchParams } = new URL(req.url);
+//     const country_id = searchParams.get("country_id") || '';
+//     const city_id = searchParams.get("city_id") || "";
+//     const state_id = searchParams.get("state_id") || "";
+//     const model = searchParams.get("model") || "";
+
+//     try {
+//         // Forward request to Laravel backend
+//         const queryParams = new URLSearchParams();
+//         if (country_id) queryParams.append("country_id", country_id);
+//         if (city_id) queryParams.append("city_id", city_id);
+//         if (state_id) queryParams.append("state_id", state_id);
+//         if (model) queryParams.append("model", model);
+
+//         const res = await get(
+//             `/api/get-localities-filter-by-location-id?${queryParams.toString()}`, req
+//         );
+//         return NextResponse.json(res.data);
+//     } catch (err) {
+//         console.error("Error fetching Localities:", err?.response?.data || err.message);
+
+//         // If Laravel sent an error response, forward it
+//         if (err.response) {
+//             return NextResponse.json(
+//                 {
+//                     error: err.response.data?.message || err.response.data || "Laravel error",
+//                 },
+//                 { status: err.response.status || 500 }
+//             );
+//         }
+
+//         // Otherwise, fallback to generic error
+//         return NextResponse.json(
+//             { error: err.message || "Failed to fetch cities" },
+//             { status: 500 }
+//         );
+//     }
+
+// }
+
+import { proxyToLaravel } from "@/lib/laravelProxy";
 
 export async function GET(req) {
+    // const body = await req.json();
     const { searchParams } = new URL(req.url);
     const country_id = searchParams.get("country_id") || '';
     const city_id = searchParams.get("city_id") || "";
     const state_id = searchParams.get("state_id") || "";
     const model = searchParams.get("model") || "";
 
-    try {
-        // Forward request to Laravel backend
-        const queryParams = new URLSearchParams();
-        if (country_id) queryParams.append("country_id", country_id);
-        if (city_id) queryParams.append("city_id", city_id);
-        if (state_id) queryParams.append("state_id", state_id);
-        if (model) queryParams.append("model", model);
+    const queryParams = new URLSearchParams();
+    if (country_id) queryParams.append("country_id", country_id);
+    if (city_id) queryParams.append("city_id", city_id);
+    if (state_id) queryParams.append("state_id", state_id);
+    if (model) queryParams.append("model", model);
 
-        const res = await get(
-            `/api/get-localities-filter-by-location-id?${queryParams.toString()}`,req
-        );
-        return NextResponse.json(res.data);
-    } catch (err) {
-        console.error("Error fetching Localities:", err?.response?.data || err.message);
 
-        // If Laravel sent an error response, forward it
-        if (err.response) {
-            return NextResponse.json(
-                {
-                    error: err.response.data?.message || err.response.data || "Laravel error",
-                },
-                { status: err.response.status || 500 }
-            );
-        }
+    // Forward request to Laravel via proxy
+    const url=`/api/get-localities-filter-by-location-id?${queryParams.toString()}`
+    const response = await proxyToLaravel(req, url, "GET");
 
-        // Otherwise, fallback to generic error
-        return NextResponse.json(
-            { error: err.message || "Failed to fetch cities" },
-            { status: 500 }
-        );
-    }
-
+    return response;
 }

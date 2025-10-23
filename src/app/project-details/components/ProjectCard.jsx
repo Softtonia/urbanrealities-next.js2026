@@ -12,8 +12,11 @@ import {
 import { MdOutlineChair, MdOutlineCorporateFare } from "react-icons/md";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import styles from "./ProjectCard.module.css";
+import { useRouter } from "next/navigation";
+import { slugify } from "@/utils/slugify";
 
 export default function ProjectCard({ property }) {
+  const router = useRouter();
   const decodeHTMLEntities = (text) => {
     const textarea = document.createElement("textarea");
     textarea.innerHTML = text;
@@ -52,6 +55,13 @@ export default function ProjectCard({ property }) {
     val.template.slug.includes("price")
   )?.field_value;
 
+
+
+
+   const handleNavigate = async () => {
+      const slug = await slugify(`${area && area} ${property.propertyType[0]?.property_type_name}-for-${property?.purpose_id_name}-in-${property?.state.name}`)
+      router.push(`/propertydetails/${slug}?id=${property?.id}`);
+    }
 
 
   // const tags = [
@@ -174,7 +184,7 @@ export default function ProjectCard({ property }) {
       <div className={styles.cardright}>
         <div className={styles.pricesection}>
           <p className={styles.price}>{price}</p>
-          <button className={styles.button}>Contact Agent</button>
+          <button className={styles.button} onClick={handleNavigate}>View Property</button>
         </div>
       </div>
     </div>
