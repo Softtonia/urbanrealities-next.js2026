@@ -3,6 +3,8 @@ import React from "react";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import "./ProjectCarousel.css";
+import { formatprice } from "@/utils/formatprice";
+
 
 const ProjectCard = ({ project, onViewProject }) => {
 
@@ -44,13 +46,13 @@ const ProjectCard = ({ project, onViewProject }) => {
     val.template.slug.includes("price")
   )?.field_value;
 
-    const heroSectionFields = project?.custom_field_values?.filter(
+  const heroSectionFields = project?.custom_field_values?.filter(
     (val) =>
       val?.template?.slug?.startsWith("herosection") &&
       (val.template.slug.includes("banner"))
   ) || [];
 
-  
+
   const heroBanner = heroSectionFields.find(val =>
     val.template.slug.includes("banner")
   )?.field_value[0];
@@ -74,14 +76,21 @@ const ProjectCard = ({ project, onViewProject }) => {
 
       <div className="project-carousel__content">
         <div className="project-card__body">
-          <p className="project-card__location m-0">{project.city.name + ',' + project.state.name}</p>
-          {project.developer && <h3 className="project-card__builder m-0">{project.developer.name}</h3>}
+          {project.name &&
+            <h3 className="project-card__builder m-0">
+              {project.name}
+            </h3>}
+          {project.developer &&
+            <p className="project-card__rera m-0">
+              {project.developer.name}
+            </p>}
+          <p className="project-card__location m-0">{project.area_locality + ',' + project.city.name}</p>
           {project.reraNo &&
             <p className="project-card__rera m-0">
               Rera No: {project.reraNo}
             </p>}
 
-          <div className="project-card__rating m-0">
+          {/* <div className="project-card__rating m-0">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="star">
                 <FaStar className={i < project.rating ? "filled" : "unfilled"} />
@@ -90,22 +99,24 @@ const ProjectCard = ({ project, onViewProject }) => {
             <span className="project-card__rating-value">
               ({project.rating}.0)
             </span>
-          </div>
+          </div> */}
           {project?.["property_type "] &&
             <p className="project-card__property-type m-0">
-              Property Type: {project?.["property_type "]?.map(val => val?.property_type_name)?.join(', ') }
+              {project?.["property_type "]?.map(val => val?.property_type_name)?.join(', ')}
             </p>}
           {ongoingPrice &&
             <p className="project-card__price m-0">
-              Ongoing Price: {ongoingPrice}
+              ₹{formatprice(ongoingPrice)} Onwards
             </p>
           }
           {/* {areaSqft &&
            <p className="project-card__area m-0">Area: {areaSqft}</p>} */}
-          {bhk &&
+          {Number(bhk) > 0 && (
             <p className="project-card__bhk m-0">
-              Bedroom: {bhk}</p>
-          }
+              {bhk} BHK
+            </p>
+          )}
+
           {/* {builderFloor &&
             <p className="project-card__builder-floor m-0">
               Builder Floor: {builderFloor}

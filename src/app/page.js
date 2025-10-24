@@ -29,7 +29,7 @@ const fetchProject = async () => {
 const fetchProperties = async () => {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await getssr(`/api/get-all-properties-listing-no-auth?per_page=10`);
+    const response = await getssr(`/api/get-all-properties-listing-no-auth?per_page=8`);
     const data = response?.data;
     console.log("=>", data)
 

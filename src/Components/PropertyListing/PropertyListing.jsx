@@ -5,6 +5,7 @@ import "./PropertyListing.css";
 import { useRouter } from "next/navigation";
 import SubHero from "./../SubHero/SubHero";
 import { slugify } from "@/utils/slugify";
+import { formatprice } from "@/utils/formatprice";
 // import axios from "axios";
 // import {get} from "@/lib/api";
 // const properties = Array.from({ length: 8 }, (_, index) => ({
@@ -30,15 +31,16 @@ export const PropertyCard = ({ property, handleViewProjectlist }) => {
       (val) =>
         (val?.template?.slug?.startsWith("herosection") ||
           val?.template?.slug?.startsWith("overview")) &&
-        (val?.template?.slug?.includes("bhk") ||
+        (val?.template?.slug?.includes("bedroom") ||
           val?.template?.slug?.includes("furnished") ||
-          val?.template?.slug?.includes("built-up-area"))
+          val?.template?.slug?.includes("built-up-area") ||
+          val?.template?.slug?.includes("price"))
     )
     : [];
 
   console.log("herroo", hero)
   const bedroom = hero.find(val =>
-    val?.template?.slug.includes("bhk")
+    val?.template?.slug.includes("bedroom")
   )?.field_value;
 
   const furnished = hero.find(val =>
@@ -47,6 +49,10 @@ export const PropertyCard = ({ property, handleViewProjectlist }) => {
 
   const area = hero.find(val =>
     val?.template?.slug.includes("built-up-area")
+  )?.field_value;
+
+  const price = hero.find(val =>
+    val?.template?.slug.includes("price")
   )?.field_value;
 
   // const area = property.custom_field_values?.find(
@@ -72,15 +78,16 @@ export const PropertyCard = ({ property, handleViewProjectlist }) => {
       <div className="property-content">
         <div className="property-title body-text-14 bord-bottom ">
 
-          <span >
-            {bedroom && <>
+          {/* <span > */}
+          {bedroom &&
+            <>
               <span >
-                {bedroom}
+                {bedroom} BHK
               </span>
-              <span className="pipe-divider"> | </span>
+              {/* <span className="pipe-divider"> | </span> */}
             </>
-            }
-            {property.property_type_id_name && <>
+          }
+          {/* {property.property_type_id_name && <>
               <span >
                 {property &&
                   property.property_type_id_name
@@ -88,34 +95,40 @@ export const PropertyCard = ({ property, handleViewProjectlist }) => {
               </span>
               <span className="pipe-divider"> | </span>
             </>
-            }{area &&
-              <span >
-                {area}sq.ft
-              </span>
-            }
+            } */}
+          {furnished &&
+            <span >
+              {furnished}
+            </span>
+          }
 
-          </span>
+          {/* </span> */}
 
         </div>
+
+        <div className="property-details body-text-14 bord-bottom">
+          {price &&
+            <span className="property-status-1">
+              ₹{formatprice(price)} onwards
+            </span>
+          }
+          {area &&
+            <span className="property-carpet-area">
+              {area}sqft.
+            </span>
+          }
+        </div>
+
         {property.state.name &&
           <div className="property-details body-text-14 bord-bottom">
             <div className="">
-              {` ${property.state.name}`}
+              {`${property.city.name},`}{` ${property.state.name}`}
             </div>
 
-          </div>}
+          </div>
+        }
 
 
-        <div className="property-details body-text-14 bord-bottom">
-          {property.property_status_id_name &&
-            <span className="property-status-1">
-              {property.property_status_id_name}
-            </span>}
-          {furnished &&
-            <span className="property-carpet-area">
-              {furnished}
-            </span>}
-        </div>
       </div>
 
       <div

@@ -50,7 +50,7 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
 
 
 const PropertiesListingWithTab = () => {
-    const { project } = useProject();
+    const { project, setSection } = useProject();
 
     const [properties, setProperties] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -92,10 +92,16 @@ const PropertiesListingWithTab = () => {
 
 
     // 🔹 Hide component only if loading is finished AND no properties
-    if (!isLoading && (!properties || properties.length === 0)) {
-        return null;
-    }
+    useEffect(() => {
+        if (!isLoading && (!properties || properties.length <= 0)) {
+            setSection(prev => ({
+                ...prev,
+                Properties: false
+            }));
+        }
+    }, [properties, isLoading]);
 
+    if (!isLoading &&  (!properties || properties.length <= 0)) return null
     return (
         <div>
             <div className={styles.listing}>

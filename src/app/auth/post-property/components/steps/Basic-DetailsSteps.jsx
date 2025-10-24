@@ -5,8 +5,8 @@ import styles from "./Basic-DetailsSteps.module.css";
 import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
-export default function StepContent({purposeList,propertyListing}) {
-  const [loading,setLoading] =useState(false);
+export default function StepContent({ purposeList, propertyListing }) {
+  const [loading, setLoading] = useState(false);
   const { token } = useSiteSettings();
   const { formData, updateFormData, setFormData } = useContext(PostPropertyContext);
 
@@ -19,16 +19,16 @@ export default function StepContent({purposeList,propertyListing}) {
   // Initialize state from context formData
   const [selectedPurpose, setSelectedPurpose] = useState(formData.basicDetails?.purpose || "");
   const [selectedProperty, setSelectedProperty] = useState('');
-  const [selectedPropertyType, setSelectedPropertyType] = useState(formData.basicDetails?.property_type || "");
-  const [selectedPropertyStatus, setSelectedPropertyStatus] = useState(formData.basicDetails?.property_status || "");
-  
-  console.log("token", token)
+  const [selectedPropertyType, setSelectedPropertyType] = useState(formData.basicDetails?.property_type || []);
+  const [selectedPropertyStatus, setSelectedPropertyStatus] = useState(formData.basicDetails?.property_status || []);
+  const [name, setName] = useState(formData.basicDetails?.name || "")
+  const [description, setDescription] = useState(formData.basicDetails?.description || "")
   useEffect(() => {
     if (propertyListing?.length > 0 && !selectedProperty) {
       setSelectedProperty(propertyListing[0].id);
     }
   }, [propertyListing, selectedProperty])
-
+  console.log(name)
 
   useEffect(() => {
     // Clear local storage data when this page is mounted
@@ -36,7 +36,7 @@ export default function StepContent({purposeList,propertyListing}) {
     setFormData({});
   }, []);
 
- 
+
   useEffect(() => {
     const fetchPropertyType = async () => {
       // console.log(token)
@@ -67,7 +67,7 @@ export default function StepContent({purposeList,propertyListing}) {
     const fetchPropertyType = async () => {
       // console.log(token)
       try {
-        const res = await fetch(`/api/post-property/get-property-status/${selectedPropertyType}`, {
+        const res = await fetch(`/api/post-property/get-property-status/${selectedPropertyType[0]}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -78,6 +78,8 @@ export default function StepContent({purposeList,propertyListing}) {
           setPropertyStatus(data);
         } else if (data?.data) {
           setPropertyStatus(data.data);
+        }else{
+          setPropertyStatus([])
         }
       } catch (err) {
         console.error('Error fetching status:', err);
@@ -118,6 +120,8 @@ export default function StepContent({purposeList,propertyListing}) {
     setError("");
 
     updateFormData("basicDetails", {
+      name: name,
+      description: description,
       purpose_id: selectedPurpose,
       property_id: selectedProperty,
       property_type_id: selectedPropertyType,
@@ -133,37 +137,61 @@ export default function StepContent({purposeList,propertyListing}) {
     <div className={styles.content}>
       <h3>Welcome back user,</h3>
       <h3>Fill out basic details</h3>
+      <div>
+        <label className={styles.formLabel}>
+          Name
+        </label>
+        <input
+          type="text"
+          className={styles.formInput}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Enter Name"
+        />
+      </div>
+      <div>
+        <label className={styles.formLabel}>
+          Description
+        </label>
+        <textarea
+          className={styles.formTextarea}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="ENter Description"
+          rows="5"
+        ></textarea>
 
+      </div>
       {/* Purpose Selection */}
       <div className={styles.optionGroup}>
         <p className={styles.subPara}>I'm looking to</p>
         <div className={styles.optionButtons}>
-        {loading
-          ? (
-            // Skeleton loading state
-            Array.from({ length: 2 }).map((_, i) => (
+          {loading
+            ? (
+              // Skeleton loading state
+              Array.from({ length: 2 }).map((_, i) => (
+                <button
+                  key={i}
+                  className={`${styles.optionBtn} placeholder col-1`}
+                  disabled
+                  style={{ height: "38px" }} // match your button height
+                  aria-label="Loading"
+                >
+                  Loading...
+                </button>
+              ))
+            )
+            : purposeList.map((p) => (
               <button
-                key={i}
-                className={`${styles.optionBtn} placeholder col-1`}
-                disabled
-                style={{ height: "38px" }} // match your button height
-                aria-label="Loading"
+                key={p.id}
+                className={`${styles.optionBtn} ${selectedPurpose === p.id ? styles.selected : ""
+                  }`}
+                onClick={() => setSelectedPurpose(p.id)}
               >
-                Loading...
+                {p.name}
               </button>
-            ))
-          )
-          : purposeList.map((p) => (
-            <button
-              key={p.id}
-              className={`${styles.optionBtn} ${selectedPurpose === p.id ? styles.selected : ""
-                }`}
-              onClick={() => setSelectedPurpose(p.id)}
-            >
-              {p.name}
-            </button>
-          ))}
-          </div>
+            ))}
+        </div>
       </div>
 
       {/* Property Type Selection */}<p className={`d-block ${styles.subPara}`}>What kind of property do you have?</p>
@@ -200,45 +228,63 @@ export default function StepContent({purposeList,propertyListing}) {
         </div>
 
       </div>
-      {propertyType?.length > 0 &&
-      <div>
-      <p className={`d-block w-100 ${styles.subPara}`}>What kind of property-Type do you have?</p>
-      {/* type Buttons */}
-      <div className={styles.optionButtons}>
+      {propertyType?.length > 0 && (
+        <div>
+          <p className={`d-block w-100 ${styles.subPara}`}>
+            What kind of property-Type do you have?
+          </p>
 
-        {propertyType.map((cat) => (
-          <button
-            key={cat.id}
-            className={`${styles.optionBtn} ${selectedPropertyType[0] === cat.id ? styles.selected : ""}`}
-            onClick={() => {
-              setSelectedPropertyType([cat.id]);
-            }}
-          >
-            {cat.name}
-          </button>
-        ))}
-      </div>
-      </div>}
-      {propertyStatus?.length > 0 &&
+          <div className={styles.optionButtons}>
+            {propertyType.map((cat) => {
+              const isSelected = selectedPropertyType.includes(cat.id);
+
+              return (
+                <button
+                  key={cat.id}
+                  className={`${styles.optionBtn} ${isSelected ? styles.selected : ""}`}
+                  onClick={() => {
+                    setSelectedPropertyType((prev) =>
+                      isSelected
+                        ? prev.filter((id) => id !== cat.id) // Remove if already selected
+                        : [...prev, cat.id] // Add if not selected
+                    );
+                  }}
+                >
+                  {cat.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {propertyStatus?.length > 0 && (
         <div>
           <p className={styles.subPara}>What is Property status?</p>
-          {/* Sub-options shown separately below */}
+
           <div className={styles.optionButtons}>
+            {propertyStatus.map((cat) => {
+              const isSelected = selectedPropertyStatus.includes(cat.id);
 
-            {propertyStatus.map((cat) => (
-              <button
-                key={cat.id}
-                className={`${styles.optionBtn} ${selectedPropertyStatus[0] === cat.id ? styles.selected : ""}`}
-                onClick={() => {
-                  setSelectedPropertyStatus([cat.id]);
-                }}
-              >
-                {cat.name}
-              </button>
-            ))}
+              return (
+                <button
+                  key={cat.id}
+                  className={`${styles.optionBtn} ${isSelected ? styles.selected : ""}`}
+                  onClick={() => {
+                    setSelectedPropertyStatus((prev) =>
+                      isSelected
+                        ? prev.filter((id) => id !== cat.id)
+                        : [...prev, cat.id]
+                    );
+                  }}
+                >
+                  {cat.name}
+                </button>
+              );
+            })}
           </div>
-
-        </div>}
+        </div>
+      )}
 
       {error && <p className="text-red-500 " style={{ color: 'red' }}>{error}</p>}
 

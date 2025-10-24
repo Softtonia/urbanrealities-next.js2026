@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const ProjectContext = createContext(null);
 
@@ -15,6 +15,13 @@ export const ProjectProvider = ({ value = {}, children }) => {
     const { project, section: initialSection } = value;
 
     const [section, setSection] = useState(initialSection || {});
+
+    // ✅ Sync when new section arrives (like after API)
+    // useEffect(() => {
+    //     if (initialSection) {
+    //         setSection(initialSection);
+    //     }
+    // }, [initialSection]);
 
     return (
         <ProjectContext.Provider value={{ project, section, setSection }}>

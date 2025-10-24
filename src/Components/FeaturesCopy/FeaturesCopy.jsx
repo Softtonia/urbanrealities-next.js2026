@@ -6,6 +6,7 @@ import "../../app/globals.css";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import SubHero from "../SubHero/SubHero";
 import slides from "../../../public/slides";
+import { formatprice } from "@/utils/formatprice";
 
 const FeaturesCopy = ({ projects }) => {
   const [current, setCurrent] = useState(0);
@@ -16,18 +17,22 @@ const FeaturesCopy = ({ projects }) => {
     const banner = val?.custom_field_values?.find((f) =>
       f?.template?.slug?.includes("banner")
     );
-
+    const onWardPrice = val?.custom_field_values?.find((f) =>
+      f?.template?.slug?.includes("price")
+    );
+// console.log("price",onWardPrice)
     return {
       id: val?.id,
       banner: banner?.field_value[0] || null, // assuming banner data is stored in field_value
       name: val?.name || "Untitled",
-      views: val?.total_view,
-      property_id_name: val?.property_id_name,
-      property_status: val?.["property_status"]?.map(s => s?.property_status_name)?.join(", ") || ""
+      views: val?.total_view || '0',
+      property_id_name: val?.property_id_name || '',
+      property_status: val?.["property_status"]?.map(s => s?.property_status_name)?.join(", ") || "",
+      price: formatprice(onWardPrice?.field_value) || ""
     };
   });
 
-  console.log("project", slides);
+  console.log("project", projects);
 
 
   // const slides = [
@@ -181,6 +186,16 @@ const FeaturesCopy = ({ projects }) => {
                     >
                       {slide.name}
                     </a>
+                    {
+                      slide?.property_id_name && (
+                        <p className="explore-btn-feature">
+                          {slide?.property_id_name}
+                        </p>)
+                    }
+                    {slide?.price &&
+                      <p className="explore-btn-feature">
+                        ₹<span>{slide?.price}</span> onwards</p>
+                    }
                   </div>
 
                 </div>

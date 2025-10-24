@@ -14,9 +14,10 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 import styles from "./DeveloperCard.module.css";
 import DeveloperDescription from "@/Components/Truncate/Truncate";
 import { useRouter } from "next/navigation";
+import { formatprice } from "@/utils/formatprice";
 
 export default function DeveloperCard({ project }) {
-  const router  = useRouter();
+  const router = useRouter();
   const heroSectionFields = project?.custom_field_values?.filter(
     (val) =>
       val?.template?.slug?.startsWith("herosection") &&
@@ -106,13 +107,18 @@ export default function DeveloperCard({ project }) {
         {/* Top Section */}
         <div className={styles.cardHeader}>
           <div className={styles.headerLeft}>
+            <p className={styles.location}>{project?.developer?.name || project?.developer_name}</p>
             <p className={styles.location}>
-              <FaMapMarkerAlt className={styles.locationIcon} /> {project?.city?.name} {project?.state?.name}
+              <FaMapMarkerAlt className={styles.locationIcon} /> {project?.city?.name || project?.area_locality} {project?.state?.name ||project?.city_name}
             </p>
-            <p className={styles.price}>{price} onwards</p>
+            <p className={styles.location}>{project?.property_type[0]?.property_type_name}</p>
+
+            {price &&
+              <p className={styles.price}>₹{formatprice(price)} onwards</p>
+            }
           </div>
           <div className={styles.headerRight}>
-            <p className={styles.developerInfo}>By: {project?.developer?.name}</p>
+
             <p className={styles.possessionInfo}>Possession in: {launchDate}</p>
           </div>
         </div>

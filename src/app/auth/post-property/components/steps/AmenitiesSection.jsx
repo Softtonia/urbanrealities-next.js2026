@@ -106,7 +106,7 @@ const AmenitiesSection = () => {
             Object.entries(formData.basicDetails || {}).forEach(([key, value]) => {
                 if (Array.isArray(value)) {
                     // For arrays, append each value
-                    value.forEach((v) => formDataToSend.append(`${key}[]`, v));
+                    value.forEach((v,id) => formDataToSend.append(`${key}[${id}]`, v));
                 } else {
                     // For single values, append directly
                     formDataToSend.append(key, value ?? "");
@@ -208,7 +208,7 @@ const AmenitiesSection = () => {
 
             {aminityFields.length === 0 && (
                 <p className={styles.formQuestion}>
-                    Please go back to Basic Details and select a Purpose and Property Type/Category to see pricing options.
+                    Please go back to Basic Details and select a Purpose and Property Type/Category to see Amenities options.
                 </p>
             )}
 

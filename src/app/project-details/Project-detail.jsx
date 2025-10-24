@@ -18,6 +18,7 @@ import OtherProjects from "./components/NearByProjects/OtherProjects";
 
 
 const ProjectDetail = ({ section, project }) => {
+    console.log("section",section)
     return (
         <ProjectProvider value={{ project, section }}>
             <div>

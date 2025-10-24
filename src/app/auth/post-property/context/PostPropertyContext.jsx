@@ -11,45 +11,50 @@ export function PostPropertyProvider({ children }) {
       return saved
         ? JSON.parse(saved)
         : {
-            basicDetails: {
-              purpose_id: "",
-              property_id: "",
-              property_type_id: [],
-              property_status_id: [],
-            },
-            locationDetails: {
-              country_id: null,
-              state_id: null,
-              city_id: null,
-              pin_code:null
-            },
-            // propertyProfile: {},
-            repeater_fields:{},
-            custom_field:{},
-            photos: [],
-            video: null,
-            pricingDetails: {
-              expectedRent: "",
-              pricePerSqFt: "",
-              basedOn: "Carpet Area",
-              electricityWaterExcluded: false,
-              priceNegotiable: false,
-              showMaintenanceBooking: false,
-              maintenanceCharges: "",
-              bookingAmount: "",
-              securityDepositType: "Fixed",
-              securityDepositValue: "",
-              lockInPeriod: "",
-              yearlyRentIncrease: "",
-              propertyUniqueDescription: "",
-            },
-          };
+          basicDetails: {
+            name: "",
+            description: "",
+            purpose_id: "",
+            property_id: "",
+            property_type_id: [],
+            property_status_id: [],
+          },
+          locationDetails: {
+            country_id: null,
+            state_id: null,
+            city_id: null,
+            street_address: "",
+            area_locality: "",
+            colony:"",
+            pin_code: null
+          },
+          // propertyProfile: {},
+          repeater_fields: {},
+          custom_field: {},
+          photos: [],
+          video: null,
+          pricingDetails: {
+            expectedRent: "",
+            pricePerSqFt: "",
+            basedOn: "Carpet Area",
+            electricityWaterExcluded: false,
+            priceNegotiable: false,
+            showMaintenanceBooking: false,
+            maintenanceCharges: "",
+            bookingAmount: "",
+            securityDepositType: "Fixed",
+            securityDepositValue: "",
+            lockInPeriod: "",
+            yearlyRentIncrease: "",
+            propertyUniqueDescription: "",
+          },
+        };
     }
     return {};
   });
   console.log(formData.repeater_fields)
-  
-// 
+
+  // 
   // Save to localStorage whenever formData changes
   useEffect(() => {
     localStorage.setItem("postPropertyData", JSON.stringify(formData));

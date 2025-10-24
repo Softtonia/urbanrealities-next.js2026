@@ -14,6 +14,32 @@
   margin-top: 12px;
 }
 
+.formLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 16px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+.formTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  min-height: 80px;
+  resize: vertical; /* Allow vertical resizing */
+}
 .optionBtn {
   padding: 10px 18px;
   border: 1px solid var( --Spanish-Gray);

@@ -3,33 +3,33 @@
 import React, { useState,useEffect } from 'react';
 import styles from './ProjectFAQ.module.css';
 import { useProject } from '../context/ProjectContext';
-const faqs = [
-  {
-    question: 'Is Mundeshwari Connaught One a good place to live?',
-    answer:
-      'Mundeshwari Connaught One is one of the best projects in Connaught Place to live in. With great transportation connectivity and impeccable modern amenities, this project will delight you in every way. Most of the offices and shopping complexes are also located nearby.',
-  },
-  {
-    question: 'What is the RERA number of Mundeshwari Connaught One?',
-    answer:
-      'The RERA number of Mundeshwari Connaught One is DLERA2022P0001-1. You can easily find it on RERA official website.',
-  },
-  {
-    question: 'How many flats are available for sale in Mundeshwari Connaught One on Magicbricks?',
-    answer:
-      'There are a total of 5 flats available for sale on Magicbricks. These flats offer prime facilities such as 24hour water, 24hour security, 100% power backup and maintenance staff making it a fine residential destination.',
-  },
-  {
-    question: 'What is the address of Mundeshwari Connaught One?',
-    answer:
-      'The address of Mundeshwari Connaught One is Godrej Connaught One, Shaheed Bhagat Singh Marg, Connaught Place, New Delhi - 110001, 110001.',
-  },
-  {
-    question: 'Which is nearest bus stop to Godrej Connaught One?',
-    answer:
-      'Palika Kendra Bus Stop is located near to the Godrej Connaught One. It is the only nearest bus stop & is located at a distance of 0.0 Kms.',
-  },
-];
+// const faqs = [
+//   {
+//     question: 'Is Mundeshwari Connaught One a good place to live?',
+//     answer:
+//       'Mundeshwari Connaught One is one of the best projects in Connaught Place to live in. With great transportation connectivity and impeccable modern amenities, this project will delight you in every way. Most of the offices and shopping complexes are also located nearby.',
+//   },
+//   {
+//     question: 'What is the RERA number of Mundeshwari Connaught One?',
+//     answer:
+//       'The RERA number of Mundeshwari Connaught One is DLERA2022P0001-1. You can easily find it on RERA official website.',
+//   },
+//   {
+//     question: 'How many flats are available for sale in Mundeshwari Connaught One on Magicbricks?',
+//     answer:
+//       'There are a total of 5 flats available for sale on Magicbricks. These flats offer prime facilities such as 24hour water, 24hour security, 100% power backup and maintenance staff making it a fine residential destination.',
+//   },
+//   {
+//     question: 'What is the address of Mundeshwari Connaught One?',
+//     answer:
+//       'The address of Mundeshwari Connaught One is Godrej Connaught One, Shaheed Bhagat Singh Marg, Connaught Place, New Delhi - 110001, 110001.',
+//   },
+//   {
+//     question: 'Which is nearest bus stop to Godrej Connaught One?',
+//     answer:
+//       'Palika Kendra Bus Stop is located near to the Godrej Connaught One. It is the only nearest bus stop & is located at a distance of 0.0 Kms.',
+//   },
+// ];
 const ProjectFAQ = () => {
   //     const [activeIndex, setActiveIndex] = useState(null);
 
@@ -64,8 +64,9 @@ const ProjectFAQ = () => {
   //   </div>
   // );
 
-  const { project,setSection } = useProject();
-  console.log("project in Stats:", project);
+  const { project,setSection,section } = useProject();
+
+  console.log("project in Stats:", section);
 
   const home = project?.repeater_fields?.filter(
     (val) =>
@@ -84,14 +85,16 @@ const ProjectFAQ = () => {
   const faqs = faqslist?.filter(item => item[0].field_value !== null && item[0].field_value !== undefined);
  // ✅ FIXED: Move setSection to useEffect
   useEffect(() => {
-    if (!faqs && faqs?.length < 0) {
+    if (!faqs ) {
+      console.log("faqs")
       setSection(prev => ({
         ...prev,
         FAQ: false
       }));
     }
-  }, [faqs, setSection]); // run only when faqs changes
+  }, [faqs]); // run only when faqs changes
 
+console.log(faqs)
   return (
     <div>
       {faqs && faqs.length > 0 && (

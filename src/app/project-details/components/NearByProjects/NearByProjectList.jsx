@@ -2,14 +2,17 @@
 import React, { useState, useEffect } from "react";
 import ProjectListingWithTab from "../ProjectListingWithTab";
 import { useCity } from "@/utils/CityContext";
+import { useProject } from "../../context/ProjectContext";
+
 
 const NearByProjectList = ({ projectId }) => {
     const { city } = useCity();
     const [properties, setProperties] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const {setSection} = useProject()
 
     useEffect(() => {
-        if (!projectId &&!city) return; // only fetch if we have required data
+        if (!projectId && !city) return; // only fetch if we have required data
 
         const getProject = async () => {
             setIsLoading(true);
@@ -31,9 +34,18 @@ const NearByProjectList = ({ projectId }) => {
             }
         };
         // if (projectId) {
-            getProject();
+        getProject();
         // }
-    }, [city,projectId]); // run when projectId or city changes
+    }, [city, projectId]); // run when projectId or city changes
+
+    useEffect(() => {
+        if (!isLoading && !properties) {
+            setSection(prev => ({
+                ...prev,
+                "Near By Project": false
+            }));
+        }
+    }, [properties, isLoading]);
 
     return (
         <>

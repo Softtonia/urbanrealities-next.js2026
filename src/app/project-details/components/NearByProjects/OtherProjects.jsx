@@ -2,16 +2,19 @@
 import React, { useState, useEffect } from "react";
 import ProjectListingWithTab from "../ProjectListingWithTab";
 import { useCity } from "@/utils/CityContext";
+import { useProject } from "../../context/ProjectContext";
+
 
 const OtherProjects = ({ projectId }) => {
     const { city } = useCity();
     const [properties, setProperties] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    console.log("location",city)
+    const {setSection} = useProject()
+    console.log("location", city)
 
     useEffect(() => {
         const getProject = async (id) => {
-            if (!id ) return;
+            if (!id) return;
 
             setIsLoading(true);
             try {
@@ -36,9 +39,16 @@ const OtherProjects = ({ projectId }) => {
         };
 
         getProject(projectId);
-    }, [city,projectId]);
+    }, [city, projectId]);
 
-    console.log("projects", properties);
+    useEffect(() => {
+        if (!isLoading && !properties ) {
+            setSection(prev => ({
+                ...prev,
+                "Other Project": false
+            }));
+        }
+    }, [properties, isLoading]);
 
     return (
         <ProjectListingWithTab

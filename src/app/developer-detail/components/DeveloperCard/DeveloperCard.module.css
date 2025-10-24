@@ -1,7 +1,7 @@
 .card {
   display: flex;
   background-color: var(--White);
-  border: 1px solid var(  --Platnium);
+  border: 1px solid var(--Platnium);
   border-radius: 12px;
   padding: clamp(12px, 2vw, 16px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
@@ -14,6 +14,7 @@
   flex-shrink: 0;
   position: relative;
 }
+
 .badge {
   position: absolute;
   top: 0px;
@@ -25,6 +26,7 @@
   border-top-left-radius: 10px;
   font-weight: bold;
 }
+
 .tagIconOnImage {
   position: absolute;
   top: 8px;
@@ -35,6 +37,7 @@
   font-size: clamp(28px, 5vw, 44px);
   color: var(--Eerie-Black);
 }
+
 .image-card {
   width: clamp(200px, 30vw, 338px);
   /* width: 338px; */
@@ -67,13 +70,18 @@
   display: flex;
   align-items: center;
   font-size: clamp(14px, 1vw, 16px);
-  margin: 0;
+  margin: 5px 0;
 }
 
 .locationIcon {
   margin-right: 4px;
   font-size: 14px;
-  color: var(--Orange-Red); /* Use a color from the image, like a rusty orange */
+  color: var(--Orange-Red);
+  /* Use a color from the image, like a rusty orange */
+}
+
+.title {
+  text-transform: capitalize;
 }
 
 .headerRight {
@@ -93,6 +101,7 @@
   color: var(--Orange-Red);
   margin: 0;
 }
+
 /* Pricing and Description */
 .pricingAndDescription {
   margin-bottom: clamp(10px, 2vw, 20px);
@@ -128,13 +137,16 @@
   border-radius: 6px;
   transition: all 0.3s ease;
 }
+
 .card-icon {
   margin-right: 5px;
 }
+
 .cardtag:hover {
   background-color: var(--Orange-Red);
   color: var(--White);
 }
+
 .viewProjectButton {
   background-color: var(--Orange-Red);
   color: var(--White);
@@ -160,6 +172,7 @@
   }
 
 }
+
 @media (max-width: 768px) {
   .card {
     flex-direction: column;

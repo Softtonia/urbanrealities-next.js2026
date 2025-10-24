@@ -16,7 +16,7 @@
 .project-card {
   flex: 0 0 auto;
   width: 827px;
-  height: 438px;
+  height: 338px;
   display: flex;
   border: 1px solid var(--Gray);
   border-radius: 10px;
@@ -113,6 +113,7 @@
   .project-card__builder-floor,
   .project-card__rating-value {
     font-size: 13px;
+    text-transform: capitalize;
   }
 
   .project-card__status {

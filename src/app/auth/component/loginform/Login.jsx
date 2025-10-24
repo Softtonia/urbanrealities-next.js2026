@@ -33,7 +33,7 @@ export default function LoginPage() {
   const data = {
     heading: "Login your account",
     subText: "Continue your journey with UrbanRealities",
-    emailLabel: "Email/Phone Number",
+    emailLabel: "Email",
     emailPlaceholder: "Enter email id",
     passwordLabel: "Password",
     passwordPlaceholder: "Enter password",

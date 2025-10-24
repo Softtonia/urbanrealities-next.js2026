@@ -53,6 +53,8 @@
 .property-title {
   font-weight: 500;
   margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
   color: #333;
 }
 
@@ -82,6 +84,9 @@
 .property-status-1{
   margin-left: 0;
 }
+.property-status-1 span{
+  font-weight: 700;
+}
 .property-carpet-area{
   margin-right: 0;
 }
@@ -102,7 +107,7 @@
 }
 
 .bord-bottom {
-  padding: 10px 10px;
+  padding: 5px 10px;
   border-bottom: 1px solid rgba(128, 128, 128, 0.248);
 }
 

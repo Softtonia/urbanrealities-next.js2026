@@ -43,6 +43,15 @@ const Location = () => {
   const [selectedPinCode, setSelectedPinCode] = useState(
     formData.locationDetails?.pin_code || ""
   );
+  const [areaLocality, setAreaLocality] = useState(
+    formData.locationDetails?.area_locality || ""
+  );
+  const [colony, setColony] = useState(
+    formData.locationDetails?.colony || ""
+  );
+  const [streetAddress, setStreetAddress] = useState(
+    formData.locationDetails?.street_address || ""
+  );
 
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
@@ -164,6 +173,9 @@ const Location = () => {
       state_id: selectedState,
       city_id: selectedCity,
       pin_code: selectedPinCode,
+           street_address: streetAddress,
+            area_locality: areaLocality,
+            colony:colony,
     });
 
     router.push("/auth/post-property/property-profile");
@@ -244,6 +256,8 @@ const Location = () => {
       zIndex: 9999,
     }),
   };
+
+  console.log(streetAddress)
 
   return (
     <div className={styles.content}>
@@ -367,6 +381,42 @@ const Location = () => {
           className={`${styles.inputField} w-20`} // keep consistent with Select styling
         />
         {errors.pin_code && <p className={styles.error}>{errors.pin_code}</p>}
+      </div>
+      <div className={styles.formGroup}>
+        <label className={styles.label}>Area / locality</label>
+        <input
+          type="text"
+          value={areaLocality}
+          onChange={(e) => {
+            setAreaLocality(e.target.value);
+          }}
+          placeholder="Enter Area / Locality"
+          className={`${styles.inputField} w-20`} // keep consistent with Select styling
+        />
+      </div>
+      <div className={styles.formGroup}>
+        <label className={styles.label}>Colony</label>
+        <input
+          type="text"
+          value={colony}
+          onChange={(e) => {
+            setColony(e.target.value);
+          }}
+          placeholder="Enter Conlony"
+          className={`${styles.inputField} w-20`} // keep consistent with Select styling
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label className={styles.label}>Street Address</label>
+        
+        <textarea
+          className={styles.formTextarea}
+          value={streetAddress}
+          onChange={(e) => setStreetAddress(e.target.value)}
+          placeholder="Enter Street Address"
+          rows="5"
+        ></textarea>
       </div>
 
       <button
