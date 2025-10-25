@@ -4,6 +4,7 @@
   background-color: var(--White);
   padding: 20px;
   margin-top: 50px;
+  text-transform:capitalize;
 }
 
 .projectHeading {

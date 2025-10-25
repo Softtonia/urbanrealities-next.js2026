@@ -62,9 +62,24 @@ const AMENITIES_DATA = {
 
 const TABS = Object.keys(AMENITIES_DATA);
 
-const PropertyAmenities = () => {
+const PropertyAmenities = ({ property }) => {
   const [activeTab, setActiveTab] = useState("Crowdsourcing");
 
+  const repeaterFields = property?.custom_field_values
+    ? Object.values(property.custom_field_values)
+    : [];
+  const ResidentialProperty = Array.isArray(repeaterFields)
+    ? repeaterFields?.filter(
+      (val) =>
+        (val?.template?.slug?.startsWith("residentialpropery"))
+    )
+    : [];
+
+  console.log("residentia",ResidentialProperty)
+  // const residential = ResidentialProperty.find(val =>
+  //   val?.template?.slug.includes("price")
+  // )?.field_value;
+  // console.log(residential)
   return (
     <div className={styles.amenitiesBox}>
       <h4 className={`body-text-sb18 ${styles.sectionTitle}`}>Amenities</h4>
@@ -72,9 +87,8 @@ const PropertyAmenities = () => {
         {TABS.map((tab) => (
           <button
             key={tab}
-            className={`body-text-rg16 ${styles.tab} ${
-              activeTab === tab ? styles.activeTab : ""
-            }`}
+            className={`body-text-rg16 ${styles.tab} ${activeTab === tab ? styles.activeTab : ""
+              }`}
             onClick={() => setActiveTab(tab)}
           >
             {tab}

@@ -3,7 +3,8 @@ import React, { useState, useEffect } from "react";
 
 import styles from "./ProjectPhotosAndReviews.module.css";
 import { FaArrowLeft, FaArrowRight, FaStar } from "react-icons/fa";
-
+import { useProject } from "../context/ProjectContext";
+import Image from "next/image";
 const images = [
   "/image-card.png",
   "/image-card.png",
@@ -15,13 +16,14 @@ const images = [
 ];
 const visibleCount = 3;
 const ProjectPhotosAndReviews = () => {
+  const { project, setSection } = useProject();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const totalSlides = images.length;
 
   // Infinite loop
-const maxIndex = images.length - visibleCount;
- const nextSlide = () => {
+  const maxIndex = images.length - visibleCount;
+  const nextSlide = () => {
     setCurrentIndex((prev) =>
       prev < totalSlides - visibleCount ? prev + 1 : 0
     );
@@ -39,7 +41,18 @@ const maxIndex = images.length - visibleCount;
   //   return () => clearInterval(interval);
   // }, []);
 
- 
+
+  const hero = project?.repeater_fields?.filter(
+    (val) =>
+      val?.template?.slug?.startsWith("herosection") &&
+      (val.template.slug.includes("gallery"))
+  ) || [];
+
+  const gallery = hero.find((val) =>
+    val.template.slug.includes("gallery")
+  )?.field_value;
+
+
   const reviews = [
     {
       name: "Bipin",
@@ -60,15 +73,33 @@ const maxIndex = images.length - visibleCount;
         "One of the luxury project at commaught place with high and luxury amenities.",
     },
   ];
+  // useEffect(() => {
+  //   if (!gallery || gallery.length === 0) {
+  //     setSection(prev => ({
+  //       ...prev,
+  //       "Project Details": false
+  //     }));
+  //   }
+  // }, [gallery]);
+  useEffect(() => {
+    const noFAQs = !gallery || gallery.length === 0;
 
+    setSection(prev => {
+      if (prev["Project Details"] === !noFAQs) return prev; // skip if already correct
+      return { ...prev, "Project Details": !noFAQs };
+    });
+  }, [gallery, setSection]);
+
+  if (!gallery || gallery.length === 0) return null
+  console.log(gallery)
   return (
     <div className={styles.projectSection}>
-      <h2 className={styles.projectHeading}>Mundeshwari Connaught Details</h2>
+      <h2 className={styles.projectHeading}>{project.name} Details</h2>
       <p className={styles.projectSubheading}>
-        Photos of Mundeshwari Connaught One
+        Photos of {project.name}
       </p>
 
-     <div className={styles.carouselWrapper}>
+      <div className={styles.carouselWrapper}>
         <div className={styles.carouselTrackWrapper}>
           <div
             className={styles.carouselTrack}
@@ -76,10 +107,12 @@ const maxIndex = images.length - visibleCount;
               transform: `translateX(-${(currentIndex * 100) / visibleCount}%)`,
             }}
           >
-            {images.map((src, idx) => (
-              <img
+            {gallery.map((src, idx) => (
+              <Image
                 key={idx}
                 src={src}
+                width={324}
+                height={247}
                 alt={`slide-${idx}`}
                 className={styles.carouselImg}
               />
@@ -88,9 +121,9 @@ const maxIndex = images.length - visibleCount;
         </div>
       </div>
       <div className={styles.photoControls}>
-        <a href="#" className={styles.seeAll}>
-          See all photos / Videos →
-        </a>
+        {/* <a href="#" className={styles.seeAll}>
+          See all photos →
+        </a> */}
         <div className={styles.arrows}>
           <button className={styles.arrowBtn} onClick={prevSlide}>
             <FaArrowLeft />
@@ -100,7 +133,7 @@ const maxIndex = images.length - visibleCount;
           </button>
         </div>
       </div>
-      <h3 className={styles.reviewHeading}>
+      {/* <h3 className={styles.reviewHeading}>
         Mundeshwari Connaught One Reviews & Ratings
       </h3>
       <div className={styles.reviewsRow}>
@@ -130,9 +163,9 @@ const maxIndex = images.length - visibleCount;
             <p className={styles.reviewContent}>{review.content}</p>
           </div>
         ))}
-      </div>
+      </div> */}
 
-      <button className={styles.writeReviewBtn}>Write a review</button>
+      {/* <button className={styles.writeReviewBtn}>Write a review</button> */}
     </div>
   );
 };

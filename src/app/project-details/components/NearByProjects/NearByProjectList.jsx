@@ -33,19 +33,29 @@ const NearByProjectList = ({ projectId }) => {
                 setIsLoading(false);
             }
         };
-        // if (projectId) {
+        if (city) {
         getProject();
-        // }
+        }
     }, [city, projectId]); // run when projectId or city changes
 
-    useEffect(() => {
-        if (!isLoading && !properties) {
-            setSection(prev => ({
-                ...prev,
-                "Near By Project": false
-            }));
-        }
-    }, [properties, isLoading]);
+    // useEffect(() => {
+    //     if (!isLoading && !properties) {
+    //         setSection(prev => ({
+    //             ...prev,
+    //             "Near By Project": false
+    //         }));
+    //     }
+    // }, [properties, isLoading]);
+
+    
+        useEffect(() => {
+            const noFAQs = (!properties || properties.length === 0) && !isLoading;
+    
+            setSection(prev => {
+                if (prev[ "Near By Project"] === !noFAQs) return prev; // skip if already correct
+                return { ...prev,  "Near By Project": !noFAQs };
+            });
+        }, [properties,isLoading, setSection]);
 
     return (
         <>

@@ -1,15 +1,21 @@
-.mobileCol{
-    display: none ;
+.mobileCol {
+    display: none;
 }
 
+.section {
+    scroll-margin-top: 100px;
+    /* adjust based on height of ProjectTabs */
+}
 
-@media (max-width:991.99px){
+@media (max-width:991.99px) {
+
     /* .smallTabCol, */
-    .largeTabCol{
+    .largeTabCol {
         display: none !important;
     }
-    .mobileCol{
-    display: block;
-    background-color: var(--Cultured);
-}
+
+    .mobileCol {
+        display: block;
+        background-color: var(--Cultured);
+    }
 }

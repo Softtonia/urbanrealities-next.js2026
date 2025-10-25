@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./ProjectDeveloperInfo.module.css";
 import { useProject } from "../context/ProjectContext";
 import { useRouter } from "next/navigation";
 // import {useRouter} from ""
 
 const ProjectDeveloperInfo = () => {
-  const { project } = useProject();
+  const { project, setSection } = useProject();
   const [expanded, setExpanded] = useState(false);
   const [describeExpanded, setDescribeExpanded] = useState(false);
   const router = useRouter()
@@ -48,8 +48,26 @@ const ProjectDeveloperInfo = () => {
 
 
   console.log("opering cities", operatingCities)
+  // useEffect(() => {
+  //   if (!developer) {
+  //     setSection(prev => ({
+  //       ...prev,
+  //       "About Developer": false
+  //     }));
+  //   }
+  // }, [developer]);
+
+  useEffect(() => {
+    const noFAQs = !developer ;
+
+    setSection(prev => {
+      if (prev["About Developer"] === !noFAQs) return prev; // skip if already correct
+      return { ...prev, "About Developer": !noFAQs };
+    });
+  }, [developer, setSection]);
 
   if (!developer) return null;
+
   return (
     <div className={styles.infocontainer}>
       <h2 className={styles.heading}>About Developer</h2>
@@ -63,8 +81,8 @@ const ProjectDeveloperInfo = () => {
           }
         </div>
         <img
-          src={developer?.featured_image ? developer.featured_image : "./Urbanrealities-logo.png"}
-          alt="Urbanrealities Logo"
+          src={developer.featured_image ? developer.featured_image : "./developer-profile.jpg"}
+          alt="Developer Logo"
           className={styles.logo}
         />
       </div>
@@ -119,6 +137,7 @@ const ProjectDeveloperInfo = () => {
       <div className={styles.description}>
         {/* ✅ Render HTML safely */}
         <div
+          className={styles.descriptionInline}
           dangerouslySetInnerHTML={{
             __html: describeExpanded ? developer?.description : displayedHTML,
           }}
@@ -136,7 +155,7 @@ const ProjectDeveloperInfo = () => {
 
       <div className={styles.buttons}>
         <button className={styles.outlineBtn}
-         onClick={handleNavigate}
+          onClick={handleNavigate}
         >Explore Builder</button>
         <button className={styles.primaryBtn}>Contact Seller</button>
       </div>

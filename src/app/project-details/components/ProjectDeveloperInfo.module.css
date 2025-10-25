@@ -84,6 +84,7 @@
   font-family: var(--font-regular);
   display: block;
   margin-top: 4px;
+  text-transform: capitalize;
 }
 
 .plus {
@@ -108,7 +109,11 @@
 
 .readMore {
   color: var(--Orange-Red);
+  /* display:inline; */
   cursor: pointer;
+}
+.descriptionInline{
+  display:inline;
 }
 
 .buttons {

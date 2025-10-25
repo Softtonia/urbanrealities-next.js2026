@@ -60,6 +60,7 @@
 .name,
 .price {
   font-family: var(--font-semibold);
+  text-transform: capitalize;
   font-size: clamp(16px, 2vw, 48px);
 }
 @media screen and (max-width: 768px) {

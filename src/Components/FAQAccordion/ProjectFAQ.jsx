@@ -13,10 +13,10 @@ const ProjectFAQ = () => {
       val?.template?.slug.includes("faq")
   ) || [];
 
-  const faqs = home.find(val =>
+  const faqslist = home.find(val =>
     val?.template?.slug.includes("faq")
   )?.field_value;
-
+  const faqs = faqslist?.filter(item => item[0].field_value !== null && item[0].field_value !== undefined);
   console.log("FAQ Data:", faqs);
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -26,14 +26,15 @@ const ProjectFAQ = () => {
 
   // ✅ FIXED: Move setSection to useEffect
   useEffect(() => {
-    if (!faqs && faqs.length < 0) {
-      setSection(prev => ({
-        ...prev,
-        FAQ: false
-      }));
-    }
-  }, [faqs, setSection]); // run only when faqs changes
+    const noFAQs = !faqs || faqs.length === 0;
 
+    setSection(prev => {
+      if (prev.FAQ === !noFAQs) return prev; // skip if already correct
+      return { ...prev, FAQ: !noFAQs };
+    });
+  }, [faqs, setSection]);
+
+  console.log("faqss==>", faqs)
   return (
     <div>
       {faqs && faqs.length > 0 && (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import styles from "./DeveloperPhotos.module.css";
 import { FaArrowLeft, FaArrowRight, FaTimes } from "react-icons/fa";
 import Modal from "react-modal";
@@ -13,7 +13,7 @@ import { useDeveloper } from "../../context/DeveloperContext";
 const visibleCount = 3;
 
 const DeveloperPhotos = () => {
-    const {developer} = useDeveloper();
+    const { developer, setSection } = useDeveloper();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [modalOpen, setModalOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -90,6 +90,17 @@ const DeveloperPhotos = () => {
         setCurrentIndex((prev) => (prev > 0 ? prev - 1 : maxIndex));
     };
     console.log("photos", photos);
+
+    useEffect(() => {
+        const noPhotos = !photos || (Array.isArray(photos) && photos.length === 1 && photos[0] === null);
+        console.log("inside")
+        setSection(prev => {
+            if (prev.Photos === !noPhotos) return prev; // skip if already correct
+            return { ...prev, Photos: !noPhotos };
+        });
+    }, [photos, setSection]);
+
+
     if (!photos || (Array.isArray(photos) && photos.length === 1 && photos[0] === null)) {
         return null;
     }

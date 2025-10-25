@@ -32,15 +32,15 @@ const ProjectDetail = ({ section, project }) => {
 
                         {/* Desktop: Left Column */}
                         <div className={`col-9 ${styles.largeTabCol}`}>
-                            <section id="overview"><ProjectAbout /></section>
-                            <section id="properties"><PropertiesListingWithTab /></section>
-                            <section id="top-advertiser"><ProjectTopAdvertisers /></section>
-                            <section id="floor-plan-&-unit"><FloorPlanSection /></section>
-                            <section id="project-details"><ProjectPhotosAndReviews /></section>
-                            <section id="about-developer"><ProjectDeveloperInfo /></section>
-                            <section id="faq"><ProjectFAQ /></section>
-                            <section id="near-by-project"><NearByProjectList projectId={project.id} /></section>
-                            <section id="other-project"><OtherProjects projectId={project.id} /></section>
+                            <section className={styles.section} id="overview"><ProjectAbout /></section>
+                            <section className={styles.section} id="properties"><PropertiesListingWithTab /></section>
+                            <section className={styles.section} id="top-advertiser"><ProjectTopAdvertisers /></section>
+                            <section className={styles.section} id="floor-plan-&-unit"><FloorPlanSection /></section>
+                            <section className={styles.section} id="project-details"><ProjectPhotosAndReviews /></section>
+                            <section className={styles.section} id="about-developer"><ProjectDeveloperInfo /></section>
+                            <section className={styles.section} id="faq"><ProjectFAQ /></section>
+                            <section className={styles.section} id="near-by-project"><NearByProjectList projectId={project.id} /></section>
+                            <section className={styles.section} id="other-project"><OtherProjects projectId={project.id} /></section>
                         </div>
 
                         {/* Desktop: Right Column (empty or sidebar) */}
@@ -48,15 +48,15 @@ const ProjectDetail = ({ section, project }) => {
 
                         {/* Mobile: Full-width Column */}
                         <div className={`col-12 ${styles.mobileCol}`}>
-                            <section id="overview"><ProjectAbout /></section>
-                            <section id="properties"><PropertiesListingWithTab /></section>
-                            <section id="top-advertiser"><ProjectTopAdvertisers /></section>
-                            <section id="floor-plan-&-unit"><FloorPlanSection /></section>
-                            <section id="project-details"><ProjectPhotosAndReviews /></section>
-                            <section id="about-developer"><ProjectDeveloperInfo /></section>
-                            <section id="faq"><ProjectFAQ /></section>
-                            <section id="near-by-project"><NearByProjectList projectId={project.id} /></section>
-                            <section id="other-project"><OtherProjects projectId={project.id} /></section>
+                            <section className={styles.section} id="overview"><ProjectAbout /></section>
+                            <section className={styles.section} id="properties"><PropertiesListingWithTab /></section>
+                            <section className={styles.section} id="top-advertiser"><ProjectTopAdvertisers /></section>
+                            <section className={styles.section} id="floor-plan-&-unit"><FloorPlanSection /></section>
+                            <section className={styles.section} id="project-details"><ProjectPhotosAndReviews /></section>
+                            <section className={styles.section} id="about-developer"><ProjectDeveloperInfo /></section>
+                            <section className={styles.section} id="faq"><ProjectFAQ /></section>
+                            <section className={styles.section} id="near-by-project"><NearByProjectList projectId={project.id} /></section>
+                            <section className={styles.section} id="other-project"><OtherProjects projectId={project.id} /></section>
                         </div>
 
                     </div>

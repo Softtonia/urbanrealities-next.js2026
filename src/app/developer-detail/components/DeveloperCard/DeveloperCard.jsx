@@ -61,15 +61,18 @@ export default function DeveloperCard({ project }) {
     {
       icon: <MdOutlineChair className={styles["card-icon"]} />,
       label: bhk,
+      name:"BHK"
     },
     {
       icon: <MdOutlineCorporateFare className={styles["card-icon"]} />,
       label: tower,
+      name:" Tower"
     },
-    {
-      icon: <FaRulerCombined className={styles["card-icon"]} />,
-      label: price,
-    },
+    // {
+    //   icon: <FaRulerCombined className={styles["card-icon"]} />,
+    //   label: price,
+    //   name:"price"
+    // },
     // {
     //   icon: <FaBuilding className={styles["card-icon"]} />,
     //   label: "Extra Tag",
@@ -137,6 +140,7 @@ export default function DeveloperCard({ project }) {
                 <span key={index} className={styles.cardtag}>
                   {tag.icon}
                   {tag.label}
+                  {tag.name}
                 </span>
               ))}
             </div>

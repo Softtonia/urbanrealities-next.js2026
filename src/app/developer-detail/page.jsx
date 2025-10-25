@@ -9,7 +9,7 @@ import OtherBuilders from "./components/project-details-mobile/OtherBuilders";
 import CompletedProjectTiles from "./components/project-details-mobile/CompletedProjectTiles";
 import FAQAccordion from "./components/project-details-mobile/FAQAccordion";
 import HomeLoanOffers from "./components/project-details-mobile/HomeLoanOffers";
-import {  getssr } from "@/lib/api";
+import { getssr } from "@/lib/api";
 import styles from "./components/developer-listing.module.css";
 // for desktop
 import DeveloperStats from "./components/DeveloperStats/DeveloperStats";
@@ -93,12 +93,13 @@ const DeveloperPage = async ({ searchParams }) => {
     "Home Loan Offers": true,
   };
 
-  if (!completedProjects) {
+  if (!completedProjects || completedProjects.length === 0) {
     section["Completed Project"] = false;
   }
-  //  if (!completedProjects) {
-  //   section["Ongoing Project"] = false;
-  // }
+
+  if (!ongoingProjects || ongoingProjects.length === 0) {
+    section["Ongoing Project"] = false;
+  }
 
   return (
     <DeveloperDetail

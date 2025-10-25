@@ -92,16 +92,25 @@ const PropertiesListingWithTab = () => {
 
 
     // 🔹 Hide component only if loading is finished AND no properties
-    useEffect(() => {
-        if (!isLoading && (!properties || properties.length <= 0)) {
-            setSection(prev => ({
-                ...prev,
-                Properties: false
-            }));
-        }
-    }, [properties, isLoading]);
+    // useEffect(() => {
+    //     if (!isLoading && (!properties || properties.length <= 0)) {
+    //         setSection(prev => ({
+    //             ...prev,
+    //             Properties: false
+    //         }));
+    //     }
+    // }, [properties, isLoading]);
 
-    if (!isLoading &&  (!properties || properties.length <= 0)) return null
+    useEffect(() => {
+        const noFAQs = (!properties || properties.length === 0) && !isLoading;
+
+        setSection(prev => {
+            if (prev.Properties === !noFAQs) return prev; // skip if already correct
+            return { ...prev, Properties: !noFAQs };
+        });
+    }, [properties,isLoading, setSection]);
+
+    if (!isLoading && (!properties || properties.length <= 0)) return null
     return (
         <div>
             <div className={styles.listing}>

@@ -48,19 +48,10 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
 }
 
 
-const SingleListingWithTab = ({DevHeading="Ongoing Project",listingFor="ongoing"}) => {
-  const {ongoingProjects,completedProjects} = useDeveloper();
-  const [listing,setListing] = useState([]);
+const SingleListingWithTab = ({ DevHeading = "Ongoing Project", listingFor = "ongoing" ,Projects}) => {
+  const [listing, setListing] = useState(Projects ||[]);
 
-useEffect(() => {
-    if (listingFor === "ongoing") {
-      setListing(ongoingProjects || []);
-    }else if (listingFor === "completed") {
-      setListing(completedProjects || []);
-    }else {
-      setListing([]);
-    }
-  }, [listingFor]);
+
 
   console.log("listingFor", listing);
 
@@ -72,7 +63,7 @@ useEffect(() => {
 
   const pageNumbers = getPagination(currentPage, totalPages, 6);
 
-  
+
   console.log("ongoingProjects", listing)
 
 
@@ -87,12 +78,12 @@ useEffect(() => {
 
   // if(!listing.length()>0) return null
 
-
+ 
   return (
     <div>
-    <div className={styles.listing}>
-      <h2>{DevHeading}</h2>
-      {/* <DeveloperCardTabs /> */}
+      <div className={styles.listing}>
+        <h2>{DevHeading}</h2>
+        {/* <DeveloperCardTabs /> */}
 
         {/* Property list + Loader wrapper */}
         <div className={styles.propertyListWrapper}>

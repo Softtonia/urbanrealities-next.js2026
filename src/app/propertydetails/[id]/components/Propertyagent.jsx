@@ -27,8 +27,8 @@ const Propertyagent = ({ property, userDetail }) => {
       !isEmpty
         ? `${userDetail.first_name || ""} ${userDetail.last_name || ""}`.trim() || "N/A"
         : "N/A",
-    phone: !isEmpty ? userDetail.phone || "N/A" : "N/A",
-    email: !isEmpty ? userDetail.email || "N/A" : "N/A",
+    phone: !isEmpty ? userDetail.phone : "N/A",
+    email: !isEmpty ? userDetail.email: "N/A",
   };
 
 

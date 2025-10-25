@@ -9,7 +9,7 @@ const OtherProjects = ({ projectId }) => {
     const { city } = useCity();
     const [properties, setProperties] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const {setSection} = useProject()
+    const { setSection } = useProject()
     console.log("location", city)
 
     useEffect(() => {
@@ -37,18 +37,28 @@ const OtherProjects = ({ projectId }) => {
                 setIsLoading(false);
             }
         };
-
-        getProject(projectId);
+        if (city) {
+            getProject(projectId);
+        }
     }, [city, projectId]);
 
-    useEffect(() => {
-        if (!isLoading && !properties ) {
-            setSection(prev => ({
-                ...prev,
-                "Other Project": false
-            }));
-        }
-    }, [properties, isLoading]);
+    // useEffect(() => {
+    //     if (!isLoading && !properties) {
+    //         setSection(prev => ({
+    //             ...prev,
+    //             "Other Project": false
+    //         }));
+    //     }
+    // }, [properties, isLoading]);
+
+     useEffect(() => {
+                const noFAQs = (!properties || properties.length === 0) && !isLoading;
+        
+                setSection(prev => {
+                    if (prev[ "Other Project"] === !noFAQs) return prev; // skip if already correct
+                    return { ...prev,  "Other Project": !noFAQs };
+                });
+            }, [properties,isLoading, setSection]);
 
     return (
         <ProjectListingWithTab

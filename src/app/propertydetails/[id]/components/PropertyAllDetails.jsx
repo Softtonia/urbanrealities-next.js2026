@@ -15,27 +15,29 @@ import PropertyAmenities from "./PropertyAmenities";
 
 
 
-const PropertyDetails = ({property,leadTypes,userDetail}) => {
-  console.log(" details",userDetail)
+const PropertyDetails = ({ property, leadTypes, userDetail }) => {
+  console.log(" details", userDetail)
 
   return (
     <div>
-      <PropertydetailsBreadcrum property={property}/>
+      <PropertydetailsBreadcrum property={property} />
       <PropertygalleryBreadcrum property={property} />
       <div className="project-highlight-background">
         <div className="container">
           <div className="row background-row">
             <div className="col-8 large-col">
-              <PropertyHighlights  property={property} />
-              <PropertyDescription property={property}/>
-              <Propertyareadata property={property}/>
-              <Propertyprice property={property}/>
-              <PropertyAmenities />
+              <PropertyHighlights property={property} />
+              <PropertyDescription property={property} />
+              <Propertyareadata property={property} />
+              <Propertyprice property={property} />
+              <PropertyAmenities property={property} />
             </div>
             <div className="col-4 small-col">
               <Projectactive />
-              <Projectagent property={property} userDetail={userDetail} />
-              <PropertyEnquiryFrom  property={property} leadTypes={leadTypes}/>
+              {userDetail?.user &&
+                <Projectagent property={property} userDetail={userDetail?.user} />
+              }
+              <PropertyEnquiryFrom property={property} leadTypes={leadTypes} />
             </div>
 
           </div>

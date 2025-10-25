@@ -21,15 +21,16 @@ import DeveloperBreadcrumb from "./components/developerBreadcrumb/DeveloperBread
 import DeveloperVision from "./components/Developervision/DeveloperVision";
 import DeveloperPhotos from "./components/DeveloperPhotos/DeveloperPhotos";
 const DeveloperDetail = ({ developer, ongoingProjects, completedProjects, section }) => {
+
     const ongoing = developer?.name
         ? `Ongoing Projects by ${developer.name}`
         : "Ongoing Projects";
     const completed = developer?.name
         ? `Completed Projects by ${developer.name}`
         : "Completed Projects";
-    
+
     return (
-        <DeveloperProvider value={{ developer, ongoingProjects, completedProjects, section }}>
+        <DeveloperProvider value={{developer,section}}>
             <div>
                 <DeveloperBreadcrumb />
                 <DeveloperBanner />
@@ -39,38 +40,38 @@ const DeveloperDetail = ({ developer, ongoingProjects, completedProjects, sectio
                 <div className="container">
                     <div className="row tab-row">
                         <div className={`col-9 ${styles.largeTabCol}`}>
-                            <section id="overview">
+                            <section id="overview" className={styles.section}>
                                 <DeveloperStats />
                             </section>
 
                             {ongoingProjects.length > 0 && (
-                                <section id="ongoing-project">
+                                <section id="ongoing-project" className={styles.section}>
 
-                                    <DeveloperListingwithTabs DevHeading={ongoing} listingFor="ongoing" />
+                                    <DeveloperListingwithTabs DevHeading={ongoing} listingFor="ongoing" Projects={ongoingProjects} />
                                 </section>
                             )}
 
                             {completedProjects.length > 0 && (
-                                <section id="completed-project">
-                                    <DeveloperListingwithTabs DevHeading={completed} listingFor="completed" />
+                                <section id="completed-project" className={styles.section}>
+                                    <DeveloperListingwithTabs DevHeading={completed} listingFor="completed" Projects={completedProjects} />
                                 </section>
                             )}
                         </div>
 
 
                         <div className={`col-12 p-0 ${styles.mobileCol}`}>
-                            <section id="overview">
+                            <section id="overview" className={styles.section}>
                                 <DeveloperStats />
                             </section>
                             {ongoingProjects.length > 0 && (
-                                <section id="ongoing-project">
-                                    <DeveloperListingwithTabs DevHeading={ongoing} listingFor="ongoing" />
+                                <section id="ongoing-project" className={styles.section}>
+                                    <DeveloperListingwithTabs DevHeading={ongoing} listingFor="ongoing" Projects={ongoingProjects} />
                                 </section>
                             )}
 
                             {completedProjects.length > 0 && (
-                                <section id="completed-project">
-                                    <DeveloperListingwithTabs DevHeading={completed} listingFor="completed" />
+                                <section id="completed-project" className={styles.section}>
+                                    <DeveloperListingwithTabs DevHeading={completed} listingFor="completed" Projects={completedProjects} />
                                 </section>
                             )}
                             {/* <section id="nearby-projects">
@@ -82,16 +83,16 @@ const DeveloperDetail = ({ developer, ongoingProjects, completedProjects, sectio
                         </div>
 
                         <div className={`col-12 ${styles.smallTabCol}`}>
-                            <section id="photos">
+                            <section id="photos" className={styles.section}>
                                 <DeveloperPhotos />
                             </section>
-                            <section id="faq">
+                            <section id="faq" className={styles.section}>
                                 <ProjectFAQ />
                             </section>
-                            <section id="vision">
+                            <section id="vision" className={styles.section}>
                                 <DeveloperVision />
                             </section>
-                            <section id="home-loan-offers">
+                            <section id="home-loan-offers" className={styles.section}>
 
                                 <HomeLoanOffers />
                             </section>

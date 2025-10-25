@@ -1,15 +1,24 @@
-.mobileCol{
-    display: none ;
+.mobileCol {
+    display: none;
+}
+
+/* Fix for sticky tabs covering target sections */
+.section {
+    scroll-margin-top: 100px;
+    /* adjust based on height of ProjectTabs */
 }
 
 
-@media (max-width:991.99px){
+
+@media (max-width:991.99px) {
+
     .smallTabCol,
-    .largeTabCol{
+    .largeTabCol {
         display: none !important;
     }
-    .mobileCol{
-    display: block;
-    padding: 20px;
-}
+
+    .mobileCol {
+        display: block;
+        padding: 20px;
+    }
 }
