@@ -81,8 +81,9 @@ const ProjectDeveloperInfo = () => {
           }
         </div>
         <img
-          src={developer.featured_image ? developer.featured_image : "./developer-profile.jpg"}
+          src={developer?.featured_image}
           alt="Developer Logo"
+          onError={(e)=>{e.target.src = "/developer-profile.jpg"}}
           className={styles.logo}
         />
       </div>

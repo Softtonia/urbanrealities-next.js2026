@@ -4,105 +4,75 @@ import styles from "./PropertyAmenities.module.css";
 import {
   FaSwimmingPool,
   FaHome,
-  FaHelicopter,
   FaGlassCheers,
-  FaWineBottle,
-  FaFire,
-  FaMountain,
-  FaWater,
-  FaBed,
-  FaUtensils,
   FaLock,
   FaUserShield,
 } from "react-icons/fa";
 
-const AMENITIES_DATA = {
-  Crowdsourcing: [
-    { icon: <FaLock />, label: "Fingerprint Access" },
-    { icon: <FaGlassCheers />, label: "Jacuzzi" },
-    { icon: <FaHome />, label: "Skydeck" },
-    { icon: <FaWater />, label: "Sea Facing" },
-    { icon: <FaBed />, label: "Golf Course" },
-    { icon: <FaHelicopter />, label: "Helipad" },
-    { icon: <FaWineBottle />, label: "Wine Cellar" },
-    { icon: <FaUserShield />, label: "Theme Based Architectures" },
-    { icon: <FaHome />, label: "Private Garage" },
-    { icon: <FaSwimmingPool />, label: "Private Pool" },
-    { icon: <FaHome />, label: "Wrap Around Balcony" },
-    { icon: <FaGlassCheers />, label: "Full Glass Wall" },
-    { icon: <FaUtensils />, label: "Island Kitchen Layout" },
-    { icon: <FaHome />, label: "Sky Villa" },
-    { icon: <FaBed />, label: "House Help" },
-    { icon: <FaFire />, label: "Fireplace" },
-    { icon: <FaHome />, label: "Smart Homes" },
-    { icon: <FaMountain />, label: "Hilltop" },
-    { icon: <FaWater />, label: "Water Front" },
-  ],
-  Convenience: [
-    { icon: <FaHome />, label: "WiFi Enabled" },
-    { icon: <FaGlassCheers />, label: "Daily Cleaning" },
-  ],
-  Environment: [
-    { icon: <FaWater />, label: "Rainwater Harvesting" },
-    { icon: <FaHome />, label: "Solar Panels" },
-  ],
-  Leisure: [
-    { icon: <FaSwimmingPool />, label: "Infinity Pool" },
-    { icon: <FaGlassCheers />, label: "Clubhouse" },
-  ],
-  Security: [
-    { icon: <FaUserShield />, label: "CCTV Surveillance" },
-    { icon: <FaLock />, label: "24x7 Security" },
-  ],
-  Sports: [
-    { icon: <FaHome />, label: "Tennis Court" },
-    { icon: <FaHome />, label: "Skating Rink" },
-  ],
+const ICON_MAP = {
+  pool: <FaSwimmingPool />,
+  reception: <FaHome />,
+  safety: <FaUserShield />,
+  lock: <FaLock />,
+  banquet: <FaGlassCheers />,
 };
 
-const TABS = Object.keys(AMENITIES_DATA);
+const getIcon = (label = "") => {
+  const l = label.toLowerCase();
+
+  if (l.includes("pool")) return ICON_MAP.pool;
+  if (l.includes("fire") || l.includes("safety")) return ICON_MAP.safety;
+  if (l.includes("banquet") || l.includes("hall")) return ICON_MAP.banquet;
+  if (l.includes("reception")) return ICON_MAP.reception;
+  if (l.includes("lock") || l.includes("intercom")) return ICON_MAP.lock;
+
+  return <FaHome />; // default icon
+};
 
 const PropertyAmenities = ({ property }) => {
-  const [activeTab, setActiveTab] = useState("Crowdsourcing");
-
-  const repeaterFields = property?.custom_field_values
-    ? Object.values(property.custom_field_values)
+  const repeaterFields = property?.repeater_fields
+    ? Object.values(property.repeater_fields)
     : [];
-  const ResidentialProperty = Array.isArray(repeaterFields)
-    ? repeaterFields?.filter(
-      (val) =>
-        (val?.template?.slug?.startsWith("residentialpropery"))
+
+  const residentialAmenities = repeaterFields.filter((val) =>
+    val?.template?.slug?.startsWith(
+      `${property.property_id_name?.toLowerCase()}property`
     )
-    : [];
+  );
 
-  console.log("residentia",ResidentialProperty)
-  // const residential = ResidentialProperty.find(val =>
-  //   val?.template?.slug.includes("price")
-  // )?.field_value;
-  // console.log(residential)
+  const [activeTab, setActiveTab] = useState(
+    residentialAmenities?.[0]?.field_label || ""
+  );
+
+  if (!residentialAmenities || residentialAmenities.length === 0) return null
   return (
     <div className={styles.amenitiesBox}>
       <h4 className={`body-text-sb18 ${styles.sectionTitle}`}>Amenities</h4>
+
       <div className={styles.tabs}>
-        {TABS.map((tab) => (
+        {residentialAmenities.map((item) => (
           <button
-            key={tab}
-            className={`body-text-rg16 ${styles.tab} ${activeTab === tab ? styles.activeTab : ""
+            key={item.custom_field_id}
+            className={`body-text-rg16 ${styles.tab} ${activeTab === item.field_label ? styles.activeTab : ""
               }`}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => setActiveTab(item.field_label)}
           >
-            {tab}
+            {item.field_label}
           </button>
         ))}
       </div>
 
       <div className={styles.grid}>
-        {AMENITIES_DATA[activeTab].map((item, index) => (
-          <div key={index} className={styles.amenityItem}>
-            <span className={styles.icon}>{item.icon}</span>
-            <span className={`body-text-rg16 ${styles.label}`}>{item.label}</span>
-          </div>
-        ))}
+        {residentialAmenities
+          .find((x) => x.field_label === activeTab)
+          ?.field_value?.map((value, index) => (
+            <div key={index} className={styles.amenityItem}>
+              <span className={styles.icon}>{getIcon(value)}</span>
+              <span className={`body-text-rg16 ${styles.label}`}>
+                {value}
+              </span>
+            </div>
+          ))}
       </div>
     </div>
   );

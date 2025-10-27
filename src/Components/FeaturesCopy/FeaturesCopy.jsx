@@ -20,7 +20,7 @@ const FeaturesCopy = ({ projects }) => {
     const onWardPrice = val?.custom_field_values?.find((f) =>
       f?.template?.slug?.includes("price")
     );
-// console.log("price",onWardPrice)
+    // console.log("price",onWardPrice)
     return {
       id: val?.id,
       banner: banner?.field_value[0] || null, // assuming banner data is stored in field_value
@@ -148,6 +148,16 @@ const FeaturesCopy = ({ projects }) => {
   };
   console.log("slides", slides);
 
+  const isValidUrl = (url) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
+
   return (
     <div className="features-copy-section">
       <div className="features-copy container">
@@ -170,8 +180,9 @@ const FeaturesCopy = ({ projects }) => {
                 key={i}
               >
                 <img
-                  src={slide.banner ? slide.banner : "https://images.unsplash.com/photo-1666846795617-5a79453e6f6c?q=80&w=3402&auto=format&fit=crop"}
-                  alt={`Property ${i + 1}`}
+                  src={slide?.banner}
+                  onError={(e) => (e.target.src = "/project-placeholder.png")}
+                  alt={`Project ${i + 1}`}
                   className="slide-image"
                 />
                 <div className="property-overlay">
@@ -186,7 +197,7 @@ const FeaturesCopy = ({ projects }) => {
                     >
                       {slide.name}
                     </a>
-                    {
+                    {/* {
                       slide?.property_id_name && (
                         <p className="explore-btn-feature">
                           {slide?.property_id_name}
@@ -195,7 +206,7 @@ const FeaturesCopy = ({ projects }) => {
                     {slide?.price &&
                       <p className="explore-btn-feature">
                         ₹<span>{slide?.price}</span> onwards</p>
-                    }
+                    } */}
                   </div>
 
                 </div>

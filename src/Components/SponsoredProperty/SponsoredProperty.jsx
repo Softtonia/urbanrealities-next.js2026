@@ -4,8 +4,8 @@ import './SponsoredProperty.css';
 
 const SponsoredProperty = ({ developer }) => {
   console.log("Developer list:", developer);
-  const developers= developer.map((dev)=>{
-    
+  const developers = developer.map((dev) => {
+
   })
 
 
@@ -17,7 +17,8 @@ const SponsoredProperty = ({ developer }) => {
             <div key={index} className="sponsored-property-card">
               <div className="sponsored-property-image-container">
                 <img
-                  src={val.image || "/sponsored-property-image.png"}
+                  src={val.image || "/project-placeholder.png" }
+                  onError={(e) => (e.target.src = "/project-placeholder.png")}
                   alt={val.title || "Sponsored Property"}
                   className="sponsored-property-image"
                 />
@@ -26,10 +27,10 @@ const SponsoredProperty = ({ developer }) => {
               <div className="sponsored-property-content">
                 <div className="sponsored-property-content-inner">
                   <div className="sponsored-property-title body-text-16 text-dark">
-                  <a
+                    <a
                       href={`/developer-detail?name=${val.name}&property-name=${val.property_id_name}&id=${val.id}`}
                       // className="explore-btn"
-                      style={{color:'black',textDecoration:"none"}}
+                      style={{ color: 'black', textDecoration: "none" }}
                     >
                       {val.name}
                     </a>
@@ -39,7 +40,7 @@ const SponsoredProperty = ({ developer }) => {
                       {
                         val?.custom_field_values?.find(
                           (temp) => temp?.template?.slug.includes("bedroom")
-                      )?.field_value?.join(", ") 
+                        )?.field_value?.join(", ")
                       } {
                         val?.custom_field_values?.find(
                           (temp) => temp?.template?.slug.includes("area")

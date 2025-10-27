@@ -96,10 +96,11 @@ export default function DeveloperCard({ project }) {
   return (
     <div className={styles.card}>
       <div className={styles.imageContainer}>
-        <span className={styles.badge}>Featured</span>
-        <FaRegBookmark className={styles.tagIconOnImage} />
+        {/* <span className={styles.badge}>Featured</span> */}
+        {/* <FaRegBookmark className={styles.tagIconOnImage} /> */}
         <img
           src={heroBanner ? heroBanner : '/image-card.png'}
+          onError={(e)=>{e.target.src ="/project-placeholder.png"}}
           alt="Property"
           className={`${styles["image-card"]}`}
         />

@@ -60,17 +60,25 @@ const ProjectCard = ({ project, onViewProject }) => {
   // // const ongoingPrice = customFields["total Price"] || "";  // example
   // const areaSqft = customFields["super Area"] || "";
   // const builderFloor = customFields["built Up Area"] || "";
+  const [imgSrc, setImgSrc] = React.useState(heroBanner);
 
 
   return (
     <div className="project-card">
       <div className="project-card__image-wrapper">
         <Image
-          src={heroBanner || '/building.png'}
+          src={imgSrc || "/project-placeholder.png"}
           alt="project-img"
           width={300}
           height={280}
           className="project-card__image"
+          onLoadingComplete={(result) => {
+            if (result.naturalWidth === 0) {
+              setImgSrc("/project-placeholder.png"); // ✅ fallback
+            }
+          }}
+          onError={() => setImgSrc("/project-placeholder.png")} // ✅ Extra fallback
+          unoptimized // optional if external domain not allowed in next.config
         />
       </div>
 

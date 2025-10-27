@@ -58,10 +58,10 @@ export default function ProjectCard({ property }) {
 
 
 
-   const handleNavigate = async () => {
-      const slug = await slugify(`${area && area} ${property.propertyType[0]?.property_type_name}-for-${property?.purpose_id_name}-in-${property?.state.name}`)
-      router.push(`/propertydetails/${slug}?id=${property?.id}`);
-    }
+  const handleNavigate = async () => {
+    const slug = await slugify(`${area && area} ${property.propertyType[0]?.property_type_name}-for-${property?.purpose_id_name}-in-${property?.state.name}`)
+    router.push(`/propertydetails/${slug}?id=${property?.id}`);
+  }
 
 
   // const tags = [
@@ -96,8 +96,9 @@ export default function ProjectCard({ property }) {
           {/* <span className={styles.badge}>Featured</span> */}
           <FaRegBookmark className={styles.tagIconOnImage} />
           <img
-            src={property?.featured_image ? property.featured_image : "/image-card.png"}
+            src={property?.featured_image && property.featured_image}
             alt="Property"
+            onError={(e) => { e.target.src = "/property-placeholder.jpg" }}
             className={`${styles["image-card"]}`}
           />
         </div>

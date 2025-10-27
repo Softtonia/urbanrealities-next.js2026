@@ -67,7 +67,7 @@ export default function AgentCard({ agent }) {
           src={
             agent.profile_photo
               ? agent.profile_photo
-              : "https://images.unsplash.com/photo-1755398105124-6ab63def4afb?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              :"/agent-profile.png"
           }
           alt={agent.name || "Agent"}
           width={70}

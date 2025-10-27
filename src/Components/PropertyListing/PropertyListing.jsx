@@ -18,7 +18,7 @@ import { formatprice } from "@/utils/formatprice";
 //   imageUrl: '/propertylistingimage.png',
 // }));
 
-export const PropertyCard = ({ property, handleViewProjectlist }) => {
+export const PropertyCard = ({property, handleViewProjectlist }) => {
 
   console.log("property", property)
   const handleNavigate = async () => {
@@ -67,13 +67,16 @@ export const PropertyCard = ({ property, handleViewProjectlist }) => {
   return (
     <div className="property-card">
       <img
-        src={
-          property.featured_image ||
-          "https://api.urbanrealities.com/public/uploads/properties/1754920384_pexels-binyaminmellish-106399.jpg"
-        }
-        alt="Property"
+        src={property?.featured_image}
+        alt={`Property-${property.id}`}
         className="property-image"
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = "/property-placeholders.jpg"; // ✅ Correct path
+        }}
       />
+
+
 
       <div className="property-content">
         <div className="property-title body-text-14 bord-bottom ">

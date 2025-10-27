@@ -104,7 +104,7 @@ export default function AgentProfileDetails({agentProfile}) {
             src={
               agent.profile_photo
                 ? agent.profile_photo
-                : "https://images.unsplash.com/photo-1755398105124-6ab63def4afb?q=80&w=1170&auto=format&fit=crop"
+                : "/agent-profile.png"
             }
             alt={agent.first_name || "Agent"}
             width={305}
