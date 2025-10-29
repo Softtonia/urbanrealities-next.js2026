@@ -49,7 +49,7 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
 
 
 const SingleListingWithTab = ({ DevHeading = "Ongoing Project", listingFor = "ongoing" ,Projects}) => {
-  const [listing, setListing] = useState(Projects ||[]);
+  const [listing, setListing] = useState(Projects?.data ||[]);
 
 
 

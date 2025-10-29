@@ -125,7 +125,7 @@ export default function DropdownMegaMenu() {
                 const slug = makeSlug(column.heading, item.name);
                 return (
                   <Link
-                    href={`/search/${item.name.toLowerCase().replace(/\s+/g, "-")}?search=${item.name}&city`}
+                    href={`/search/query?search=${slug}`}
                     key={i}
                     className="dropdown-item"
                   >

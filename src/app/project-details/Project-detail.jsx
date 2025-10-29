@@ -31,7 +31,7 @@ const ProjectDetail = ({ section, project }) => {
                     <div className="row tab-row">
 
                         {/* Desktop: Left Column */}
-                        <div className={`col-9 ${styles.largeTabCol}`}>
+                        <div className={`col-12 col-lg-9 ${styles.largeTabCol}`}>
                             <section className={styles.section} id="overview"><ProjectAbout /></section>
                             <section className={styles.section} id="properties"><PropertiesListingWithTab /></section>
                             <section className={styles.section} id="top-advertiser"><ProjectTopAdvertisers /></section>
@@ -47,7 +47,7 @@ const ProjectDetail = ({ section, project }) => {
                         <div className={`col-3 ${styles.smallTabCol}`}></div>
 
                         {/* Mobile: Full-width Column */}
-                        <div className={`col-12 ${styles.mobileCol}`}>
+                        {/* <div className={`col-12 ${styles.mobileCol}`}>
                             <section className={styles.section} id="overview"><ProjectAbout /></section>
                             <section className={styles.section} id="properties"><PropertiesListingWithTab /></section>
                             <section className={styles.section} id="top-advertiser"><ProjectTopAdvertisers /></section>
@@ -57,7 +57,7 @@ const ProjectDetail = ({ section, project }) => {
                             <section className={styles.section} id="faq"><ProjectFAQ /></section>
                             <section className={styles.section} id="near-by-project"><NearByProjectList projectId={project.id} /></section>
                             <section className={styles.section} id="other-project"><OtherProjects projectId={project.id} /></section>
-                        </div>
+                        </div> */}
 
                     </div>
                 </div>

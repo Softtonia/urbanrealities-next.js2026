@@ -3,50 +3,48 @@ import React, { useEffect, useState } from "react";
 import styles from "./AgentPropertyList.module.css";
 import AgentPropertyCard from "./AgentPropertyCard";
 import { LuSlidersHorizontal } from "react-icons/lu";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 const AboutPropertyList = ({ userProperties }) => {
   const { token } = useSiteSettings();
+  const router = useRouter();
   const { id } = useParams();
-  const properties = userProperties;
-  const [isEmpty, setIsEmpty] = useState(false);
-  const [filter, setFilter] = useState(""); // "", "rent", "sell", "pg"
+  const searchParams = useSearchParams();
+  const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState(false);
-  const [purposeList, setPurposeList] = useState([])
-
-
-
-
-  // run again if id or filter changes
+  const [purposeList, setPurposeList] = useState([]);
+  useEffect(() => {
+    const purposeFromURL = searchParams.get("purpose");
+    if (purposeFromURL) {
+      setFilter(purposeFromURL);
+    }
+  }, [searchParams]);
+  const handlepurpose = (purposeId) => {
+    router.push(`/all-agent/${id}?purpose=${purposeId}`);
+    setFilter(purposeId);
+  };
+  console.log("=>>", filter)
   useEffect(() => {
     const fetchPurpose = async () => {
-
-      // console.log(token)
       try {
-        const res = await fetch('/api/post-property/get-purpose', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
+        const res = await fetch("/api/post-property/get-purpose", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
 
         if (Array.isArray(data)) {
           setPurposeList(data);
-        } else if (data?.data) {
+        } else if (Array.isArray(data?.data)) {
           setPurposeList(data.data);
         }
       } catch (err) {
-
-        console.error('Error fetching roles:', err);
+        console.error("Error fetching purposes:", err);
       }
     };
-    if (token) {
-      fetchPurpose();
-    }
+    fetchPurpose();
   }, [token]);
-  console.log("==,>", properties)
 
   return (
     <div className={styles.listWrapper}>
@@ -54,9 +52,9 @@ const AboutPropertyList = ({ userProperties }) => {
       <div className={styles.filters}>
         {purposeList.map((purpose) => (
           <div key={purpose.id}>
-            < button
-              className={`${styles.tabBtn} ${filter === "rent" ? styles.activeTab : ""}`}
-              onClick={() => setFilter(purpose.id)}
+            <button
+              className={`${styles.tabBtn} ${String(filter) === String(purpose.id) ? styles.activeTab : ""}`}
+              onClick={() => handlepurpose(purpose.id)}
             >
               {purpose.name}
             </button>
@@ -71,19 +69,16 @@ const AboutPropertyList = ({ userProperties }) => {
       </div>
 
       {/* Property Cards */}
-      {
-        loading ? (
-          <p>Loading...</p>
-        ) : properties && properties.length > 0 ? (
-          properties.map((property) => (
-            <AgentPropertyCard key={property.id} property={property} />
-          ))
-        ) : (
-          <p>Properties not found</p>
-        )
-      }
-
-    </div >
+      {loading ? (
+        <p>Loading...</p>
+      ) : userProperties && userProperties.length > 0 ? (
+        userProperties.map((property) => (
+          <AgentPropertyCard key={property.id} property={property} />
+        ))
+      ) : (
+        <p>Properties not found</p>
+      )}
+    </div>
   );
 };
 

@@ -66,19 +66,24 @@ async function fetchUserProperties(id, purpose_id) {
 
 const agentdetailspage = async ({ params, searchParams }) => {
   const { id } = await params; // no need for await
-  const purpose_id = searchParams?.purpose_id; // query string ?purpose_id=123
+  const decontructtId = id.split("-").pop();
+  console.log("==>", decontructtId); // Output: 3
 
-  const agentProfile = await getAgentProfile(id)
-  
-  const relatedProperties = await fetchRelatedProperties(id)
-  const userProperties = await fetchUserProperties(id, purpose_id)
+  const purpose_id = searchParams?.purpose; // query string ?purpose_id=123
+
+  const agentProfile = await getAgentProfile(decontructtId)
+
+  const relatedProperties = await fetchRelatedProperties(decontructtId)
+  const userProperties = await fetchUserProperties(decontructtId, purpose_id)
+  const agent = Array.isArray(agentProfile)?agentProfile[0]:agentProfile
+  console.log(agent,relatedProperties,userProperties)
   return (
     //     <div className={` ${styles.container} container `}>
     // <AgentProfileDetails/>
     // <AboutAgent/>
     //     </div>
     <>
-      <AgentProfileLayout agentProfile={agentProfile} relatedProperties={relatedProperties} userProperties={userProperties} />
+      <AgentProfileLayout agentProfile={agent} relatedProperties={relatedProperties} userProperties={userProperties} />
     </>
   );
 }

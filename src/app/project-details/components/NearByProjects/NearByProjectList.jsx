@@ -9,8 +9,8 @@ const NearByProjectList = ({ projectId }) => {
     const { city } = useCity();
     const [properties, setProperties] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const {setSection} = useProject()
-
+    const { setSection } = useProject()
+    console.log("hello ")
     useEffect(() => {
         if (!projectId && !city) return; // only fetch if we have required data
 
@@ -34,7 +34,7 @@ const NearByProjectList = ({ projectId }) => {
             }
         };
         if (city) {
-        getProject();
+            getProject();
         }
     }, [city, projectId]); // run when projectId or city changes
 
@@ -47,15 +47,15 @@ const NearByProjectList = ({ projectId }) => {
     //     }
     // }, [properties, isLoading]);
 
-    
-        useEffect(() => {
-            const noFAQs = (!properties || properties.length === 0) && !isLoading;
-    
-            setSection(prev => {
-                if (prev[ "Near By Project"] === !noFAQs) return prev; // skip if already correct
-                return { ...prev,  "Near By Project": !noFAQs };
-            });
-        }, [properties,isLoading, setSection]);
+
+    useEffect(() => {
+        const noFAQs = (!properties || properties.length === 0) && !isLoading;
+
+        setSection(prev => {
+            if (prev["Near By Project"] === !noFAQs) return prev; // skip if already correct
+            return { ...prev, "Near By Project": !noFAQs };
+        });
+    }, [properties, isLoading, setSection]);
 
     return (
         <>

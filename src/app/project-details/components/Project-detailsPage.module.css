@@ -1,6 +1,6 @@
-.mobileCol {
+/* .mobileCol {
     display: none;
-}
+} */
 
 /* Fix for sticky tabs covering target sections */
 .section {
@@ -14,7 +14,7 @@
 
     .smallTabCol,
     .largeTabCol {
-        display: none !important;
+        /* display: none !important; */
     }
 
     .mobileCol {

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./PropertygalleryBreadcrum.css";
 import SharePropertyPopup from "./SharePropertyPopup";
 import { usePathname } from "next/navigation";
+import { formatprice } from "@/utils/formatprice";
 
 const propertyData = {
   title: "3BHK, Mundeshwari",
@@ -73,7 +74,7 @@ const PropertygalleryBreadcrum = ({ property }) => {
             {price && (
               <div className="header-info d-flex mb-2">
                 <h4 className="body-text-20 m-0">{'Price'}</h4>
-                <span className="price body-text-20">₹{price}</span>
+                <span className="price body-text-20">₹{formatprice(price)} Onwards</span>
               </div>)}
 
             <div className="label-desc d-flex flex-direction-column">
@@ -96,7 +97,7 @@ const PropertygalleryBreadcrum = ({ property }) => {
 
           <div className="gallery-icon m-0 ">
 
-            <img src="/View.svg" alt="" />
+            {/* <img src="/View.svg" alt="" /> */}
 
             <img src="/Heart.svg" alt="" />
             <button
@@ -122,21 +123,28 @@ const PropertygalleryBreadcrum = ({ property }) => {
           <div className="gallery-content">
             <div className="main-image">
               <img
-                src={property?.featured_image ? property?.featured_image : "/living.png"}
+                src={property?.featured_image && property?.featured_image }
                 alt="Main"
                 width={832}
                 height={493}
                 className="featured-img"
+                onError={(e) => {
+                  e.currentTarget.src = "/property-placeholders.jpg";
+                }}
               />
             </div>
+
             <div className="side-images">
-              {/* Main Image */}
+              {/* Main Side Image */}
               <img
                 src={editgallery?.[0] || "/kitchen.png"}
                 alt="Main"
                 width={584}
                 height={246}
                 className="project-img"
+                onError={(e) => {
+                  e.currentTarget.src = "/property-placeholders.jpg";
+                }}
               />
 
               {/* Sub Images */}
@@ -151,6 +159,9 @@ const PropertygalleryBreadcrum = ({ property }) => {
                         width={274}
                         height={227}
                         className="project-thumb-img"
+                        onError={(e) => {
+                          e.currentTarget.src = "/property-placeholders.jpg";
+                        }}
                       />
                     </div>
                   )}
@@ -164,6 +175,9 @@ const PropertygalleryBreadcrum = ({ property }) => {
                         width={274}
                         height={227}
                         className="project-thumb-img"
+                        onError={(e) => {
+                          e.currentTarget.src = "/property-placeholders.jpg";
+                        }}
                       />
                       {/* <span className="overlay-text">View All {editgallery.length} Photos</span> */}
                     </div>
@@ -171,8 +185,8 @@ const PropertygalleryBreadcrum = ({ property }) => {
                 </div>
               )}
             </div>
-
           </div>
+
         </div>
       </div>
       <SharePropertyPopup

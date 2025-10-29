@@ -41,16 +41,16 @@ const data = [{
 //     { label: 'Delhi', href: '/properties/delhi' },
 //     { label: 'Green Park Villa', href: '/properties/delhi/green-park-villa' },
 //   ];
-const AgentProfileLayout = ({agentProfile,relatedProperties,userProperties}) => {
+const AgentProfileLayout = ({ agentProfile, relatedProperties, userProperties }) => {
   const { id } = useParams()
   const router = useRouter()
   // const [relatedProperties, setRelatedProperties] = useState([])
   const [isEmpty, setIsEmpty] = useState(false)
   const handleViewProjectlist = (id) => {
-    router.push(`/propertydetails/${id}`);
+    router.push(`/propertydetails/id=${id}`);
   };
 
-  console.log("agent=>",relatedProperties)
+  console.log("agent=>", relatedProperties)
 
   // useEffect(() => {
   //   const fetchRelatedProperties = async () => {
@@ -115,33 +115,40 @@ const AgentProfileLayout = ({agentProfile,relatedProperties,userProperties}) => 
   //     ],
   //   },
   // ];
-  
+
+  console.log("=", userProperties)
 
   return (
     <>
-    <div className={` ${styles.Breadcrumbs}  `}>
-      <div className={` ${styles.container} container `}>
-    {/* <Breadcrumbs paths={breadcrumbPaths}/> */}
-    <Breadcrumbs color="black"   fontSize="1.1rem"  fontFamily="poppins-medium" />
-    </div>
-    </div>
-    <div className={` ${styles.profileContainer} container `}>
+      <div className={` ${styles.Breadcrumbs}  `}>
+        <div className={` ${styles.container} container `}>
+          {/* <Breadcrumbs paths={breadcrumbPaths}/> */}
+          <Breadcrumbs color="black" fontSize="1.1rem" fontFamily="poppins-medium" />
+        </div>
+      </div>
+      <div className={` ${styles.profileContainer} container `}>
         <div className={` ${styles.profilerow} row `}>
           <div className={` ${styles.agentprofilecol} col-12 col-xl-8 p-0 `}><AgentProfileDetails agentProfile={agentProfile} /> </div>
           <div className={` ${styles.AgentFormcol} col-12  col-xl-4 p-0`}> <AgentForm data={data[0]} /> </div>
         </div>
       </div>
-
-      <div className={styles.AboutAgentsection}>
-        <div className={` ${styles.aboutAgentWrapper} container `}>
-          <div className={` ${styles.col} col-12 `}> <AboutAgent agentProfile={agentProfile} /> </div>
-        </div>
-      </div>
+      {agentProfile?.about &&
+        <div className={styles.AboutAgentsection}>
+          <div className={` ${styles.aboutAgentWrapper} container `}>
+            <div className={` ${styles.col} col-12 `}> <AboutAgent agentProfile={agentProfile} /> </div>
+          </div>
+        </div>}
 
       <div className={` ${styles.Container} container `}>
         <div className={` ${styles.AboutPropertyList} row `}>
-          <div className={` ${styles.Aboutcol} col-12 col-lg-8 `}><AgentPropertyList userProperties={userProperties} /> </div>
-          <div className={` ${styles.Aboutcol} col-12  col-lg-4 `}> <AgentReviews /> </div>
+          <div className={` ${styles.Aboutcol} col-12 col-lg-8 `}>
+            {userProperties && userProperties.length > 0 &&
+              <AgentPropertyList userProperties={userProperties} />
+            }
+          </div>
+          <div className={` ${styles.Aboutcol} col-12  col-lg-4 `}>
+            <AgentReviews />
+          </div>
         </div>
       </div>
 
@@ -162,31 +169,31 @@ const AgentProfileLayout = ({agentProfile,relatedProperties,userProperties}) => 
         </div>
       </div>
       {isEmpty ? (
-      <div className="container">
-      <div className="property-container">
-        <SubHero
-          subHeroHeading={"RELATED PROPERTIES"}
-          subHeroText={"PROPERTIES FOR RENT"}
-        />
+        <div className="container">
+          <div className="property-container">
+            <SubHero
+              subHeroHeading={"RELATED PROPERTIES"}
+              subHeroText={"PROPERTIES FOR RENT"}
+            />
 
-        <div className="property-listing-scroll">
-          <div className="property-listing">
-            {isEmpty ? (
-              relatedProperties && relatedProperties.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  handleViewProjectlist={() => handleViewProjectlist(property.id)}
-                />
-              ))
-            ) : (
-              <p>No properties available.</p>
-            )}
+            <div className="property-listing-scroll">
+              <div className="property-listing">
+                {isEmpty ? (
+                  relatedProperties && relatedProperties.map((property) => (
+                    <PropertyCard
+                      key={property.id}
+                      property={property}
+                      handleViewProjectlist={() => handleViewProjectlist(property.id)}
+                    />
+                  ))
+                ) : (
+                  <p>No properties available.</p>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>):''}
-      
+        </div>) : ''}
+
 
 
     </>

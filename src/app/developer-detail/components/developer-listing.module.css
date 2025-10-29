@@ -1,5 +1,5 @@
 .mobileCol {
-    display: none;
+    /* display: none; */
 }
 
 .section {
@@ -11,7 +11,7 @@
 
     /* .smallTabCol, */
     .largeTabCol {
-        display: none !important;
+        /* display: none !important; */
     }
 
     .mobileCol {

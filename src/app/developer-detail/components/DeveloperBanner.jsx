@@ -1,10 +1,10 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useDeveloper } from "../context/DeveloperContext";
 import styles from "./DeveloperBanner.module.css";
 
 const DeveloperBanner = () => {
-  const {developer} = useDeveloper();
+  const { developer } = useDeveloper();
 
   // ✅ Extract RERA number 
 
@@ -40,14 +40,24 @@ const DeveloperBanner = () => {
     val.template.slug.includes("logo")
   )?.field_value;
 
-  console.log("Hero Section Fields:", developer);
+  const [bgImage, setBgImage] = useState("/banner-placeholder.jpg");
+
+  useEffect(() => {
+    if (heroBanner) {
+      const img = new Image();
+      img.src = heroBanner;
+
+      img.onload = () => setBgImage(heroBanner);
+      img.onerror = () => setBgImage("/banner-placeholder.jpg");
+    }
+  }, [heroBanner]);
 
   return (
     <>
       <div
         className={styles.projectdetailsherosection}
         style={{
-          backgroundImage: `url(${heroBanner ? encodeURI(heroBanner) : "/banner-placeholder.jpg"})`,
+          backgroundImage: `url(${bgImage})`,
         }}
       >
         <div className={`${styles.herosection} container`}>

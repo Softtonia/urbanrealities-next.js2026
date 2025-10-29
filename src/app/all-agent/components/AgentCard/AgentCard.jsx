@@ -97,8 +97,8 @@ export default function AgentCard({ agent }) {
             <button onClick={handleShow} className={styles.callBtn}>
               Request a Call Back
             </button>
-            <Link href={`/all-agent/${agent.id}`} className={styles.visitBtn}>
-              Visit Property
+            <Link href={`/all-agent/${agent.first_name}-${agent.id}`} className={styles.visitBtn}>
+              View Profile
             </Link>
           </div>
         </div>

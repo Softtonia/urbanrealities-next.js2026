@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./ProjectBanner.module.css";
 import { useProject } from "../context/ProjectContext";
 import { FaMapMarkerAlt } from "react-icons/fa";
 
 const ProjectBanner = () => {
-  const {project} = useProject();
+  const { project } = useProject();
 
 
   const heroSectionFields = project?.repeater_fields?.filter(
@@ -15,11 +15,11 @@ const ProjectBanner = () => {
       (val.template.slug.includes("banner"))
   ) || [];
 
-  
+
   const heroBanner = heroSectionFields.find(val =>
     val.template.slug.includes("banner")
   )?.field_value;
-  
+
   // const overview = project?.repeater_fields?.filter(
   //   (val) =>
   //     val?.template?.slug?.startsWith("overview") &&
@@ -72,13 +72,24 @@ const ProjectBanner = () => {
     link.click();
     document.body.removeChild(link);
   };
+  const [bgImage, setBgImage] = useState("/banner-placeholder.jpg");
+
+  useEffect(() => {
+    if (heroBanner) {
+      const img = new Image();
+      img.src = heroBanner;
+
+      img.onload = () => setBgImage(heroBanner);
+      img.onerror = () => setBgImage("/banner-placeholder.jpg");
+    }
+  }, [heroBanner]);
 
   return (
     <>
       <div
         className={styles.projectdetailsherosection}
         style={{
-          backgroundImage: `url(${heroBanner ? heroBanner : "/banner-placeholder.jpg"})`,
+          backgroundImage: `url(${bgImage})`,
         }}
       >
         <div className={`${styles.herosection} container`}>

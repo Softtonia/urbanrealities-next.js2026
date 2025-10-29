@@ -37,44 +37,57 @@ const ProjectTabs = () => {
   
   console.log(tabs,section)
 
-  useEffect(() => {
-    if (!tabs.length) return;
+useEffect(() => {
+  if (!tabs.length) return;
 
-    const observerOptions = {
-      root: null,
-      rootMargin: '-150px 0px -70% 0px',
-      threshold: 0
-    };
+  const observerOptions = {
+    root: null,
+    rootMargin: "-150px 0px -50% 0px",
+    threshold: 0.2,
+  };
 
-    const observerCallback = (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          setActiveTab(entry.target.id);
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-    // ✅ Stop previous observers before adding new
-    Object.values(sectionRefs.current).forEach(el => observer.unobserve(el));
-    sectionRefs.current = {};
-
-    // ✅ Re-observe based on new tabs list
-    tabs.forEach(tab => {
-      const sectionId = tab.toLowerCase().replace(/\s+/g, "-");
-      const el = document.getElementById(sectionId);
-      if (el) {
-        sectionRefs.current[sectionId] = el;
-        observer.observe(el);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        setActiveTab(entry.target.id);
       }
     });
+  }, observerOptions);
 
-    return () => {
-      Object.values(sectionRefs.current).forEach(el => observer.unobserve(el));
-    };
+  tabs.forEach(tab => {
+    const sectionId = tab.toLowerCase().replace(/\s+/g, "-");
+    const el = document.getElementById(sectionId);
+    if (el) observer.observe(el);
+  });
 
-  }, [tabs]);
+  return () => observer.disconnect();
+}, [tabs]);
+useEffect(() => {
+  if (!tabs.length) return;
+
+  const observerOptions = {
+    root: null,
+    rootMargin: "-150px 0px -50% 0px",
+    threshold: 0.2,
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        setActiveTab(entry.target.id);
+      }
+    });
+  }, observerOptions);
+
+  tabs.forEach(tab => {
+    const sectionId = tab.toLowerCase().replace(/\s+/g, "-");
+    const el = document.getElementById(sectionId);
+    if (el) observer.observe(el);
+  });
+
+  return () => observer.disconnect();
+}, [tabs]);
+
 
   return (
     <div className={styles.tabContainer}>

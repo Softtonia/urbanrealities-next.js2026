@@ -77,9 +77,8 @@ const MobileSideMenu = () => {
           return (
             <div key={idx} className="mb-4">
               <div
-                className={`section-area d-flex justify-content-between align-items-center p-2 ${
-                  section.expandable ? "rounded" : ""
-                }`}
+                className={`section-area d-flex justify-content-between align-items-center p-2 ${section.expandable ? "rounded" : ""
+                  }`}
                 onClick={() => section.expandable && toggleSection(key)}
                 style={{ cursor: section.expandable ? "pointer" : "default" }}
               >
@@ -98,10 +97,11 @@ const MobileSideMenu = () => {
                 <ul className="list-unstyled ps-3 pt-2">
                   {section.items.map((item, j) => {
                     const slug = makeSlug(section.heading, item.name);
+                    
                     return (
                       <li key={j} className="mb-2">
                         <Link
-                          href={`/${slug}`}
+                          href={`/search/query?search=${item.name}`}
                           className="text-dark text-decoration-none d-flex justify-content-between align-items-center"
                         >
                           {item.name}
@@ -142,9 +142,8 @@ const MobileSideMenu = () => {
           return (
             <div key={idx} className="mb-4">
               <div
-                className={`section-area d-flex justify-content-between align-items-center p-2 ${
-                  section.expandable ? "rounded" : ""
-                }`}
+                className={`section-area d-flex justify-content-between align-items-center p-2 ${section.expandable ? "rounded" : ""
+                  }`}
                 onClick={() => section.expandable && toggleSection(key)}
                 style={{ cursor: section.expandable ? "pointer" : "default" }}
               >
@@ -202,9 +201,8 @@ const MobileSideMenu = () => {
           return (
             <div key={idx} className="mb-4">
               <div
-                className={`section-area d-flex justify-content-between align-items-center p-2 ${
-                  section.expandable ? "rounded" : ""
-                }`}
+                className={`section-area d-flex justify-content-between align-items-center p-2 ${section.expandable ? "rounded" : ""
+                  }`}
                 onClick={() => section.expandable && toggleSection(key)}
                 style={{ cursor: section.expandable ? "pointer" : "default" }}
               >
@@ -277,9 +275,8 @@ const MobileSideMenu = () => {
           return (
             <div key={idx} className="mb-4">
               <div
-                className={`section-area d-flex justify-content-between align-items-center p-2 ${
-                  section.expandable ? "rounded" : ""
-                }`}
+                className={`section-area d-flex justify-content-between align-items-center p-2 ${section.expandable ? "rounded" : ""
+                  }`}
                 onClick={() => section.expandable && toggleSection(key)}
                 style={{ cursor: section.expandable ? "pointer" : "default" }}
               >
@@ -329,7 +326,7 @@ const MobileSideMenu = () => {
       <div className={`menu-panel ${activeMenu === "main" ? "active" : ""}`}>
         <div className="d-flex justify-content-between px-2 border-bottom">
           <p className="mb-2 m-0 p-2 pt-3 fw-bold">Sign in Account</p>
-          <button className="btn btn-login">Login</button>
+          <Link href={'/auth/login'} className="btn btn-login">Login</Link>
         </div>
 
         <ul className="list-unstyled px-3 py-2">

@@ -23,10 +23,10 @@ const Breadcrumbs = ({ color, fontSize, fontFamily }) => {
     <nav aria-label="breadcrumbs">
       <ul
         className={styles.breadcrumbs}
-style={style}      >
+        style={style}      >
         <li className={styles.item}>
           <Link href="/" className={styles.homeLink}
-style={style}>
+            style={style}>
             Home
           </Link>
         </li>
@@ -39,7 +39,11 @@ style={style}>
               <span className={styles.separator}>&gt;</span>
               {isLast ? (
                 <span className={styles.current} style={style}>
-                  {capitalize(value.replace(/-/g, " "))}
+                  {capitalize(
+                    !isNaN(value.split('-').pop())
+                      ? value.split('-').slice(0, -1).join(' ') // remove the numeric ID part
+                      : value.replace(/-/g, ' ')
+                  )}
                 </span>
               ) : (
                 <Link href={href} className={styles.link} style={style}>

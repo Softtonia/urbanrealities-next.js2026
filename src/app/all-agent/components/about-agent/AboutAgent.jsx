@@ -2,6 +2,7 @@ import React from "react";
 import styles from "../AgentProfileLayout.module.css";
 import SubHero from "@/Components/SubHero/SubHero";
 const AboutAgent = ({agentProfile}) => {
+  if(!agentProfile?.about) return null
   return (
     <div >
       <SubHero subHeroHeading={`About ${agentProfile?.first_name} `}></SubHero>

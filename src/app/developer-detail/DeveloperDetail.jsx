@@ -30,7 +30,7 @@ const DeveloperDetail = ({ developer, ongoingProjects, completedProjects, sectio
         : "Completed Projects";
 
     return (
-        <DeveloperProvider value={{developer,section}}>
+        <DeveloperProvider value={{ developer, section }}>
             <div>
                 <DeveloperBreadcrumb />
                 <DeveloperBanner />
@@ -39,19 +39,19 @@ const DeveloperDetail = ({ developer, ongoingProjects, completedProjects, sectio
                 </div>
                 <div className="container">
                     <div className="row tab-row">
-                        <div className={`col-9 ${styles.largeTabCol}`}>
+                        <div className={`col-lg-9 col-12 ${styles.largeTabCol}`}>
                             <section id="overview" className={styles.section}>
                                 <DeveloperStats />
                             </section>
 
-                            {ongoingProjects.length > 0 && (
+                            {ongoingProjects && (
                                 <section id="ongoing-project" className={styles.section}>
 
                                     <DeveloperListingwithTabs DevHeading={ongoing} listingFor="ongoing" Projects={ongoingProjects} />
                                 </section>
                             )}
 
-                            {completedProjects.length > 0 && (
+                            {completedProjects && (
                                 <section id="completed-project" className={styles.section}>
                                     <DeveloperListingwithTabs DevHeading={completed} listingFor="completed" Projects={completedProjects} />
                                 </section>
@@ -59,7 +59,7 @@ const DeveloperDetail = ({ developer, ongoingProjects, completedProjects, sectio
                         </div>
 
 
-                        <div className={`col-12 p-0 ${styles.mobileCol}`}>
+                        {/* <div className={`col-12 p-0 ${styles.mobileCol}`}>
                             <section id="overview" className={styles.section}>
                                 <DeveloperStats />
                             </section>
@@ -74,13 +74,13 @@ const DeveloperDetail = ({ developer, ongoingProjects, completedProjects, sectio
                                     <DeveloperListingwithTabs DevHeading={completed} listingFor="completed" Projects={completedProjects} />
                                 </section>
                             )}
-                            {/* <section id="nearby-projects">
+                            <section id="nearby-projects">
                        <DeveloperListingwithTabs
                          DevHeading={`other Project `}
                        />
-                     </section> */}
+                     </section> 
 
-                        </div>
+                        </div> */}
 
                         <div className={`col-12 ${styles.smallTabCol}`}>
                             <section id="photos" className={styles.section}>
@@ -89,7 +89,7 @@ const DeveloperDetail = ({ developer, ongoingProjects, completedProjects, sectio
                             <section id="faq" className={styles.section}>
                                 <ProjectFAQ />
                             </section>
-                            <section id="vision" className={styles.section}>
+                            <section id="mission-and-vision" className={styles.section}>
                                 <DeveloperVision />
                             </section>
                             <section id="home-loan-offers" className={styles.section}>

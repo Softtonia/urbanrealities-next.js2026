@@ -33,6 +33,7 @@
 .aboutProject-desc {
   font-size: clamp(14px, 1.11vw, 16px);
   font-family: var(--font-regular);
+  text-align: justify;
 }
 .aboutProject-box span {
   font-size: clamp(14px, 1.11vw, 16px);

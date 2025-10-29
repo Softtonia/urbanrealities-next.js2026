@@ -9,7 +9,7 @@ const multiTabs = [
     // "Completed Project",
     "Photos",
     "FAQ",
-    "Vision",
+    "Mission and Vision",
     "Home Loan Offers",
     // "Near By Project",
     // "Others Project"
@@ -17,7 +17,7 @@ const multiTabs = [
 
 const DeveloperTabs = () => {
     const [activeTab, setActiveTab] = useState("overview");
-    const {section} =useDeveloper()
+    const { section } = useDeveloper()
 
     useEffect(() => {
         const handleScroll = () => {

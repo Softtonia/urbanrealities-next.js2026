@@ -43,7 +43,7 @@ async function fetchProject(id) {
       return { error: true, status: response?.status || 500 };
     }
 
-    const data = response?.data?.data;
+    const data = response?.data;
     return data || { error: true, status: 404 };
   } catch (err) {
     console.error("Error fetching project:", err);
@@ -61,7 +61,7 @@ async function fetchCompletedProject(id) {
       return { error: true, status: response?.status || 500 };
     }
 
-    const data = response?.data?.data;
+    const data = response?.data;
     return data || { error: true, status: 404 };
   } catch (err) {
     console.error("Error fetching project:", err);
@@ -89,15 +89,15 @@ const DeveloperPage = async ({ searchParams }) => {
     "Completed Project": true,
     Photos: true,
     FAQ: true,
-    Vision: true,
+    "Mission and Vision": true,
     "Home Loan Offers": true,
   };
 
-  if (!completedProjects || completedProjects.length === 0) {
+  if (!completedProjects ) {
     section["Completed Project"] = false;
   }
 
-  if (!ongoingProjects || ongoingProjects.length === 0) {
+  if (!ongoingProjects ) {
     section["Ongoing Project"] = false;
   }
 

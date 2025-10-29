@@ -28,7 +28,8 @@ const FeaturesCopy = ({ projects }) => {
       views: val?.total_view || '0',
       property_id_name: val?.property_id_name || '',
       property_status: val?.["property_status"]?.map(s => s?.property_status_name)?.join(", ") || "",
-      price: formatprice(onWardPrice?.field_value) || ""
+      price: formatprice(onWardPrice?.field_value) || "",
+      project_type: val?.["property_type "]?.map(val => val?.property_type_name)?.join(', ')
     };
   });
 
@@ -197,13 +198,15 @@ const FeaturesCopy = ({ projects }) => {
                     >
                       {slide.name}
                     </a>
-                    {/* {
-                      slide?.property_id_name && (
+                    {
+                      slide?.project_type && (
                         <p className="explore-btn-feature">
-                          {slide?.property_id_name}
-                        </p>)
+                          {slide.project_type}
+                        </p>
+                      )
                     }
-                    {slide?.price &&
+
+                    {/* {slide?.price &&
                       <p className="explore-btn-feature">
                         ₹<span>{slide?.price}</span> onwards</p>
                     } */}

@@ -70,7 +70,7 @@
     flex-wrap: wrap;
     padding: clamp(12px, 3vw, 16px);
     margin-bottom: clamp(18px, 4vw, 29px);
-    background: none;
-    backdrop-filter: none;
+    /* background: none;
+    backdrop-filter: none; */
   }
 }

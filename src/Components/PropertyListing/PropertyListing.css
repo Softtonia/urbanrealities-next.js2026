@@ -5,9 +5,6 @@
    padding: 60px 0;
 
 }
-.property-container{
-  padding-top: 80px ;
-}
 
 .property-listing-scroll::-webkit-scrollbar {
   display: none;
@@ -16,6 +13,9 @@
   scrollbar-width: none;
 }
 
+.property-container{
+  padding-top: 80px ;
+}
 .property-listing {
   display: flex;
   flex-wrap: wrap;
