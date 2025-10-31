@@ -93,7 +93,7 @@ export default function AgentProfileDetails({agentProfile}) {
     contactDetails.email = agent.email || "N/A";
   }
 
-  console.log(contactDetails);
+  console.log("agent==>",agent);
 
   return (
     <>
@@ -144,12 +144,12 @@ export default function AgentProfileDetails({agentProfile}) {
 
           <div className={styles.statsRow}>
             <div className={styles.statscount}>
-              <h3>{agent.rent || 0}+</h3>
+              <h3>{agent?.rent ||0}+</h3>
               <p>Properties for rent</p>
             </div>
             <div className={styles.statscount}>
-              <h3>{agent.sale || 0}+</h3>
-              <p>Properties for buy</p>
+              <h3>{agent?.sale || 0 }+</h3>
+              <p>Properties for Sell</p>
             </div>
           </div>
 

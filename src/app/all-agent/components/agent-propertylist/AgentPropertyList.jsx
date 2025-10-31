@@ -76,7 +76,7 @@ const AboutPropertyList = ({ userProperties }) => {
           <AgentPropertyCard key={property.id} property={property} />
         ))
       ) : (
-        <p>Properties not found</p>
+        <p>No properties found for this agent</p>
       )}
     </div>
   );

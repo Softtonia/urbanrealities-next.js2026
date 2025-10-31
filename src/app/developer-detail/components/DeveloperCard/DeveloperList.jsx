@@ -4,14 +4,13 @@ import React from "react";
 import DeveloperCard from "./DeveloperCard";
 import styles from "./DeveloperCard.module.css";
 
-export default function DeveloperList({ currentPage, cardsPerPage, totalProperties }) {
-  const startIndex = (currentPage - 1) * cardsPerPage;
-  const visibleCards = totalProperties?.slice(startIndex, startIndex + cardsPerPage);
+export default function DeveloperList({  totalProperties }) {
+  
 
   return (
     <div className={styles.propertyListContainer}>
-      {visibleCards?.length>0 && visibleCards.map((project, index) => (
-        <DeveloperCard key={startIndex + index} project={project} />
+      {totalProperties?.length>0 && totalProperties.map((project, index) => (
+        <DeveloperCard key={index} project={project} />
       ))}
     </div>
   );

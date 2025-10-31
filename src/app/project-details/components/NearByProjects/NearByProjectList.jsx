@@ -4,62 +4,69 @@ import ProjectListingWithTab from "../ProjectListingWithTab";
 import { useCity } from "@/utils/CityContext";
 import { useProject } from "../../context/ProjectContext";
 
-
 const NearByProjectList = ({ projectId }) => {
     const { city } = useCity();
-    const [properties, setProperties] = useState([]);
+    const [projects, setProjects] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { setSection } = useProject()
-    console.log("hello ")
-    useEffect(() => {
-        if (!projectId && !city) return; // only fetch if we have required data
+    const [pagination, setPagination] = useState({
+        total: 0,
+        per_page: 4,
+        current_page: 1,
+        last_page: 1,
+    });
+    const { setSection } = useProject();
 
-        const getProject = async () => {
-            setIsLoading(true);
-            try {
-                const res = await fetch(
-                    `/api/project-list/get-nearby-projects?id=${projectId}&countryId=${city?.country_id}&stateId=${city?.state_id}&cityId=${city?.id}`,
-                    {
-                        method: "GET",
-                        headers: { "Content-Type": "application/json" },
-                    }
-                );
-                const result = await res.json();
-                setProperties(result?.data?.projects || []);
-            } catch (err) {
-                console.error("Failed to fetch projects", err);
-                setProperties([]);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        if (city) {
-            getProject();
+    // 🔹 Fetch projects from API with pagination
+    const getProjects = async (page = 1) => {
+        if (!projectId || !city) return;
+        setIsLoading(true);
+        try {
+            const res = await fetch(
+                `/api/project-list/get-nearby-projects?id=${projectId}&countryId=${city?.country_id}&stateId=${city?.state_id}&cityId=${city?.id}&page=${page}&per_page=4`,
+                { method: "GET", headers: { "Content-Type": "application/json" } }
+            );
+            const result = await res.json();
+
+            setProjects(result?.data?.projects || []);
+            setPagination(result?.data?.pagination || pagination);
+        } catch (err) {
+            console.error("Failed to fetch nearby projects:", err);
+            setProjects([]);
+        } finally {
+            setIsLoading(false);
         }
-    }, [city, projectId]); // run when projectId or city changes
+    };
 
-    // useEffect(() => {
-    //     if (!isLoading && !properties) {
-    //         setSection(prev => ({
-    //             ...prev,
-    //             "Near By Project": false
-    //         }));
-    //     }
-    // }, [properties, isLoading]);
-
-
+    // Initial fetch
     useEffect(() => {
-        const noFAQs = (!properties || properties.length === 0) && !isLoading;
+        if (city && projectId) getProjects(1);
+    }, [city, projectId]);
 
-        setSection(prev => {
-            if (prev["Near By Project"] === !noFAQs) return prev; // skip if already correct
-            return { ...prev, "Near By Project": !noFAQs };
+    // 🔹 Hide section if empty
+    useEffect(() => {
+        const noProjects = (!projects || projects.length === 0) && !isLoading;
+        setSection((prev) => {
+            if (prev["Near By Project"] === !noProjects) return prev;
+            return { ...prev, "Near By Project": !noProjects };
         });
-    }, [properties, isLoading, setSection]);
+    }, [projects, isLoading, setSection]);
 
+    // 🔹 Handle page change
+    const handlePageChange = (page) => {
+        if (page !== pagination.current_page) {
+            getProjects(page);
+        }
+    };
+console.log("projects",projects)
     return (
         <>
-            <ProjectListingWithTab projects={properties} heading={"Near By Projects"} isLoading={isLoading} />
+            <ProjectListingWithTab
+                projects={projects}
+                heading={"Near By Projects"}
+                isLoading={isLoading}
+                pagination={pagination}
+                onPageChange={handlePageChange}
+            />
         </>
     );
 };

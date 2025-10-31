@@ -28,9 +28,9 @@ async function fetchRelatedProperties(id) {
   try {
     // ✅ Directly call backend API, not your Next.js API route
     const response = await get(`/api/get-related-properties-id/${id}`);
-    const data = response?.user;
-    console.log("=>", data)
+    const data = response?.data?.data?.properties;
 
+    console.log("=>", data);   
     if (Array.isArray(data)) return data;
     if (data?.data) return data.data;
     return [];
@@ -75,8 +75,8 @@ const agentdetailspage = async ({ params, searchParams }) => {
 
   const relatedProperties = await fetchRelatedProperties(decontructtId)
   const userProperties = await fetchUserProperties(decontructtId, purpose_id)
-  const agent = Array.isArray(agentProfile)?agentProfile[0]:agentProfile
-  console.log(agent,relatedProperties,userProperties)
+  const agent = Array.isArray(agentProfile) ? agentProfile[0] : agentProfile
+  console.log(relatedProperties)
   return (
     //     <div className={` ${styles.container} container `}>
     // <AgentProfileDetails/>

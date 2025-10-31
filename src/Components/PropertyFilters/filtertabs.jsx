@@ -11,7 +11,7 @@ import { useCity } from "@/utils/CityContext";
 import { useSearch } from "@/hooks/useSearch";
 
 
-export default function PropertyFilters({ initialFilters }) {
+export default function PropertyFilters({ initialFilters, location }) {
   const { city } = useCity();
   const { globalFilters, setGlobalFilters, debouncedFilters, dynamicFilter } = useSearch({
     autoPush: true,
@@ -530,9 +530,9 @@ export default function PropertyFilters({ initialFilters }) {
   //     filter
   //   }))
   // }, [filter]);
-
+  const borderValue = "1px solid var('--Orange-Red')";
   return (
-    <div className={styles.filterContainer}>
+    <div className={styles.filterContainer} style={{ background: location === "project" ? `` : 'var(--Orange-Red)' }}>
       <div className={`${styles.filterBar} container`}>
         {/* Search + Buy */}
         <div className={styles.searchGroup}>
@@ -543,6 +543,7 @@ export default function PropertyFilters({ initialFilters }) {
           >
             <button
               className={`${styles.filterButton} ${styles.buyButton}`}
+              style={{ border: location === "project" ?  '': borderValue }}
               onClick={() => toggleDropdown("buy")}
             >
               <small>{selectedValues.purpose} </small>
@@ -611,6 +612,8 @@ export default function PropertyFilters({ initialFilters }) {
               <button
                 className={`${styles.filterButton} ${selectedValues[filter.key] ? styles.active : ""
                   }`}
+                style={{ border: location === "project" ? '': borderValue  }}
+
                 onClick={() => toggleDropdown(filter.key)}
               >
                 <small>{selectedValues[filter.key] || filter.label}</small>
@@ -807,6 +810,8 @@ export default function PropertyFilters({ initialFilters }) {
             <button
               className={`${styles.filterButton} ${showMoreFilters ? styles.active : ""
                 }`}
+              style={{ border: location === "project" ? borderValue : '' }}
+
               onClick={toggleMoreFilters}
             >
               <small><FaSlidersH className={styles.icon} /> More Filters</small>
@@ -821,6 +826,6 @@ export default function PropertyFilters({ initialFilters }) {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 }

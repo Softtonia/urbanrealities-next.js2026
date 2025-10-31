@@ -7,12 +7,10 @@ export const useDeveloper = () => useContext(DeveloperContext);
 
 export const DeveloperProvider = ({ value, children }) => {
 
-    const { developer, ongoingProjects, completedProjects, section: initialSection } = value || {};
-
-    const [section, setSection] = useState(initialSection || {});
+    const { developer, section, setSection } = value || {};
 
     return (
-        <DeveloperContext.Provider value={{ developer, section, setSection, completedProjects, ongoingProjects }}>
+        <DeveloperContext.Provider value={{ developer, section, setSection }}>
             {children}
         </DeveloperContext.Provider>
     );

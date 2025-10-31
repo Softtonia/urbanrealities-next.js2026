@@ -48,18 +48,21 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
   return pages;
 }
 
-const SingleListingWithTab = ({ searchResults }) => {
-  const {city} = useCity()
+const SingleListingWithTab = ({ searchResults, comeFirst="Properties" }) => {
+  const { city } = useCity()
   const dataByTab = {
     "Properties": searchResults.properties || [],
     "New Project": searchResults.projects || [],
     "Top Agent": searchResults.agents || [],
   };
-  console.log('=>',searchResults)
+
+
+
+  console.log('=>', searchResults)
 
   // const totalProperties = Array(96).fill(1); // Dummy 24 cards
   const cardsPerPage = 4;
-  const [activeTab, setActiveTab] = useState("Properties");
+  const [activeTab, setActiveTab] = useState(comeFirst);
   const [currentPage, setCurrentPage] = useState(1);
   const totalProperties = dataByTab[activeTab] || [];
   const totalPages = Math.ceil(totalProperties.length / cardsPerPage);
@@ -80,7 +83,7 @@ const SingleListingWithTab = ({ searchResults }) => {
     <div>
       <div className={styles.listing}>
         <h2> {activeTab} in {city && city.name}</h2>
-        <SingleTabs activeTab={activeTab} setActiveTab={setActiveTab} searchResults={searchResults}/>
+        <SingleTabs activeTab={activeTab} setActiveTab={setActiveTab} searchResults={searchResults} comeFirst={comeFirst} />
 
         {/* Property list + Loader wrapper */}
         <div className={styles.propertyListWrapper}>

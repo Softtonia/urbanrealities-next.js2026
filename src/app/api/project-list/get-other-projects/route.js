@@ -8,9 +8,10 @@ export async function GET(req) {
     const cityId = searchParams.get('cityId');
     const stateId = searchParams.get('stateId');
     const countryId = searchParams.get('countryId');
-
+    const page = searchParams.get('page');
+    const per_page = searchParams.get('per_page');
     // Forward to Laravel API with query params
-    const url = `/api/get-other-projects/${id}?country_id=${countryId}&state_id=${stateId}&city_id=${cityId}`;
+    const url = `/api/get-other-projects/${id}?country_id=${countryId}&state_id=${stateId}&city_id=${cityId}&page=${page}&per_page=${per_page}`;
 
     // Forward request to Laravel via proxy
     const response = await proxyToLaravel(req, url, "GET");

@@ -21,7 +21,6 @@ async function getAgent() {
 
 export default async function FindAgentPage() {
   const agents =await getAgent() // <-- initialize as array
-  console.log(agents)
 
   return (
     <div className={` ${styles.findAgent} container`}>

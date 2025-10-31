@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCity } from "@/utils/CityContext";
 
 export const useSearch = ({
@@ -13,6 +13,9 @@ export const useSearch = ({
 
     const router = useRouter();
     const searchParams = useSearchParams();
+     const pathname = usePathname(); // ✅ gives the current route path (e.g. /projects, /properties)
+  const startingPath = useMemo(() => pathname || "/", [pathname]); // ✅ fallback safe
+
 
     // --- Helpers ---
     const parseParams = () => {
@@ -48,7 +51,7 @@ export const useSearch = ({
                 params.set(key, String(value));
             }
         });
-        router.replace(`/search/query?${params.toString()}`, { shallow: true });
+        router.replace(`${startingPath}?${params.toString()}`, { shallow: true });
     }, [debouncedFilters, autoPush, router]);
 
     // --- Search trigger ---

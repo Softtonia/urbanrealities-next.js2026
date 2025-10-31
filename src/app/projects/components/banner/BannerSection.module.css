@@ -1,0 +1,152 @@
+.bannerSection {
+    position: relative;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    color: white;
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.brand {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.heading {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--Orange-Red);
+    margin-bottom: 8px;
+}
+
+.subHeading {
+    font-size: 1.2rem;
+}
+
+.city {
+    font-weight: 700;
+    color: var(--Orange-Red);
+    text-decoration: underline;
+}
+/* Cards layout */
+.cardsContainer {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 20px;
+    margin-top: 40px;
+    flex-wrap: nowrap; /* ✅ Keeps all cards in one row */
+    overflow-x: auto;  /* ✅ Adds horizontal scroll if needed */
+    padding-bottom: 10px;
+    scrollbar-width: thin; /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari */
+.cardsContainer::-webkit-scrollbar {
+    height: 6px;
+}
+.cardsContainer::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.card {
+    cursor: pointer;
+    flex: 0 0 300px; /* ✅ Fixed width so cards stay aligned */
+    border-radius: 20px;
+    padding: 25px 20px;
+    background: white;
+    color: #222;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    /* transform: translateY(-6px); */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.iconWrapper {
+    margin-bottom: 12px;
+}
+
+.iconYellow {
+    color: var(--Orange-Red);
+    font-size: 1.8rem;
+}
+
+.iconBlue {
+    color: #3b82f6;
+    font-size: 1.8rem;
+}
+
+.iconRed {
+    color: #f87171;
+    font-size: 1.8rem;
+}
+
+.cardTitle {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+}
+
+.cardHighlight {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #111;
+    margin-top: 3px;
+}
+
+/* Background colors */
+.yellowCard {
+    background-color: #fff8e1;
+}
+
+.blueCard {
+    background-color: #e0f2fe;
+}
+
+.redCard {
+    background-color: #fee2e2;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .cardsContainer{
+        justify-content: start;
+    }
+    .card {
+        flex: 0 0 240px; /* ✅ Smaller cards on mobile */
+        padding: 20px 15px;
+    }
+
+    .iconYellow,
+    .iconBlue,
+    .iconRed {
+        font-size: 1.5rem;
+    }
+
+    .cardTitle {
+        font-size: 0.85rem;
+    }
+
+    .cardHighlight {
+        font-size: 1rem;
+    }
+}

@@ -33,41 +33,7 @@ async function fetchDeveloper(id) {
   }
 }
 
-async function fetchProject(id) {
-  try {
-    const response = await getssr(`/api/get-all-ongoing-projects-by-developer?developer_id=${id}`);
 
-    // Handle non-200 responses
-    if (!response || response.status >= 400) {
-      console.error(`❌ API Error ${response?.status}: ${response?.statusText}`);
-      return { error: true, status: response?.status || 500 };
-    }
-
-    const data = response?.data;
-    return data || { error: true, status: 404 };
-  } catch (err) {
-    console.error("Error fetching project:", err);
-    return { error: true, status: err?.response?.status || 500 };
-  }
-}
-
-async function fetchCompletedProject(id) {
-  try {
-    const response = await getssr(`/api/get-all-completed-projects-by-developer?developer_id=${id}`);
-
-    // Handle non-200 responses
-    if (!response || response.status >= 400) {
-      console.error(`❌ API Error ${response?.status}: ${response?.statusText}`);
-      return { error: true, status: response?.status || 500 };
-    }
-
-    const data = response?.data;
-    return data || { error: true, status: 404 };
-  } catch (err) {
-    console.error("Error fetching project:", err);
-    return { error: true, status: err?.response?.status || 500 };
-  }
-}
 
 const DeveloperPage = async ({ searchParams }) => {
 
@@ -77,36 +43,13 @@ const DeveloperPage = async ({ searchParams }) => {
   // Fetch developer details
   const developer = await fetchDeveloper(id);
 
-  // Fetch ongoing projects only if developer exists
-  const ongoingProjects = developer?.id ? await fetchProject(developer.id) : [];
-  const completedProjects = developer?.id ? await fetchCompletedProject(developer.id) : [];
 
 
-  // console.log("developer", completedProjects);
-  const section = {
-    Overview: true,
-    "Ongoing Project": true,
-    "Completed Project": true,
-    Photos: true,
-    FAQ: true,
-    "Mission and Vision": true,
-    "Home Loan Offers": true,
-  };
-
-  if (!completedProjects ) {
-    section["Completed Project"] = false;
-  }
-
-  if (!ongoingProjects ) {
-    section["Ongoing Project"] = false;
-  }
 
   return (
     <DeveloperDetail
       developer={developer}
-      ongoingProjects={ongoingProjects}
-      completedProjects={completedProjects}
-      section={section}
+     
     />
     // <DeveloperProvider value={{ developer, ongoingProjects, completedProjects, section }}>
     //   <div>

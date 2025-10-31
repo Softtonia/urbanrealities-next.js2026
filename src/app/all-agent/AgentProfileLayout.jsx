@@ -116,7 +116,7 @@ const AgentProfileLayout = ({ agentProfile, relatedProperties, userProperties })
   //   },
   // ];
 
-  console.log("=", userProperties)
+  console.log("==>>>", relatedProperties)
 
   return (
     <>
@@ -142,9 +142,9 @@ const AgentProfileLayout = ({ agentProfile, relatedProperties, userProperties })
       <div className={` ${styles.Container} container `}>
         <div className={` ${styles.AboutPropertyList} row `}>
           <div className={` ${styles.Aboutcol} col-12 col-lg-8 `}>
-            {userProperties && userProperties.length > 0 &&
-              <AgentPropertyList userProperties={userProperties} />
-            }
+            {/* {userProperties && userProperties.length > 0 && */}
+            <AgentPropertyList userProperties={userProperties} />
+            {/* } */}
           </div>
           <div className={` ${styles.Aboutcol} col-12  col-lg-4 `}>
             <AgentReviews />
@@ -178,7 +178,8 @@ const AgentProfileLayout = ({ agentProfile, relatedProperties, userProperties })
 
             <div className="property-listing-scroll">
               <div className="property-listing">
-                {isEmpty ? (
+                {/* {isEmpty ? ( */}
+                {
                   relatedProperties && relatedProperties.map((property) => (
                     <PropertyCard
                       key={property.id}
@@ -186,9 +187,11 @@ const AgentProfileLayout = ({ agentProfile, relatedProperties, userProperties })
                       handleViewProjectlist={() => handleViewProjectlist(property.id)}
                     />
                   ))
-                ) : (
-                  <p>No properties available.</p>
-                )}
+                }
+                {/* )  */}
+                {/* : ( */}
+                {/* <p>No properties available.</p> */}
+                {/* )} */}
               </div>
             </div>
           </div>

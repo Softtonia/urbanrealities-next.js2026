@@ -3,6 +3,9 @@ import React from "react";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import styles from "./Projects-viewcards.module.css";
+import { useSearch } from "@/hooks/useSearch";
+import PropertyFilters from "@/Components/PropertyFilters/filtertabs";
+import SingleListingWithTab from "@/app/search/[search]/components/SingleTabs/SingleListingwithTabs";
 
 const projectData = [
   {
@@ -109,11 +112,24 @@ const ProjectsViewCards = ({ project, onViewProject }) => {
 
 // agar map karna hai
 const ProjectsList = ({ onViewProject }) => {
+  const { payload, debouncedFilters, searchResults } = useSearch({ autoPush: false })
+  // const [searchResults,setSearchResults] =useState();
+
+  
+  const filters = []
+
   return (
-    <div className={styles.projectCarousel}>
-      {projectData.map((proj, idx) => (
-        <ProjectsViewCards key={idx} project={proj} onViewProject={onViewProject} />
-      ))}
+    <div>
+      <PropertyFilters initialFilters={debouncedFilters} location="project"/>
+      <div className={`row ${styles["tab-row"]}`}>
+        <div className={`col-12 ${styles["listing-col"]}`}>
+          <SingleListingWithTab filters={filters} searchResults={searchResults} comeFirst="New Project"/>
+        </div>
+        {/* <div className={styles.projectCarousel}>
+        {projectData.map((proj, idx) => (
+          <ProjectsViewCards key={idx} project={proj} onViewProject={onViewProject} />
+        ))} */}
+      </div>
     </div>
   );
 };

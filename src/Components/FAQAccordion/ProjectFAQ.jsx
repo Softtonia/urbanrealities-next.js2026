@@ -4,7 +4,7 @@ import styles from './ProjectFAQ.module.css';
 import { useDeveloper } from '@/app/developer-detail/context/DeveloperContext';
 
 const ProjectFAQ = () => {
-  const { developer, setSection } = useDeveloper();
+  const { developer, setSection ,section} = useDeveloper();
   // console.log("Developer in Stats:", developer);
 
   const home = developer?.repeater_fields?.filter(
@@ -35,6 +35,8 @@ const ProjectFAQ = () => {
   }, [faqs, setSection]);
 
   console.log("faqss==>", faqs)
+      console.log("sections",section)
+  
   return (
     <div>
       {faqs && faqs.length > 0 && (

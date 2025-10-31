@@ -1,7 +1,7 @@
 .filterContainer {
   position: relative;
   width: 100%;
-  background: var(--Orange-Red);
+  /* background: var(--Orange-Red); */
 }
 
 .filterBar {
@@ -98,6 +98,7 @@
   border: none;
   padding: 8px 14px;
   border-radius: 20px;
+  border: 1px solid var(--Orange-Red);
   cursor: pointer;
   position: relative;
   white-space: nowrap;
