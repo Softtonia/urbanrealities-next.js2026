@@ -1,0 +1,271 @@
+name: Deploy Next.js to Holiplaces
+
+on:
+  push:
+    branches:
+      - dev
+
+concurrency:
+  group: holiplaces-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy Full Code and Build on Server
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      APP_NAME: holiplaces-next
+      SERVER_PATH: /var/www/holiplaces.com
+      NODE_VERSION: 20
+      PORT: 3000
+      SSH_PORT: 22
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Configure SSH
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          mkdir -p ~/.ssh
+
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "ERROR: SERVER_SSH_KEY secret missing"
+            exit 1
+          fi
+
+          if [ -z "$SERVER_HOST" ]; then
+            echo "ERROR: SERVER_HOST secret missing"
+            exit 1
+          fi
+
+          if [ -z "$SERVER_USER" ]; then
+            echo "ERROR: SERVER_USER secret missing"
+            exit 1
+          fi
+
+          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null || {
+            echo "ERROR: SERVER_SSH_KEY is invalid. Use private key, not .pub key."
+            exit 1
+          }
+
+          ssh -4 -i ~/.ssh/deploy_key \
+            -p "${{ env.SSH_PORT }}" \
+            -o StrictHostKeyChecking=no \
+            -o ConnectTimeout=60 \
+            "$SERVER_USER@$SERVER_HOST" \
+            "echo SSH connected successfully"
+
+      - name: Create Release Folder on Server
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          RELEASE_DIR="${{ env.SERVER_PATH }}/releases/${{ github.sha }}"
+
+          ssh -4 -i ~/.ssh/deploy_key \
+            -p "${{ env.SSH_PORT }}" \
+            -o StrictHostKeyChecking=no \
+            "$SERVER_USER@$SERVER_HOST" \
+            "mkdir -p '$RELEASE_DIR'"
+
+      - name: Upload Complete Code to Server
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          RELEASE_DIR="${{ env.SERVER_PATH }}/releases/${{ github.sha }}"
+
+          rsync -az --delete \
+            -e "ssh -4 -i ~/.ssh/deploy_key -p ${{ env.SSH_PORT }} -o StrictHostKeyChecking=no" \
+            --exclude ".git" \
+            --exclude ".github" \
+            --exclude "node_modules" \
+            --exclude ".next" \
+            --exclude "deploy" \
+            --exclude "deploy.tar.gz" \
+            --exclude "*.zip" \
+            --exclude "*.tar" \
+            --exclude "*.tar.gz" \
+            --exclude ".env" \
+            --exclude ".env.local" \
+            ./ \
+            "$SERVER_USER@$SERVER_HOST:$RELEASE_DIR/"
+
+      - name: Build Project on Server
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh -4 -i ~/.ssh/deploy_key \
+            -p "${{ env.SSH_PORT }}" \
+            -o StrictHostKeyChecking=no \
+            "$SERVER_USER@$SERVER_HOST" bash -s << 'SERVER_SCRIPT'
+            set -e
+
+            SERVER_PATH="/var/www/holiplaces.com"
+            RELEASE_DIR="/var/www/holiplaces.com/releases/${{ github.sha }}"
+
+            cd "$RELEASE_DIR"
+
+            echo "Current release folder:"
+            pwd
+
+            echo "Installing dependencies..."
+            if [ -f package-lock.json ]; then
+              npm ci --legacy-peer-deps
+            else
+              npm install --legacy-peer-deps
+            fi
+
+            echo "Building Next.js..."
+            NODE_ENV=production npm run build
+
+            if [ ! -d ".next" ]; then
+              echo "ERROR: .next folder not found after build"
+              exit 1
+            fi
+
+            if [ ! -d ".next/standalone" ]; then
+              echo "ERROR: .next/standalone not found"
+              echo "Fix: add output: 'standalone' in next.config.mjs"
+              exit 1
+            fi
+
+            echo "Copying static/public files into standalone build..."
+
+            mkdir -p .next/standalone/.next
+            rm -rf .next/standalone/.next/static
+            cp -r .next/static .next/standalone/.next/static
+
+            if [ -d "public" ]; then
+              rm -rf .next/standalone/public
+              cp -r public .next/standalone/public
+            fi
+
+            echo "Build completed successfully"
+          SERVER_SCRIPT
+
+      - name: Setup PM2 Config
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh -4 -i ~/.ssh/deploy_key \
+            -p "${{ env.SSH_PORT }}" \
+            -o StrictHostKeyChecking=no \
+            "$SERVER_USER@$SERVER_HOST" bash -s << 'SERVER_SCRIPT'
+            set -e
+
+            SERVER_PATH="/var/www/holiplaces.com"
+            APP_NAME="holiplaces-next"
+            PORT="3000"
+
+            mkdir -p "$SERVER_PATH/releases"
+            mkdir -p "$SERVER_PATH/shared"
+
+            if ! command -v pm2 >/dev/null 2>&1; then
+              npm install -g pm2
+            fi
+
+            rm -f "$SERVER_PATH/ecosystem.config.cjs"
+
+            {
+              echo "module.exports = {"
+              echo "  apps: ["
+              echo "    {"
+              echo "      name: '$APP_NAME',"
+              echo "      script: '$SERVER_PATH/current/.next/standalone/server.js',"
+              echo "      cwd: '$SERVER_PATH/current/.next/standalone',"
+              echo "      instances: 2,"
+              echo "      exec_mode: 'cluster',"
+              echo "      env: {"
+              echo "        NODE_ENV: 'production',"
+              echo "        PORT: $PORT"
+              echo "      }"
+              echo "    }"
+              echo "  ]"
+              echo "};"
+            } > "$SERVER_PATH/ecosystem.config.cjs"
+
+            node -c "$SERVER_PATH/ecosystem.config.cjs"
+
+            echo "PM2 config created successfully"
+          SERVER_SCRIPT
+
+      - name: Activate New Release
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh -4 -i ~/.ssh/deploy_key \
+            -p "${{ env.SSH_PORT }}" \
+            -o StrictHostKeyChecking=no \
+            "$SERVER_USER@$SERVER_HOST" bash -s << 'SERVER_SCRIPT'
+            set -e
+
+            SERVER_PATH="/var/www/holiplaces.com"
+            RELEASE_DIR="/var/www/holiplaces.com/releases/${{ github.sha }}"
+
+            if [ ! -d "$RELEASE_DIR" ]; then
+              echo "ERROR: Release folder not found"
+              exit 1
+            fi
+
+            if [ ! -f "$RELEASE_DIR/.next/standalone/server.js" ]; then
+              echo "ERROR: Standalone server.js not found"
+              exit 1
+            fi
+
+            if [ -d "$SERVER_PATH/current" ] && [ ! -L "$SERVER_PATH/current" ]; then
+              mv "$SERVER_PATH/current" "$SERVER_PATH/current_backup_$(date +%s)"
+            fi
+
+            ln -sfnT "$RELEASE_DIR" "$SERVER_PATH/current"
+
+            pm2 startOrReload "$SERVER_PATH/ecosystem.config.cjs" --update-env
+            pm2 save
+
+            echo "New release activated successfully"
+          SERVER_SCRIPT
+
+      - name: Keep Only Latest 2 Releases
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh -4 -i ~/.ssh/deploy_key \
+            -p "${{ env.SSH_PORT }}" \
+            -o StrictHostKeyChecking=no \
+            "$SERVER_USER@$SERVER_HOST" bash -s << 'SERVER_SCRIPT'
+            set -e
+
+            SERVER_PATH="/var/www/holiplaces.com"
+
+            cd "$SERVER_PATH/releases"
+
+            echo "Existing releases before cleanup:"
+            ls -la
+
+            ls -dt */ | tail -n +3 | xargs -r rm -rf
+
+            echo "Releases after cleanup:"
+            ls -la
+
+            echo "Deployment completed successfully"
+          SERVER_SCRIPT
