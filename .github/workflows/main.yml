@@ -11,83 +11,38 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy Full Code and Build on Server
+    name: Deploy to Server
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 30
 
     env:
-      APP_NAME: holiplaces
       SERVER_PATH: /var/www/holiplaces.com
-      PORT: 3000
+      APP_NAME: holiplaces
       SSH_PORT: 22
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
 
-      - name: Configure SSH
-        shell: bash
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Add Server to Known Hosts
         run: |
           mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ env.SSH_PORT }} -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-          if [ -z "$SSH_PRIVATE_KEY" ]; then
-            echo "ERROR: SERVER_SSH_KEY secret missing"
-            exit 1
-          fi
-
-          if [ -z "$SERVER_HOST" ]; then
-            echo "ERROR: SERVER_HOST secret missing"
-            exit 1
-          fi
-
-          if [ -z "$SERVER_USER" ]; then
-            echo "ERROR: SERVER_USER secret missing"
-            exit 1
-          fi
-
-          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-
-          ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null || {
-            echo "ERROR: SERVER_SSH_KEY is invalid. Use private key, not .pub key."
-            exit 1
-          }
-
-          ssh -4 -i ~/.ssh/deploy_key \
-            -p "${{ env.SSH_PORT }}" \
-            -o StrictHostKeyChecking=no \
-            -o ConnectTimeout=60 \
-            "$SERVER_USER@$SERVER_HOST" \
-            "echo SSH connected successfully"
-
-      - name: Create Release Folder
-        shell: bash
-        env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
+      - name: Upload Code
         run: |
           RELEASE_DIR="${{ env.SERVER_PATH }}/releases/${{ github.sha }}"
 
-          ssh -4 -i ~/.ssh/deploy_key \
-            -p "${{ env.SSH_PORT }}" \
-            -o StrictHostKeyChecking=no \
-            "$SERVER_USER@$SERVER_HOST" \
+          ssh -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
             "rm -rf '$RELEASE_DIR' && mkdir -p '$RELEASE_DIR'"
 
-      - name: Upload Full Code to Server
-        shell: bash
-        env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-        run: |
-          RELEASE_DIR="${{ env.SERVER_PATH }}/releases/${{ github.sha }}"
-
           rsync -az --delete \
-            -e "ssh -4 -i ~/.ssh/deploy_key -p ${{ env.SSH_PORT }} -o StrictHostKeyChecking=no" \
+            -e "ssh -p ${{ env.SSH_PORT }}" \
             --exclude ".git" \
             --exclude ".github" \
             --exclude "node_modules" \
@@ -98,21 +53,16 @@ jobs:
             --exclude "*.tar" \
             --exclude "*.tar.gz" \
             ./ \
-            "$SERVER_USER@$SERVER_HOST:$RELEASE_DIR/"
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:$RELEASE_DIR/
 
-      - name: Build Project on Server
-        shell: bash
-        env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
+      - name: Build and Activate
         run: |
-          ssh -4 -i ~/.ssh/deploy_key \
-            -p "${{ env.SSH_PORT }}" \
-            -o StrictHostKeyChecking=no \
-            "$SERVER_USER@$SERVER_HOST" bash -s << 'SERVER_SCRIPT'
+          ssh -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} bash -s << 'SERVER_SCRIPT'
             set -e
 
-            RELEASE_DIR="/var/www/holiplaces.com/releases/${{ github.sha }}"
+            SERVER_PATH="/var/www/holiplaces.com"
+            RELEASE_DIR="$SERVER_PATH/releases/${{ github.sha }}"
+            APP_NAME="holiplaces"
 
             cd "$RELEASE_DIR"
 
@@ -121,161 +71,30 @@ jobs:
               rsync -a img/ public/img/
             fi
 
-            if [ -f package-lock.json ]; then
-              npm ci --legacy-peer-deps
-            else
-              npm install --legacy-peer-deps
+            if [ -d "data" ]; then
+              mkdir -p public/data
+              rsync -a data/ public/data/
             fi
 
-            NODE_ENV=production npm run build
+            if [ -f package-lock.json ]; then
+              npm ci --legacy-peer-deps --prefer-offline
+            else
+              npm install --legacy-peer-deps --prefer-offline
+            fi
+
+            npm run build
 
             if [ ! -d ".next" ]; then
-              echo "ERROR: .next folder not found after build"
+              echo "ERROR: .next build folder missing"
               exit 1
-            fi
-
-            if [ ! -d ".next/standalone" ]; then
-              echo "ERROR: .next/standalone not found"
-              echo "Fix: add output: 'standalone' in next.config.mjs"
-              exit 1
-            fi
-
-            if [ ! -f ".next/standalone/server.js" ]; then
-              echo "ERROR: .next/standalone/server.js not found"
-              exit 1
-            fi
-
-            mkdir -p .next/standalone/.next
-
-            rm -rf .next/standalone/.next/static
-            cp -r .next/static .next/standalone/.next/static
-
-            rm -rf .next/standalone/public
-            cp -r public .next/standalone/public
-
-            cat > server.js << 'ROOT_SERVER'
-            const path = require("path");
-            
-            process.chdir(path.join(__dirname, ".next", "standalone"));
-            
-            require(path.join(__dirname, ".next", "standalone", "server.js"));
-            ROOT_SERVER
-
-            node -c server.js
-
-            echo "Build completed successfully"
-          SERVER_SCRIPT
-
-      - name: Create PM2 Config
-        shell: bash
-        env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-        run: |
-          ssh -4 -i ~/.ssh/deploy_key \
-            -p "${{ env.SSH_PORT }}" \
-            -o StrictHostKeyChecking=no \
-            "$SERVER_USER@$SERVER_HOST" bash -s << 'SERVER_SCRIPT'
-            set -e
-
-            SERVER_PATH="/var/www/holiplaces.com"
-            APP_NAME="holiplaces"
-            PORT="3000"
-
-            mkdir -p "$SERVER_PATH/releases"
-            mkdir -p "$SERVER_PATH/shared"
-
-            if ! command -v pm2 >/dev/null 2>&1; then
-              npm install -g pm2
-            fi
-
-            cat > "$SERVER_PATH/ecosystem.config.cjs" << PM2_CONFIG
-            module.exports = {
-              apps: [
-                {
-                  name: "$APP_NAME",
-                  script: "server.js",
-                  cwd: "$SERVER_PATH/current",
-                  instances: 1,
-                  exec_mode: "fork",
-                  env: {
-                    NODE_ENV: "production",
-                    HOSTNAME: "0.0.0.0",
-                    PORT: $PORT
-                  }
-                }
-              ]
-            };
-            PM2_CONFIG
-
-            node -c "$SERVER_PATH/ecosystem.config.cjs"
-
-            echo "PM2 config created successfully"
-          SERVER_SCRIPT
-
-      - name: Activate Release and Restart App
-        shell: bash
-        env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-        run: |
-          ssh -4 -i ~/.ssh/deploy_key \
-            -p "${{ env.SSH_PORT }}" \
-            -o StrictHostKeyChecking=no \
-            "$SERVER_USER@$SERVER_HOST" bash -s << 'SERVER_SCRIPT'
-            set -e
-
-            SERVER_PATH="/var/www/holiplaces.com"
-            RELEASE_DIR="/var/www/holiplaces.com/releases/${{ github.sha }}"
-
-            if [ ! -d "$RELEASE_DIR" ]; then
-              echo "ERROR: Release folder not found"
-              exit 1
-            fi
-
-            if [ ! -f "$RELEASE_DIR/server.js" ]; then
-              echo "ERROR: root server.js launcher not found"
-              exit 1
-            fi
-
-            if [ ! -f "$RELEASE_DIR/.next/standalone/server.js" ]; then
-              echo "ERROR: standalone server.js not found"
-              exit 1
-            fi
-
-            if [ -d "$SERVER_PATH/current" ] && [ ! -L "$SERVER_PATH/current" ]; then
-              mv "$SERVER_PATH/current" "$SERVER_PATH/current_backup_$(date +%s)"
             fi
 
             ln -sfnT "$RELEASE_DIR" "$SERVER_PATH/current"
 
-            pm2 delete holiplaces-next || true
-            pm2 delete holiplaces || true
-
-            pm2 start "$SERVER_PATH/ecosystem.config.cjs" --update-env
+            pm2 restart "$APP_NAME" --update-env || pm2 start npm --name "$APP_NAME" -- start
             pm2 save
 
-            pm2 list
-
-            echo "App restarted successfully"
-          SERVER_SCRIPT
-
-      - name: Keep Only Latest 2 Releases
-        shell: bash
-        env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-        run: |
-          ssh -4 -i ~/.ssh/deploy_key \
-            -p "${{ env.SSH_PORT }}" \
-            -o StrictHostKeyChecking=no \
-            "$SERVER_USER@$SERVER_HOST" bash -s << 'SERVER_SCRIPT'
-            set -e
-
-            SERVER_PATH="/var/www/holiplaces.com"
-
             cd "$SERVER_PATH/releases"
-
             ls -dt */ | tail -n +3 | xargs -r rm -rf
 
             echo "Deployment completed successfully"
