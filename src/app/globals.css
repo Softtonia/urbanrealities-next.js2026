@@ -131,11 +131,36 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
 :root {
   --font-bold: "poppins-bold";
   --font-semibold: "poppins-semibold";
   --font-medium: "poppins-medium";
   --font-regular: "poppins-regular";
+  
+  --font-inter-semibold: "Inter";
+  --font-inter-medium: "Inter";
+  --font-inter-regular: "Inter";
 }
 
 html {
@@ -497,23 +522,24 @@ tr:nth-child(odd) {
   width: 100%;
   background: var(--Orange-Red);
   color: var(--White);
-  padding: 5px 20px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 10px;
+  border-radius: 6px;
   text-decoration: none;
 }
 .googleBtn {
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 100%;
-  padding: 5px 20px;
+  padding: 12px 20px;
   background: var(--White);
   color: var(--Eerie-Black);
   border: 1px solid var(--Lavender-Gray);
-  border-radius: 10px;
+  border-radius: 6px;
 }
 .formHeading {
-  font-size: 20px !important;
+  font-size: 28px !important;
   font-family: var(--font-medium);
 }
 

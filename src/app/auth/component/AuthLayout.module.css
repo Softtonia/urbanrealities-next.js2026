@@ -1,31 +1,29 @@
 .authContainer {
-  display: flex;
-  justify-content: center;
-  padding: 20px 0;
+  padding: 0px 0;
   background-color: var(--off-white);
+  width: 100%;
 }
 
 .loginContainer {
   display: flex;
   width: 100%;
-  max-width: 800px;
-  height: 700px;
+  min-height: 700px;
 }
 
 .leftPanel {
-  width: 393px;
+  width: 40%;
   background: url('/login-bg.png');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
   background-clip: border-box;
   color: var(--White);
-  padding: 50px 35px 29px 35px;
+  padding: 50px 80px 29px 80px;
 }
 
 .rightPanel {
-  padding: 90px 25px 80px 25px;
-  width: 407px;
+  padding: 90px 96px 80px 96px;
+  width: 60%;
   height: 100%;
   display: flex;
   justify-content: space-between;
@@ -40,6 +38,7 @@
   position: absolute;
   top: 0;
   left: 0;
+  display: none;
 }
 
 /* .closeIcon{

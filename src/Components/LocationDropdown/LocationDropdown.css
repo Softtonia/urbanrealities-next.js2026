@@ -15,6 +15,7 @@
 .city-text{
     color: var(--Gray);
     font-size: 14px;
+    font-family: var(--font-regular);
 }
 
 .city-heading-mob{

@@ -4,6 +4,7 @@ import styles from "../loginform/Login.module.css";
 import { useRegisterForm } from "../../context/RegisterFormProvider";
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
+import AuthInput from "../AuthInput/AuthInput";
 
 const SetPassword = () => {
   const { formData, updateField } = useRegisterForm();
@@ -173,14 +174,11 @@ const SetPassword = () => {
         <h2 className={`formHeading ${styles.formHeading}`}>{data.heading}</h2>
         <p className={`formSubHeading ${styles.formSubHeading}`}>{data.subText}</p>
 
-        <div className={styles.formGroup} style={{ position: "relative" }}>
-          <label htmlFor="Password" className={`formLabel ${styles.formLabel}`}>
-            {data.passwordLabel}
-          </label>
-          <input
+        <div style={{ position: "relative" }}>
+          <AuthInput
+            label={data.passwordLabel}
             type={showPassword ? "text" : "password"}
             id="Password"
-            className={`formInput ${styles.formInput}`}
             placeholder={data.passwordPlaceholder}
             onChange={(e) => updateField("password", e.target.value)}
             value={formData.password}
@@ -192,42 +190,37 @@ const SetPassword = () => {
               right: "10px",
               top: "60%",
               transform: "translateY(-50%)",
-              cursor: "pointer"
+              cursor: "pointer",
+              color: "var(--color-primary, #000)"
             }}
           >
             <EyeIcon open={showPassword} />
           </span>
         </div>
 
-        <div className={styles.formGroup} style={{ position: "relative" }}>
-          <label htmlFor="confirmPassword" className={`formLabel ${styles.formLabel}`}>
-            {data.confirmPasswordLabel}
-          </label>
-          <input
+        <div style={{ position: "relative" }}>
+          <AuthInput
+            label={data.confirmPasswordLabel}
             type={showConfirmPassword ? "text" : "password"}
             id="confirmPassword"
-            className={`formInput ${styles.formInput}`}
             placeholder={data.confirmPasswordPlaceholder}
             onChange={(e) => updateField("confirm_password", e.target.value)}
             value={formData.confirm_password}
+            error={error}
           />
           <span
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             style={{
               position: "absolute",
               right: "10px",
-              top: "60%",
+              top: error ? "45%" : "60%",
               transform: "translateY(-50%)",
-              cursor: "pointer"
+              cursor: "pointer",
+              color: "var(--color-primary, #000)"
             }}
           >
             <EyeIcon open={showConfirmPassword} />
           </span>
-          {error && (
-            <p className={`formLabel ${styles.errorText}`} style={{ color: "red", fontSize: "12px" }}>
-              {error}
-            </p>
-          )}
         </div>
 
         <button

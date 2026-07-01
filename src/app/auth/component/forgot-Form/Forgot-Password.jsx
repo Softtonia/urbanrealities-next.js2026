@@ -4,6 +4,7 @@ import React from "react";
 import styles from "../loginform/Login.module.css";
 import Link from "next/link";
 import { IoArrowBackSharp } from "react-icons/io5";
+import AuthInput from "../AuthInput/AuthInput";
 
 export default function ForgotPassword() {
   const data = {
@@ -26,13 +27,10 @@ export default function ForgotPassword() {
       <p className={`formSubHeading ${styles.formSubHeading}`}>{data.subText}</p>
 
       <div className={styles.formGroup}>
-        <label htmlFor="email" className={`formLabel ${styles.formLabel}`}>
-          {data.emailLabel}
-        </label>
-        <input
+        <AuthInput
+          label={data.emailLabel}
           type="text"
           id="email"
-          className={`formInput ${styles.formInput}`}
           placeholder={data.emailPlaceholder}
         />
       </div>

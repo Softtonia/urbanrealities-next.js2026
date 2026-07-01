@@ -6,6 +6,12 @@
 .formSubHeading{
   margin-bottom: 25px;
 }
+.formSubText {
+  color: var(--Gray, #666);
+  font-size: 16px;
+  font-family: var(--font-inter-regular), sans-serif;
+  margin-bottom: 30px;
+}
 .formGroup{
   display: flex;
   flex-direction: column;
@@ -39,7 +45,7 @@
 /*---------------- register ----------------*/
 .radioGroup {
   display: flex;
-  gap: 5px;
+  gap: 15px;
   flex-wrap: wrap;
   margin-bottom: 15px;
 }
@@ -47,8 +53,29 @@
 .radioOption {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   color: var(--Eerie-Black);
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.radioOption input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #999;
+  border-radius: 50%;
+  cursor: pointer;
+  background-clip: content-box;
+  padding: 3px; /* controls the size of the inner circle */
+  margin: 0;
+}
+
+.radioOption input[type="radio"]:checked {
+  background-color: var(--Orange-Red, #ff4500);
+  border-color: var(--Orange-Red, #ff4500);
 }
 
  .nextBtn {

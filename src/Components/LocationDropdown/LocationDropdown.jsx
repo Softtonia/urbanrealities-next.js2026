@@ -5,11 +5,11 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import "../LocationDropdown/LocationDropdown.css";
 import { useCity } from "@/utils/CityContext";
 
-const LocationDropdown = ({cities,selectCity}) => {
-  const { setCity } = useCity();
+const LocationDropdown = ({cities, selectCity, onSelectCity}) => {
+  const { city: selectedCity, setCity } = useCity();
   console.log('=>',cities)
 
-  const [activeCity, setActiveCity] = useState(null); // ✅ initially null
+  // const [activeCity, setActiveCity] = useState(null); // ✅ initially null
   // const [cities, setCities] = useState({
   //   filter_city: null,
   //   nearby: [],
@@ -31,14 +31,14 @@ const LocationDropdown = ({cities,selectCity}) => {
   //           setCities(data.cities);
 
   //           // ✅ If no activeCity yet, try restoring from localStorage
-  //           // if (!activeCity) {
-  //           //   const savedCity = localStorage.getItem("selectedCity");
-  //           //   if (savedCity) {
-  //           //     const parsed = JSON.parse(savedCity);
-  //           //     setActiveCity(parsed.id);
-  //           //     setCity([parsed]);
-  //           //   }
-  //           // }
+  //           if (!activeCity) {
+  //             const savedCity = localStorage.getItem("selectedCity");
+  //             if (savedCity) {
+  //               const parsed = JSON.parse(savedCity);
+  //               setActiveCity(parsed.id);
+  //               setCity([parsed]);
+  //             }
+  //           }
   //         }
   //       } catch (err) {
   //         console.error("Error fetching cities:", err);
@@ -53,7 +53,8 @@ const LocationDropdown = ({cities,selectCity}) => {
   const handleSuggestionClick = (city) => {
     console.log(city)
     setCity(city); // update in context
-    setActiveCity(city.id); // set selected city id
+    // setActiveCity(city.id); // set selected city id
+    if (onSelectCity) onSelectCity(city);
     // selectCity()
     // localStorage.setItem("selectedCity", JSON.stringify(city)); // ✅ store full city object
   };
@@ -66,7 +67,7 @@ const renderCityGrid = (citiesArray) => {
       {citiesArray.map((city) => (
         <div
           key={city.id}
-          className={`city-text mb-2 ${activeCity === city.id ? "active" : ""}`}
+          className={`city-text mb-2 ${selectedCity?.id === city.id ? "active" : ""}`}
           onClick={() => handleSuggestionClick(city)}
         >
           {city.name}

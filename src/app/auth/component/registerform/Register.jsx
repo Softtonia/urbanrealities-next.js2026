@@ -4,17 +4,22 @@ import styles from "../loginform/Login.module.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRegisterForm } from "../../context/RegisterFormProvider";
+import AuthInput from "../AuthInput/AuthInput";
 import { useDebounce } from "@/hooks/useDebounce";
+import { FaGoogle } from "react-icons/fa";
+import { getRoleListing, checkUsername, checkEmail, checkPhone } from "@/services/auth.service";
 
 const Register = ({ roles = [] }) => {
   const { formData, updateField } = useRegisterForm();
   const [formError, setFormError] = useState("");
-  // const [roles, setRoles] = useState(roles);
+  const [roleList, setRoleList] = useState(roles);
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("")
   const [phoneError, setPhoneError] = useState("")
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
+  const [isAgreed, setIsAgreed] = useState(false);
+  const [agreeError, setAgreeError] = useState("");
 
 
   const router = useRouter();
@@ -33,22 +38,28 @@ const Register = ({ roles = [] }) => {
   const debouncePhone = useDebounce(formData.phone, 1000)
 
   // --- Fetch roles from Laravel via Next.js API ---
-  // useEffect(() => {
-  //   const fetchRoles = async () => {
-  //     try {
-  //       const res = await fetch('/api/auth/role-listing');
-  //       const data = await res.json();
-  //       if (Array.isArray(data)) {
-  //         setRoles(data);
-  //       } else if (data?.data) {
-  //         setRoles(data.data);
-  //       }
-  //     } catch (err) {
-  //       console.error('Error fetching roles:', err);
-  //     }
-  //   };
-  //   fetchRoles();
-  // }, []);
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const data = await getRoleListing();
+        console.log(data , "role goes here")
+        if (Array.isArray(data)) {
+          setRoleList(data);
+        } else if (data?.roles && Array.isArray(data.roles)) {
+          setRoleList(data.roles);
+        } else if (data?.data && Array.isArray(data.data)) {
+          setRoleList(data.data);
+        } else {
+          setRoleList([]);
+        }
+      } catch (err) {
+        console.error('Error fetching roles:', err);
+      }
+    };
+    if (roleList.length === 0) {
+      fetchRoles();
+    }
+  }, []);
 
   // --- Username availability check ---
   useEffect(() => {
@@ -58,15 +69,7 @@ const Register = ({ roles = [] }) => {
         return;
       }
       try {
-        const res = await fetch('/api/auth/usernamecheck', {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ user_name: debounceUserName })
-        });
-
-        const data = await res.json();
+        const data = await checkUsername(debounceUserName);
         console.log(data.user_name)
 
         if (!data?.user_name?.exists) {
@@ -90,15 +93,7 @@ const Register = ({ roles = [] }) => {
         return;
       }
       try {
-        const res = await fetch('/api/auth/register/checkmail', {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ email: debounceEmail })
-        });
-
-        const data = await res.json();
+        const data = await checkEmail(debounceEmail);
         console.log(data)
 
         if (!data.email?.exists) {
@@ -121,15 +116,7 @@ const Register = ({ roles = [] }) => {
         return;
       }
       try {
-        const res = await fetch('/api/auth/register/checkphone', {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ phone: debouncePhone })
-        });
-
-        const data = await res.json();
+        const data = await checkPhone(debouncePhone);
         console.log(data)
 
         if (!data.phone?.exists) {
@@ -176,6 +163,10 @@ const Register = ({ roles = [] }) => {
       isValid = false;
     } else setPhoneError("");
 
+    if (!isAgreed) {
+      setAgreeError("You must agree to the terms and conditions.");
+      isValid = false;
+    } else setAgreeError("");
   
     return isValid;
   };
@@ -207,8 +198,8 @@ const Register = ({ roles = [] }) => {
 
 
   const data = {
-    heading: "Sign Up",
-    subText: "Start your journey with UrbanRealities",
+    heading: "Create your account",
+    subText: "Enter your details below to get started with UrbanRealities.",
     firstName: 'First Name',
     firstNamePlaceholder: "Enter First Name",
     lastName: "Last Name",
@@ -216,13 +207,13 @@ const Register = ({ roles = [] }) => {
     usernameLabel: "Username",
     usernamePlaceholder: "Enter Username",
     emailLabel: "Email",
-    emailPlaceholder: "Enter email",
+    emailPlaceholder: "Enter Email Address",
     phoneLabel: "Phone Number",
     phonePlaceholder: "Enter Phone Number",
     userTypeLabel: "I am",
-    nextButton: "Next",
+    nextButton: "Create Account",
     loginText: "Already have an account?",
-    loginLinkText: "Login",
+    loginLinkText: "Log in",
     loginLink: "/auth/login",
     knowText: "Know More",
     guideText: "Sign Up Guide?",
@@ -231,104 +222,67 @@ const Register = ({ roles = [] }) => {
   return (
     <div>
       <h2 className={`formHeading ${styles.formHeading}`}>{data.heading}</h2>
-      {/* <p className={`formSubHeading ${styles.formSubHeading}`}>{data.subText}</p> */}
+      <p className={styles.formSubText}>{data.subText}</p>
 
-      {/* First Name */}
-      {/* First Name */}
-      <div className={styles.formGroup}>
-        <label htmlFor="firstName" className={`formLabel ${styles.formLabel}`}>
-          {data.firstName}
-        </label>
-        <input
-          type="text"
-          id="firstName"
-          value={formData.firstName}
-          className={`formInput ${styles.formInput}`}
-          placeholder={data.firstNamePlaceholder}
-          onChange={(e) => updateField("firstName", e.target.value)}
-        />
-        {firstNameError && (
-          <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{firstNameError}</p>
-        )}
+      {/* Name Row */}
+      <div style={{ display: 'flex', gap: '20px' }}>
+        {/* First Name */}
+        <div style={{ flex: 1 }}>
+          <AuthInput
+            label={data.firstName}
+            id="firstName"
+            value={formData.firstName}
+            placeholder={data.firstNamePlaceholder}
+            onChange={(e) => updateField("firstName", e.target.value)}
+            error={firstNameError}
+          />
+        </div>
+
+        {/* Last Name */}
+        <div style={{ flex: 1 }}>
+          <AuthInput
+            label={data.lastName}
+            id="lastName"
+            value={formData.lastName}
+            placeholder={data.lastNamePlaceholder}
+            onChange={(e) => updateField("lastName", e.target.value)}
+            error={lastNameError}
+          />
+        </div>
       </div>
+      <AuthInput
+        label={data.usernameLabel}
+        id="username"
+        value={formData.userName}
+        placeholder={data.usernamePlaceholder}
+        onChange={(e) => updateField("userName", e.target.value)}
+        error={usernameError}
+      />
 
-      {/* Last Name */}
-      <div className={styles.formGroup}>
-        <label htmlFor="lastName" className={`formLabel ${styles.formLabel}`}>
-          {data.lastName}
-        </label>
-        <input
-          type="text"
-          id="lastName"
-          value={formData.lastName}
-          className={`formInput ${styles.formInput}`}
-          placeholder={data.lastNamePlaceholder}
-          onChange={(e) => updateField("lastName", e.target.value)}
-        />
-        {lastNameError && (
-          <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{lastNameError}</p>
-        )}
-      </div>
+      <AuthInput
+        label={data.emailLabel}
+        type="email"
+        id="email"
+        value={formData.email}
+        placeholder={data.emailPlaceholder}
+        onChange={(e) => updateField("email", e.target.value)}
+        error={emailError}
+      />
 
-
-      {/* Username */}
-      <div className={styles.formGroup}>
-        <label htmlFor="username" className={`formLabel ${styles.formLabel}`}>
-          {data.usernameLabel}
-        </label>
-        <input
-          type="text"
-          id="username"
-          value={formData.userName}
-          className={`formInput ${styles.formInput}`}
-          placeholder={data.usernamePlaceholder}
-          onChange={(e) => updateField("userName", e.target.value)}
-        />
-        {usernameError && (
-          <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{usernameError}</p>
-        )}
-      </div>
-
-      {/* Email */}
-      <div className={styles.formGroup}>
-        <label htmlFor="email" className={`formLabel ${styles.formLabel}`}>
-          {data.emailLabel}
-        </label>
-        <input
-          type="email"
-          id="email"
-          value={formData.email}
-          className={`formInput ${styles.formInput}`}
-          placeholder={data.emailPlaceholder}
-          onChange={(e) => updateField("email", e.target.value)}
-        />{emailError && (
-          <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{emailError}</p>
-        )}
-      </div>
-
-
-      {/* Phone */}
-      <div className={styles.formGroup}>
-        <label htmlFor="phone" className={`formLabel ${styles.formLabel}`}>
-          {data.phoneLabel}
-        </label>
-        <input
-          type="tel"
-          id="phone"
-          value={formData.phone}
-          className={`formInput ${styles.formInput}`}
-          placeholder={data.phonePlaceholder}
-          onChange={(e) => {
-            let value = e.target.value.replace(/\D/g, ""); // Remove all non-digits
-            value = value.replace(/^0+/, ""); // Remove leading zeros
-            if (value.length > 10) value = value.slice(0, 10); // Limit to 10 digits
-            updateField("phone", value);
-          }}
-        />
-        {phoneError && (
-          <p className="formLabel" style={{ color: "red", fontSize: "12px" }}>{phoneError}</p>
-        )}
-      </div>
+      <AuthInput
+        label={data.phoneLabel}
+        type="tel"
+        id="phone"
+        value={formData.phone}
+        placeholder={data.phonePlaceholder}
+        onChange={(e) => {
+          let value = e.target.value.replace(/\D/g, "");
+          value = value.replace(/^0+/, "");
+          if (value.length > 10) value = value.slice(0, 10);
+          updateField("phone", value);
+        }}
+        error={phoneError}
+      />
 
 
       {/* Roles */}
@@ -337,7 +291,7 @@ const Register = ({ roles = [] }) => {
           {data.userTypeLabel}
         </label>
         <div className={styles.radioGroup}>
-          {roles.map((role) => (
+          {(Array.isArray(roleList) ? roleList : []).map((role) => (
             <label key={role.id} className={styles.radioOption}>
               <input
                 type="radio"
@@ -357,6 +311,28 @@ const Register = ({ roles = [] }) => {
         </p>
       )}
 
+      {/* Agree Checkbox */}
+      <div className={styles.formGroup} style={{ height: 'auto', marginBottom: '25px', flexDirection: 'row', alignItems: 'flex-start', gap: '10px' }}>
+        <input
+          type="checkbox"
+          id="agreeTerms"
+          checked={isAgreed}
+          onChange={(e) => {
+            setIsAgreed(e.target.checked);
+            if (e.target.checked) setAgreeError("");
+          }}
+          style={{ marginTop: '3px' }}
+        />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label htmlFor="agreeTerms" style={{ fontSize: '12px', color: 'var(--Eerie-Black)', fontFamily: 'var(--font-inter-regular)', lineHeight: '1.4' }}>
+            I agree to <Link href="/terms" style={{ color: 'var(--Orange-Red)', textDecoration: 'none' }}>urbanrealities.com</Link>, <Link href="/privacy-policy" style={{ color: 'var(--Orange-Red)', textDecoration: 'none' }}>privacy policy</Link> and <Link href="/terms-and-conditions" style={{ color: 'var(--Orange-Red)', textDecoration: 'none' }}>terms and condition</Link>
+          </label>
+          {agreeError && (
+            <p style={{ color: "var(--Tart-Orange)", fontSize: "12px", marginTop: "4px" }}>{agreeError}</p>
+          )}
+        </div>
+      </div>
+
 
       {/* Next Button */}
       <button
@@ -364,15 +340,33 @@ const Register = ({ roles = [] }) => {
         onClick={handleNext}
         disabled={!!usernameError} // disable if username is taken
         className={`body-text-14 formGroupBtn ${styles.nextBtn}`}
+        style={{ marginTop: '20px' }}
       >
         {data.nextButton}
       </button>
 
+      {/* Or Divider */}
+      <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
+         <div style={{ flex: 1, height: '1px', backgroundColor: '#e0e0e0' }}></div>
+         <span style={{ padding: '0 10px', color: '#888', fontSize: '12px' }}>or</span>
+         <div style={{ flex: 1, height: '1px', backgroundColor: '#e0e0e0' }}></div>
+      </div>
+
+      {/* Google Button */}
+      <button
+        type="button"
+        className={`body-text-14 googleBtn ${styles.googleBtn}`}
+        style={{ marginBottom: '30px' }}
+      >
+        <FaGoogle color="#555" size={16} style={{ marginRight: '8px' }} />
+        Sign up with Google
+      </button>
+
       {/* Links */}
       <div className={styles.formLinks}>
-        <p className={`formLinkText ${styles.formLinkText}`}>
+        <p className={`formLinkText ${styles.formLinkText}`} style={{ color: '#555' }}>
           {data.loginText}{" "}
-          <Link href={data.loginLink} className={`formLink ${styles.formLink}`}>
+          <Link href={data.loginLink} className={`formLink ${styles.formLink}`} style={{ color: 'var(--Orange-Red)', fontWeight: '500', textDecoration: 'none' }}>
             {data.loginLinkText}
           </Link>
         </p>

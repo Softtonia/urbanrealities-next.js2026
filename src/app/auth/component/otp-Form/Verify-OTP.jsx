@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import styles from "../loginform/Login.module.css";
 import { useRouter } from "next/navigation";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
-
+import AuthInput from "../AuthInput/AuthInput";
 const VerifyOTP = () => {
   const router = useRouter();
   const { token } = useSiteSettings();
@@ -111,27 +111,15 @@ const VerifyOTP = () => {
 
       <form onSubmit={handleVerify}>
         <div className={styles.formGroup}>
-          <label htmlFor="otp" className={`formLabel ${styles.formLabel}`}>
-            {data.otpLabel}
-          </label>
-
-          <input
+          <AuthInput
+            label={data.otpLabel}
             type="text"
             id="otp"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
-            className={`formInput ${styles.formInput}`}
             placeholder={data.otpPlaceholder}
+            error={error}
           />
-
-          {error && (
-            <p
-              className="formLabel"
-              style={{ color: "red", marginBottom: "10px" }}
-            >
-              {error}
-            </p>
-          )}
 
           {/* TIMER / RESEND TEXT */}
           {/* {isResendVisible ? (
