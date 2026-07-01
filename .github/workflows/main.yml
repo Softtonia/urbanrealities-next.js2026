@@ -154,12 +154,12 @@ jobs:
             cp -r public .next/standalone/public
 
             cat > server.js << 'ROOT_SERVER'
-const path = require("path");
-
-process.chdir(path.join(__dirname, ".next", "standalone"));
-
-require(path.join(__dirname, ".next", "standalone", "server.js"));
-ROOT_SERVER
+            const path = require("path");
+            
+            process.chdir(path.join(__dirname, ".next", "standalone"));
+            
+            require(path.join(__dirname, ".next", "standalone", "server.js"));
+            ROOT_SERVER
 
             node -c server.js
 
@@ -190,23 +190,23 @@ ROOT_SERVER
             fi
 
             cat > "$SERVER_PATH/ecosystem.config.cjs" << PM2_CONFIG
-module.exports = {
-  apps: [
-    {
-      name: "$APP_NAME",
-      script: "server.js",
-      cwd: "$SERVER_PATH/current",
-      instances: 1,
-      exec_mode: "fork",
-      env: {
-        NODE_ENV: "production",
-        HOSTNAME: "0.0.0.0",
-        PORT: $PORT
-      }
-    }
-  ]
-};
-PM2_CONFIG
+            module.exports = {
+              apps: [
+                {
+                  name: "$APP_NAME",
+                  script: "server.js",
+                  cwd: "$SERVER_PATH/current",
+                  instances: 1,
+                  exec_mode: "fork",
+                  env: {
+                    NODE_ENV: "production",
+                    HOSTNAME: "0.0.0.0",
+                    PORT: $PORT
+                  }
+                }
+              ]
+            };
+            PM2_CONFIG
 
             node -c "$SERVER_PATH/ecosystem.config.cjs"
 
