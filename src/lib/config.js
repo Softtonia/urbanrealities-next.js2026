@@ -12,4 +12,4 @@ export const NEXT_PUBLIC_SITE_URL = "https://holiplaces.com";
 
 export const NEXT_PUBLIC_API_URL = "https://api.holiplaces.com";
 
-export const NEXT_PUBLIC_BUSINESS_DOMAIN = "https://business.holiplaces.com";
+export const NEXT_PUBLIC_BUSINESS_DOMAIN = "https://business.holiplaces.com"; 
