@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 40
 
     env:
-      APP_NAME: holiplaces-next
+      APP_NAME: holiplaces
       SERVER_PATH: /var/www/holiplaces.com
       PORT: 3000
       SSH_PORT: 22
@@ -112,29 +112,21 @@ jobs:
             "$SERVER_USER@$SERVER_HOST" bash -s << 'SERVER_SCRIPT'
             set -e
 
-            SERVER_PATH="/var/www/holiplaces.com"
             RELEASE_DIR="/var/www/holiplaces.com/releases/${{ github.sha }}"
 
             cd "$RELEASE_DIR"
 
-            echo "Release folder:"
-            pwd
-
-            # Important for your project because img folder is in root.
-            # Next.js serves static files from public, so copy root img into public/img.
             if [ -d "img" ]; then
               mkdir -p public/img
               rsync -a img/ public/img/
             fi
 
-            echo "Installing dependencies..."
             if [ -f package-lock.json ]; then
               npm ci --legacy-peer-deps
             else
               npm install --legacy-peer-deps
             fi
 
-            echo "Building Next.js..."
             NODE_ENV=production npm run build
 
             if [ ! -d ".next" ]; then
@@ -153,8 +145,6 @@ jobs:
               exit 1
             fi
 
-            echo "Copying static files into standalone build..."
-
             mkdir -p .next/standalone/.next
 
             rm -rf .next/standalone/.next/static
@@ -162,6 +152,16 @@ jobs:
 
             rm -rf .next/standalone/public
             cp -r public .next/standalone/public
+
+            cat > server.js << 'ROOT_SERVER'
+const path = require("path");
+
+process.chdir(path.join(__dirname, ".next", "standalone"));
+
+require(path.join(__dirname, ".next", "standalone", "server.js"));
+ROOT_SERVER
+
+            node -c server.js
 
             echo "Build completed successfully"
           SERVER_SCRIPT
@@ -179,7 +179,7 @@ jobs:
             set -e
 
             SERVER_PATH="/var/www/holiplaces.com"
-            APP_NAME="holiplaces-next"
+            APP_NAME="holiplaces"
             PORT="3000"
 
             mkdir -p "$SERVER_PATH/releases"
@@ -189,26 +189,24 @@ jobs:
               npm install -g pm2
             fi
 
-            rm -f "$SERVER_PATH/ecosystem.config.cjs"
-
-            {
-              echo "module.exports = {"
-              echo "  apps: ["
-              echo "    {"
-              echo "      name: '$APP_NAME',"
-              echo "      script: '$SERVER_PATH/current/.next/standalone/server.js',"
-              echo "      cwd: '$SERVER_PATH/current/.next/standalone',"
-              echo "      instances: 1,"
-              echo "      exec_mode: 'fork',"
-              echo "      env: {"
-              echo "        NODE_ENV: 'production',"
-              echo "        HOSTNAME: '0.0.0.0',"
-              echo "        PORT: $PORT"
-              echo "      }"
-              echo "    }"
-              echo "  ]"
-              echo "};"
-            } > "$SERVER_PATH/ecosystem.config.cjs"
+            cat > "$SERVER_PATH/ecosystem.config.cjs" << PM2_CONFIG
+module.exports = {
+  apps: [
+    {
+      name: "$APP_NAME",
+      script: "server.js",
+      cwd: "$SERVER_PATH/current",
+      instances: 1,
+      exec_mode: "fork",
+      env: {
+        NODE_ENV: "production",
+        HOSTNAME: "0.0.0.0",
+        PORT: $PORT
+      }
+    }
+  ]
+};
+PM2_CONFIG
 
             node -c "$SERVER_PATH/ecosystem.config.cjs"
 
@@ -235,8 +233,13 @@ jobs:
               exit 1
             fi
 
+            if [ ! -f "$RELEASE_DIR/server.js" ]; then
+              echo "ERROR: root server.js launcher not found"
+              exit 1
+            fi
+
             if [ ! -f "$RELEASE_DIR/.next/standalone/server.js" ]; then
-              echo "ERROR: Standalone server.js not found"
+              echo "ERROR: standalone server.js not found"
               exit 1
             fi
 
@@ -246,16 +249,15 @@ jobs:
 
             ln -sfnT "$RELEASE_DIR" "$SERVER_PATH/current"
 
-            # Delete old PM2 app that was already using port 3000
-            pm2 delete holiplaces || true
             pm2 delete holiplaces-next || true
+            pm2 delete holiplaces || true
 
             pm2 start "$SERVER_PATH/ecosystem.config.cjs" --update-env
             pm2 save
 
-            echo "App restarted successfully"
-
             pm2 list
+
+            echo "App restarted successfully"
           SERVER_SCRIPT
 
       - name: Keep Only Latest 2 Releases
@@ -274,13 +276,7 @@ jobs:
 
             cd "$SERVER_PATH/releases"
 
-            echo "Releases before cleanup:"
-            ls -la
-
             ls -dt */ | tail -n +3 | xargs -r rm -rf
-
-            echo "Releases after cleanup:"
-            ls -la
 
             echo "Deployment completed successfully"
           SERVER_SCRIPT
