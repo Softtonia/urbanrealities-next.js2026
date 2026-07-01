@@ -13,12 +13,11 @@ jobs:
   deploy:
     name: Deploy Full Code and Build on Server
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
 
     env:
       APP_NAME: holiplaces-next
       SERVER_PATH: /var/www/holiplaces.com
-      NODE_VERSION: 20
       PORT: 3000
       SSH_PORT: 22
 
@@ -65,7 +64,7 @@ jobs:
             "$SERVER_USER@$SERVER_HOST" \
             "echo SSH connected successfully"
 
-      - name: Create Release Folder on Server
+      - name: Create Release Folder
         shell: bash
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
@@ -77,9 +76,9 @@ jobs:
             -p "${{ env.SSH_PORT }}" \
             -o StrictHostKeyChecking=no \
             "$SERVER_USER@$SERVER_HOST" \
-            "mkdir -p '$RELEASE_DIR'"
+            "rm -rf '$RELEASE_DIR' && mkdir -p '$RELEASE_DIR'"
 
-      - name: Upload Complete Code to Server
+      - name: Upload Full Code to Server
         shell: bash
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
@@ -93,13 +92,11 @@ jobs:
             --exclude ".github" \
             --exclude "node_modules" \
             --exclude ".next" \
-            --exclude "deploy" \
-            --exclude "deploy.tar.gz" \
+            --exclude ".env" \
+            --exclude ".env.local" \
             --exclude "*.zip" \
             --exclude "*.tar" \
             --exclude "*.tar.gz" \
-            --exclude ".env" \
-            --exclude ".env.local" \
             ./ \
             "$SERVER_USER@$SERVER_HOST:$RELEASE_DIR/"
 
@@ -120,8 +117,15 @@ jobs:
 
             cd "$RELEASE_DIR"
 
-            echo "Current release folder:"
+            echo "Release folder:"
             pwd
+
+            # Important for your project because img folder is in root.
+            # Next.js serves static files from public, so copy root img into public/img.
+            if [ -d "img" ]; then
+              mkdir -p public/img
+              rsync -a img/ public/img/
+            fi
 
             echo "Installing dependencies..."
             if [ -f package-lock.json ]; then
@@ -144,21 +148,25 @@ jobs:
               exit 1
             fi
 
-            echo "Copying static/public files into standalone build..."
+            if [ ! -f ".next/standalone/server.js" ]; then
+              echo "ERROR: .next/standalone/server.js not found"
+              exit 1
+            fi
+
+            echo "Copying static files into standalone build..."
 
             mkdir -p .next/standalone/.next
+
             rm -rf .next/standalone/.next/static
             cp -r .next/static .next/standalone/.next/static
 
-            if [ -d "public" ]; then
-              rm -rf .next/standalone/public
-              cp -r public .next/standalone/public
-            fi
+            rm -rf .next/standalone/public
+            cp -r public .next/standalone/public
 
             echo "Build completed successfully"
           SERVER_SCRIPT
 
-      - name: Setup PM2 Config
+      - name: Create PM2 Config
         shell: bash
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
@@ -190,10 +198,11 @@ jobs:
               echo "      name: '$APP_NAME',"
               echo "      script: '$SERVER_PATH/current/.next/standalone/server.js',"
               echo "      cwd: '$SERVER_PATH/current/.next/standalone',"
-              echo "      instances: 2,"
-              echo "      exec_mode: 'cluster',"
+              echo "      instances: 1,"
+              echo "      exec_mode: 'fork',"
               echo "      env: {"
               echo "        NODE_ENV: 'production',"
+              echo "        HOSTNAME: '0.0.0.0',"
               echo "        PORT: $PORT"
               echo "      }"
               echo "    }"
@@ -206,7 +215,7 @@ jobs:
             echo "PM2 config created successfully"
           SERVER_SCRIPT
 
-      - name: Activate New Release
+      - name: Activate Release and Restart App
         shell: bash
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
@@ -237,10 +246,16 @@ jobs:
 
             ln -sfnT "$RELEASE_DIR" "$SERVER_PATH/current"
 
-            pm2 startOrReload "$SERVER_PATH/ecosystem.config.cjs" --update-env
+            # Delete old PM2 app that was already using port 3000
+            pm2 delete holiplaces || true
+            pm2 delete holiplaces-next || true
+
+            pm2 start "$SERVER_PATH/ecosystem.config.cjs" --update-env
             pm2 save
 
-            echo "New release activated successfully"
+            echo "App restarted successfully"
+
+            pm2 list
           SERVER_SCRIPT
 
       - name: Keep Only Latest 2 Releases
@@ -259,7 +274,7 @@ jobs:
 
             cd "$SERVER_PATH/releases"
 
-            echo "Existing releases before cleanup:"
+            echo "Releases before cleanup:"
             ls -la
 
             ls -dt */ | tail -n +3 | xargs -r rm -rf
