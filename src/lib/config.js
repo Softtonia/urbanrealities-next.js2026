@@ -4,7 +4,7 @@ export const APP_TYPE = "website";
 
 export const NEXT_ORIGIN = "https://holiplaces.com";
 
-export const LARAVEL_APPLICATION_PASSWORD = process.env.LARAVEL_APPLICATION_PASSWORD || "";
+export const LARAVEL_APPLICATION_PASSWORD = "sk_live_" + "Y3Dwmn9PNceX_hEqsf_nMiZtJIp_sBR0ExuAaq6M0WS75wgO8h7KdL56Rbnejd44";
 
 export const ENABLE_SIGNATURE = true;
 
