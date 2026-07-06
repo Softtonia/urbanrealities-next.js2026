@@ -95,7 +95,7 @@ jobs:
             pm2 save
 
             cd "$SERVER_PATH/releases"
-            ls -dt */ | tail -n +3 | xargs -r rm -rf
+            ls -dt */ | tail -n +2 | xargs -r rm -rf
 
             echo "Deployment completed successfully"
           SERVER_SCRIPT
