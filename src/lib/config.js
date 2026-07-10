@@ -2,7 +2,7 @@ export const LARAVEL_API_BASE_URL = "https://api.holiplaces.com";
 
 export const APP_TYPE = "website";
 
-export const NEXT_ORIGIN = "http://localhost:3000";
+export const NEXT_ORIGIN = "https://holiplaces.com";
 
 export const LARAVEL_APPLICATION_PASSWORD = ['sk', 'live', 'F4Qm8xT2pL7vA1zC9nB3hF6wD0sK4rY8uPoN5tM2xV7aC1dG'].join('_');
 
