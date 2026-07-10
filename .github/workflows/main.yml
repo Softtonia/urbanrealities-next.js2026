@@ -1,0 +1,158 @@
+name: Deploy Next.js to Holiplaces
+
+on:
+  push:
+    branches:
+      - dev
+
+concurrency:
+  group: holiplaces-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      SERVER_PATH: /var/www/holiplaces.com
+      APP_NAME: holiplaces
+      SSH_PORT: 22
+      PORT: 3000
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Add Server to Known Hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ env.SSH_PORT }} -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Upload Code
+        run: |
+          RELEASE_DIR="${{ env.SERVER_PATH }}/releases/${{ github.sha }}"
+
+          ssh -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+            "mkdir -p '${{ env.SERVER_PATH }}/releases' && rm -rf '$RELEASE_DIR' && mkdir -p '$RELEASE_DIR'"
+
+          rsync -az --delete \
+            -e "ssh -p ${{ env.SSH_PORT }}" \
+            --exclude ".git" \
+            --exclude ".github" \
+            --exclude "node_modules" \
+            --exclude ".next" \
+            --exclude ".env" \
+            --exclude ".env.local" \
+            --exclude ".env.production" \
+            --exclude "*.zip" \
+            --exclude "*.tar" \
+            --exclude "*.tar.gz" \
+            ./ \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:$RELEASE_DIR/
+
+      - name: Build and Activate
+        run: |
+          ssh -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} bash -s << 'SERVER_SCRIPT'
+            set -e
+
+            SERVER_PATH="/var/www/holiplaces.com"
+            RELEASE_DIR="$SERVER_PATH/releases/${{ github.sha }}"
+            APP_NAME="holiplaces"
+            PORT="3000"
+
+            echo "Going to release directory..."
+            cd "$RELEASE_DIR"
+
+            echo "Preparing public folders..."
+
+            if [ -d "img" ]; then
+              mkdir -p public/img
+              rsync -a img/ public/img/
+            fi
+
+            if [ -d "data" ]; then
+              mkdir -p public/data
+              rsync -a data/ public/data/
+            fi
+
+            echo "Installing dependencies..."
+
+            if [ -f package-lock.json ]; then
+              npm ci --legacy-peer-deps
+            else
+              npm install --legacy-peer-deps
+            fi
+
+            echo "Building Next.js..."
+
+            npm run build
+
+            if [ ! -d ".next" ]; then
+              echo "ERROR: .next build folder missing"
+              exit 1
+            fi
+
+            echo "Activating release..."
+
+            ln -sfnT "$RELEASE_DIR" "$SERVER_PATH/current"
+
+            echo "Restarting PM2 with normal Next.js server..."
+
+            pm2 delete "$APP_NAME" || true
+
+            cd "$SERVER_PATH/current"
+
+            pm2 start npm \
+              --name "$APP_NAME" \
+              --cwd "$SERVER_PATH/current" \
+              -- start
+
+            pm2 save
+
+            echo "Waiting for Next.js server..."
+
+            sleep 8
+
+            for i in {1..20}; do
+              if ss -ltn | grep -q ":$PORT "; then
+                echo "Next.js port $PORT is listening"
+                break
+              fi
+
+              echo "Waiting for port $PORT... attempt $i"
+              sleep 2
+            done
+
+            if ! ss -ltn | grep -q ":$PORT "; then
+              echo "ERROR: Next.js is not listening on port $PORT"
+              pm2 logs "$APP_NAME" --lines 80 --nostream
+              exit 1
+            fi
+
+            echo "Checking PM2 app status..."
+
+            if ! pm2 describe "$APP_NAME" | grep -q "online"; then
+              echo "ERROR: PM2 app is not online"
+              pm2 logs "$APP_NAME" --lines 80 --nostream
+              exit 1
+            fi
+
+            echo "Reloading nginx..."
+
+            sudo nginx -t
+            sudo systemctl reload nginx
+
+            echo "Cleaning old releases..."
+
+            cd "$SERVER_PATH/releases"
+            ls -dt */ | tail -n +4 | xargs -r rm -rf
+
+            echo "Deployment completed successfully"
+          SERVER_SCRIPT

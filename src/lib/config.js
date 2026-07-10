@@ -4,7 +4,7 @@ export const APP_TYPE = "website";
 
 export const NEXT_ORIGIN = "http://localhost:3000";
 
-export const LARAVEL_APPLICATION_PASSWORD = ['sk', 'live', 'r_adzi7_m2ZjVx5q6csM6okveG_4jJk8waehr1oiNO34iFLzGnL96t0MuXhKI0bR'].join('_');
+export const LARAVEL_APPLICATION_PASSWORD = ['sk', 'live', 'F4Qm8xT2pL7vA1zC9nB3hF6wD0sK4rY8uPoN5tM2xV7aC1dG'].join('_');
 
 export const ENABLE_SIGNATURE = true;
 
