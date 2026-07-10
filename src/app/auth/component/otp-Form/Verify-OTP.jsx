@@ -4,6 +4,8 @@ import styles from "../loginform/Login.module.css";
 import { useRouter } from "next/navigation";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import AuthInput from "../AuthInput/AuthInput";
+import { LARAVEL_APPLICATION_PASSWORD } from "@/lib/config";
+
 const VerifyOTP = () => {
   const router = useRouter();
   const { token } = useSiteSettings();
@@ -65,13 +67,14 @@ const VerifyOTP = () => {
     setError("");
 
     try {
-      const res = await fetch("/api/auth/verify-otp", {
+      const res = await fetch("https://api.holiplaces.com/api/verify-register-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${finalToken}`,
+          "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
         },
-        body: JSON.stringify({ email_otp: otp, }),
+        body: JSON.stringify({ otp: otp, }),
       });
 
       const result = await res.json();

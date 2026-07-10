@@ -2,9 +2,9 @@ export const LARAVEL_API_BASE_URL = "https://api.holiplaces.com";
 
 export const APP_TYPE = "website";
 
-export const NEXT_ORIGIN = "https://holiplaces.com";
+export const NEXT_ORIGIN = "http://localhost:3000";
 
-export const LARAVEL_APPLICATION_PASSWORD = ['sk', 'live', 'Y3Dwmn9PNceX_hEqsf_nMiZtJIp_sBR0ExuAaq6M0WS75wgO8h7KdL56Rbnejd44'].join('_');
+export const LARAVEL_APPLICATION_PASSWORD = ['sk', 'live', 'r_adzi7_m2ZjVx5q6csM6okveG_4jJk8waehr1oiNO34iFLzGnL96t0MuXhKI0bR'].join('_');
 
 export const ENABLE_SIGNATURE = true;
 

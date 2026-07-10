@@ -23,7 +23,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
-    if (token) {
+    if (token && token !== "undefined" && token !== "null") {
       // Already logged in, redirect to dashboard
       router.replace("/");
     }

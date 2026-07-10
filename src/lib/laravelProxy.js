@@ -48,13 +48,17 @@ export async function proxyToLaravel(req, endpoint, method = "GET", body = null)
         }
 
         // Return Laravel response exactly
+        const isErrorResponse = response && response.success === false && response.status;
+        const responseBody = isErrorResponse ? response.data : response;
+        const responseStatus = isErrorResponse ? response.status : 200;
+
         return new NextResponse(
-            typeof response.data === "object"
-                ? JSON.stringify(response.data)
-                : response.data,
+            typeof responseBody === "object"
+                ? JSON.stringify(responseBody)
+                : responseBody,
             {
-                status: response.status,
-                headers: response.headers,
+                status: responseStatus,
+                headers: response.headers || { "Content-Type": "application/json" },
             }
         );
     } catch (error) {

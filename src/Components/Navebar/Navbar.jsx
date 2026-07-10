@@ -229,7 +229,7 @@ export default function Navbar() {
             <Link className="navbar-brand d-flex align-items-center" href="/">
               <Image
                 src={
-                  siteData?.website_logo || siteData?.mobile_logo || "/logo.png"
+                  siteData?.website_logo || siteData?.mobile_logo 
                 }
                 alt="Urbanrealities"
                 width={90}

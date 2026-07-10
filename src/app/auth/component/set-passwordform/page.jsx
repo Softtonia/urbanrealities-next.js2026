@@ -5,6 +5,7 @@ import { useRegisterForm } from "../../context/RegisterFormProvider";
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import AuthInput from "../AuthInput/AuthInput";
+import { LARAVEL_APPLICATION_PASSWORD } from "@/lib/config";
 
 const SetPassword = () => {
   const { formData, updateField } = useRegisterForm();
@@ -78,10 +79,11 @@ const SetPassword = () => {
     setError("");
 
     try {
-      const response = await fetch("/api/auth/user-register", {
+      const response = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
         },
         body: JSON.stringify({
           user_name: formData.userName,
@@ -97,19 +99,13 @@ const SetPassword = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        // ✅ Check if all 3 duplicate errors are present
-        if (
-          result?.phone?.[0]?.includes("has already been taken") &&
-          result?.email?.[0]?.includes("has already been taken") &&
-          result?.user_name?.[0]?.includes("has already been taken")
-        ) {
-          throw new Error("User already got created");
+        if (result?.errors) {
+          throw new Error(Object.values(result.errors).flat().join(", "));
+        } else if (result?.message) {
+          throw new Error(result.message);
+        } else {
+          throw new Error("Registration failed");
         }
-
-        // fallback for other validation errors
-        // throw new Error(
-        //   Object.values(result).flat().join(", ") || "Registration failed"
-        // );
       }
 
       if (result) {

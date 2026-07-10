@@ -13,51 +13,51 @@ const FeaturesCopy = ({ projects }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const scrollRef = useRef(null);
-  const slides = projects?.map((val) => {
-    const banner = val?.custom_field_values?.find((f) =>
-      f?.template?.slug?.includes("banner")
-    );
-    const onWardPrice = val?.custom_field_values?.find((f) =>
-      f?.template?.slug?.includes("price")
-    );
-    // console.log("price",onWardPrice)
-    return {
-      id: val?.id,
-      banner: banner?.field_value[0] || null, // assuming banner data is stored in field_value
-      name: val?.name || "Untitled",
-      views: val?.total_view || '0',
-      property_id_name: val?.property_id_name || '',
-      property_status: val?.["property_status"]?.map(s => s?.property_status_name)?.join(", ") || "",
-      price: formatprice(onWardPrice?.field_value) || "",
-      project_type: val?.["property_type "]?.map(val => val?.property_type_name)?.join(', ')
-    };
-  });
+  // const slides = projects?.map((val) => {
+  //   const banner = val?.custom_field_values?.find((f) =>
+  //     f?.template?.slug?.includes("banner")
+  //   );
+  //   const onWardPrice = val?.custom_field_values?.find((f) =>
+  //     f?.template?.slug?.includes("price")
+  //   );
+  //   // console.log("price",onWardPrice)
+  //   return {
+  //     id: val?.id,
+  //     banner: banner?.field_value[0] || null, // assuming banner data is stored in field_value
+  //     name: val?.name || "Untitled",
+  //     views: val?.total_view || '0',
+  //     property_id_name: val?.property_id_name || '',
+  //     property_status: val?.["property_status"]?.map(s => s?.property_status_name)?.join(", ") || "",
+  //     price: formatprice(onWardPrice?.field_value) || "",
+  //     project_type: val?.["property_type "]?.map(val => val?.property_type_name)?.join(', ')
+  //   };
+  // });
 
   console.log("project", projects);
 
 
-  // const slides = [
-  //   {
-  //     image:
-  //       "https://images.unsplash.com/photo-1666846795617-5a79453e6f6c?q=80&w=3402&auto=format&fit=crop",
-  //   },
-  //   {
-  //     image:
-  //       "https://images.unsplash.com/photo-1642878542442-46f76aaae355?q=80&w=1999&auto=format&fit=crop",
-  //   },
-  //   {
-  //     image:
-  //       "https://images.unsplash.com/photo-1662236337008-e546a2359f45?q=80&w=3687&auto=format&fit=crop",
-  //   },
-  //   {
-  //     image:
-  //       "https://images.unsplash.com/photo-1642878542442-46f76aaae355?q=80&w=1999&auto=format&fit=crop",
-  //   },
-  //   {
-  //     image:
-  //       "https://images.unsplash.com/photo-1662236337008-e546a2359f45?q=80&w=3687&auto=format&fit=crop",
-  //   },
-  // ];
+  const slides = [
+    {
+      image:
+        "https://images.unsplash.com/photo-1666846795617-5a79453e6f6c?q=80&w=3402&auto=format&fit=crop",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1642878542442-46f76aaae355?q=80&w=1999&auto=format&fit=crop",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1662236337008-e546a2359f45?q=80&w=3687&auto=format&fit=crop",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1642878542442-46f76aaae355?q=80&w=1999&auto=format&fit=crop",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1662236337008-e546a2359f45?q=80&w=3687&auto=format&fit=crop",
+    },
+  ];
 
   useEffect(() => {
     const checkMobile = () => {

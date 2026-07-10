@@ -20,7 +20,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     useEffect(() => {
         const savedToken = sessionStorage.getItem('token')
         const user_id = sessionStorage.getItem('userId')
-        if (savedToken) {
+        if (savedToken && savedToken !== "undefined" && savedToken !== "null") {
             setToken(savedToken)
             setUserId(user_id)
         }
