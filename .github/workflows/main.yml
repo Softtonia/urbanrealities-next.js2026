@@ -19,8 +19,6 @@ jobs:
       SERVER_PATH: /var/www/holiplaces.com
       APP_NAME: holiplaces
       SSH_PORT: 22
-      PORT: 3000
-      HOSTNAME: 127.0.0.1
 
     steps:
       - name: Checkout Code
@@ -41,7 +39,7 @@ jobs:
           RELEASE_DIR="${{ env.SERVER_PATH }}/releases/${{ github.sha }}"
 
           ssh -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
-            "mkdir -p '${{ env.SERVER_PATH }}/releases' && rm -rf '$RELEASE_DIR' && mkdir -p '$RELEASE_DIR'"
+            "rm -rf '$RELEASE_DIR' && mkdir -p '$RELEASE_DIR'"
 
           rsync -az --delete \
             -e "ssh -p ${{ env.SSH_PORT }}" \
@@ -51,7 +49,6 @@ jobs:
             --exclude ".next" \
             --exclude ".env" \
             --exclude ".env.local" \
-            --exclude ".env.production" \
             --exclude "*.zip" \
             --exclude "*.tar" \
             --exclude "*.tar.gz" \
@@ -66,12 +63,8 @@ jobs:
             SERVER_PATH="/var/www/holiplaces.com"
             RELEASE_DIR="$SERVER_PATH/releases/${{ github.sha }}"
             APP_NAME="holiplaces"
-            PORT="3000"
-            HOSTNAME="127.0.0.1"
 
             cd "$RELEASE_DIR"
-
-            echo "Preparing public folders..."
 
             if [ -d "img" ]; then
               mkdir -p public/img
@@ -83,15 +76,11 @@ jobs:
               rsync -a data/ public/data/
             fi
 
-            echo "Installing dependencies..."
-
             if [ -f package-lock.json ]; then
-              npm ci --legacy-peer-deps
+              npm ci --legacy-peer-deps --prefer-offline
             else
-              npm install --legacy-peer-deps
+              npm install --legacy-peer-deps --prefer-offline
             fi
-
-            echo "Building Next.js..."
 
             npm run build
 
@@ -100,55 +89,13 @@ jobs:
               exit 1
             fi
 
-            if [ ! -f ".next/standalone/server.js" ]; then
-              echo "ERROR: .next/standalone/server.js missing"
-              echo "Make sure next.config.js has: output: 'standalone'"
-              exit 1
-            fi
-
-            echo "Copying public and static assets for standalone..."
-
-            rm -rf .next/standalone/public
-            rm -rf .next/standalone/.next/static
-
-            if [ -d "public" ]; then
-              cp -R public .next/standalone/public
-            fi
-
-            mkdir -p .next/standalone/.next
-            cp -R .next/static .next/standalone/.next/static
-
-            echo "Activating release..."
-
             ln -sfnT "$RELEASE_DIR" "$SERVER_PATH/current"
 
-            echo "Restarting PM2 with standalone server..."
-
-            pm2 delete "$APP_NAME" || true
-
-            cd "$SERVER_PATH/current"
-
-            PORT="$PORT" HOSTNAME="$HOSTNAME" pm2 start "$SERVER_PATH/current/.next/standalone/server.js" \
-              --name "$APP_NAME" \
-              --cwd "$SERVER_PATH/current" \
-              --update-env
-
+            pm2 restart "$APP_NAME" --update-env || pm2 start npm --name "$APP_NAME" -- start
             pm2 save
 
-            echo "Testing local Next.js server..."
-
-            sleep 3
-            curl -I "http://127.0.0.1:$PORT" || exit 1
-
-            echo "Reloading nginx..."
-
-            sudo nginx -t
-            sudo systemctl reload nginx
-
-            echo "Cleaning old releases..."
-
             cd "$SERVER_PATH/releases"
-            ls -dt */ | tail -n +4 | xargs -r rm -rf
+            ls -dt */ | tail -n +2 | xargs -r rm -rf
 
             echo "Deployment completed successfully"
           SERVER_SCRIPT
