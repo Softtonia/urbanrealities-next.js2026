@@ -5,7 +5,7 @@ import { useRegisterForm } from "../../context/RegisterFormProvider";
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import AuthInput from "../AuthInput/AuthInput";
-import { LARAVEL_APPLICATION_PASSWORD } from "@/lib/config";
+import { registerUser } from "@/services/auth.service";
 
 const SetPassword = () => {
   const { formData, updateField } = useRegisterForm();
@@ -79,26 +79,17 @@ const SetPassword = () => {
     setError("");
 
     try {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
-        },
-        body: JSON.stringify({
-          user_name: formData.userName,
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          role_id: formData.role,
-          password: formData.password,
-        }),
+      const result = await registerUser({
+        user_name: formData.userName,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        role_id: formData.role,
+        password: formData.password,
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      if (result.success === false) {
         if (result?.errors) {
           throw new Error(Object.values(result.errors).flat().join(", "));
         } else if (result?.message) {
@@ -109,21 +100,11 @@ const SetPassword = () => {
       }
 
       if (result) {
-        if (
-          result.role === "company" ||
-          result.role === "consultancy" ||
-          result.role === "agent" ||
-          result.role === "developer"
-        ) {
-          // Store token temporarily in localStorage
-          localStorage.setItem("tempAuthToken", result.api_token);
+        // Store token temporarily in localStorage for OTP verification
+        localStorage.setItem("tempAuthToken", result.api_token);
 
-          // Redirect to verify OTP page (with user id or email)
-          router.push(`/auth/login/verify-otp?email=${formData.email}&id=${result.user_id}`);
-        } else {
-          login(result.user_id, result.api_token);
-          router.push(`/auth/login/verify-otp?email=${formData.email}`);
-        }
+        // Redirect to verify OTP page
+        router.push(`/auth/login/verify-otp?email=${formData.email}&id=${result.user_id}`);
       }
 
       sessionStorage.setItem("registration_step", "2");

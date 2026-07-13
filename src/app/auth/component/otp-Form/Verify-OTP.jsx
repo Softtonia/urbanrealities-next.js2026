@@ -4,7 +4,8 @@ import styles from "../loginform/Login.module.css";
 import { useRouter } from "next/navigation";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import AuthInput from "../AuthInput/AuthInput";
-import { LARAVEL_APPLICATION_PASSWORD } from "@/lib/config";
+import { resendOtp, verifyOtp } from "@/services/auth.service";
+import { toast } from "react-toastify";
 
 const VerifyOTP = () => {
   const router = useRouter();
@@ -41,13 +42,7 @@ const VerifyOTP = () => {
       setIsResendVisible(false);
       setTimer(60);
       // 🔁 Call your Laravel resend API here
-      await fetch("/api/auth/resend-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: finalToken }),
-      });
+      await resendOtp(finalToken);
     } catch (err) {
       console.error("Failed to resend OTP", err);
       setError("Unable to resend OTP. Try again later.");
@@ -67,28 +62,14 @@ const VerifyOTP = () => {
     setError("");
 
     try {
-      const res = await fetch("https://api.holiplaces.com/api/verify-register-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${finalToken}`,
-          "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
-        },
-        body: JSON.stringify({ otp: otp, }),
-      });
+      const result = await verifyOtp(otp, finalToken);
 
-      const result = await res.json();
-
-      if (res.ok) {
+      if (result && result.status !== false) {
+        toast.success(result.message || "Registration successful");
         localStorage.removeItem("tempAuthToken");
-
-        if (
-          ["company", "consultancy", "agent", "developer"].includes(result.role)
-        ) {
-          window.location.href = `${process.env.NEXT_PUBLIC_BUSINESS_DOMAIN}?authtoken=${result.token}&id=${result.user_id}`;
-        } else {
-          router.push("/");
-        }
+        setTimeout(() => {
+          window.location.href = "/auth/login";
+        }, 1500);
       } else {
         setError(result.message || "Invalid OTP");
       }

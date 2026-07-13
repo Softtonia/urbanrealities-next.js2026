@@ -8,6 +8,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import BootstrapClient from "@/Components/BootstrapClient";
 import { SiteSettingsProvider } from "@/Components/mycontext/siteSettingContext";
 import { CityProvider } from "@/utils/CityContext";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const geistSans = Geist({
@@ -124,6 +126,7 @@ export default async function RootLayout({ children }) {
           <Navbar />
           <main>{children}</main>
           <Footer />
+          <ToastContainer />
         </SiteSettingsProvider>
         </CityProvider>
       </body>

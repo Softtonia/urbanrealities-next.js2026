@@ -41,5 +41,6 @@
 .errorText {
   color: var(--Tart-Orange);
   font-family: var(--font-inter-regular), sans-serif;
-  font-size: 12px;
+  font-size: 14px;
+  margin-bottom: 5px !important;
 }

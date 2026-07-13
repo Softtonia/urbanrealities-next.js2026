@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import AuthInput from "../AuthInput/AuthInput";
+import { loginUser, getGoogleLoginLink } from "@/services/auth.service";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -48,12 +50,9 @@ export default function LoginPage() {
   };
   const handgoogleredirect = async () => {
     try {
-      const res = await fetch('/api/auth/googlelogin/getlink');
-      const data = await res.json();
-
+      const data = await getGoogleLoginLink();
       if (data?.url) {
-        console.log(data)
-        // Redirect browser to Google login
+        console.log(data);
         window.location.href = data.url;
       } else {
         console.error('Google login URL not found in response');
@@ -71,14 +70,9 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-      });
+      const result = await loginUser(email, password);
 
-      const result = await res.json();
-
-      if (!res.ok) {
+      if (!result.success && result.success !== undefined && !result.token) {
         // 🔹 Handle server error messages nicely
         if (result.message === "User not found") {
           setError("Please enter a correct registered email address.");
@@ -93,6 +87,7 @@ export default function LoginPage() {
       // ✅ Success: store token + redirect
 
       if (result) {
+        toast.success(result.message || "Login successful");
 
         // const role = 'company'
         if (result.role === "company" || result.role === "consultancy" || result.role === "agent" || result.role === "developer") {
@@ -103,7 +98,7 @@ export default function LoginPage() {
           window.location.href = `${process.env.NEXT_PUBLIC_BUSINESS_DOMAIN}?authtoken=${result.token}&id=${result.user_id}`;
         } else {
           login(result.user_id, result.token);
-          router.push(redirect);
+          window.location.href = redirect;
         }
 
       }

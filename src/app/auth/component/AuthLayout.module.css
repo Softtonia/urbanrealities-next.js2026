@@ -1,6 +1,6 @@
 .authContainer {
   padding: 0px 0;
-  background-color: var(--off-white);
+  background-color: var(--white);
   width: 100%;
 }
 
@@ -24,7 +24,7 @@
 .rightPanel {
   padding: 90px 96px 80px 96px;
   width: 60%;
-  height: 100%;
+  height: 100% !important;
   display: flex;
   justify-content: space-between;
   position: relative;

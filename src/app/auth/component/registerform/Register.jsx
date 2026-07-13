@@ -7,7 +7,7 @@ import { useRegisterForm } from "../../context/RegisterFormProvider";
 import AuthInput from "../AuthInput/AuthInput";
 import { useDebounce } from "@/hooks/useDebounce";
 import { FaGoogle } from "react-icons/fa";
-import { getRoleListing, checkUsername, checkEmail, checkPhone } from "@/services/auth.service";
+import { getRoleListing, checkUsername, checkUserDuplicate } from "@/services/auth.service";
 
 const Register = ({ roles = [] }) => {
   const { formData, updateField } = useRegisterForm();
@@ -20,7 +20,7 @@ const Register = ({ roles = [] }) => {
   const [lastNameError, setLastNameError] = useState("");
   const [isAgreed, setIsAgreed] = useState(false);
   const [agreeError, setAgreeError] = useState("");
-
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
@@ -85,53 +85,44 @@ const Register = ({ roles = [] }) => {
     checkUsername();
   }, [debounceUserName]);
 
-  // ---email check
+  // --- email and phone duplicate check
   useEffect(() => {
-    const checkEmail = async () => {
-      if (!debounceEmail) {
+    const checkDuplicate = async () => {
+      if (!debounceEmail && !debouncePhone) {
         setEmailError("");
-        return;
-      }
-      try {
-        const data = await checkEmail(debounceEmail);
-        console.log(data)
-
-        if (!data.email?.exists) {
-          setEmailError(""); // ✅ available
-        } else {
-          setEmailError("email is already taken."); // ❌ not available
-        }
-      } catch (err) {
-        console.error("Error checking email:", err);
-      }
-    };
-
-    checkEmail();
-  }, [debounceEmail]);
-  // -------------phone check
-  useEffect(() => {
-    const checkphone = async () => {
-      if (!debouncePhone) {
         setPhoneError("");
         return;
       }
       try {
-        const data = await checkPhone(debouncePhone);
-        console.log(data)
+        const payloadEmail = debounceEmail || "";
+        const payloadPhone = debouncePhone || "";
+        
+        const data = await checkUserDuplicate(payloadEmail, payloadPhone);
+        console.log("duplicate check data", data);
 
-        if (!data.phone?.exists) {
-          setPhoneError(""); // ✅ available
+        if (data && data.duplicate) {
+          if (data?.email_exists) {
+            setEmailError("Email already exists.");
+          } else {
+            setEmailError("");
+          }
+
+          if (data?.phone_exists) {
+            setPhoneError("Phone number already exists.");
+          } else {
+            setPhoneError("");
+          }
         } else {
-          setPhoneError("phone number is already taken."); // ❌ not available
+          setEmailError("");
+          setPhoneError("");
         }
       } catch (err) {
-        console.error("Error checking phone:", err);
+        console.error("Error checking duplicates:", err);
       }
     };
 
-    checkphone();
-  }, [debouncePhone]);
-
+    checkDuplicate();
+  }, [debounceEmail, debouncePhone]);
 
   // --- Next button handler ---
   console.log(formData.role)
@@ -192,8 +183,9 @@ const Register = ({ roles = [] }) => {
     }).toString();
 
     sessionStorage.setItem("registration_step", "1");
+    setLoading(true);
 
-    router.push(`/auth/login/setpassword?${query}`);
+    window.location.href = `/auth/login/setpassword?${query}`;
   };
 
 
@@ -338,11 +330,11 @@ const Register = ({ roles = [] }) => {
       <button
         type="button"
         onClick={handleNext}
-        disabled={!!usernameError} // disable if username is taken
+        disabled={!!usernameError || loading} // disable if username is taken or loading
         className={`body-text-14 formGroupBtn ${styles.nextBtn}`}
         style={{ marginTop: '20px' }}
       >
-        {data.nextButton}
+        {loading ? "Creating..." : data.nextButton}
       </button>
 
       {/* Or Divider */}
