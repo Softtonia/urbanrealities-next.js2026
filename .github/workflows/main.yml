@@ -13,13 +13,14 @@ jobs:
   deploy:
     name: Deploy to Server
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
 
     env:
       SERVER_PATH: /var/www/holiplaces.com
       APP_NAME: holiplaces
       SSH_PORT: 22
       PORT: 3000
+      HOST: 127.0.0.1
 
     steps:
       - name: Checkout Code
@@ -60,15 +61,104 @@ jobs:
       - name: Build and Activate
         run: |
           ssh -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} bash -s << 'SERVER_SCRIPT'
-            set -e
+            set -Eeuo pipefail
 
             SERVER_PATH="/var/www/holiplaces.com"
             RELEASE_DIR="$SERVER_PATH/releases/${{ github.sha }}"
             APP_NAME="holiplaces"
             PORT="3000"
+            HOST="127.0.0.1"
+
+            PREVIOUS_RELEASE=""
+            if [ -L "$SERVER_PATH/current" ] || [ -d "$SERVER_PATH/current" ]; then
+              PREVIOUS_RELEASE="$(readlink -f "$SERVER_PATH/current" || true)"
+            fi
+
+            print_debug_logs() {
+              echo "================ PM2 STATUS ================"
+              pm2 status || true
+
+              echo "================ PM2 LOGS ================"
+              pm2 logs "$APP_NAME" --lines 120 --nostream || true
+
+              echo "================ LISTENING PORTS ================"
+              ss -ltnp || true
+
+              echo "================ NGINX ERROR LOG ================"
+              sudo tail -n 80 /var/log/nginx/holiplaces_error.log || true
+              sudo tail -n 80 /var/log/nginx/error.log || true
+            }
+
+            start_app() {
+              TARGET_DIR="$1"
+
+              echo "Stopping old PM2 process if exists..."
+              pm2 delete "$APP_NAME" || true
+
+              echo "Freeing port $PORT if occupied..."
+              if command -v fuser >/dev/null 2>&1; then
+                fuser -k "$PORT/tcp" || true
+              fi
+
+              sleep 2
+
+              cd "$TARGET_DIR"
+
+              echo "Starting Next.js directly with PM2..."
+              pm2 start "$TARGET_DIR/node_modules/next/dist/bin/next" \
+                --name "$APP_NAME" \
+                --cwd "$TARGET_DIR" \
+                -- start -p "$PORT" -H "$HOST"
+
+              pm2 save
+            }
+
+            wait_for_app() {
+              echo "Waiting for Next.js server on $HOST:$PORT..."
+
+              for i in {1..30}; do
+                if ss -ltnp | grep -q "$HOST:$PORT"; then
+                  echo "Next.js is listening on $HOST:$PORT"
+                  return 0
+                fi
+
+                echo "Waiting for port $PORT... attempt $i"
+                sleep 2
+              done
+
+              return 1
+            }
+
+            rollback_previous_release() {
+              if [ -n "$PREVIOUS_RELEASE" ] && [ -d "$PREVIOUS_RELEASE" ]; then
+                echo "Rolling back to previous release: $PREVIOUS_RELEASE"
+
+                ln -sfnT "$PREVIOUS_RELEASE" "$SERVER_PATH/current"
+
+                start_app "$SERVER_PATH/current"
+
+                if wait_for_app; then
+                  echo "Rollback successful. Previous release is live."
+                  sudo nginx -t && sudo systemctl reload nginx || true
+                  exit 1
+                fi
+              fi
+
+              echo "Rollback not possible or failed."
+              print_debug_logs
+              exit 1
+            }
 
             echo "Going to release directory..."
             cd "$RELEASE_DIR"
+
+            echo "Checking Next.js config..."
+
+            if grep -R "output:[[:space:]]*['\"]standalone['\"]" next.config.* 2>/dev/null; then
+              echo "ERROR: output: standalone found in next.config file."
+              echo "Remove output: standalone for this safe deployment workflow."
+              exit 1
+            fi
 
             echo "Preparing public folders..."
 
@@ -85,12 +175,15 @@ jobs:
             echo "Installing dependencies..."
 
             if [ -f package-lock.json ]; then
-              npm ci --legacy-peer-deps
+              npm ci --legacy-peer-deps --no-audit --no-fund
             else
-              npm install --legacy-peer-deps
+              npm install --legacy-peer-deps --no-audit --no-fund
             fi
 
             echo "Building Next.js..."
+
+            export NEXT_TELEMETRY_DISABLED=1
+            export NODE_OPTIONS="--max-old-space-size=1024"
 
             npm run build
 
@@ -99,60 +192,51 @@ jobs:
               exit 1
             fi
 
+            if [ ! -f "node_modules/next/dist/bin/next" ]; then
+              echo "ERROR: Next.js binary missing in node_modules"
+              exit 1
+            fi
+
             echo "Activating release..."
 
             ln -sfnT "$RELEASE_DIR" "$SERVER_PATH/current"
 
-            echo "Restarting PM2 with normal Next.js server..."
+            echo "Starting new release..."
 
-            pm2 delete "$APP_NAME" || true
+            if ! start_app "$SERVER_PATH/current"; then
+              echo "ERROR: Failed to start PM2 app"
+              rollback_previous_release
+            fi
 
-            cd "$SERVER_PATH/current"
-
-            pm2 start npm \
-              --name "$APP_NAME" \
-              --cwd "$SERVER_PATH/current" \
-              -- start
-
-            pm2 save
-
-            echo "Waiting for Next.js server..."
-
-            sleep 8
-
-            for i in {1..20}; do
-              if ss -ltn | grep -q ":$PORT "; then
-                echo "Next.js port $PORT is listening"
-                break
-              fi
-
-              echo "Waiting for port $PORT... attempt $i"
-              sleep 2
-            done
-
-            if ! ss -ltn | grep -q ":$PORT "; then
-              echo "ERROR: Next.js is not listening on port $PORT"
-              pm2 logs "$APP_NAME" --lines 80 --nostream
-              exit 1
+            if ! wait_for_app; then
+              echo "ERROR: New release did not start on port $PORT"
+              rollback_previous_release
             fi
 
             echo "Checking PM2 app status..."
 
             if ! pm2 describe "$APP_NAME" | grep -q "online"; then
               echo "ERROR: PM2 app is not online"
-              pm2 logs "$APP_NAME" --lines 80 --nostream
-              exit 1
+              rollback_previous_release
             fi
 
-            echo "Reloading nginx..."
+            echo "Testing Nginx config..."
 
-            sudo nginx -t
+            if ! sudo nginx -t; then
+              echo "ERROR: Nginx config test failed"
+              rollback_previous_release
+            fi
+
+            echo "Reloading Nginx..."
+
             sudo systemctl reload nginx
 
             echo "Cleaning old releases..."
 
             cd "$SERVER_PATH/releases"
+
+            # Keep latest 3 releases to allow rollback
             ls -dt */ | tail -n +4 | xargs -r rm -rf
 
-            echo "Deployment completed successfully"
+            echo "Deployment completed successfully."
           SERVER_SCRIPT
