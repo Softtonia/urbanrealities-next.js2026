@@ -20,7 +20,6 @@ jobs:
       APP_NAME: holiplaces
       SSH_PORT: 22
       PORT: 3000
-      HOST: 127.0.0.1
 
     steps:
       - name: Checkout Code
@@ -102,7 +101,6 @@ jobs:
             RELEASE_DIR="$SERVER_PATH/releases/${{ github.sha }}"
             APP_NAME="holiplaces"
             PORT="3000"
-            HOST="127.0.0.1"
 
             PREVIOUS_RELEASE=""
 
@@ -110,56 +108,40 @@ jobs:
               PREVIOUS_RELEASE="$(readlink -f "$SERVER_PATH/current" || true)"
             fi
 
-            print_pm2_logs() {
+            show_logs() {
               echo "================ PM2 STATUS ================"
               pm2 status || true
 
               echo "================ PM2 LOGS ================"
               pm2 logs "$APP_NAME" --lines 120 --nostream || true
 
-              echo "================ PORT STATUS ================"
+              echo "================ PORT 3000 STATUS ================"
               ss -ltnp | grep ":$PORT" || true
             }
 
-            port_open() {
-              PORT_TO_CHECK="$PORT" HOST_TO_CHECK="$HOST" node - <<'NODE'
-            const net = require('net');
-
-            const host = process.env.HOST_TO_CHECK || '127.0.0.1';
-            const port = Number(process.env.PORT_TO_CHECK || 3000);
-
-            const socket = net.createConnection({ host, port });
-
-            const timer = setTimeout(() => {
-              socket.destroy();
-              process.exit(1);
-            }, 2000);
-
-            socket.on('connect', () => {
-              clearTimeout(timer);
-              socket.destroy();
-              process.exit(0);
-            });
-
-            socket.on('error', () => {
-              clearTimeout(timer);
-              process.exit(1);
-            });
-            NODE
+            is_port_open() {
+              ss -ltn 2>/dev/null | awk '{print $4}' | grep -q ":$PORT$"
             }
 
             wait_for_app() {
-              echo "Waiting for Next.js server on $HOST:$PORT..."
+              echo "Waiting for Next.js server on port $PORT..."
 
               for i in {1..30}; do
-                if port_open; then
-                  echo "Next.js is running on $HOST:$PORT"
+                if is_port_open; then
+                  echo "Next.js is listening on port $PORT"
+                  ss -ltnp | grep ":$PORT" || true
                   return 0
+                fi
+
+                if ! pm2 describe "$APP_NAME" >/dev/null 2>&1; then
+                  echo "PM2 app does not exist while waiting."
+                  show_logs
+                  return 1
                 fi
 
                 if ! pm2 describe "$APP_NAME" | grep -q "online"; then
                   echo "PM2 app is not online."
-                  print_pm2_logs
+                  show_logs
                   return 1
                 fi
 
@@ -168,16 +150,15 @@ jobs:
               done
 
               echo "ERROR: Next.js did not open port $PORT."
-              print_pm2_logs
+              show_logs
               return 1
             }
 
             start_app() {
               TARGET_DIR="$1"
 
-              cd "$TARGET_DIR"
-
               echo "Installing production dependencies on server..."
+              cd "$TARGET_DIR"
 
               if [ -f package-lock.json ]; then
                 npm ci --omit=dev --legacy-peer-deps --no-audit --no-fund
@@ -185,17 +166,25 @@ jobs:
                 npm install --omit=dev --legacy-peer-deps --no-audit --no-fund
               fi
 
-              echo "Starting/reloading PM2..."
+              echo "Stopping old PM2 process..."
+              pm2 delete "$APP_NAME" || true
+
+              echo "Freeing port $PORT if occupied..."
+              if command -v fuser >/dev/null 2>&1; then
+                fuser -k "$PORT/tcp" || true
+              fi
+
+              sleep 2
+
+              echo "Starting PM2..."
 
               export NODE_ENV=production
               export PORT="$PORT"
-              export HOSTNAME="$HOST"
+              export HOSTNAME="127.0.0.1"
 
               if [ -f "$TARGET_DIR/ecosystem.config.js" ]; then
-                pm2 startOrReload "$TARGET_DIR/ecosystem.config.js" --update-env
+                pm2 start "$TARGET_DIR/ecosystem.config.js" --update-env
               else
-                pm2 delete "$APP_NAME" || true
-
                 pm2 start npm \
                   --name "$APP_NAME" \
                   --cwd "$TARGET_DIR" \
@@ -216,11 +205,11 @@ jobs:
                   sudo nginx -t && sudo systemctl reload nginx || true
                 else
                   echo "Rollback failed."
-                  print_pm2_logs
+                  show_logs
                 fi
               else
                 echo "No previous release available for rollback."
-                print_pm2_logs
+                show_logs
               fi
 
               exit 1
@@ -244,8 +233,9 @@ jobs:
               exit 1
             fi
 
-            if [ ! -f "package-lock.json" ]; then
-              echo "WARNING: package-lock.json missing. npm install will be used instead of npm ci."
+            if grep -R "output:[[:space:]]*['\"]standalone['\"]" next.config.* 2>/dev/null; then
+              echo "ERROR: output standalone found. Remove output: standalone from next.config."
+              exit 1
             fi
 
             echo "Activating release..."
@@ -275,8 +265,6 @@ jobs:
 
             echo "Cleaning old releases..."
             cd "$SERVER_PATH/releases"
-
-            # Keep latest 5 releases for rollback safety
             ls -dt */ | tail -n +6 | xargs -r rm -rf
 
             echo "Deployment completed successfully."
