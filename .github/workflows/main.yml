@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy to Server
+    name: Build and Deploy to Server
     runs-on: ubuntu-latest
     timeout-minutes: 40
 
@@ -24,31 +24,53 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.9.1
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
         with:
-          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+          node-version: 22
+          cache: npm
 
-      - name: Add Server to Known Hosts
+      - name: Install Dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --legacy-peer-deps --no-audit --no-fund
+          else
+            npm install --legacy-peer-deps --no-audit --no-fund
+          fi
+
+      - name: Build Next.js on GitHub Runner
+        run: |
+          export NEXT_TELEMETRY_DISABLED=1
+          export NODE_OPTIONS="--max-old-space-size=4096"
+
+          npm run build
+
+          if [ ! -d ".next" ]; then
+            echo "ERROR: .next build folder missing"
+            exit 1
+          fi
+
+      - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p ${{ env.SSH_PORT }} -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Upload Code
+      - name: Upload Built Release
         run: |
           RELEASE_DIR="${{ env.SERVER_PATH }}/releases/${{ github.sha }}"
 
-          ssh -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+          ssh -i ~/.ssh/id_rsa -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
             "mkdir -p '${{ env.SERVER_PATH }}/releases' && rm -rf '$RELEASE_DIR' && mkdir -p '$RELEASE_DIR'"
 
           rsync -az --delete \
-            -e "ssh -p ${{ env.SSH_PORT }}" \
+            -e "ssh -i ~/.ssh/id_rsa -p ${{ env.SSH_PORT }}" \
             --exclude ".git" \
             --exclude ".github" \
             --exclude "node_modules" \
-            --exclude ".next" \
             --exclude ".env" \
             --exclude ".env.local" \
             --exclude ".env.production" \
@@ -58,9 +80,9 @@ jobs:
             ./ \
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:$RELEASE_DIR/
 
-      - name: Build and Activate
+      - name: Activate Release on Server
         run: |
-          ssh -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} bash -s << 'SERVER_SCRIPT'
+          ssh -i ~/.ssh/id_rsa -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} bash -s << 'SERVER_SCRIPT'
             set -Eeuo pipefail
 
             SERVER_PATH="/var/www/holiplaces.com"
@@ -104,7 +126,14 @@ jobs:
 
               cd "$TARGET_DIR"
 
-              echo "Starting Next.js directly with PM2..."
+              echo "Installing production dependencies on server..."
+              if [ -f package-lock.json ]; then
+                npm ci --omit=dev --legacy-peer-deps --no-audit --no-fund
+              else
+                npm install --omit=dev --legacy-peer-deps --no-audit --no-fund
+              fi
+
+              echo "Starting Next.js with PM2..."
               pm2 start "$TARGET_DIR/node_modules/next/dist/bin/next" \
                 --name "$APP_NAME" \
                 --cwd "$TARGET_DIR" \
@@ -152,49 +181,24 @@ jobs:
             echo "Going to release directory..."
             cd "$RELEASE_DIR"
 
+            echo "Cleaning wrong parent lockfiles..."
+            rm -f "$SERVER_PATH/package-lock.json" "$SERVER_PATH/yarn.lock" "$SERVER_PATH/pnpm-lock.yaml"
+
             echo "Checking Next.js config..."
 
             if grep -R "output:[[:space:]]*['\"]standalone['\"]" next.config.* 2>/dev/null; then
               echo "ERROR: output: standalone found in next.config file."
-              echo "Remove output: standalone for this safe deployment workflow."
+              echo "Remove output: standalone for this workflow."
               exit 1
             fi
-
-            echo "Preparing public folders..."
-
-            if [ -d "img" ]; then
-              mkdir -p public/img
-              rsync -a img/ public/img/
-            fi
-
-            if [ -d "data" ]; then
-              mkdir -p public/data
-              rsync -a data/ public/data/
-            fi
-
-            echo "Installing dependencies..."
-
-            if [ -f package-lock.json ]; then
-              npm ci --legacy-peer-deps --no-audit --no-fund
-            else
-              npm install --legacy-peer-deps --no-audit --no-fund
-            fi
-
-            echo "Building Next.js..."
-
-            export NEXT_TELEMETRY_DISABLED=1
-            export NODE_OPTIONS="--max-old-space-size=1024"
-
-            npm run build
 
             if [ ! -d ".next" ]; then
-              echo "ERROR: .next build folder missing"
+              echo "ERROR: .next folder missing. Build was not uploaded."
               exit 1
             fi
 
-            if [ ! -f "node_modules/next/dist/bin/next" ]; then
-              echo "ERROR: Next.js binary missing in node_modules"
-              exit 1
+            if [ ! -d "public" ]; then
+              echo "WARNING: public folder missing. If your images are inside public, check repo."
             fi
 
             echo "Activating release..."
@@ -235,7 +239,7 @@ jobs:
 
             cd "$SERVER_PATH/releases"
 
-            # Keep latest 3 releases to allow rollback
+            # Keep latest 3 releases for rollback
             ls -dt */ | tail -n +4 | xargs -r rm -rf
 
             echo "Deployment completed successfully."
