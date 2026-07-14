@@ -75,7 +75,7 @@ export async function laravelApi(path, options = {}) {
     // New final flow
     "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
     "X-App-Type": APP_TYPE,
-    Origin: NEXT_ORIGIN,
+    "Origin": NEXT_ORIGIN,
     "X-App-Origin": NEXT_ORIGIN,
 
     // Debug only

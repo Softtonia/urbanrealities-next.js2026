@@ -14,8 +14,8 @@ async function fetchPurpose() {
     // ✅ Directly call backend API, not your Next.js API route
     const response = await getssr(`/api/purpose-listing`);
     const data = response;
-    console.log("==>", data)
-    if (data?.data) return data.data;
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.data)) return data.data;
     return [];
   } catch (err) {
     console.error("Error fetching purpose:", err);
@@ -28,9 +28,8 @@ async function fetchProperties() {
     // ✅ Directly call backend API, not your Next.js API route
     const response = await getssr(`/api/property-listing`);
     const data = response.data;
-    // console.log("==>",data)
-    if (data) return data;
-    if (data?.data) return data.data;
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.data)) return data.data;
     return [];
   } catch (err) {
     console.error("Error fetching property listing:", err);

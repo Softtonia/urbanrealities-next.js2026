@@ -16,10 +16,10 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     const [isOtpVerified, setIsOtpVerified] = useState(1);
 
 
-    // On load, read token from sessionStorage
+    // On load, read token from localStorage
     useEffect(() => {
-        const savedToken = sessionStorage.getItem('token')
-        const user_id = sessionStorage.getItem('userId')
+        const savedToken = localStorage.getItem('token')
+        const user_id = localStorage.getItem('userId')
         if (savedToken && savedToken !== "undefined" && savedToken !== "null") {
             setToken(savedToken)
             setUserId(user_id)
@@ -47,11 +47,11 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     // console.log(object)
 
 
-    // Save to sessionStorage and state
+    // Save to localStorage and state
     const login = (userId, token) => {
 
-        sessionStorage.setItem('token', token)
-        sessionStorage.setItem('userId', userId)
+        localStorage.setItem('token', token)
+        localStorage.setItem('userId', userId)
         setToken(token)
         setUserId(userId)
 
@@ -65,7 +65,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
 
 
     const logout = async () => {
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
         console.log("token", token)
 
         try {
@@ -79,7 +79,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
             });
 
             if (res) {
-                sessionStorage.removeItem('token');
+                localStorage.removeItem('token');
                 setToken(null);
                 setUserId(null)
             } else {

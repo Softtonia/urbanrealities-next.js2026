@@ -2,12 +2,12 @@
 import axios from "axios";
 
 export async function checkAuth() {
-    const token = sessionStorage.getItem("token");
-    const userId = sessionStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
 
     console.log(token,userId)
 
-    if (!token || !userId) return { isAuthenticated: false, user: null };
+    if (!token || !userId || token === "undefined" || token === "null" || userId === "undefined" || userId === "null") return { isAuthenticated: false, user: null };
 
     try {
         const res = await axios.get(`/api/auth/getuser?id=${userId}`, {
@@ -19,12 +19,12 @@ export async function checkAuth() {
         return { isAuthenticated: true, user: res.data?.name,is_otp_verified: res.data?.is_otp_verified };
     } catch (error) {
         console.error("Auth check failed:", error.response?.data || error.message);
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("userId");
         
         if (error.response?.status === 401) {
+            // localStorage.removeItem("token");
+            // localStorage.removeItem("userId");
             // Option 1: Reload page
-            window.location.reload();
+            // window.location.reload();
 
             // Option 2: Redirect to login page
             // window.location.href = "/auth/login";

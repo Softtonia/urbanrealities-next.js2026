@@ -11,12 +11,16 @@ import { toast } from "react-toastify";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async () => {
+    setEmailError("");
+    
     if (!email) {
       toast.error("Please enter your email or phone number.");
+      setEmailError("Please enter your email or phone number.");
       return;
     }
     
@@ -24,13 +28,19 @@ export default function ForgotPassword() {
       setLoading(true);
       const res = await generateEmailOtp(email);
       
-      if (res) {
+      if (res.status === true || res.success === true) {
         toast.success(res.message || "OTP sent successfully!");
         router.push(`/auth/forgot-password/forgot-password-verify?email=${encodeURIComponent(email)}`);
-      } 
+      } else {
+        const errorMsg = res.data?.message || res.message || res.data?.errors?.email?.[0] || "Failed to send OTP.";
+        toast.error(errorMsg);
+        setEmailError(errorMsg);
+      }
     } catch (error) {
       console.error(error);
-      toast.error(error?.response?.data?.message || "An error occurred. Please try again.");
+      const catchErrorMsg = error?.response?.data?.message || "An error occurred. Please try again.";
+      toast.error(catchErrorMsg);
+      setEmailError(catchErrorMsg);
     } finally {
       setLoading(false);
     }
@@ -62,7 +72,11 @@ export default function ForgotPassword() {
           id="email"
           placeholder={data.emailPlaceholder}
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          error={emailError}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (emailError) setEmailError("");
+          }}
         />
       </div>
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { resetPassword } from "@/services/auth.service";
 import { toast } from "react-toastify";
+import AuthInput from "../AuthInput/AuthInput";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -65,13 +66,10 @@ const ResetPassword = () => {
       <p className={` formSubHeading ${styles.formSubHeading}`}>{data.subText}</p>
 
       <div className={styles.formGroup}>
-        <label htmlFor="Password" className={`formLabel ${styles.formLabel}`}>
-          {data.passwordLabel}
-        </label>
-        <input
+        <AuthInput
+          label={data.passwordLabel}
           type="password"
           id="Password"
-          className={` formInput ${styles.formInput}`}
           placeholder={data.passwordPlaceholder}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -79,13 +77,10 @@ const ResetPassword = () => {
       </div>
 
       <div className={styles.formGroup}>
-        <label htmlFor="confirmPassword" className={`formLabel  ${styles.formLabel}`}>
-          {data.confirmPasswordLabel}
-        </label>
-        <input
+        <AuthInput
+          label={data.confirmPasswordLabel}
           type="password"
           id="confirmPassword"
-          className={`${styles.formInput} formInput`}
           placeholder={data.confirmPasswordPlaceholder}
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}

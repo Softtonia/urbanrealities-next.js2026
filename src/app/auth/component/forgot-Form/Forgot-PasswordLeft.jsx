@@ -10,7 +10,7 @@ const ForgotPasswordLeft = () => {
      "Go to www.urbanrealities.com.",
       "Click on 'Forgot Password' on the login page.",
       "Enter your email/phone associated with your account.",
-      "Check your email for a password reset link.",
+      "Check your email for an otp to reset your password.",
       "Click the link and follow the instructions to set a new password.",
       "If you need further assistance, contact our support team at support@urbanrealities.com."
     ],

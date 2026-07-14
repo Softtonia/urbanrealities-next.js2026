@@ -25,8 +25,15 @@ export async function forgotPassword(email) {
 }
 
 export async function generateEmailOtp(email) {
+  console.log(email , "email")
   return await laravelApi('/api/generate-email-otp', { method: 'POST', body: { email } });
 }
+
+export async function verifyEmailOtp(email, email_otp) {
+  console.log("email and otp", email, email_otp);
+  return await laravelApi('/api/verify-email-otp', { method: 'POST', body: { email, email_otp } });
+}
+
 
 export async function resetPassword(payload) {
   return await laravelApi('/api/reset-password', { method: 'POST', body: payload });
@@ -38,6 +45,7 @@ export async function resetPassword(payload) {
 // because laravelApi prepends LARAVEL_API_BASE_URL which would bypass Next.js API.
 import axios from 'axios';
 import { NEXT_PUBLIC_API_URL, LARAVEL_APPLICATION_PASSWORD, APP_TYPE } from "@/lib/config";
+
 
 const nextJsApi = axios.create({
   baseURL: NEXT_PUBLIC_API_URL,

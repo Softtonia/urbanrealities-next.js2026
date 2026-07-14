@@ -49,7 +49,7 @@ export async function proxyToLaravel(req, endpoint, method = "GET", body = null)
 
         // Return Laravel response exactly
         const isErrorResponse = response && response.success === false && response.status;
-        const responseBody = isErrorResponse ? response.data : response;
+        const responseBody = isErrorResponse ? (response.data || { error: response.message || "Unknown error" }) : response;
         const responseStatus = isErrorResponse ? response.status : 200;
 
         return new NextResponse(

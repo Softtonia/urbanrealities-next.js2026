@@ -24,7 +24,7 @@ export default function LoginPage() {
   const [googleLink, setGoogleLink] = useState('')
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
     if (token && token !== "undefined" && token !== "null") {
       // Already logged in, redirect to dashboard
       router.replace("/");
@@ -97,7 +97,8 @@ export default function LoginPage() {
           // Redirect to business domain
           window.location.href = `${process.env.NEXT_PUBLIC_BUSINESS_DOMAIN}?authtoken=${result.token}&id=${result.user_id}`;
         } else {
-          login(result.user_id, result.token);
+          const extractedUserId = result.user_id || result.user?.id || result.id;
+          login(extractedUserId, result.token);
           window.location.href = redirect;
         }
 

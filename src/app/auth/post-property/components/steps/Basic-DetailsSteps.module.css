@@ -7,6 +7,9 @@
   font-family: var(--font-medium);
   margin-bottom: 8px;
 }
+.userNameHighlight {
+  color: var(--Orange-Red);
+}
 .optionButtons {
   display: flex;
   flex-wrap: wrap;
@@ -52,7 +55,7 @@
 .selected {
   border-color: var(--Orange-Red);
   color: var(--Orange-Red);
-  font-family: var(--font-semibold) ;
+  background-color: #fff5e6;
 }
 .radioGroup {
   display: flex;
@@ -98,5 +101,29 @@
   font-size: clamp(14px, 1.5vw, 16px);
 }
 
+@keyframes skeletonPulse {
+  0% {
+    background-color: #e2e5e7;
+  }
+  100% {
+    background-color: #f1f3f5;
+  }
+}
 
+.skeletonText {
+  animation: skeletonPulse 1.2s infinite alternate;
+  border-radius: 4px;
+  height: 20px;
+  width: 150px;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.skeletonButton {
+  animation: skeletonPulse 1.2s infinite alternate;
+  border-radius: 20px;
+  height: 42px;
+  border: 1px solid #e2e5e7;
+  display: inline-block;
+}
 

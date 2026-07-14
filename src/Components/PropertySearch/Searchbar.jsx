@@ -4,8 +4,11 @@ import "./Searchbar.css";
 import PropertySearch from "./PropertySearch";
 import Link from "next/link";
 
+import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
+
 export default function Searchbar() {
   const [activeTab, setActiveTab] = useState("Buy");
+  const { token, isLoadingToken } = useSiteSettings();
 
   const navItems = [
     { label: "Buy", value: "Buy" },
@@ -14,7 +17,7 @@ export default function Searchbar() {
     { label: "PG", value: "PG" },
     { label: "Plot", value: "Plot" },
     { label: "Commercial", value: "Commercial" },
-    { label: "Post Free Property Ad", value: "Post Free Property Ad", link:"/post-property" },
+    { label: "Post Free Property Ad", value: "Post Free Property Ad", link: !token ? `/auth/login?redirect=/auth/post-property/basic-details` : "/auth/post-property/basic-details" },
   ];
 
   const handleSearch = (filters) => {

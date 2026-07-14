@@ -229,7 +229,7 @@ export default function Navbar() {
             <Link className="navbar-brand d-flex align-items-center" href="/">
               <Image
                 src={
-                  siteData?.website_logo || siteData?.mobile_logo 
+                  siteData?.website_logo || siteData?.mobile_logo || homeLogo
                 }
                 alt="Urbanrealities"
                 width={90}
@@ -323,7 +323,7 @@ export default function Navbar() {
           <div className="d-flex align-items-center gap-3">
             <Link
               href={
-                !token ? `/post-property` : "/auth/post-property/basic-details"
+                !token ? `/auth/login?redirect=/auth/post-property/basic-details` : "/auth/post-property/basic-details"
               }
               className="btn-property d-flex align-items-center gap-2 rounded-pill"
             >
@@ -598,7 +598,7 @@ export default function Navbar() {
           </div>
           <div className="m-0">
             <Link
-              href="/post-property"
+              href={!token ? `/auth/login?redirect=/auth/post-property/basic-details` : "/auth/post-property/basic-details"}
               className="btn-property d-flex align-items-center gap-2 rounded-pill text-sm px-3 py-1"
             >
               <Image

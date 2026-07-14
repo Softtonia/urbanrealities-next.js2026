@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; ;
 import { useSiteSettings } from "./mycontext/siteSettingContext";
 
-export default function ProtectedRoute({ children }) {
+export default function ProtectedRoute({ children, fallback = null }) {
     const { token, isLoadingToken } = useSiteSettings()
     const router = useRouter()
 
@@ -18,7 +18,7 @@ export default function ProtectedRoute({ children }) {
     }, [token, isLoadingToken, router])
 
     if (isLoadingToken || !token) {
-        return null  // your spinner or loader
+        return fallback;  // Show fallback (e.g. skeleton) while checking auth
     }
 
     return children

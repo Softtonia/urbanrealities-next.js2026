@@ -15,8 +15,7 @@
 .formGroup{
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
-  height: 66px;
+  min-height: 66px;
 }
 
 .formLabel {

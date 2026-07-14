@@ -4,37 +4,91 @@ import { useRouter } from "next/navigation";
 import styles from "./Basic-DetailsSteps.module.css";
 import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
+import { getTaxonomies, getUserDetails } from "@/services/post-property.service";
 
 export default function StepContent({ purposeList, propertyListing }) {
   const [loading, setLoading] = useState(false);
-  const { token } = useSiteSettings();
+  const { token, userId } = useSiteSettings();
   const { formData, updateFormData, setFormData } = useContext(PostPropertyContext);
 
-  // const [purposeList, setPurposeList] = useState([])
-  // const [propertyListing, setPropertyListing] = useState([])
+  const [taxonomies, setTaxonomies] = useState([]);
+  const [loadingTaxonomies, setLoadingTaxonomies] = useState(true);
+  const [selectedTaxonomies, setSelectedTaxonomies] = useState(formData.basicDetails?.taxonomies || {});
   const [propertyType, setPropertyType] = useState([])
   const [propertyStatus, setPropertyStatus] = useState([])
   const router = useRouter();
+
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (userId && token) {
+        try {
+          const res = await getUserDetails(userId, token);
+          if (res?.first_name || res?.last_name) {
+            setUserName(`${res.first_name || ""} ${res.last_name || ""}`.trim());
+          } else if (res?.user_name) {
+            setUserName(res.user_name);
+          } else if (res?.data?.first_name || res?.data?.last_name) {
+            setUserName(`${res.data.first_name || ""} ${res.data.last_name || ""}`.trim());
+          } else if (res?.name) {
+            setUserName(res.name);
+          }
+        } catch (error) {
+          console.error("Error fetching user details:", error);
+        }
+      }
+    };
+    fetchUser();
+  }, [userId, token]);
 
   // Initialize state from context formData
   const [selectedPurpose, setSelectedPurpose] = useState(formData.basicDetails?.purpose || "");
   const [selectedProperty, setSelectedProperty] = useState('');
   const [selectedPropertyType, setSelectedPropertyType] = useState(formData.basicDetails?.property_type || []);
   const [selectedPropertyStatus, setSelectedPropertyStatus] = useState(formData.basicDetails?.property_status || []);
-  const [name, setName] = useState(formData.basicDetails?.name || "")
-  const [description, setDescription] = useState(formData.basicDetails?.description || "")
   useEffect(() => {
     if (propertyListing?.length > 0 && !selectedProperty) {
       setSelectedProperty(propertyListing[0].id);
     }
   }, [propertyListing, selectedProperty])
-  console.log(name)
 
   useEffect(() => {
     // Clear local storage data when this page is mounted
     localStorage.removeItem("postPropertyData");
     setFormData({});
   }, []);
+
+  useEffect(() => {
+    const fetchTaxonomiesData = async () => {
+      // Do not set loading state to true on every click to avoid flickering, 
+      // but keep it if taxonomies is empty (initial load)
+      if (taxonomies.length === 0) {
+        setLoadingTaxonomies(true);
+      }
+      try {
+        // Only include termIds for taxonomies where hierarchical is true
+        const termIds = Object.entries(selectedTaxonomies)
+          .filter(([taxId]) => {
+            const taxonomy = taxonomies.find(t => String(t.id) === String(taxId));
+            // If taxonomy is known, check hierarchical flag. If unknown (e.g. initial load), include it.
+            return taxonomy ? taxonomy.hierarchical : true;
+          })
+          .map(([_, termId]) => termId);
+        
+        const response = await getTaxonomies(termIds);
+        if (response?.data) {
+          const sortedData = [...response.data].sort((a, b) => a.sort_order - b.sort_order);
+          setTaxonomies(sortedData);
+        }
+      } catch (error) {
+        console.error("Error fetching taxonomies:", error);
+      } finally {
+        setLoadingTaxonomies(false);
+      }
+    };
+    fetchTaxonomiesData();
+  }, [selectedTaxonomies]);
 
 
   useEffect(() => {
@@ -58,10 +112,10 @@ export default function StepContent({ purposeList, propertyListing }) {
         console.error('Error fetching roles:', err);
       }
     };
-    if (token) {
+    if (token && selectedProperty) {
       fetchPropertyType();
     }
-  }, [selectedProperty]);
+  }, [selectedProperty, token]);
 
   useEffect(() => {
     const fetchPropertyType = async () => {
@@ -85,10 +139,10 @@ export default function StepContent({ purposeList, propertyListing }) {
         console.error('Error fetching status:', err);
       }
     };
-    if (token) {
+    if (token && selectedPropertyType?.length > 0) {
       fetchPropertyType();
     }
-  }, [selectedPropertyType]);
+  }, [selectedPropertyType, token]);
 
 
 
@@ -113,20 +167,19 @@ export default function StepContent({ purposeList, propertyListing }) {
   const [error, setError] = useState("");
 
   const handleContinue = () => {
-    if (!selectedPurpose || !selectedProperty || !selectedPropertyType || !selectedPropertyStatus) {
-      setError("Please fill all the required fields before continuing.");
-      return;
-    }
+    // if (!selectedPurpose || !selectedProperty || !selectedPropertyType || !selectedPropertyStatus) {
+    //   setError("Please fill all the required fields before continuing.");
+    //   return;
+    // }
     setError("");
 
     updateFormData("basicDetails", {
-      name: name,
-      description: description,
       purpose_id: selectedPurpose,
       property_id: selectedProperty,
       property_type_id: selectedPropertyType,
       // expandedCategory: expandedCategory,
       property_status_id: selectedPropertyStatus,
+      taxonomies: selectedTaxonomies,
     });
 
     router.push("/auth/post-property/location-details");
@@ -135,155 +188,47 @@ export default function StepContent({ purposeList, propertyListing }) {
 
   return (
     <div className={styles.content}>
-      <h3>Welcome back user,</h3>
+      <h3>Welcome back <span className={styles.userNameHighlight}>{userName || "user"}</span>,</h3>
       <h3>Fill out basic details</h3>
-      <div>
-        <label className={styles.formLabel}>
-          Name
-        </label>
-        <input
-          type="text"
-          className={styles.formInput}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Enter Name"
-        />
-      </div>
-      <div>
-        <label className={styles.formLabel}>
-          Description
-        </label>
-        <textarea
-          className={styles.formTextarea}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="ENter Description"
-          rows="5"
-        ></textarea>
 
-      </div>
-      {/* Purpose Selection */}
-      <div className={styles.optionGroup}>
-        <p className={styles.subPara}>I'm looking to</p>
-        <div className={styles.optionButtons}>
-          {loading
-            ? (
-              // Skeleton loading state
-              Array.from({ length: 2 }).map((_, i) => (
-                <button
+      {loadingTaxonomies ? (
+        // Skeleton loader for taxonomies
+        Array.from({ length: 3 }).map((_, index) => (
+          <div key={index} className={styles.optionGroup}>
+            <p className={styles.skeletonText} style={{ width: ['120px', '160px', '140px'][index % 3] }}></p>
+            <div className={styles.optionButtons}>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
                   key={i}
-                  className={`${styles.optionBtn} placeholder col-1`}
-                  disabled
-                  style={{ height: "38px" }} // match your button height
-                  aria-label="Loading"
-                >
-                  Loading...
-                </button>
-              ))
-            )
-            : purposeList.map((p) => (
-              <button
-                key={p.id}
-                className={`${styles.optionBtn} ${selectedPurpose === p.id ? styles.selected : ""
-                  }`}
-                onClick={() => setSelectedPurpose(p.id)}
-              >
-                {p.name}
-              </button>
-            ))}
-        </div>
-      </div>
-
-      {/* Property Type Selection */}<p className={`d-block ${styles.subPara}`}>What kind of property do you have?</p>
-      <div className={styles.optionGroup}>
-
-        <div className={styles.radioGroup}>
-          {propertyListing.map((type, index) => {
-            // If no selection yet, select the first one
-            if (index === 0 && !selectedProperty) {
-              setSelectedProperty(type.id);
-            }
-
-            return (
-              <label
-                key={type.id}
-                className={`${styles.radioLabel} ${selectedProperty === type.id ? styles.selected : ""}`}
-              >
-                <input
-                  type="radio"
-                  name="property"
-                  value={type.id}
-                  checked={selectedProperty === type.id}
-                  onChange={() => {
-                    setSelectedProperty(type.id);
-                    setSelectedPropertyType([]);
-                    setSelectedPropertyStatus([]);
-                  }}
-                  className={styles.radioInput}
-                />
-                {type.name}
-              </label>
-            );
-          })}
-        </div>
-
-      </div>
-      {propertyType?.length > 0 && (
-        <div>
-          <p className={`d-block w-100 ${styles.subPara}`}>
-            What kind of property-Type do you have?
-          </p>
-
-          <div className={styles.optionButtons}>
-            {propertyType.map((cat) => {
-              const isSelected = selectedPropertyType.includes(cat.id);
-
-              return (
-                <button
-                  key={cat.id}
-                  className={`${styles.optionBtn} ${isSelected ? styles.selected : ""}`}
-                  onClick={() => {
-                    setSelectedPropertyType((prev) =>
-                      isSelected
-                        ? prev.filter((id) => id !== cat.id) // Remove if already selected
-                        : [...prev, cat.id] // Add if not selected
-                    );
-                  }}
-                >
-                  {cat.name}
-                </button>
-              );
-            })}
+                  className={styles.skeletonButton}
+                  style={{ width: ['100px', '140px', '90px', '160px', '110px', '130px'][i % 6] }}
+                ></div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
-
-      {propertyStatus?.length > 0 && (
-        <div>
-          <p className={styles.subPara}>What is Property status?</p>
-
-          <div className={styles.optionButtons}>
-            {propertyStatus.map((cat) => {
-              const isSelected = selectedPropertyStatus.includes(cat.id);
-
-              return (
-                <button
-                  key={cat.id}
-                  className={`${styles.optionBtn} ${isSelected ? styles.selected : ""}`}
-                  onClick={() => {
-                    setSelectedPropertyStatus((prev) =>
-                      isSelected
-                        ? prev.filter((id) => id !== cat.id)
-                        : [...prev, cat.id]
-                    );
-                  }}
-                >
-                  {cat.name}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        ))
+      ) : (
+        taxonomies.map(taxonomy => (
+          taxonomy.terms && taxonomy.terms.length > 0 ? (
+            <div key={taxonomy.id} className={styles.optionGroup}>
+              <p className={styles.subPara}>{taxonomy.name}</p>
+              <div className={styles.optionButtons}>
+                {taxonomy.terms.map((term) => (
+                  <button
+                    key={term.id}
+                    className={`${styles.optionBtn} ${selectedTaxonomies[taxonomy.id] === term.id ? styles.selected : ""}`}
+                    onClick={() => setSelectedTaxonomies(prev => ({
+                      ...prev,
+                      [taxonomy.id]: term.id
+                    }))}
+                  >
+                    {term.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null
+        ))
       )}
 
       {error && <p className="text-red-500 " style={{ color: 'red' }}>{error}</p>}

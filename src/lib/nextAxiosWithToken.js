@@ -12,9 +12,10 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("userId");
-            window.location.href = "/auth/login";
+            // localStorage.removeItem("token");
+            // localStorage.removeItem("userId");
+            // window.location.href = "/auth/login";
+            console.error("401 error caught by interceptor, but automatic logout is disabled for debugging.");
         }
         return Promise.reject(error);
     }
