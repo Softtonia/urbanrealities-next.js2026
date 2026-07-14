@@ -20,6 +20,7 @@ jobs:
       APP_NAME: holiplaces
       SSH_PORT: 22
       PORT: 3000
+      HOST: 127.0.0.1
 
     steps:
       - name: Checkout Code
@@ -30,6 +31,18 @@ jobs:
         with:
           node-version: 22
           cache: npm
+
+      - name: Prepare Public Folders
+        run: |
+          if [ -d "img" ]; then
+            mkdir -p public/img
+            rsync -a img/ public/img/
+          fi
+
+          if [ -d "data" ]; then
+            mkdir -p public/data
+            rsync -a data/ public/data/
+          fi
 
       - name: Install Dependencies on GitHub Runner
         run: |
@@ -58,7 +71,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p ${{ env.SSH_PORT }} -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Upload Built Code to Server
+      - name: Upload Built Release to Server
         run: |
           RELEASE_DIR="${{ env.SERVER_PATH }}/releases/${{ github.sha }}"
 
@@ -89,6 +102,7 @@ jobs:
             RELEASE_DIR="$SERVER_PATH/releases/${{ github.sha }}"
             APP_NAME="holiplaces"
             PORT="3000"
+            HOST="127.0.0.1"
 
             PREVIOUS_RELEASE=""
 
@@ -96,36 +110,56 @@ jobs:
               PREVIOUS_RELEASE="$(readlink -f "$SERVER_PATH/current" || true)"
             fi
 
-            print_debug_logs() {
+            print_pm2_logs() {
               echo "================ PM2 STATUS ================"
               pm2 status || true
 
               echo "================ PM2 LOGS ================"
               pm2 logs "$APP_NAME" --lines 120 --nostream || true
 
-              echo "================ LISTENING PORTS ================"
-              ss -ltnp || true
+              echo "================ PORT STATUS ================"
+              ss -ltnp | grep ":$PORT" || true
+            }
 
-              echo "================ NGINX HOLIPLACES ERROR LOG ================"
-              sudo tail -n 100 /var/log/nginx/holiplaces_error.log || true
+            port_open() {
+              PORT_TO_CHECK="$PORT" HOST_TO_CHECK="$HOST" node - <<'NODE'
+            const net = require('net');
 
-              echo "================ NGINX GLOBAL ERROR LOG ================"
-              sudo tail -n 100 /var/log/nginx/error.log || true
+            const host = process.env.HOST_TO_CHECK || '127.0.0.1';
+            const port = Number(process.env.PORT_TO_CHECK || 3000);
+
+            const socket = net.createConnection({ host, port });
+
+            const timer = setTimeout(() => {
+              socket.destroy();
+              process.exit(1);
+            }, 2000);
+
+            socket.on('connect', () => {
+              clearTimeout(timer);
+              socket.destroy();
+              process.exit(0);
+            });
+
+            socket.on('error', () => {
+              clearTimeout(timer);
+              process.exit(1);
+            });
+            NODE
             }
 
             wait_for_app() {
-              echo "Waiting for Next.js server on port $PORT..."
+              echo "Waiting for Next.js server on $HOST:$PORT..."
 
               for i in {1..30}; do
-                if ss -ltnp | grep -q ":$PORT "; then
-                  echo "Next.js is listening on port $PORT"
-                  ss -ltnp | grep ":$PORT " || true
+                if port_open; then
+                  echo "Next.js is running on $HOST:$PORT"
                   return 0
                 fi
 
                 if ! pm2 describe "$APP_NAME" | grep -q "online"; then
-                  echo "PM2 app is not online while waiting."
-                  pm2 logs "$APP_NAME" --lines 120 --nostream || true
+                  echo "PM2 app is not online."
+                  print_pm2_logs
                   return 1
                 fi
 
@@ -133,25 +167,13 @@ jobs:
                 sleep 2
               done
 
-              echo "ERROR: Port $PORT did not open."
-              pm2 logs "$APP_NAME" --lines 120 --nostream || true
-              ss -ltnp || true
-
+              echo "ERROR: Next.js did not open port $PORT."
+              print_pm2_logs
               return 1
             }
 
             start_app() {
               TARGET_DIR="$1"
-
-              echo "Stopping old PM2 process if exists..."
-              pm2 delete "$APP_NAME" || true
-
-              echo "Freeing port $PORT if occupied..."
-              if command -v fuser >/dev/null 2>&1; then
-                fuser -k "$PORT/tcp" || true
-              fi
-
-              sleep 2
 
               cd "$TARGET_DIR"
 
@@ -163,49 +185,54 @@ jobs:
                 npm install --omit=dev --legacy-peer-deps --no-audit --no-fund
               fi
 
-              echo "Starting Next.js with PM2 using npm start..."
+              echo "Starting/reloading PM2..."
 
-              pm2 start npm \
-                --name "$APP_NAME" \
-                --cwd "$TARGET_DIR" \
-                -- start
+              export NODE_ENV=production
+              export PORT="$PORT"
+              export HOSTNAME="$HOST"
+
+              if [ -f "$TARGET_DIR/ecosystem.config.js" ]; then
+                pm2 startOrReload "$TARGET_DIR/ecosystem.config.js" --update-env
+              else
+                pm2 delete "$APP_NAME" || true
+
+                pm2 start npm \
+                  --name "$APP_NAME" \
+                  --cwd "$TARGET_DIR" \
+                  -- start
+              fi
 
               pm2 save
             }
 
             rollback_previous_release() {
               if [ -n "$PREVIOUS_RELEASE" ] && [ -d "$PREVIOUS_RELEASE" ]; then
-                echo "Rolling back to previous release: $PREVIOUS_RELEASE"
+                echo "Rolling back to previous release..."
 
                 ln -sfnT "$PREVIOUS_RELEASE" "$SERVER_PATH/current"
 
-                start_app "$SERVER_PATH/current"
-
-                if wait_for_app; then
-                  echo "Rollback successful. Previous release is live."
+                if start_app "$SERVER_PATH/current" && wait_for_app; then
+                  echo "Rollback completed. Previous release is live."
                   sudo nginx -t && sudo systemctl reload nginx || true
-                  exit 1
+                else
+                  echo "Rollback failed."
+                  print_pm2_logs
                 fi
+              else
+                echo "No previous release available for rollback."
+                print_pm2_logs
               fi
 
-              echo "Rollback not possible or failed."
-              print_debug_logs
               exit 1
             }
 
             echo "Going to release directory..."
             cd "$RELEASE_DIR"
 
-            echo "Cleaning wrong parent lockfiles..."
+            echo "Removing wrong parent lockfiles..."
             rm -f "$SERVER_PATH/package-lock.json" "$SERVER_PATH/yarn.lock" "$SERVER_PATH/pnpm-lock.yaml"
 
-            echo "Checking Next.js config..."
-
-            if grep -R "output:[[:space:]]*['\"]standalone['\"]" next.config.* 2>/dev/null; then
-              echo "ERROR: output: standalone found in next.config file."
-              echo "Remove output: standalone for this workflow."
-              exit 1
-            fi
+            echo "Checking required files..."
 
             if [ ! -d ".next" ]; then
               echo "ERROR: .next folder missing. Build was not uploaded."
@@ -217,46 +244,40 @@ jobs:
               exit 1
             fi
 
-            echo "Activating release..."
+            if [ ! -f "package-lock.json" ]; then
+              echo "WARNING: package-lock.json missing. npm install will be used instead of npm ci."
+            fi
 
+            echo "Activating release..."
             ln -sfnT "$RELEASE_DIR" "$SERVER_PATH/current"
 
             echo "Starting new release..."
 
             if ! start_app "$SERVER_PATH/current"; then
-              echo "ERROR: Failed to start PM2 app."
+              echo "ERROR: PM2 start failed."
               rollback_previous_release
             fi
 
             if ! wait_for_app; then
-              echo "ERROR: New release did not start on port $PORT."
-              rollback_previous_release
-            fi
-
-            echo "Checking PM2 app status..."
-
-            if ! pm2 describe "$APP_NAME" | grep -q "online"; then
-              echo "ERROR: PM2 app is not online."
+              echo "ERROR: New release did not start correctly."
               rollback_previous_release
             fi
 
             echo "Testing Nginx config..."
 
             if ! sudo nginx -t; then
-              echo "ERROR: Nginx config test failed."
+              echo "ERROR: Nginx config failed."
               rollback_previous_release
             fi
 
             echo "Reloading Nginx..."
-
             sudo systemctl reload nginx
 
             echo "Cleaning old releases..."
-
             cd "$SERVER_PATH/releases"
 
-            # Keep latest 3 releases for rollback safety
-            ls -dt */ | tail -n +4 | xargs -r rm -rf
+            # Keep latest 5 releases for rollback safety
+            ls -dt */ | tail -n +6 | xargs -r rm -rf
 
             echo "Deployment completed successfully."
           SERVER_SCRIPT
