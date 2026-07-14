@@ -13,14 +13,13 @@ jobs:
   deploy:
     name: Build and Deploy to Server
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
 
     env:
       SERVER_PATH: /var/www/holiplaces.com
       APP_NAME: holiplaces
       SSH_PORT: 22
       PORT: 3000
-      HOST: 127.0.0.1
 
     steps:
       - name: Checkout Code
@@ -32,7 +31,7 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install Dependencies
+      - name: Install Dependencies on GitHub Runner
         run: |
           if [ -f package-lock.json ]; then
             npm ci --legacy-peer-deps --no-audit --no-fund
@@ -52,14 +51,14 @@ jobs:
             exit 1
           fi
 
-      - name: Setup SSH Key
+      - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p ${{ env.SSH_PORT }} -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Upload Built Release
+      - name: Upload Built Code to Server
         run: |
           RELEASE_DIR="${{ env.SERVER_PATH }}/releases/${{ github.sha }}"
 
@@ -71,6 +70,7 @@ jobs:
             --exclude ".git" \
             --exclude ".github" \
             --exclude "node_modules" \
+            --exclude ".next/cache" \
             --exclude ".env" \
             --exclude ".env.local" \
             --exclude ".env.production" \
@@ -89,9 +89,9 @@ jobs:
             RELEASE_DIR="$SERVER_PATH/releases/${{ github.sha }}"
             APP_NAME="holiplaces"
             PORT="3000"
-            HOST="127.0.0.1"
 
             PREVIOUS_RELEASE=""
+
             if [ -L "$SERVER_PATH/current" ] || [ -d "$SERVER_PATH/current" ]; then
               PREVIOUS_RELEASE="$(readlink -f "$SERVER_PATH/current" || true)"
             fi
@@ -106,9 +106,38 @@ jobs:
               echo "================ LISTENING PORTS ================"
               ss -ltnp || true
 
-              echo "================ NGINX ERROR LOG ================"
-              sudo tail -n 80 /var/log/nginx/holiplaces_error.log || true
-              sudo tail -n 80 /var/log/nginx/error.log || true
+              echo "================ NGINX HOLIPLACES ERROR LOG ================"
+              sudo tail -n 100 /var/log/nginx/holiplaces_error.log || true
+
+              echo "================ NGINX GLOBAL ERROR LOG ================"
+              sudo tail -n 100 /var/log/nginx/error.log || true
+            }
+
+            wait_for_app() {
+              echo "Waiting for Next.js server on port $PORT..."
+
+              for i in {1..30}; do
+                if ss -ltnp | grep -q ":$PORT "; then
+                  echo "Next.js is listening on port $PORT"
+                  ss -ltnp | grep ":$PORT " || true
+                  return 0
+                fi
+
+                if ! pm2 describe "$APP_NAME" | grep -q "online"; then
+                  echo "PM2 app is not online while waiting."
+                  pm2 logs "$APP_NAME" --lines 120 --nostream || true
+                  return 1
+                fi
+
+                echo "Waiting for port $PORT... attempt $i"
+                sleep 2
+              done
+
+              echo "ERROR: Port $PORT did not open."
+              pm2 logs "$APP_NAME" --lines 120 --nostream || true
+              ss -ltnp || true
+
+              return 1
             }
 
             start_app() {
@@ -127,35 +156,21 @@ jobs:
               cd "$TARGET_DIR"
 
               echo "Installing production dependencies on server..."
+
               if [ -f package-lock.json ]; then
                 npm ci --omit=dev --legacy-peer-deps --no-audit --no-fund
               else
                 npm install --omit=dev --legacy-peer-deps --no-audit --no-fund
               fi
 
-              echo "Starting Next.js with PM2..."
-              pm2 start "$TARGET_DIR/node_modules/next/dist/bin/next" \
+              echo "Starting Next.js with PM2 using npm start..."
+
+              pm2 start npm \
                 --name "$APP_NAME" \
                 --cwd "$TARGET_DIR" \
-                -- start -p "$PORT" -H "$HOST"
+                -- start
 
               pm2 save
-            }
-
-            wait_for_app() {
-              echo "Waiting for Next.js server on $HOST:$PORT..."
-
-              for i in {1..30}; do
-                if ss -ltnp | grep -q "$HOST:$PORT"; then
-                  echo "Next.js is listening on $HOST:$PORT"
-                  return 0
-                fi
-
-                echo "Waiting for port $PORT... attempt $i"
-                sleep 2
-              done
-
-              return 1
             }
 
             rollback_previous_release() {
@@ -197,8 +212,9 @@ jobs:
               exit 1
             fi
 
-            if [ ! -d "public" ]; then
-              echo "WARNING: public folder missing. If your images are inside public, check repo."
+            if [ ! -f "package.json" ]; then
+              echo "ERROR: package.json missing."
+              exit 1
             fi
 
             echo "Activating release..."
@@ -208,26 +224,26 @@ jobs:
             echo "Starting new release..."
 
             if ! start_app "$SERVER_PATH/current"; then
-              echo "ERROR: Failed to start PM2 app"
+              echo "ERROR: Failed to start PM2 app."
               rollback_previous_release
             fi
 
             if ! wait_for_app; then
-              echo "ERROR: New release did not start on port $PORT"
+              echo "ERROR: New release did not start on port $PORT."
               rollback_previous_release
             fi
 
             echo "Checking PM2 app status..."
 
             if ! pm2 describe "$APP_NAME" | grep -q "online"; then
-              echo "ERROR: PM2 app is not online"
+              echo "ERROR: PM2 app is not online."
               rollback_previous_release
             fi
 
             echo "Testing Nginx config..."
 
             if ! sudo nginx -t; then
-              echo "ERROR: Nginx config test failed"
+              echo "ERROR: Nginx config test failed."
               rollback_previous_release
             fi
 
@@ -239,7 +255,7 @@ jobs:
 
             cd "$SERVER_PATH/releases"
 
-            # Keep latest 3 releases for rollback
+            # Keep latest 3 releases for rollback safety
             ls -dt */ | tail -n +4 | xargs -r rm -rf
 
             echo "Deployment completed successfully."
