@@ -74,7 +74,7 @@ export default function StepContent({ purposeList, propertyListing }) {
             // If taxonomy is known, check hierarchical flag. If unknown (e.g. initial load), include it.
             return taxonomy ? taxonomy.hierarchical : true;
           })
-          .map(([_, termId]) => termId);
+          .map(([_, termId]) => termId); 
         
         const response = await getTaxonomies(termIds);
         if (response?.data) {
