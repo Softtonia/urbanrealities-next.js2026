@@ -345,14 +345,14 @@ const Register = ({ roles = [] }) => {
       </div>
 
       {/* Google Button */}
-      <button
+      {/* <button
         type="button"
         className={`body-text-14 googleBtn ${styles.googleBtn}`}
         style={{ marginBottom: '30px' }}
       >
         <FaGoogle color="#555" size={16} style={{ marginRight: '8px' }} />
         Sign up with Google
-      </button>
+      </button> */}
 
       {/* Links */}
       <div className={styles.formLinks}>

@@ -3,7 +3,7 @@ import { laravelApi } from "@/lib/axios";
 export async function getTaxonomies(termIds = []) {
   let url = "/api/frontend/taxonomies";
   if (termIds && termIds.length > 0) {
-    url += `?property_term_id=${termIds.join(',')}`;
+    url += `?selected_term_ids=${termIds.join(',')}`;
   }
   return await laravelApi(url, { method: "GET" });
 }

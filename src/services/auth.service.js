@@ -68,7 +68,7 @@ export async function loginUser(email, password) {
 
 export async function getGoogleLoginLink() {
   try {
-    const res = await nextJsApi.get('/api/auth/googlelogin/getlink');
+    const res = await nextJsApi.get('/api/auth/google');
     return res.data;
   } catch (error) {
     return { success: false, message: error.message };
