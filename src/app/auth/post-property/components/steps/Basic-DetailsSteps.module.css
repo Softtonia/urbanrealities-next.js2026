@@ -44,12 +44,13 @@
   resize: vertical; /* Allow vertical resizing */
 }
 .optionBtn {
-  padding: 10px 18px;
+   padding:8px 16px;
   border: 1px solid var( --Spanish-Gray);
-  border-radius: 20px;
+   border-radius: 5px;
   background-color: var(--White);
   cursor: pointer;
   transition: all 0.3s ease;
+  font-size: 14px !important;
 }
 
 .selected {
@@ -103,10 +104,10 @@
 
 @keyframes skeletonPulse {
   0% {
-    background-color: #e2e5e7;
+    background-color: var(--Skeleton-Bg);
   }
   100% {
-    background-color: #f1f3f5;
+    background-color: var(--Skeleton-Highlight);
   }
 }
 
@@ -121,9 +122,9 @@
 
 .skeletonButton {
   animation: skeletonPulse 1.2s infinite alternate;
-  border-radius: 20px;
-  height: 42px;
-  border: 1px solid #e2e5e7;
+  border-radius: 5px;
+  height: 38px;
+  border: 1px solid var(--Skeleton-Bg);
   display: inline-block;
 }
 

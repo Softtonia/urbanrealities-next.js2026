@@ -22,8 +22,8 @@
 }
 
 .rightPanel {
-  padding: 90px 96px 80px 96px;
-  width: 60%;
+  padding: 40px 20px;
+  width: 100%;
   height: 100% !important;
   display: flex;
   justify-content: space-between;
@@ -73,17 +73,26 @@
 display: none !important;
  } */
 
-@media (max-width: 768px) {
-
+@media (min-width: 769px) {
   .leftPanel {
-    display: none;
+    display: block;
+    flex: 0 0 40%;
+    width: 40%;
   }
+  .rightPanel {
+    flex: 0 0 60%;
+    width: 60%;
+    padding: 90px 96px 80px 96px;
+  }
+}
 
+@media (max-width: 768px) {
+  .leftPanel {
+    display: none !important;
+  }
   .loginContainer {
-    display: flex;
-    width: 100%;
-    max-width: 414px;
-    /* height: 770px; */
+    display: flex !important;
+    width: 100% !important;
   }
 
   /* .formlogo{

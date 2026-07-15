@@ -21,6 +21,7 @@ import { GoChevronDown } from "react-icons/go";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { useSiteSettings } from "../mycontext/siteSettingContext";
 import { useCity } from "@/utils/CityContext";
+import { getSiteSettingsData } from "@/services/site-setting.service";
 
 const staticCities = {
   filter_city: null,
@@ -73,7 +74,7 @@ const staticCities = {
 };
 
 export default function Navbar() {
-  const { city, setCity } = useCity();
+  const { city, setCity, isLoadingCity } = useCity();
   const cityId = city ? city.id : "";
   const cityName = city ? city.name : "";
   const [activeCity, setActiveCity] = useState(cityId);
@@ -138,9 +139,26 @@ export default function Navbar() {
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showHelp, setShowHelp] = useState(false);
-  const { settings } = useSiteSettings();
+  const { settings, token, logout, isLoadingToken } = useSiteSettings();
   const [siteData, setSiteData] = useState(settings);
-  const { token, logout, isLoadingToken } = useSiteSettings();
+  const [isLoadingSiteData, setIsLoadingSiteData] = useState(true);
+
+  useEffect(() => {
+    const fetchSiteSettings = async () => {
+      try {
+        const response = await getSiteSettingsData();
+        if (response) {
+          setSiteData(response.data || response); 
+        }
+      } catch (err) {
+        console.error("Error fetching site settings:", err);
+      } finally {
+        setIsLoadingSiteData(false);
+      }
+    };
+    fetchSiteSettings();
+  }, []);
+
   const [activeDropdown, setActiveDropdown] = useState(null); // "buy" | "rent" | "sell" | null
 
   const toggleDropdown = (menu) => {
@@ -225,25 +243,39 @@ export default function Navbar() {
       {/* Desktop Navbar */}
       <nav className="navbar navbar-expand-xl px-4 py-2 d-none d-xl-flex">
         <div className="container-fluid d-flex align-items-center justify-content-between p-0">
-          <div className="d-flex align-items-center">
+          <div className="d-flex align-items-center gap-4">
             <Link className="navbar-brand d-flex align-items-center" href="/">
-              <Image
-                src={
-                  siteData?.website_logo || siteData?.mobile_logo || homeLogo
-                }
-                alt="Urbanrealities"
-                width={90}
-                height={30}
-              />
+              {isLoadingSiteData ? (
+                <div className="placeholder-glow">
+                  <div className="placeholder" style={{ width: "90px", height: "30px", borderRadius: "4px", backgroundColor: "var(--Skeleton-Bg)" }}></div>
+                </div>
+              ) : (
+                <Image
+                  src={
+                    siteData?.website_logo || siteData?.mobile_logo 
+                  }
+                  alt="Urbanrealities"
+                  width={90}
+                  height={30}
+                />
+              )}
             </Link>
 
             <div
               className="position-relative"
               onClick={() => toggleDropdown("location")}
             >
-              <div className="nav-link d-flex align-items-center" role="button">
-                <div className="nav-items-name">{city && city.name}</div>
-                <FaMapMarkerAlt className="icon-nav-loc me-1" />
+              <div className="nav-link d-flex align-items-center pb-1" role="button">
+                {isLoadingCity ? (
+                  <div className="placeholder-glow d-flex align-items-center">
+                    <div className="placeholder" style={{ width: "60px", height: "20px", borderRadius: "4px", backgroundColor: "var(--Skeleton-Bg)", marginRight: "5px" }}></div>
+                  </div>
+                ) : (
+                  <>
+                    <FaMapMarkerAlt className="icon-nav-loc me-1" />
+                    <div className="nav-items-name">{city && city.name ? city.name : "Location"}</div>
+                  </>
+                )}
               </div>
               <div
                 className={`transition-opacity duration-300 ${activeDropdown === "location"
@@ -482,7 +514,15 @@ export default function Navbar() {
               role="button"
               onClick={() => setShowLocationSlider(true)}
             >
-              {city ? city.name : "Location"} <FaAngleDown />
+              {isLoadingCity ? (
+                <div className="placeholder-glow d-flex align-items-center">
+                  <div className="placeholder" style={{ width: "70px", height: "20px", borderRadius: "4px", backgroundColor: "#e9ecef", marginRight: "5px" }}></div>
+                </div>
+              ) : (
+                <>
+                  {city ? city.name : "Location"} <FaAngleDown />
+                </>
+              )}
             </div>
           </div>
           <div className="nav-items-name d-flex align-items-center gap-3 m-0">
@@ -580,19 +620,25 @@ export default function Navbar() {
             </div>
             <div>
               <Link className="" href="/">
-                <Image
-                  src={
-                    siteData?.website_logo?.startsWith("http")
-                      ? siteData.website_logo
-                      : siteData?.mobile_logo?.startsWith("http")
-                        ? siteData.mobile_logo
-                        : "/logo.png"
-                  }
-                  alt="Urbanrealities"
-                  width={100}
-                  height={25}
-                  priority // Optional: for faster loading above-the-fold
-                />
+                {isLoadingSiteData ? (
+                  <div className="placeholder-glow">
+                    <div className="placeholder" style={{ width: "100px", height: "25px", borderRadius: "4px", backgroundColor: "#e9ecef" }}></div>
+                  </div>
+                ) : (
+                  <Image
+                    src={
+                      siteData?.website_logo?.startsWith("http")
+                        ? siteData.website_logo
+                        : siteData?.mobile_logo?.startsWith("http")
+                          ? siteData.mobile_logo
+                          : "/logo.png"
+                    }
+                    alt="Urbanrealities"
+                    width={100}
+                    height={25}
+                    priority // Optional: for faster loading above-the-fold
+                  />
+                )}
               </Link>
             </div>
           </div>

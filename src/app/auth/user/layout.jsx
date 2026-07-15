@@ -22,7 +22,6 @@ function Layout({ children }) {
  
 
 
-  // ✅ Run once to detect screen type after mount
 
  
   useEffect(() => {
@@ -99,15 +98,8 @@ function Layout({ children }) {
 }
 
 export default function UserLayout({ children }) {
- const { isOtpVerified,fetchingUser } = useSiteSettings();
- const router = useRouter();
   return (
     <DashboardProvider>
-      {!isOtpVerified && !fetchingUser &&
-        <div className={styles.stickyNotification}>
-          <div className={styles.notificationMessage}>Please verify your email.</div>
-          <button className={styles.verifyBtn} onClick={()=>router.push('/auth/login/verify-email')} >Verify</button>
-        </div>}
       <Layout>{children}</Layout>
     </DashboardProvider>
   );

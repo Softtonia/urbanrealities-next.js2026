@@ -37,7 +37,6 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
             if (isAuthenticated) setUser(user);
 
             setIsOtpVerified(is_otp_verified);
-            setFetchingUser(false)
             // setLoading(false);
             console.log("hello inside")
         };
