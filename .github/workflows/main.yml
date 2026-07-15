@@ -11,44 +11,78 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy to Server
+    name: Build and Deploy to Server
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
 
     env:
       SERVER_PATH: /var/www/holiplaces.com
       APP_NAME: holiplaces
       SSH_PORT: 22
       PORT: 3000
-      HOST: 127.0.0.1
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Prepare Public Folders
+        run: |
+          if [ -d "img" ]; then
+            mkdir -p public/img
+            rsync -a img/ public/img/
+          fi
+
+          if [ -d "data" ]; then
+            mkdir -p public/data
+            rsync -a data/ public/data/
+          fi
+
+      - name: Install Dependencies on GitHub Runner
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --legacy-peer-deps --no-audit --no-fund
+          else
+            npm install --legacy-peer-deps --no-audit --no-fund
+          fi
+
+      - name: Build Next.js on GitHub Runner
+        run: |
+          export NEXT_TELEMETRY_DISABLED=1
+          export NODE_OPTIONS="--max-old-space-size=4096"
+
+          npm run build
+
+          if [ ! -d ".next" ]; then
+            echo "ERROR: .next build folder missing"
+            exit 1
+          fi
 
       - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.9.1
-        with:
-          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
-
-      - name: Add Server to Known Hosts
         run: |
           mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p ${{ env.SSH_PORT }} -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Upload Code
+      - name: Upload Built Release to Server
         run: |
           RELEASE_DIR="${{ env.SERVER_PATH }}/releases/${{ github.sha }}"
 
-          ssh -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+          ssh -i ~/.ssh/id_rsa -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
             "mkdir -p '${{ env.SERVER_PATH }}/releases' && rm -rf '$RELEASE_DIR' && mkdir -p '$RELEASE_DIR'"
 
           rsync -az --delete \
-            -e "ssh -p ${{ env.SSH_PORT }}" \
+            -e "ssh -i ~/.ssh/id_rsa -p ${{ env.SSH_PORT }}" \
             --exclude ".git" \
             --exclude ".github" \
             --exclude "node_modules" \
-            --exclude ".next" \
+            --exclude ".next/cache" \
             --exclude ".env" \
             --exclude ".env.local" \
             --exclude ".env.production" \
@@ -58,41 +92,81 @@ jobs:
             ./ \
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:$RELEASE_DIR/
 
-      - name: Build and Activate
+      - name: Activate Release on Server
         run: |
-          ssh -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} bash -s << 'SERVER_SCRIPT'
+          ssh -i ~/.ssh/id_rsa -p ${{ env.SSH_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} bash -s << 'SERVER_SCRIPT'
             set -Eeuo pipefail
 
             SERVER_PATH="/var/www/holiplaces.com"
             RELEASE_DIR="$SERVER_PATH/releases/${{ github.sha }}"
             APP_NAME="holiplaces"
             PORT="3000"
-            HOST="127.0.0.1"
 
             PREVIOUS_RELEASE=""
+
             if [ -L "$SERVER_PATH/current" ] || [ -d "$SERVER_PATH/current" ]; then
               PREVIOUS_RELEASE="$(readlink -f "$SERVER_PATH/current" || true)"
             fi
 
-            print_debug_logs() {
+            show_logs() {
               echo "================ PM2 STATUS ================"
               pm2 status || true
 
               echo "================ PM2 LOGS ================"
               pm2 logs "$APP_NAME" --lines 120 --nostream || true
 
-              echo "================ LISTENING PORTS ================"
-              ss -ltnp || true
+              echo "================ PORT 3000 STATUS ================"
+              ss -ltnp | grep ":$PORT" || true
+            }
 
-              echo "================ NGINX ERROR LOG ================"
-              sudo tail -n 80 /var/log/nginx/holiplaces_error.log || true
-              sudo tail -n 80 /var/log/nginx/error.log || true
+            is_port_open() {
+              ss -ltn 2>/dev/null | awk '{print $4}' | grep -q ":$PORT$"
+            }
+
+            wait_for_app() {
+              echo "Waiting for Next.js server on port $PORT..."
+
+              for i in {1..30}; do
+                if is_port_open; then
+                  echo "Next.js is listening on port $PORT"
+                  ss -ltnp | grep ":$PORT" || true
+                  return 0
+                fi
+
+                if ! pm2 describe "$APP_NAME" >/dev/null 2>&1; then
+                  echo "PM2 app does not exist while waiting."
+                  show_logs
+                  return 1
+                fi
+
+                if ! pm2 describe "$APP_NAME" | grep -q "online"; then
+                  echo "PM2 app is not online."
+                  show_logs
+                  return 1
+                fi
+
+                echo "Waiting for port $PORT... attempt $i"
+                sleep 2
+              done
+
+              echo "ERROR: Next.js did not open port $PORT."
+              show_logs
+              return 1
             }
 
             start_app() {
               TARGET_DIR="$1"
 
-              echo "Stopping old PM2 process if exists..."
+              echo "Installing production dependencies on server..."
+              cd "$TARGET_DIR"
+
+              if [ -f package-lock.json ]; then
+                npm ci --omit=dev --legacy-peer-deps --no-audit --no-fund
+              else
+                npm install --omit=dev --legacy-peer-deps --no-audit --no-fund
+              fi
+
+              echo "Stopping old PM2 process..."
               pm2 delete "$APP_NAME" || true
 
               echo "Freeing port $PORT if occupied..."
@@ -102,141 +176,96 @@ jobs:
 
               sleep 2
 
-              cd "$TARGET_DIR"
+              echo "Starting PM2..."
 
-              echo "Starting Next.js directly with PM2..."
-              pm2 start "$TARGET_DIR/node_modules/next/dist/bin/next" \
-                --name "$APP_NAME" \
-                --cwd "$TARGET_DIR" \
-                -- start -p "$PORT" -H "$HOST"
+              export NODE_ENV=production
+              export PORT="$PORT"
+              export HOSTNAME="127.0.0.1"
+
+              if [ -f "$TARGET_DIR/ecosystem.config.js" ]; then
+                pm2 start "$TARGET_DIR/ecosystem.config.js" --update-env
+              else
+                pm2 start npm \
+                  --name "$APP_NAME" \
+                  --cwd "$TARGET_DIR" \
+                  -- start
+              fi
 
               pm2 save
             }
 
-            wait_for_app() {
-              echo "Waiting for Next.js server on $HOST:$PORT..."
-
-              for i in {1..30}; do
-                if ss -ltnp | grep -q "$HOST:$PORT"; then
-                  echo "Next.js is listening on $HOST:$PORT"
-                  return 0
-                fi
-
-                echo "Waiting for port $PORT... attempt $i"
-                sleep 2
-              done
-
-              return 1
-            }
-
             rollback_previous_release() {
               if [ -n "$PREVIOUS_RELEASE" ] && [ -d "$PREVIOUS_RELEASE" ]; then
-                echo "Rolling back to previous release: $PREVIOUS_RELEASE"
+                echo "Rolling back to previous release..."
 
                 ln -sfnT "$PREVIOUS_RELEASE" "$SERVER_PATH/current"
 
-                start_app "$SERVER_PATH/current"
-
-                if wait_for_app; then
-                  echo "Rollback successful. Previous release is live."
+                if start_app "$SERVER_PATH/current" && wait_for_app; then
+                  echo "Rollback completed. Previous release is live."
                   sudo nginx -t && sudo systemctl reload nginx || true
-                  exit 1
+                else
+                  echo "Rollback failed."
+                  show_logs
                 fi
+              else
+                echo "No previous release available for rollback."
+                show_logs
               fi
 
-              echo "Rollback not possible or failed."
-              print_debug_logs
               exit 1
             }
 
             echo "Going to release directory..."
             cd "$RELEASE_DIR"
 
-            echo "Checking Next.js config..."
+            echo "Removing wrong parent lockfiles..."
+            rm -f "$SERVER_PATH/package-lock.json" "$SERVER_PATH/yarn.lock" "$SERVER_PATH/pnpm-lock.yaml"
 
-            if grep -R "output:[[:space:]]*['\"]standalone['\"]" next.config.* 2>/dev/null; then
-              echo "ERROR: output: standalone found in next.config file."
-              echo "Remove output: standalone for this safe deployment workflow."
-              exit 1
-            fi
-
-            echo "Preparing public folders..."
-
-            if [ -d "img" ]; then
-              mkdir -p public/img
-              rsync -a img/ public/img/
-            fi
-
-            if [ -d "data" ]; then
-              mkdir -p public/data
-              rsync -a data/ public/data/
-            fi
-
-            echo "Installing dependencies..."
-
-            if [ -f package-lock.json ]; then
-              npm ci --legacy-peer-deps --no-audit --no-fund
-            else
-              npm install --legacy-peer-deps --no-audit --no-fund
-            fi
-
-            echo "Building Next.js..."
-
-            export NEXT_TELEMETRY_DISABLED=1
-            export NODE_OPTIONS="--max-old-space-size=1024"
-
-            npm run build
+            echo "Checking required files..."
 
             if [ ! -d ".next" ]; then
-              echo "ERROR: .next build folder missing"
+              echo "ERROR: .next folder missing. Build was not uploaded."
               exit 1
             fi
 
-            if [ ! -f "node_modules/next/dist/bin/next" ]; then
-              echo "ERROR: Next.js binary missing in node_modules"
+            if [ ! -f "package.json" ]; then
+              echo "ERROR: package.json missing."
+              exit 1
+            fi
+
+            if grep -R "output:[[:space:]]*['\"]standalone['\"]" next.config.* 2>/dev/null; then
+              echo "ERROR: output standalone found. Remove output: standalone from next.config."
               exit 1
             fi
 
             echo "Activating release..."
-
             ln -sfnT "$RELEASE_DIR" "$SERVER_PATH/current"
 
             echo "Starting new release..."
 
             if ! start_app "$SERVER_PATH/current"; then
-              echo "ERROR: Failed to start PM2 app"
+              echo "ERROR: PM2 start failed."
               rollback_previous_release
             fi
 
             if ! wait_for_app; then
-              echo "ERROR: New release did not start on port $PORT"
-              rollback_previous_release
-            fi
-
-            echo "Checking PM2 app status..."
-
-            if ! pm2 describe "$APP_NAME" | grep -q "online"; then
-              echo "ERROR: PM2 app is not online"
+              echo "ERROR: New release did not start correctly."
               rollback_previous_release
             fi
 
             echo "Testing Nginx config..."
 
             if ! sudo nginx -t; then
-              echo "ERROR: Nginx config test failed"
+              echo "ERROR: Nginx config failed."
               rollback_previous_release
             fi
 
             echo "Reloading Nginx..."
-
             sudo systemctl reload nginx
 
             echo "Cleaning old releases..."
-
             cd "$SERVER_PATH/releases"
-
-            # Keep latest 3 releases to allow rollback
-            ls -dt */ | tail -n +4 | xargs -r rm -rf
+            ls -dt */ | tail -n +6 | xargs -r rm -rf
 
             echo "Deployment completed successfully."
           SERVER_SCRIPT
