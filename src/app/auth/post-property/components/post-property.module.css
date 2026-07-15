@@ -1,6 +1,7 @@
 .wrapper {
     display: flex;
   gap: 20px;
+  margin-bottom: 32px;
 }
 .sidebarCol{
     padding: 32px 0 0 48px;
