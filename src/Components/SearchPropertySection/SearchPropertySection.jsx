@@ -8,11 +8,11 @@ const SearchPropertySection = () => {
     <>
       <div className="search-property-section text-center">
         <div className="container">
-          <h2 className="search-heading">
-            <span style={{ marginRight: "20px" }}>Find</span>
-            <span style={{ marginRight: "20px" }}>Buy,</span>
-            <span style={{ marginRight: "20px" }}>Rent,</span>
-            <span style={{ marginRight: "20px" }}>Sell</span>
+          <h2 className="search-heading d-flex flex-wrap justify-content-center">
+            <span className="me-2 me-md-4">Find</span>
+            <span className="me-2 me-md-4">Buy,</span>
+            <span className="me-2 me-md-4">Rent,</span>
+            <span className="me-2 me-md-4">Sell</span>
             <span>Property in India</span>
           </h2>
 

@@ -11,6 +11,7 @@ import Testimonials from "@/Components/Testimonials/Testimonials";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import { get, getssr } from "@/lib/api";
+import { LARAVEL_API_BASE_URL } from "@/lib/config";
 
 const backendBase = process.env.LARAVEL_API_BASE_URL?.replace(/\/$/, "") || "";
 
@@ -25,7 +26,7 @@ const extractArray = (res) => {
 
 const fetchProject = async () => {
   try {
-    const response = await getssr(`${backendBase}/api/get-all-project-listing-no-auth?per_page=10`);
+    const response = await getssr(`/api/get-all-project-listing-no-auth?per_page=10`);
     return extractArray(response);
   } catch (err) {
     console.error("Error fetching Projects", err);
@@ -35,7 +36,7 @@ const fetchProject = async () => {
 
 const fetchProperties = async () => {
   try {
-    const response = await getssr(`${backendBase}/api/get-all-properties-listing-no-auth?per_page=8`);
+    const response = await getssr(`/api/get-all-properties-listing-no-auth?per_page=8`);
     return extractArray(response);
   } catch (err) {
     console.error("Error fetching properties", err);
@@ -45,7 +46,7 @@ const fetchProperties = async () => {
 
 const fetchDeveloper = async () => {
   try {
-    const response = await getssr(`${backendBase}/api/fetch-all-developer-listing-no-auth?per_page=5`);
+    const response = await getssr(`/api/fetch-all-developer-listing-no-auth?per_page=5`);
     return extractArray(response);
   } catch (err) {
     console.error("Error fetching Developer", err);
@@ -55,7 +56,8 @@ const fetchDeveloper = async () => {
 
 const fetchReviews = async () => {
   try {
-    const response = await getssr(`${backendBase}/api/get-client-review`);
+    const response = await getssr(`/api/get-client-review`);
+    console.log(response , "client-review-response")
     return extractArray(response);
   } catch (err) {
     console.error("Error fetching reviews", err);

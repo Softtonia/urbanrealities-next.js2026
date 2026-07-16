@@ -15,6 +15,10 @@
   background-color: var(--white);
   margin-top: 20px;
 }
+.recent-search-item{
+  width: fit-content;
+  padding: 10px 15px!important;
+}
 
 .dropdown .dropdown-toggle {
   cursor: pointer;
@@ -253,7 +257,7 @@
 
   .search-container-small {
     display: flex;
-    width: 100%;
+    width: auto;
     align-items: center;
     justify-content: space-between;
     border-radius: 50px;
@@ -261,6 +265,9 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 10px 20px;
     background-color: var(--white);
+    box-sizing: border-box;
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
   .search-text::placeholder {
@@ -271,12 +278,14 @@
 
   .search-text {
     border: none;
-    width: 100% !important;
+    flex: 1;
+    min-width: 0;
     outline: none;
     box-shadow: none;
     background-color: transparent;
     font-family: var(--font-regular);
     font-size: 14px;
+    margin: 0 10px;
   }
 
   .small-btn {

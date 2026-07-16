@@ -600,16 +600,16 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="d-flex d-xl-none bg-dark text-white w-100 px-4 py-3 align-items-center justify-content-between">
-          <div className="d-flex align-items-center gap-3 m-0">
+        <div className="d-flex d-xl-none bg-dark text-white w-100 px-2 px-sm-4 py-3 align-items-center justify-content-between">
+          <div className="d-flex align-items-center gap-2 m-0">
             <div
               onClick={() => setMobileMenuOpen(true)}
               className="cursor-pointer"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="28"
-                height="28"
+                width="24"
+                height="24"
                 viewBox="0 0 64 64"
               >
                 <path
@@ -622,7 +622,7 @@ export default function Navbar() {
               <Link className="" href="/">
                 {isLoadingSiteData ? (
                   <div className="placeholder-glow">
-                    <div className="placeholder" style={{ width: "100px", height: "25px", borderRadius: "4px", backgroundColor: "#e9ecef" }}></div>
+                    <div className="placeholder" style={{ width: "90px", height: "22px", borderRadius: "4px", backgroundColor: "#e9ecef" }}></div>
                   </div>
                 ) : (
                   <Image
@@ -634,26 +634,27 @@ export default function Navbar() {
                           : "/logo.png"
                     }
                     alt="Urbanrealities"
-                    width={100}
-                    height={25}
+                    width={90}
+                    height={22}
                     priority // Optional: for faster loading above-the-fold
                   />
                 )}
               </Link>
             </div>
           </div>
-          <div className="m-0">
+          <div className="m-0" style={{ flexShrink: 0 }}>
             <Link
               href={!token ? `/auth/login?redirect=/auth/post-property/basic-details` : "/auth/post-property/basic-details"}
-              className="btn-property d-flex align-items-center gap-2 rounded-pill text-sm px-3 py-1"
+              className="btn-property d-flex align-items-center gap-1 rounded-pill text-sm px-2 py-1"
+              style={{ fontSize: "12px" }}
             >
               <Image
                 src={homeLogo}
                 alt="Post Property"
-                width={18}
-                height={18}
+                width={16}
+                height={16}
               />
-              Post Property <span className="badge-property">Free</span>
+              Post <span className="d-none d-sm-inline">Property</span> <span className="badge-property" style={{ padding: "2px 4px", fontSize: "10px" }}>Free</span>
             </Link>
           </div>
         </div>
@@ -676,7 +677,7 @@ export default function Navbar() {
         <div
           className="position-fixed top-0 start-0 h-100 bg-white text-dark d-xl-none"
           style={{
-            width: "400px",
+            width: "300px",
             transition: "transform 0.3s ease-in-out",
             transform: mobileMenuOpen ? "translateX(0)" : "translateX(-100%)",
             zIndex: 1050,

@@ -26,6 +26,7 @@
 .filter-section,
 .filter-tags-group {
   margin-bottom: 20px;
+  padding-bottom: 20px;
 }
 
 .filter-section label,

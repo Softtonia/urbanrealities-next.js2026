@@ -52,8 +52,16 @@ export default function LoginPage() {
     try {
       const data = await getGoogleLoginLink();
       if (data?.url) {
-        console.log(data);
-        window.location.href = data.url;
+        let authUrl = data.url;
+        // If running locally, dynamically replace the production redirect URI with the local one
+        if (typeof window !== "undefined" && window.location.hostname === "localhost") {
+          authUrl = authUrl.replace(
+            "https%3A%2F%2Fholiplaces.com",
+            "http%3A%2F%2Flocalhost%3A3000"
+          );
+        }
+        console.log("Redirecting to:", authUrl);
+        window.location.href = authUrl;
       } else {
         console.error('Google login URL not found in response');
       }

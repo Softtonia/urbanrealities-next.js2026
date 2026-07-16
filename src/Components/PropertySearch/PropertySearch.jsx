@@ -27,7 +27,12 @@ export default function PropertySearch({ purpose }) {
   const locationRef = useRef(null)
   const budgetDropdownRef = useRef(null);
   const router = useRouter();
-  const { city } = useCity();
+  const { city: globalCity } = useCity();
+  const [localCity, setLocalCity] = useState(null);
+
+  useEffect(() => {
+    setLocalCity(globalCity);
+  }, [globalCity]);
 
   const handleViewsearch = () => {
     router.push("/FilterMobile");
@@ -160,6 +165,7 @@ export default function PropertySearch({ purpose }) {
             }))
         );
         const results = await Promise.all(typeRequests);
+        console.log(results , "property type--------------------  ")
         setPropertyType(results);
       } catch (err) {
         console.error("Error fetching property types:", err);
@@ -199,7 +205,7 @@ export default function PropertySearch({ purpose }) {
       propertyId: propertyIds.join(","),   // e.g. 65,70
       propertyType: typeIds.join(","),     // e.g. 1,2,3,4
       purpose,
-      location: inputLocation || city?.name || "",
+      location: inputLocation || localCity?.name || "",
     };
     search(filters)
     
@@ -224,56 +230,128 @@ export default function PropertySearch({ purpose }) {
         <div className="searchbar-cts d-flex justify-content-center align-items-center">
           <div className="search-container">
             {/* Location Dropdown */}
-            <div className="dropdown full-click-area" ref={locationRef}>
+            <div className="dropdown full-click-area" ref={locationRef} style={{ width: "280px" }}>
               <div
                 className="dropdown-toggle d-flex align-items-center gap-2"
                 onClick={() => setIsLocationOpen((prev) => !prev)}
               >
                 <IoLocation className={"icon-custom"} />
-                {city &&
-                  <span className="Add-city">{city && city.name}</span>
-                }
+                {localCity && (
+                  <span className="Add-city d-flex align-items-center gap-1">
+                    {localCity.name}
+                    <span 
+                      style={{ 
+                        cursor: "pointer", 
+                        fontWeight: "bold", 
+                        marginLeft: "4px",
+                        display: isLocationOpen ? "inline" : "none"
+                      }} 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLocalCity(null);
+                        setInputLocation("");
+                      }}
+                    >
+                      ×
+                    </span>
+                  </span>
+                )}
                 <input
                   type="text"
-                  placeholder="Add more..."
+                  placeholder={localCity ? "" : "Search location..."}
                   className="search-input"
+                  style={{ flex: 1, minWidth: "50px" }}
                   value={inputLocation}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={(e) => setInputLocation(e.target.value)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsLocationOpen(true);
+                  }}
+                  onChange={(e) => {
+                    setInputLocation(e.target.value);
+                    setIsLocationOpen(true);
+                  }}
                 />
               </div>
               {isLocationOpen && (
-                <ul
-                  className="dropdown-menu body-text-14 custom-dropdown show"
+                <div
+                  className="dropdown-menu body-text-14 custom-dropdown show p-3"
                   onClick={(e) => e.stopPropagation()}
+                  style={{ minWidth: "720px", border: "none", boxShadow: "0px 4px 12px rgba(0,0,0,0.1)", borderRadius: "8px" }}
                 >
-                  <li>
-                    <a className="dropdown-item text-muted" href="#">
-                      <i>
-                        {" "}
-                        <IoLocation />
-                      </i>
-                      City,Locality
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item text-muted" href="#">
-                      <i>
-                        {" "}
-                        <FaMapPin />{" "}
-                      </i>
-                      Area (Like South Delhi)
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item text-muted" href="#">
-                      <i>
-                        <FaBuilding />
-                      </i>
-                      Project or builder name
-                    </a>
-                  </li>
-                </ul>
+                  {/* Recent Searches */}
+                  <div className="recent-searches mb-3">
+                    <h6 style={{ fontSize: "12px", fontWeight: "bold", color: "#555" }}>Recent Searches</h6>
+                    <div 
+                      className="recent-search-item p-2 mt-2" 
+                      style={{ backgroundColor: "#f8f9fa", border: "1px solid #e9ecef", borderRadius: "8px", cursor: "pointer" }}
+                      onClick={() => {
+                        setInputLocation("Bangalore");
+                        setIsLocationOpen(false);
+                      }}
+                    >
+                      <div style={{ color: "#333", fontSize: "14px" }}>Buy in Bangalore</div>
+                      <div style={{ color: "#888", fontSize: "12px" }}>Flat, House/Villa, Plot, All ...</div>
+                    </div>
+                  </div>
+
+                  {/* Location Header and List - ONLY visible when NO city is selected */}
+                  {!localCity && (
+                    <>
+                      <div className="location-header mb-2">
+                    <span style={{ backgroundColor: "var(--Orange-Red)", color: "#fff", padding: "2px 6px", fontSize: "12px", fontWeight: "bold", borderRadius: "2px" }}>
+                      Location
+                    </span>
+                  </div>
+
+                  {/* Location List */}
+                  <ul className="list-unstyled mb-0" style={{ maxHeight: "200px", overflowY: "auto" }}>
+                    {[
+                      "Delhi Ncr",
+                      "New Delhi",
+                      "New Delhi-North",
+                      "New Delhi-South",
+                      "New Delhi-East",
+                      "New Delhi-West",
+                      "New Delhi-Central",
+                      "Gurgaon",
+                      "Noida",
+                      "Bangalore",
+                      "Mumbai",
+                      "Pune"
+                    ]
+                      .filter((loc) => loc.toLowerCase().includes(inputLocation.toLowerCase()))
+                      .map((loc, idx) => {
+                        // Highlight matching text in red
+                        const matchIndex = loc.toLowerCase().indexOf(inputLocation.toLowerCase());
+                        let beforeMatch = loc;
+                        let matchText = "";
+                        let afterMatch = "";
+
+                        if (inputLocation && matchIndex !== -1) {
+                          beforeMatch = loc.substring(0, matchIndex);
+                          matchText = loc.substring(matchIndex, matchIndex + inputLocation.length);
+                          afterMatch = loc.substring(matchIndex + inputLocation.length);
+                        }
+
+                        return (
+                          <li 
+                            key={idx} 
+                            style={{ padding: "6px 0", cursor: "pointer", fontSize: "14px", color: "#555" }}
+                            onClick={() => {
+                              setInputLocation(loc);
+                              setIsLocationOpen(false);
+                            }}
+                          >
+                            {beforeMatch}
+                            <span style={{ color: "#ff4d4f" }}>{matchText}</span>
+                            {afterMatch}
+                          </li>
+                        );
+                      })}
+                  </ul>
+                    </>
+                  )}
+                </div>
               )}
             </div>
 
