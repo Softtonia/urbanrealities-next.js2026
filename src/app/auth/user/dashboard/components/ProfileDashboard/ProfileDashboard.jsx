@@ -108,7 +108,7 @@ const Dashboard = () => {
               <div className={styles.pendingDot}></div>
               <span>KYC Status<br/><strong>Pending</strong></span>
             </div>
-            <Link href={`/auth/user/setting/edit-profile?id=${profile.id}`} className={styles.editBtn}>
+            <Link href={`/auth/user/dashboard/edit-profile?id=${profile.id}`} className={styles.editBtn}>
               <FaEdit /> Edit Profile
             </Link>
           </div>

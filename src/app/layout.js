@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/Components/Navebar/Navbar";
-import Footer from "@/Components/Footer/Footer";
+import ConditionalFooter from "@/Components/Footer/ConditionalFooter";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import BootstrapClient from "@/Components/BootstrapClient";
 import { SiteSettingsProvider } from "@/Components/mycontext/siteSettingContext";
@@ -125,7 +125,7 @@ export default async function RootLayout({ children }) {
           <BootstrapClient />
           <Navbar />
           <main>{children}</main>
-          <Footer />
+          <ConditionalFooter />
           <ToastContainer />
         </SiteSettingsProvider>
         </CityProvider>

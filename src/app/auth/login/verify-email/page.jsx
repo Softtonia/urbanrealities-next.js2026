@@ -86,7 +86,7 @@ const VerifyOTP = () => {
                 ) {
                     window.location.href = `${process.env.NEXT_PUBLIC_BUSINESS_DOMAIN}?authtoken=${result.api_token}&id=${result.user_id}`;
                 } else {
-                    router.push("/auth/user/setting");
+                    router.push("/auth/user/dashboard");
                 }
             } else {
                 setError(result.message || "Invalid OTP");
@@ -175,7 +175,7 @@ const VerifyOTPpage = () => {
                         <h3>Your email is already verified </h3>
                         <p>
                             <Link
-                                href="/auth/user/setting"
+                                href="/auth/user/dashboard"
                                 style={{
                                     color: "var(--Orange-Red)",
                                     textDecoration: "underline",

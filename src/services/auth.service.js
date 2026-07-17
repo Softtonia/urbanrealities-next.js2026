@@ -106,3 +106,17 @@ export async function verifyOtp(otp, token) {
     headers: { Authorization: `Bearer ${token}` }
   });
 }
+
+export async function getUserProfile(userId, token) {
+  try {
+    const res = await fetch(`/api/auth/user-profile?id=${userId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return await res.json();
+  } catch (error) {
+    throw error;
+  }
+}

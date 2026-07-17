@@ -56,7 +56,7 @@ function Layout({ children }) {
   return (
     <ProtectedRoute>
       <div className={styles.dashboard}>
-        <div className={`${styles.mainContainer} container`}>
+        <div className={styles.mainContainer}>
           {pageHeading && (
             <h1 className={`${styles.heading} top-heading`}>{pageHeading}</h1>
           )}

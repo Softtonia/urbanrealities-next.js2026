@@ -7,6 +7,7 @@ import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import Select from "react-select";
 import { FaUser, FaBuilding, FaMapMarkerAlt, FaIdCard, FaCamera, FaCheckCircle, FaExclamationCircle, FaHeadset } from "react-icons/fa";
+import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
 
 const ProfileForm = () => {
   const searchParams = useSearchParams();
@@ -123,11 +124,8 @@ const ProfileForm = () => {
     if (token) fetchProfile();
   }, [token]);
 
-  // Hide sidebar title
   useEffect(() => {
-    return () => {
-      setPageHeading("Welcome Back! Urbanrealities");
-    };
+    setPageHeading("");
   }, []);
 
   // ✅ Handle image change
@@ -181,7 +179,7 @@ const ProfileForm = () => {
 
       if (res.ok) {
         console.log("✅ Profile Updated Successfully:", data);
-        router.push("/auth/user/setting");
+        router.push("/auth/user/dashboard");
       } else {
         console.error("❌ Update Failed:", data?.message || "Unknown error");
         alert("Profile update failed. Please try again.");
@@ -337,6 +335,10 @@ const ProfileForm = () => {
 
   return (
     <div className={styles.profileWraper}>
+      <Breadcrumb items={[
+        { label: 'Dashboard', link: '/auth/user/dashboard' },
+        { label: 'Edit Profile', link: '' }
+      ]} />
       {/* Tabs */}
       <div className={styles.tabsContainer}>
         <button 
@@ -484,7 +486,7 @@ const ProfileForm = () => {
 
             <div className={styles.formActions}>
               <button type="submit" className={styles.btnSave}>Save Changes</button>
-              <button type="button" className={styles.btnCancel} onClick={() => router.push('/auth/user/setting')}>Cancel</button>
+              <button type="button" className={styles.btnCancel} onClick={() => router.push('/auth/user/dashboard')}>Cancel</button>
             </div>
           </form>
         </div>

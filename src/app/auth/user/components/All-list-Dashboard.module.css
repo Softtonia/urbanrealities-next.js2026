@@ -1,9 +1,9 @@
 .dashboard {
   display: flex;
   background-color: var(--off-white);
-  padding: 50px 0;
+  padding: 0;
+  min-height: 100vh;
 }
-
 
 .insightcard {
   width: 100%;
@@ -17,7 +17,8 @@
 
 .pagerow {
   display: flex;
-  gap: 20px;
+  gap: 0;
+  width: 100%;
   overflow-x: visible;
 }
 
@@ -34,13 +35,14 @@
 }
 
 .Sidebarcol {
-  width: 155px;
-  padding-right: 0px;
+  width: 260px;
+  flex-shrink: 0;
 }
 
 .main {
   flex: 1;
   min-width: 0;
+  padding:20px;
 }
 
 .fullWidth {

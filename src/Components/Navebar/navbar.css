@@ -2,6 +2,9 @@
   background-color: var(--Eerie-Black);
   color: var(--White);
   padding: 10px 20px;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
 }
 
 .nav-items-name{

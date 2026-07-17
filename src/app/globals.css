@@ -78,6 +78,11 @@
   --Lotion: #fafafa;
 
   --Gainsboro: #dddddd;
+
+  /* Sidebar Colors */
+  --Sidebar-Bg: #1b1c20;
+  --Sidebar-Text: #a1a1aa;
+  --Sidebar-Active-Bg: #27272a;
 }
 
 /* -----custom color css class-------- */
@@ -116,7 +121,7 @@
 
 @font-face {
   font-family: "poppins-semibold";
-  src: url("/fonts/Poppins-Semibold.ttf") format("truetype");
+  src: url("/fonts/Poppins-SemiBold.ttf") format("truetype");
   font-weight: 600;
   font-display: swap;
 }
@@ -157,14 +162,14 @@
 }
 
 :root {
-  --font-bold: "poppins-bold";
-  --font-semibold: "poppins-semibold";
-  --font-medium: "poppins-medium";
-  --font-regular: "poppins-regular";
+  --font-bold: "poppins-bold", sans-serif;
+  --font-semibold: "poppins-semibold", sans-serif;
+  --font-medium: "poppins-medium", sans-serif;
+  --font-regular: "poppins-regular", sans-serif;
   
-  --font-inter-semibold: "Inter";
-  --font-inter-medium: "Inter";
-  --font-inter-regular: "Inter";
+  --font-inter-semibold: "Inter", sans-serif;
+  --font-inter-medium: "Inter", sans-serif;
+  --font-inter-regular: "Inter", sans-serif;
 }
 
 html {

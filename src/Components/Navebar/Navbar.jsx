@@ -279,8 +279,8 @@ export default function Navbar() {
               </div>
               <div
                 className={`transition-opacity duration-300 ${activeDropdown === "location"
-                  ? "opacity-100 visible"
-                  : "opacity-0 invisible"
+                  ? "d-block"
+                  : "d-none"
                   } position-absolute top-100 start-0`}
                 style={{ marginTop: "15px" }}
               >
@@ -444,47 +444,32 @@ export default function Navbar() {
                     </button>
                     {isOpen && (
                       <ul
-                        className="dropdown-menu show"
+                        className="dropdown-menu show shadow-lg border-0"
                         style={{
                           display: "block",
                           position: "absolute",
                           top: "100%",
                           left: -20,
                           backgroundColor: "#fff",
-                          padding: "0.5rem 0",
-                          borderRadius: "0.25rem",
-                          boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-                          minWidth: "150px",
+                          padding: "4px 0",
+                          borderRadius: "0",
+                          minWidth: "160px",
                         }}
                       >
                         <li>
                           <Link
-                            className="dropdown-item"
-                            href="/auth/user/account"
-                            style={{
-                              backgroundColor: "transparent",
-                              color: "inherit",
-                            }}
-                          >
-                            Dashboard
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            className="dropdown-item"
-                            href="/auth/user/setting"
-                            style={{
-                              backgroundColor: "transparent",
-                              color: "inherit",
-                            }}
+                            className="dropdown-item py-1 px-4"
+                            href="/auth/user/dashboard"
+                            style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}
                           >
                             My Profile
                           </Link>
                         </li>
                         <li>
                           <button
-                            className="dropdown-item text-danger"
+                            className="dropdown-item py-1 px-4"
                             onClick={logout}
+                            style={{ fontSize: "14px", fontWeight: "500", color: "#e40e0e" }}
                           >
                             Logout
                           </button>
@@ -541,47 +526,32 @@ export default function Navbar() {
                 </button>
                 {isOpen && (
                   <ul
-                    className="dropdown-menu show"
+                    className="dropdown-menu show shadow-lg border-0"
                     style={{
                       display: "block",
                       position: "absolute",
                       top: "100%",
                       left: -20,
                       backgroundColor: "#fff",
-                      padding: "0.5rem 0",
-                      borderRadius: "0.25rem",
-                      boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-                      minWidth: "150px",
+                      padding: "4px 0",
+                      borderRadius: "0",
+                      minWidth: "160px",
                     }}
                   >
                     <li>
                       <Link
-                        className="dropdown-item"
-                        href="/auth/user/account"
-                        style={{
-                          backgroundColor: "transparent",
-                          color: "inherit",
-                        }}
-                      >
-                        Dashboard
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        className="dropdown-item"
-                        href="/auth/user/setting"
-                        style={{
-                          backgroundColor: "transparent",
-                          color: "inherit",
-                        }}
+                        className="dropdown-item py-1 px-4"
+                        href="/auth/user/dashboard"
+                        style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}
                       >
                         My Profile
                       </Link>
                     </li>
                     <li>
                       <button
-                        className="dropdown-item text-danger"
+                        className="dropdown-item py-1 px-4"
                         onClick={logout}
+                        style={{ fontSize: "14px", fontWeight: "500", color: "#e40e0e" }}
                       >
                         Logout
                       </button>

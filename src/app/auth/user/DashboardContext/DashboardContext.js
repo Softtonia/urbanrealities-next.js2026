@@ -6,7 +6,7 @@ const DashboardContext = createContext();
 
 export const DashboardProvider = ({ children }) => {
   const [showSidebar, setShowSidebar] = useState(true);
-  const [pageHeading, setPageHeading] = useState("Welcome Back! Urbanrealities");
+  const [pageHeading, setPageHeading] = useState("");
 
   const value = {
     showSidebar,
