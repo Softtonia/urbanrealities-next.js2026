@@ -1,173 +1,592 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
-import styles from "../loginform/Login.module.css"; // ✅ Using existing module styles
-import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from 'react';
+import styles from '../loginform/Login.module.css';
+import { useSiteSettings } from '@/Components/mycontext/siteSettingContext';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function CallbackForm({ roles: initialRoles = [] }) {
+const API_URL =
+    process.env.NEXT_PUBLIC_API_URL ||
+    'https://api.holiplaces.com/api';
+
+const BUSINESS_DOMAIN =
+    process.env.NEXT_PUBLIC_BUSINESS_DOMAIN ||
+    'https://business.holiplaces.com';
+
+export default function CallbackForm({
+    roles: initialRoles = [],
+}) {
     const router = useRouter();
-    const { login } = useSiteSettings();
-    const [roleId, setRoleId] = useState("");
-    const [code, setCode] = useState("");
-    const [registrationToken, setRegistrationToken] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [isChecking, setIsChecking] = useState(true);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-    const [roles, setRoles] = useState(initialRoles);
     const searchParams = useSearchParams();
-    const redirect = searchParams.get("redirect") || "/";
-    console.log(roles , "roles")
+    const { login } = useSiteSettings();
 
-    // Fetch roles if they didn't load from SSR
+    const [roleId, setRoleId] = useState('');
+    const [registrationToken, setRegistrationToken] =
+        useState('');
+
+    const [roles, setRoles] = useState(
+        Array.isArray(initialRoles)
+            ? initialRoles
+            : []
+    );
+
+    const [loading, setLoading] = useState(false);
+    const [isChecking, setIsChecking] =
+        useState(true);
+
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+
+    const redirect =
+        searchParams.get('redirect') || '/';
+
+    const isRegisteredParam =
+        searchParams.get('is_registered');
+
+    const loginCode =
+        searchParams.get('code');
+
+    const registrationTokenParam =
+        searchParams.get('registration_token');
+
+    /**
+     * Common API headers.
+     *
+     * Do not manually add Origin.
+     * Browser automatically sends the correct Origin header.
+     */
+    const getHeaders = () => ({
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-Application-Password':
+            process.env
+                .NEXT_PUBLIC_APPLICATION_PASSWORD ||
+            '',
+        'X-App-Type':
+            process.env.NEXT_PUBLIC_APP_TYPE ||
+            'website',
+    });
+
+    /**
+     * Redirect user after successful authentication.
+     */
+    const redirectAuthenticatedUser = (
+        userData
+    ) => {
+        const businessRoles = [
+            'company',
+            'consultancy',
+            'developer',
+            'agent',
+        ];
+
+        const roleName = String(
+            userData?.role_name || ''
+        ).toLowerCase();
+
+        if (businessRoles.includes(roleName)) {
+            const businessUrl = new URL(
+                BUSINESS_DOMAIN
+            );
+
+            businessUrl.searchParams.set(
+                'authtoken',
+                userData.token
+            );
+
+            businessUrl.searchParams.set(
+                'id',
+                String(userData.user_id)
+            );
+
+            window.location.href =
+                businessUrl.toString();
+
+            return;
+        }
+
+        login(
+            userData.user_id,
+            userData.token
+        );
+
+        router.replace(redirect);
+    };
+
+    /**
+     * Fetch available roles.
+     *
+     * Admin role is removed because backend
+     * does not allow role_id 1.
+     */
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                // We fetch from the local Next.js proxy just in case
-                const res = await fetch('/api/admin/role-listing');
-                const data = await res.json();
-                if (Array.isArray(data)) {
-                    setRoles(data);
-                } else if (data?.roles && Array.isArray(data.roles)) {
-                    setRoles(data.roles);
-                } else if (data?.data && Array.isArray(data.data)) {
-                    setRoles(data.data);
+                const response = await fetch(
+                    '/api/admin/role-listing',
+                    {
+                        headers: {
+                            Accept:
+                                'application/json',
+                        },
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(
+                        'Unable to load roles.'
+                    );
                 }
+
+                const result =
+                    await response.json();
+
+                let roleList = [];
+
+                if (Array.isArray(result)) {
+                    roleList = result;
+                } else if (
+                    Array.isArray(result?.roles)
+                ) {
+                    roleList = result.roles;
+                } else if (
+                    Array.isArray(result?.data)
+                ) {
+                    roleList = result.data;
+                }
+
+                roleList = roleList.filter(
+                    (role) =>
+                        Number(role.id) !== 1
+                );
+
+                setRoles(roleList);
             } catch (err) {
-                console.error("Error fetching roles on client:", err);
+                console.error(
+                    'Error fetching roles:',
+                    err
+                );
+
+                setError(
+                    'Unable to load account roles.'
+                );
             }
         };
 
-        if (!roles || roles.length === 0) {
+        /**
+         * Roles are only required for a new user.
+         */
+        if (
+            isRegisteredParam === 'false' &&
+            (!roles || roles.length === 0)
+        ) {
             fetchRoles();
         }
-    }, [roles]);
+    }, [
+        isRegisteredParam,
+        roles?.length,
+    ]);
 
-    //  Get `code` from URL on client
+    /**
+     * Handle Google callback URL.
+     *
+     * Existing account:
+     * is_registered=true&code=...
+     *
+     * New account:
+     * is_registered=false&registration_token=...
+     */
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const urlParams = new URLSearchParams(window.location.search);
-            const codeParam = urlParams.get("code");
-            if (codeParam) {
-                setCode(codeParam);
-                checkUser(codeParam);
-            } else {
-                setIsChecking(false);
-            }
-        }
-    }, []);
+        let cancelled = false;
 
-    const checkUser = async (codeParam) => {
-        try {
-            // Check if user is already registered without passing role_id
-            const url = `https://api.holiplaces.com/api/auth/google/exchange`;
-            const res = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code: codeParam })
-            });
-            const result = await res.json();
-            
-            const isRegistered = result?.data?.is_registered ?? result?.is_registered;
+        const processGoogleCallback =
+            async () => {
+                setError('');
+                setSuccess('');
 
-            if (res.ok && isRegistered === true) {
-                // User is already registered
-                if (result.data.role_name === "company" || result.data.role_name === "consultancy" || result.data.role_name === "developer" || result.data.role_name === "agent") {
-                    window.location.href = `${process.env.NEXT_PUBLIC_BUSINESS_DOMAIN || 'https://business.holiplaces.com'}?authtoken=${result.data.token}&id=${result.data.user_id}`;
-                } else {
-                    login(result.data.user_id, result.data.token);
-                    router.push(redirect);
+                /**
+                 * EXISTING USER:
+                 * Exchange temporary Redis login code.
+                 */
+                if (
+                    isRegisteredParam === 'true'
+                ) {
+                    if (!loginCode) {
+                        if (!cancelled) {
+                            setError(
+                                'Google login code is missing.'
+                            );
+
+                            setIsChecking(false);
+                        }
+
+                        return;
+                    }
+
+                    try {
+                        const response =
+                            await fetch(
+                                `${API_URL}/auth/google/exchange`,
+                                {
+                                    method: 'POST',
+                                    headers:
+                                        getHeaders(),
+                                    body: JSON.stringify(
+                                        {
+                                            code: loginCode,
+                                        }
+                                    ),
+                                }
+                            );
+
+                        const result =
+                            await response.json();
+
+                        if (
+                            !response.ok ||
+                            !result?.status
+                        ) {
+                            throw new Error(
+                                result?.message ||
+                                    'Google login failed.'
+                            );
+                        }
+
+                        if (
+                            !result?.data?.token ||
+                            !result?.data
+                                ?.user_id
+                        ) {
+                            throw new Error(
+                                'Invalid login response received.'
+                            );
+                        }
+
+                        if (!cancelled) {
+                            redirectAuthenticatedUser(
+                                result.data
+                            );
+                        }
+                    } catch (err) {
+                        if (!cancelled) {
+                            setError(
+                                err instanceof Error
+                                    ? err.message
+                                    : 'Google login failed.'
+                            );
+
+                            setIsChecking(false);
+                        }
+                    }
+
+                    return;
                 }
-            } else if (res.ok && isRegistered === false) {
-                // New user - Show role selection form
-                setRegistrationToken(result?.data?.registration_token || result?.registration_token || "");
-                setIsChecking(false);
-            } else {
-                setError(result?.message || "Authentication failed");
-                setIsChecking(false);
-            }
-        } catch (err) {
-            setError(err.message || "An error occurred");
-            setIsChecking(false);
-        }
-    };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError("");
-        setSuccess("");
-        try {
-            const url = `https://api.holiplaces.com/api/auth/google/complete-registration`;
-            const res = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ registration_token: registrationToken, role_id: roleId })
-            });
-            const result = await res.json();
-            if (!res.ok) {
-                throw new Error(result.message || "Request failed");
-            }
-            if (result) {
-                console.log("Callback Result:", result);
+                /**
+                 * NEW USER:
+                 * Show role-selection form.
+                 */
+                if (
+                    isRegisteredParam === 'false'
+                ) {
+                    if (
+                        !registrationTokenParam
+                    ) {
+                        if (!cancelled) {
+                            setError(
+                                'Google registration token is missing.'
+                            );
 
-                if (result.data.role_name === "company" || result.data.role_name === "consultancy" || result.data.role_name === "developer" || result.data.role_name === "agent") {
-                    window.location.href = `${process.env.NEXT_PUBLIC_BUSINESS_DOMAIN || 'https://business.holiplaces.com'}?authtoken=${result.data.token}&id=${result.data.user_id}`;
-                } else {
-                    login(result.data.user_id, result.data.token);
-                    router.push(redirect);
+                            setIsChecking(false);
+                        }
+
+                        return;
+                    }
+
+                    if (!cancelled) {
+                        setRegistrationToken(
+                            registrationTokenParam
+                        );
+
+                        setIsChecking(false);
+                    }
+
+                    return;
                 }
+
+                /**
+                 * Invalid callback URL.
+                 */
+                if (!cancelled) {
+                    setError(
+                        'Invalid Google authentication request.'
+                    );
+
+                    setIsChecking(false);
+                }
+            };
+
+        processGoogleCallback();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [
+        isRegisteredParam,
+        loginCode,
+        registrationTokenParam,
+    ]);
+
+    /**
+     * Create a new account after role selection.
+     */
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if (!registrationToken) {
+            setError(
+                'Registration token is missing or expired.'
+            );
+
+            return;
+        }
+
+        if (!roleId) {
+            setError(
+                'Please select your account role.'
+            );
+
+            return;
+        }
+
+        try {
+            setLoading(true);
+            setError('');
+            setSuccess('');
+
+            const response = await fetch(
+                `${API_URL}/auth/google/complete-registration`,
+                {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify({
+                        registration_token:
+                            registrationToken,
+
+                        role_id: Number(roleId),
+                    }),
+                }
+            );
+
+            const result =
+                await response.json();
+
+            if (
+                !response.ok ||
+                !result?.status
+            ) {
+                throw new Error(
+                    result?.message ||
+                        'Google registration failed.'
+                );
             }
+
+            if (
+                !result?.data?.token ||
+                !result?.data?.user_id
+            ) {
+                throw new Error(
+                    'Invalid registration response received.'
+                );
+            }
+
+            setSuccess(
+                'Account created successfully.'
+            );
+
+            redirectAuthenticatedUser(
+                result.data
+            );
         } catch (err) {
-            setError(err.message);
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : 'Google registration failed.'
+            );
         } finally {
             setLoading(false);
         }
     };
 
-
+    /**
+     * Existing user is being logged in automatically.
+     */
     if (isChecking) {
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '250px',
+                }}
+            >
                 <p>Verifying account...</p>
             </div>
         );
     }
 
-    return (
-        <div>
-            <h5 className={styles.formHeading}>Set Role</h5>
-            <form className={styles.form}>
-                <div className={styles.formGroup}>
-                    <div className={styles.radioGroup}>
-                        {roles.map((role) => (
-                            <label key={role.id} className={styles.radioOption}>
-                                <input
-                                    type="radio"
-                                    name="userType"
-                                    value={role.id}
-                                    checked={roleId === role.id}
-                                    onChange={() => setRoleId(role.id)}
-                                />
-                                <span className={`body-text-14 ${styles.spanOption}`}>
-                                    {role.name}
-                                </span>
-                            </label>
-                        ))}
-                    </div>
-                </div>
-                {error && <p className={styles.error}>{error}</p>}
+    /**
+     * Existing user login failure.
+     * Never show role selection to this user.
+     */
+    if (
+        isRegisteredParam === 'true' &&
+        error
+    ) {
+        return (
+            <div>
+                <p className={styles.error}>
+                    {error}
+                </p>
 
                 <button
                     type="button"
-                    onClick={handleSubmit}
-                    disabled={loading || !roleId}
+                    className={`body-text-14 formGroupBtn ${styles.nextBtn}`}
+                    onClick={() =>
+                        router.replace(
+                            '/auth/login'
+                        )
+                    }
+                >
+                    Back to Login
+                </button>
+            </div>
+        );
+    }
+
+    /**
+     * Do not display role selection unless
+     * backend confirms this is a new user.
+     */
+    if (
+        isRegisteredParam !== 'false' ||
+        !registrationToken
+    ) {
+        return (
+            <div>
+                <p className={styles.error}>
+                    {error ||
+                        'Invalid registration session.'}
+                </p>
+            </div>
+        );
+    }
+
+    /**
+     * New-user role-selection form.
+     */
+    return (
+        <div>
+            <h5 className={styles.formHeading}>
+                Set Role
+            </h5>
+
+            <form
+                className={styles.form}
+                onSubmit={handleSubmit}
+            >
+                <div
+                    className={
+                        styles.formGroup
+                    }
+                >
+                    <div
+                        className={
+                            styles.radioGroup
+                        }
+                    >
+                        {roles
+                            .filter(
+                                (role) =>
+                                    Number(
+                                        role.id
+                                    ) !== 1
+                            )
+                            .map((role) => {
+                                const currentRoleId =
+                                    String(
+                                        role.id
+                                    );
+
+                                return (
+                                    <label
+                                        key={
+                                            currentRoleId
+                                        }
+                                        className={
+                                            styles.radioOption
+                                        }
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="userType"
+                                            value={
+                                                currentRoleId
+                                            }
+                                            checked={
+                                                roleId ===
+                                                currentRoleId
+                                            }
+                                            onChange={(
+                                                event
+                                            ) =>
+                                                setRoleId(
+                                                    event
+                                                        .target
+                                                        .value
+                                                )
+                                            }
+                                        />
+
+                                        <span
+                                            className={`body-text-14 ${styles.spanOption}`}
+                                        >
+                                            {
+                                                role.name
+                                            }
+                                        </span>
+                                    </label>
+                                );
+                            })}
+                    </div>
+                </div>
+
+                {error && (
+                    <p
+                        className={
+                            styles.error
+                        }
+                    >
+                        {error}
+                    </p>
+                )}
+
+                {success && (
+                    <p>{success}</p>
+                )}
+
+                <button
+                    type="submit"
+                    disabled={
+                        loading || !roleId
+                    }
                     className={`body-text-14 formGroupBtn ${styles.nextBtn}`}
                 >
-                    {loading ? 'Submitting...' : 'Submit'}
+                    {loading
+                        ? 'Submitting...'
+                        : 'Submit'}
                 </button>
-
             </form>
         </div>
     );
