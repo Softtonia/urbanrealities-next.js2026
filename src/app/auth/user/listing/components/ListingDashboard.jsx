@@ -9,8 +9,18 @@ import {
 } from 'react-icons/fa';
 import styles from './ListingDashboard.module.css';
 
-const ListingDashboard = ({ properties = [], loading = false }) => {
-  const [activeTab, setActiveTab] = useState('All Listings');
+const ListingDashboard = ({ 
+  properties = [], 
+  loading = false,
+  analytics = null,
+  meta = null,
+  currentPage = 1,
+  setCurrentPage = () => {},
+  filterType = 'all',
+  setFilterType = () => {},
+  perPage = 5,
+  setPerPage = () => {}
+}) => {
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'grid'
 
   // Dummy Fallback Data for UI since API might not have all these yet
@@ -22,29 +32,6 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
     negotiable: id % 2 !== 0,
     type: id % 2 === 0 ? 'Apartment' : 'Builder Floor'
   });
-
-  const displayProperties = properties.length > 0 ? properties : [
-    {
-      id: 991,
-      name: '3 BHK Builder Floor in DLF Phase 2',
-      city: { name: 'Gurgaon' },
-      state: { name: 'DLF Phase 2' },
-      featured_image: '/property-placeholders.jpg',
-      custom_field_values: [
-        { template: { name: 'property.basic.price' }, field_value: '₹2.45 Cr' }
-      ]
-    },
-    {
-      id: 992,
-      name: '2 BHK Apartment in Sector 65',
-      city: { name: 'Gurgaon' },
-      state: { name: 'Sector 65' },
-      featured_image: '/property-placeholders.jpg',
-      custom_field_values: [
-        { template: { name: 'property.basic.price' }, field_value: '₹1.15 Cr' }
-      ]
-    }
-  ];
 
   return (
     <div className={styles.dashboardContainer}>
@@ -74,7 +61,7 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
           </div>
           <div className={styles.statInfo}>
             <p className={styles.statLabel}>Total Listings</p>
-            <h3 className={styles.statValue}>12</h3>
+            <h3 className={styles.statValue}>{analytics?.total_listing || 0}</h3>
           </div>
         </div>
         <div className={styles.statCard}>
@@ -83,7 +70,7 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
           </div>
           <div className={styles.statInfo}>
             <p className={styles.statLabel}>Active Listings</p>
-            <h3 className={styles.statValue}>8</h3>
+            <h3 className={styles.statValue}>{analytics?.active_listing || 0}</h3>
           </div>
         </div>
         <div className={styles.statCard}>
@@ -92,7 +79,7 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
           </div>
           <div className={styles.statInfo}>
             <p className={styles.statLabel}>Inactive Listings</p>
-            <h3 className={styles.statValue}>3</h3>
+            <h3 className={styles.statValue}>{analytics?.inactive_listing || 0}</h3>
           </div>
         </div>
         <div className={styles.statCard}>
@@ -101,7 +88,7 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
           </div>
           <div className={styles.statInfo}>
             <p className={styles.statLabel}>Expired Listings</p>
-            <h3 className={styles.statValue}>1</h3>
+            <h3 className={styles.statValue}>{analytics?.expired_listing || 0}</h3>
           </div>
         </div>
         <div className={styles.statCard}>
@@ -109,8 +96,8 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
             <FaUsers />
           </div>
           <div className={styles.statInfo}>
-            <p className={styles.statLabel}>Total Leads</p>
-            <h3 className={styles.statValue}>125</h3>
+            <p className={styles.statLabel}>Draft Listings</p>
+            <h3 className={styles.statValue}>{analytics?.draft_listing || 0}</h3>
           </div>
         </div>
       </div>
@@ -120,13 +107,22 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
         {/* Toolbar */}
         <div className={styles.toolbar}>
           <div className={styles.tabs}>
-            {['All Listings (12)', 'Active (8)', 'Inactive (3)', 'Expired (1)', 'Draft (2)'].map(tab => (
+            {[
+              { label: `All Listings (${analytics?.total_listing || 0})`, value: 'all' },
+              { label: `Active (${analytics?.active_listing || 0})`, value: 'active' },
+              { label: `Inactive (${analytics?.inactive_listing || 0})`, value: 'inactive' },
+              { label: `Expired (${analytics?.expired_listing || 0})`, value: 'expired' },
+              { label: `Draft (${analytics?.draft_listing || 0})`, value: 'draft' }
+            ].map(tab => (
               <button 
-                key={tab}
-                className={`${styles.tabBtn} ${activeTab === tab.split(' ')[0] || (tab.startsWith('All') && activeTab === 'All Listings') ? styles.active : ''}`}
-                onClick={() => setActiveTab(tab.startsWith('All') ? 'All Listings' : tab.split(' ')[0])}
+                key={tab.value}
+                className={`${styles.tabBtn} ${filterType === tab.value ? styles.active : ''}`}
+                onClick={() => {
+                  setFilterType(tab.value);
+                  setCurrentPage(1);
+                }}
               >
-                {tab}
+                {tab.label}
               </button>
             ))}
           </div>
@@ -175,29 +171,50 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
               </tr>
             </thead>
             <tbody>
-              {displayProperties.map((prop, idx) => {
+              {properties.length > 0 ? properties.map((prop, idx) => {
                 const stats = getDummyStats(prop.id || idx);
                 
-                // Try to extract price from custom fields like the old component
+                // Map new API data format
                 let displayPrice = "N/A";
-                if (prop.custom_field_values) {
-                  const priceField = prop.custom_field_values.find(f => f.template?.name?.toLowerCase() === "property.basic.price");
-                  if (priceField) displayPrice = priceField.field_value;
+                if (prop.meta) {
+                  const priceField = prop.meta.find(f => f.custom_field?.field_name_slug === "price");
+                  if (priceField) {
+                    displayPrice = priceField.value_string || priceField.value_number || priceField.value_text || "N/A";
+                  }
                 }
                 
+                let displayType = stats.type;
+                if (prop.selected_taxonomies) {
+                  const typeTax = prop.selected_taxonomies.find(t => t.taxonomy_slug === "property-type");
+                  if (typeTax && typeTax.selected_terms?.length > 0) {
+                    displayType = typeTax.selected_terms[0].name;
+                  }
+                }
+                
+                const title = prop.title || prop.name || 'Untitled Property';
+                const idLabel = prop.listing_code ? `ID: ${prop.listing_code}` : ``;
+                const cityName = prop.city_name || prop.city?.name || 'City';
+                const stateName = prop.state_name || prop.state?.name || 'State';
+                const imageSrc = prop.featured_image || prop.gallery_images?.[0];
+                const rawStatus = prop.status || 'Unknown';
+                const sLower = rawStatus.toLowerCase();
+                let statusClass = styles.badgeInactive;
+                if (sLower === 'published' || sLower === 'active') statusClass = styles.badgeActive;
+                else if (sLower === 'expired' || sLower === 'rejected') statusClass = styles.badgeExpired;
+
                 return (
                   <tr key={prop.id || idx}>
                     <td>
                       <div className={styles.propCell}>
                         <img 
-                          src={prop.featured_image || '/property-placeholders.jpg'} 
+                          src={imageSrc} 
                           alt="Property" 
                           className={styles.propImage}
                           onError={(e) => { e.target.src = '/property-placeholders.jpg' }}
                         />
                         <div className={styles.propDetails}>
-                          <h4>{prop.name || 'Untitled Property'}</h4>
-                          <p className={styles.propId}>ID: URP-2026-00{12 - idx}</p>
+                          <h4>{title}</h4>
+                          <p className={styles.propId}>{idLabel}</p>
                         </div>
                       </div>
                     </td>
@@ -205,15 +222,15 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
                       <div className={styles.locCell}>
                         <FaMapMarkerAlt className={styles.cellIcon} />
                         <div>
-                          {prop.city?.name || 'City'}
-                          <span className={styles.subText}>{prop.state?.name || 'State'}</span>
+                          {cityName}
+                          <span className={styles.subText}>{stateName}</span>
                         </div>
                       </div>
                     </td>
                     <td>
                       <div className={styles.typeCell}>
-                        {stats.type === 'Villa' ? <FaHome className={styles.typeIcon} /> : <FaBuilding className={styles.typeIcon} />}
-                        {stats.type}
+                        {displayType === 'Villa' ? <FaHome className={styles.typeIcon} /> : <FaBuilding className={styles.typeIcon} />}
+                        {displayType}
                       </div>
                     </td>
                     <td>
@@ -224,27 +241,24 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
                     </td>
                     <td>
                       <div>
-                        <div className={`${styles.badge} ${
-                          stats.status === 'Active' ? styles.badgeActive : 
-                          stats.status === 'Inactive' ? styles.badgeInactive : 
-                          styles.badgeExpired
-                        }`}>
-                          <div className={styles.badgeDot}></div> {stats.status}
+                        <div className={`${styles.badge} ${statusClass}`}>
+                          <div className={styles.badgeDot}></div> 
+                          <span style={{ textTransform: 'capitalize' }}>{rawStatus}</span>
                         </div>
                         <span className={styles.subText}>
-                          {stats.status === 'Active' ? 'Published on' : stats.status === 'Inactive' ? 'Paused on' : 'Expired on'}
-                          <br/>{stats.date}
+                          Date
+                          <br/>{prop.created_at ? new Date(prop.created_at).toLocaleDateString() : stats.date}
                         </span>
                       </div>
                     </td>
                     <td>
-                      <div className={styles.statCell}>
-                        <FaEye /> {stats.views}
+                      <div className={styles?.statCell}>
+                        <FaEye /> {stats?.views}
                       </div>
                     </td>
                     <td>
-                      <div className={styles.statCell}>
-                        <FaUsers /> {stats.leads}
+                      <div className={styles?.statCell}>
+                        <FaUsers /> {stats?.leads}
                       </div>
                     </td>
                     <td>
@@ -256,44 +270,69 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
                     </td>
                   </tr>
                 );
-              })}
+              }) : (
+                <tr>
+                  <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--Gray-500)' }}>
+                    {loading ? 'Loading properties...' : 'No properties found.'}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
         ) : (
           <div className={styles.gridContainer}>
-            {displayProperties.map((prop, idx) => {
+            {properties.length > 0 ? properties.map((prop, idx) => {
               const stats = getDummyStats(prop.id || idx);
               
+              // Map new API data format
               let displayPrice = "N/A";
-              if (prop.custom_field_values) {
-                const priceField = prop.custom_field_values.find(f => f.template?.name?.toLowerCase() === "property.basic.price");
-                if (priceField) displayPrice = priceField.field_value;
+              if (prop.meta) {
+                const priceField = prop.meta.find(f => f.custom_field?.field_name_slug === "price");
+                if (priceField) {
+                  displayPrice = priceField.value_string || priceField.value_number || priceField.value_text || "N/A";
+                }
               }
+              
+              let displayType = stats.type;
+              if (prop.selected_taxonomies) {
+                const typeTax = prop.selected_taxonomies.find(t => t.taxonomy_slug === "property-type");
+                if (typeTax && typeTax.selected_terms?.length > 0) {
+                  displayType = typeTax.selected_terms[0].name;
+                }
+              }
+
+              const title = prop.title || prop.name || 'Untitled Property';
+              const idLabel = prop.listing_code ? `ID: ${prop.listing_code}` : ``;
+              const cityName = prop.city_name || prop.city?.name || 'City';
+              const stateName = prop.state_name || prop.state?.name || 'State';
+              const imageSrc = prop.featured_image || prop.gallery_images?.[0];
+              
+              const rawStatus = prop.status || 'Unknown';
+              const sLower = rawStatus.toLowerCase();
+              let statusClass = styles.badgeInactive;
+              if (sLower === 'published' || sLower === 'active') statusClass = styles.badgeActive;
+              else if (sLower === 'expired' || sLower === 'rejected') statusClass = styles.badgeExpired;
 
               return (
                 <div key={prop.id || idx} className={styles.propertyCard}>
                   <div className={styles.cardImageWrapper}>
                     <img 
-                      src={prop.featured_image || '/property-placeholders.jpg'} 
+                      src={imageSrc} 
                       alt="Property" 
                       onError={(e) => { e.target.src = '/property-placeholders.jpg' }}
                     />
-                    <div className={`${styles.cardBadge} ${
-                      stats.status === 'Active' ? styles.badgeActive : 
-                      stats.status === 'Inactive' ? styles.badgeInactive : 
-                      styles.badgeExpired
-                    }`}>
+                    <div className={`${styles.cardBadge} ${statusClass}`}>
                       <div className={styles.badgeDot}></div>
-                      {stats.status}
+                      <span style={{ textTransform: 'capitalize' }}>{rawStatus}</span>
                     </div>
                   </div>
                   
                   <div className={styles.cardContent}>
                     <div className={styles.cardHeaderRow}>
                       <div>
-                        <h4 className={styles.cardTitle}>{prop.name || 'Untitled Property'}</h4>
-                        <p className={styles.cardId}>ID: URP-2026-00{12 - idx}</p>
+                        <h4 className={styles.cardTitle}>{title}</h4>
+                        <p className={styles.cardId}>{idLabel}</p>
                       </div>
                       <div className={styles.cardPrice}>
                         <h4>{displayPrice}</h4>
@@ -304,13 +343,13 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
                     <div className={styles.cardInfoRow}>
                       <div className={styles.cardInfoItem}>
                         <FaMapMarkerAlt className={styles.cellIcon} />
-                        {prop.city?.name || 'City'}, {prop.state?.name || 'State'}
+                        {cityName}, {stateName}
                       </div>
                     </div>
                     <div className={styles.cardInfoRow}>
                       <div className={styles.cardInfoItem}>
-                        {stats.type === 'Villa' ? <FaHome className={styles.typeIcon} /> : <FaBuilding className={styles.typeIcon} />}
-                        {stats.type}
+                        {displayType === 'Villa' ? <FaHome className={styles.typeIcon} /> : <FaBuilding className={styles.typeIcon} />}
+                        {displayType}
                       </div>
                     </div>
 
@@ -332,23 +371,59 @@ const ListingDashboard = ({ properties = [], loading = false }) => {
                   </div>
                 </div>
               );
-            })}
+            }) : (
+              <div style={{ padding: '40px', color: 'var(--Gray-500)', textAlign: 'center', gridColumn: '1 / -1' }}>
+                {loading ? 'Loading properties...' : 'No properties found.'}
+              </div>
+            )}
           </div>
         )}
 
         {/* Pagination Row */}
         <div className={styles.paginationRow}>
-          <div>Showing 1 to {Math.min(5, displayProperties.length)} of {displayProperties.length} listings</div>
-          <div className={styles.pageControls}>
-            <button className={styles.pageBtn}>&lt;</button>
-            <button className={`${styles.pageBtn} ${styles.active}`}>1</button>
-            <button className={styles.pageBtn}>2</button>
-            <button className={styles.pageBtn}>3</button>
-            <button className={styles.pageBtn}>&gt;</button>
+          <div>
+            Showing {properties.length === 0 ? 0 : (currentPage - 1) * perPage + 1} to {Math.min(currentPage * perPage, meta?.total || properties.length)} of {meta?.total || properties.length} listings
           </div>
-          <select className={styles.perPageSelect}>
-            <option>Show 5 per page</option>
-            <option>Show 10 per page</option>
+          
+          <div className={styles.pageControls}>
+            <button 
+              className={styles.pageBtn} 
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            >
+              &lt;
+            </button>
+            
+            {Array.from({ length: meta?.last_page || 1 }, (_, i) => i + 1).map(page => (
+              <button 
+                key={page} 
+                className={`${styles.pageBtn} ${currentPage === page ? styles.active : ''}`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button 
+              className={styles.pageBtn}
+              disabled={currentPage === (meta?.last_page || 1)}
+              onClick={() => setCurrentPage(prev => Math.min(meta?.last_page || 1, prev + 1))}
+            >
+              &gt;
+            </button>
+          </div>
+
+          <select 
+            className={styles.perPageSelect}
+            value={perPage}
+            onChange={(e) => {
+              setPerPage(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+          >
+            <option value={5}>Show 5 per page</option>
+            <option value={10}>Show 10 per page</option>
+            <option value={20}>Show 20 per page</option>
           </select>
         </div>
       </div>
