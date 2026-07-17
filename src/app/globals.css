@@ -1,4 +1,25 @@
 :root {
+  /* Analytics Dashboard Colors */
+  --Orange-500: #f97316;
+  --Blue-500: #3b82f6;
+  --Green-500: #22c55e;
+  --Purple-500: #a855f7;
+  --Gray-900: #111827;
+  --Gray-600: #4b5563;
+  --Gray-500: #6b7280;
+  --Gray-400: #9ca3af;
+  --Gray-300: #d1d5db;
+  --Gray-200: #e5e7eb;
+  --Gray-100: #f3f4f6;
+  --Gray-50: #f9fafb;
+  --Emerald-500: #10b981;
+  --Red-500: #ef4444;
+  --Green-100: #dcfce7;
+  --Green-800: #166534;
+  --Orange-50: #fff7ed;
+  --Orange-100: #ffedd5;
+  --Orange-200: #fed7aa;
+
   /* Primary color */
   --Linen: rgba(255, 239, 231);
 

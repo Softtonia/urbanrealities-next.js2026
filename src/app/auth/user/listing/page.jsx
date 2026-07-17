@@ -1,9 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import styles from '../components/All-list-Dashboard.module.css';
-import MyAccountListing from './components/My-Account-listing';
 import ProtectedRoute from '@/Components/protectedRoute';
-import {  useSiteSettings } from '@/Components/mycontext/siteSettingContext';
+import { useSiteSettings } from '@/Components/mycontext/siteSettingContext';
+import ListingDashboard from './components/ListingDashboard';
 
 const ListingPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,74 +43,9 @@ const ListingPage = () => {
     }
   }, [token, currentPage]);
 
-  const totalPages = meta?.last_page || 1;
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
   return (
     <ProtectedRoute>
-      <>
-        {loading ? (
-          <div className={styles.loaderWrapper}>
-            <div className={styles.spinner}></div>
-          </div>
-        ) : (
-          <>
-            <section className={styles.listingcard}>
-              {properties?.length > 0 ? (
-                properties.map((listing) => (
-                  <MyAccountListing key={listing.id} data={listing} />
-                ))
-              ) : (
-                <p>Properties not Found</p>
-              )}
-            </section>
-
-            {totalPages > 1 && (
-              <nav className={styles.pagination}>
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  &lt;
-                </button>
-
-                {Array.from({ length: 5 }, (_, index) => {
-                  const startPage = Math.max(
-                    1,
-                    Math.min(totalPages - 4, currentPage - 2)
-                  );
-                  const pageNumber = startPage + index;
-                  if (pageNumber > totalPages) return null;
-
-                  return (
-                    <button
-                      key={pageNumber}
-                      onClick={() => handlePageChange(pageNumber)}
-                      className={
-                        currentPage === pageNumber ? styles.activePage : ''
-                      }
-                    >
-                      {pageNumber}
-                    </button>
-                  );
-                })}
-
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  &gt;
-                </button>
-              </nav>
-            )}
-          </>
-        )}
-      </>
+      <ListingDashboard properties={properties} loading={loading} />
     </ProtectedRoute>
   );
 };

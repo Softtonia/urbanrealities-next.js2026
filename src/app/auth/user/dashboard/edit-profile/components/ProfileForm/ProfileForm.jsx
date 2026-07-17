@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Select from "react-select";
 import { FaUser, FaBuilding, FaMapMarkerAlt, FaIdCard, FaCamera, FaCheckCircle, FaExclamationCircle, FaHeadset } from "react-icons/fa";
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
+import KycDocuments from "../KycDocuments/KycDocuments";
 
 const ProfileForm = () => {
   const searchParams = useSearchParams();
@@ -479,8 +480,8 @@ const ProfileForm = () => {
             )}
             
             {activeTab === 'kyc' && (
-              <div className={styles.fieldsGrid}>
-                <p>KYC documents will appear here.</p>
+              <div className={styles.fieldsGrid} style={{ display: 'block' }}>
+                <KycDocuments />
               </div>
             )}
 

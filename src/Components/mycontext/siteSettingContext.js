@@ -27,7 +27,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
         setIsLoadingToken(false) // done loading
     }, [])
 
-    console.log(token)
+    console.log(token , "----API-TOKEN----")
     const [fetchingUser, setFetchingUser] = useState(true)
 
     useEffect(() => {
