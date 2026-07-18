@@ -43,6 +43,26 @@
   min-height: 80px;
   resize: vertical; /* Allow vertical resizing */
 }
+
+/* Override bootstrap focus outline for form controls to use orange */
+.formContainer {
+  /* wrapper for dynamic fields */
+}
+.formContainer :global(.form-control:focus) {
+  border-color: var(--Orange-Red) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.orangeBtn {
+  background-color: var(--Orange-Red) !important;
+  border-color: var(--Orange-Red) !important;
+  color: white !important;
+}
+.orangeBtn:hover {
+  opacity: 0.9;
+  color: white !important;
+}
 .optionBtn {
    padding:8px 16px;
   border: 1px solid var( --Spanish-Gray);
@@ -96,6 +116,9 @@
 .subPara {
   margin-top: 24px;
   font-size: clamp(14px, 1.5vw, 16px);
+  font-family: var(--font-regular);
+  margin-bottom: 8px;
+  text-transform: capitalize;
 }
 .optionBtn,
 .radioLabel {

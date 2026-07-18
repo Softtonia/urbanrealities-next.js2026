@@ -8,6 +8,8 @@ import {
   FaEye, FaEdit, FaTrash, FaLightbulb, FaHome
 } from 'react-icons/fa';
 import styles from './ListingDashboard.module.css';
+import CustomSelect from '@/Components/CustomSelect/CustomSelect';
+import { TextField, InputAdornment, FormControl, InputLabel, Select, MenuItem, Skeleton } from '@mui/material';
 
 const ListingDashboard = ({ 
   properties = [], 
@@ -22,6 +24,14 @@ const ListingDashboard = ({
   setPerPage = () => {}
 }) => {
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'grid'
+  const [sortValue, setSortValue] = useState('newest');
+
+  const sortOptions = [
+    { label: 'Newest First', value: 'newest' },
+    { label: 'Oldest First', value: 'oldest' },
+    { label: 'Price: High to Low', value: 'price_desc' },
+    { label: 'Price: Low to High', value: 'price_asc' },
+  ];
 
   // Dummy Fallback Data for UI since API might not have all these yet
   const getDummyStats = (id) => ({
@@ -55,88 +65,166 @@ const ListingDashboard = ({
 
       {/* Top Stats Grid */}
       <div className={styles.topStatsGrid}>
-        <div className={styles.statCard}>
-          <div className={styles.statIconWrapper} style={{ background: '#fff7ed', color: 'var(--Orange-500)' }}>
-            <FaBuilding />
+        {[
+          { label: 'Total Listings', value: analytics?.total_listing, icon: <FaBuilding />, bg: '#fff7ed', color: 'var(--Orange-500)' },
+          { label: 'Published', value: analytics?.published_listing, icon: <FaEye />, bg: '#dcfce7', color: 'var(--Emerald-500)' },
+          { label: 'Active', value: analytics?.active_listing, icon: <FaCheckCircle />, bg: '#dcfce7', color: 'var(--Green-500)' },
+          { label: 'Under Review', value: analytics?.under_review_listing, icon: <FaSearch />, bg: '#f3e8ff', color: 'var(--Purple-500)' },
+          { label: 'Draft', value: analytics?.draft_listing, icon: <FaEdit />, bg: '#eff6ff', color: 'var(--Blue-500)' },
+          { label: 'Inactive', value: analytics?.inactive_listing, icon: <FaPauseCircle />, bg: '#fef3c7', color: '#f59e0b' },
+          { label: 'Expired', value: analytics?.expired_listing, icon: <FaClock />, bg: '#fee2e2', color: 'var(--Red-500)' },
+          { label: 'Rejected', value: analytics?.rejected_listing, icon: <FaTrash />, bg: '#f3f4f6', color: 'var(--Gray-500)' }
+        ].map((stat, idx) => (
+          <div key={idx} className={styles.statCard}>
+            <div className={styles.statIconWrapper} style={{ background: stat.bg, color: stat.color }}>
+              {stat.icon}
+            </div>
+            <div className={styles.statInfo}>
+              <p className={styles.statLabel}>{stat.label}</p>
+              <h3 className={styles.statValue}>
+                {loading ? <Skeleton variant="rounded" width={40} height={28} /> : (stat.value || 0)}
+              </h3>
+            </div>
           </div>
-          <div className={styles.statInfo}>
-            <p className={styles.statLabel}>Total Listings</p>
-            <h3 className={styles.statValue}>{analytics?.total_listing || 0}</h3>
-          </div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statIconWrapper} style={{ background: '#dcfce7', color: 'var(--Emerald-500)' }}>
-            <FaCheckCircle />
-          </div>
-          <div className={styles.statInfo}>
-            <p className={styles.statLabel}>Active Listings</p>
-            <h3 className={styles.statValue}>{analytics?.active_listing || 0}</h3>
-          </div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statIconWrapper} style={{ background: '#fef3c7', color: '#f59e0b' }}>
-            <FaPauseCircle />
-          </div>
-          <div className={styles.statInfo}>
-            <p className={styles.statLabel}>Inactive Listings</p>
-            <h3 className={styles.statValue}>{analytics?.inactive_listing || 0}</h3>
-          </div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statIconWrapper} style={{ background: '#fee2e2', color: 'var(--Red-500)' }}>
-            <FaClock />
-          </div>
-          <div className={styles.statInfo}>
-            <p className={styles.statLabel}>Expired Listings</p>
-            <h3 className={styles.statValue}>{analytics?.expired_listing || 0}</h3>
-          </div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statIconWrapper} style={{ background: '#eff6ff', color: 'var(--Blue-500)' }}>
-            <FaUsers />
-          </div>
-          <div className={styles.statInfo}>
-            <p className={styles.statLabel}>Draft Listings</p>
-            <h3 className={styles.statValue}>{analytics?.draft_listing || 0}</h3>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Main Content Card */}
       <div className={styles.contentCard}>
         {/* Toolbar */}
         <div className={styles.toolbar}>
-          <div className={styles.tabs}>
-            {[
-              { label: `All Listings (${analytics?.total_listing || 0})`, value: 'all' },
-              { label: `Active (${analytics?.active_listing || 0})`, value: 'active' },
-              { label: `Inactive (${analytics?.inactive_listing || 0})`, value: 'inactive' },
-              { label: `Expired (${analytics?.expired_listing || 0})`, value: 'expired' },
-              { label: `Draft (${analytics?.draft_listing || 0})`, value: 'draft' }
-            ].map(tab => (
-              <button 
-                key={tab.value}
-                className={`${styles.tabBtn} ${filterType === tab.value ? styles.active : ''}`}
-                onClick={() => {
-                  setFilterType(tab.value);
+          <div className={styles.filterDropdown}>
+            <FormControl size="small" sx={{ 
+              width: 180, 
+              backgroundColor: 'var(--White)',
+              '& .MuiInputLabel-root': {
+                fontSize: '13px',
+                fontFamily: 'inherit',
+                color: 'var(--Gray-500)',
+                '&.Mui-focused': { color: 'var(--Orange-500)' }
+              },
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+                fontSize: '13px',
+                fontFamily: 'inherit',
+                color: 'var(--Gray-600)',
+                height: '40px',
+                '& fieldset': { borderColor: 'var(--Gray-200)' },
+                '& fieldset legend': { fontSize: '9.75px', fontFamily: 'inherit' },
+                '&:hover fieldset': { borderColor: 'var(--Gray-300)' },
+                '&.Mui-focused fieldset': { borderColor: 'var(--Orange-500)', borderWidth: '1px' }
+              }
+            }}>
+              <InputLabel id="filter-select-label">Status</InputLabel>
+              <Select
+                labelId="filter-select-label"
+                value={filterType}
+                label="Status"
+                onChange={(e) => {
+                  setFilterType(e.target.value);
                   setCurrentPage(1);
                 }}
               >
-                {tab.label}
-              </button>
-            ))}
+                {[
+                  { label: 'All Listings', value: 'all' },
+                  { label: 'Published', value: 'published' },
+                  { label: 'Active', value: 'active' },
+                  { label: 'Under Review', value: 'under_review' },
+                  { label: 'Draft', value: 'draft' },
+                  { label: 'Inactive', value: 'inactive' },
+                  { label: 'Expired', value: 'expired' },
+                  { label: 'Rejected', value: 'rejected' }
+                ].map(opt => (
+                  <MenuItem key={opt.value} value={opt.value} sx={{ fontSize: '13px', fontFamily: 'inherit' }}>
+                    {opt.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
           <div className={styles.toolbarRight}>
-            <div className={styles.searchBox}>
-              <FaSearch className={styles.searchIcon} />
-              <input type="text" placeholder="Search by title, location or ID..." />
-            </div>
-            <select className={styles.sortSelect}>
-              <option>Sort By: Newest First</option>
-              <option>Sort By: Oldest First</option>
-              <option>Price: High to Low</option>
-              <option>Price: Low to High</option>
-            </select>
+            <TextField 
+              variant="outlined"
+              size="small"
+              label="Search by title, location"
+              sx={{ 
+                width: 280,
+                backgroundColor: 'var(--White)',
+                '& .MuiInputLabel-root': {
+                  fontSize: '13px',
+                  fontFamily: 'inherit',
+                  color: 'var(--Gray-500)',
+                  '&.Mui-focused': {
+                    color: 'var(--Orange-500)'
+                  }
+                },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontFamily: 'inherit',
+                  color: 'var(--Gray-600)',
+                  height: '40px',
+                  '& fieldset': {
+                    borderColor: 'var(--Gray-200)',
+                  },
+                  '& fieldset legend': {
+                    fontSize: '9.75px',
+                    fontFamily: 'inherit',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'var(--Gray-300)',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: 'var(--Orange-500)',
+                    borderWidth: '1px'
+                  }
+                }
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FaSearch color="var(--Gray-400)" />
+                  </InputAdornment>
+                )
+              }}
+            />
+
+            <FormControl size="small" sx={{ 
+              width: 180, 
+              backgroundColor: 'var(--White)',
+              '& .MuiInputLabel-root': {
+                fontSize: '13px',
+                fontFamily: 'inherit',
+                color: 'var(--Gray-500)',
+                '&.Mui-focused': { color: 'var(--Orange-500)' }
+              },
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+                fontSize: '13px',
+                fontFamily: 'inherit',
+                color: 'var(--Gray-600)',
+                height: '40px',
+                '& fieldset': { borderColor: 'var(--Gray-200)' },
+                '& fieldset legend': { fontSize: '9.75px', fontFamily: 'inherit' },
+                '&:hover fieldset': { borderColor: 'var(--Gray-300)' },
+                '&.Mui-focused fieldset': { borderColor: 'var(--Orange-500)', borderWidth: '1px' }
+              }
+            }}>
+              <InputLabel id="sort-select-label">Sort By</InputLabel>
+              <Select
+                labelId="sort-select-label"
+                value={sortValue}
+                label="Sort By"
+                onChange={(e) => setSortValue(e.target.value)}
+              >
+                {sortOptions.map(opt => (
+                  <MenuItem key={opt.value} value={opt.value} sx={{ fontSize: '13px', fontFamily: 'inherit' }}>
+                    {opt.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
             <div className={styles.viewToggles}>
               <button 
                 className={`${styles.viewToggleBtn} ${viewMode === 'list' ? styles.active : ''}`}
@@ -213,7 +301,7 @@ const ListingDashboard = ({
                           onError={(e) => { e.target.src = '/property-placeholders.jpg' }}
                         />
                         <div className={styles.propDetails}>
-                          <h4>{title}</h4>
+                          <h4 className='text-capitalize'>{title}</h4>
                           <p className={styles.propId}>{idLabel}</p>
                         </div>
                       </div>
@@ -236,7 +324,6 @@ const ListingDashboard = ({
                     <td>
                       <div>
                         <div className={styles.priceValue}>{displayPrice}</div>
-                        <span className={styles.subText}>{stats.negotiable ? 'Negotiable' : 'Fixed'}</span>
                       </div>
                     </td>
                     <td>
@@ -270,10 +357,23 @@ const ListingDashboard = ({
                     </td>
                   </tr>
                 );
-              }) : (
+              }) : loading ? (
+                [...Array(5)].map((_, i) => (
+                  <tr key={i}>
+                    <td><Skeleton variant="rounded" width="80%" height={48} /></td>
+                    <td><Skeleton variant="text" width="60%" height={24} /></td>
+                    <td><Skeleton variant="text" width="50%" height={24} /></td>
+                    <td><Skeleton variant="text" width="40%" height={24} /></td>
+                    <td><Skeleton variant="rounded" width="60%" height={28} /></td>
+                    <td><Skeleton variant="text" width={40} height={24} /></td>
+                    <td><Skeleton variant="text" width={40} height={24} /></td>
+                    <td><Skeleton variant="rounded" width={100} height={32} /></td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
                   <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--Gray-500)' }}>
-                    {loading ? 'Loading properties...' : 'No properties found.'}
+                    No properties found.
                   </td>
                 </tr>
               )}
@@ -336,7 +436,6 @@ const ListingDashboard = ({
                       </div>
                       <div className={styles.cardPrice}>
                         <h4>{displayPrice}</h4>
-                        <p>{stats.negotiable ? 'Negotiable' : 'Fixed'}</p>
                       </div>
                     </div>
 
@@ -371,9 +470,22 @@ const ListingDashboard = ({
                   </div>
                 </div>
               );
-            }) : (
+            }) : loading ? (
+              [...Array(6)].map((_, i) => (
+                <div key={i} className={styles.propertyCard}>
+                  <Skeleton variant="rectangular" height={220} sx={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }} />
+                  <div className={styles.cardContent}>
+                    <Skeleton variant="text" height={32} width="70%" />
+                    <Skeleton variant="text" width="50%" />
+                    <div style={{ marginTop: 16 }}>
+                      <Skeleton variant="rounded" height={32} width={120} />
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
               <div style={{ padding: '40px', color: 'var(--Gray-500)', textAlign: 'center', gridColumn: '1 / -1' }}>
-                {loading ? 'Loading properties...' : 'No properties found.'}
+                No properties found.
               </div>
             )}
           </div>

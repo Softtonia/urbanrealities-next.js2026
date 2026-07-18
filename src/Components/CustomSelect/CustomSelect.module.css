@@ -1,0 +1,85 @@
+.customSelectWrapper {
+  position: relative;
+  min-width: 180px;
+  font-family: inherit;
+}
+
+.selectBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--White, #ffffff);
+  border: 1px solid var(--Gray-200, #e5e7eb);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  font-size: 13px;
+  color: var(--Gray-600, #4b5563);
+  font-weight: 500;
+  height: 40px;
+}
+
+.selectBox:hover {
+  background: var(--Gray-50, #f9fafb);
+}
+
+.selectBox.open {
+  border-color: var(--Orange-500, #f97316);
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.1);
+}
+
+.selectedText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  font-size: 10px;
+  color: var(--Gray-500, #6b7280);
+  transition: transform 0.3s ease;
+}
+
+.chevron.rotate {
+  transform: rotate(180deg);
+}
+
+.optionsList {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background: var(--White, #ffffff);
+  border: 1px solid var(--Gray-200, #e5e7eb);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  overflow: hidden;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.optionItem {
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--Gray-600, #4b5563);
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+.optionItem:hover {
+  background: var(--Gray-50, #f9fafb);
+  color: var(--Orange-500, #f97316);
+}
+
+.optionItem.selected {
+  background: var(--Orange-50, #fff7ed);
+  color: var(--Orange-500, #f97316);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -7,7 +7,7 @@ export async function GET(req,{params}) {
        
         const authHeader = req.headers.get('authorization');//get token from header
 
-        const response = await get(`/api/cities/${id}`, {
+        const response = await get(`/api/frontend/locations/cities?state_id=${id}`, {
             headers: {
                 'Authorization': authHeader,
             },

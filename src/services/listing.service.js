@@ -28,3 +28,18 @@ export const fetchUserListings = async (token, filter = 'all', perPage = 5, page
     throw error;
   }
 };
+
+export const submitListing = async (token, payload) => {
+  try {
+    const response = await apiClient.post(`/api/frontend/listings`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error submitting listing:", error);
+    throw error;
+  }
+};

@@ -1,9 +1,9 @@
 'use client';
 import React from 'react';
 import { 
-  FaEye, FaUsers, FaComments, FaBuilding, FaArrowUp, 
+  FaEye, FaUsers, FaComments, FaBuilding, FaArrowUp, FaArrowDown, 
    FaDownload, FaDesktop, 
-   FaMapMarkerAlt, FaStar, FaPlus 
+  FaMapMarkerAlt, FaStar, FaPlus 
 } from 'react-icons/fa';
 import Image from 'next/image';
 import { DatePicker } from 'antd';
@@ -36,18 +36,39 @@ ChartJS.register(
   Filler
 );
 
-const COLORS = {
-  orange: '#f97316',
-  blue: '#3b82f6',
-  green: '#22c55e',
-  purple: '#a855f7',
-  gray: '#d1d5db',
-  white: '#ffffff',
-  textLight: '#9ca3af',
-  gridLine: '#f3f4f6',
+let cachedColors = null;
+const getColors = () => {
+  if (cachedColors) return cachedColors;
+  if (typeof window !== 'undefined') {
+    const style = getComputedStyle(document.documentElement);
+    cachedColors = {
+      orange: style.getPropertyValue('--Orange-500').trim() || '#f97316',
+      blue: style.getPropertyValue('--Blue-500').trim() || '#3b82f6',
+      green: style.getPropertyValue('--Green-500').trim() || '#22c55e',
+      purple: style.getPropertyValue('--Purple-500').trim() || '#a855f7',
+      red: style.getPropertyValue('--Red-500').trim() || '#ef4444',
+      gray: style.getPropertyValue('--Gray-300').trim() || '#d1d5db',
+      white: style.getPropertyValue('--White').trim() || '#ffffff',
+      textLight: style.getPropertyValue('--Gray-400').trim() || '#9ca3af',
+      gridLine: style.getPropertyValue('--Gray-100').trim() || '#f3f4f6',
+    };
+    return cachedColors;
+  }
+  return {
+    orange: '#f97316',
+    blue: '#3b82f6',
+    green: '#22c55e',
+    purple: '#a855f7',
+    red: '#ef4444',
+    gray: '#d1d5db',
+    white: '#ffffff',
+    textLight: '#9ca3af',
+    gridLine: '#f3f4f6',
+  };
 };
 
 const AnalyticsDashboard = () => {
+  const COLORS = getColors();
 
   // --- Chart Data & Options ---
 
@@ -87,8 +108,8 @@ const AnalyticsDashboard = () => {
         backgroundColor: (context) => {
           const ctx = context.chart.ctx;
           const gradient = ctx.createLinearGradient(0, 0, 0, 250);
-          gradient.addColorStop(0, 'rgba(249, 115, 22, 0.2)');
-          gradient.addColorStop(1, 'rgba(249, 115, 22, 0)');
+          gradient.addColorStop(0, `${COLORS.orange}33`);
+          gradient.addColorStop(1, `${COLORS.orange}00`);
           return gradient;
         },
         fill: true,
@@ -171,6 +192,53 @@ const AnalyticsDashboard = () => {
     }]
   };
 
+  const topStatsData = [
+    {
+      id: 1,
+      title: 'Total Views',
+      value: '1000',
+      changeValue: 18.7,
+      vsText: 'vs 03 May - 09 May',
+      icon: <FaEye />,
+      iconBg: 'var(--Orange-50, #fff7ed)',
+      iconColor: COLORS.orange,
+      sparklineData: [10, 25, 20, 45, 30, 50, 40],
+    },
+    {
+      id: 2,
+      title: 'Total Leads',
+      value: '125',
+      changeValue: -14.3,
+      vsText: 'vs 03 May - 09 May',
+      icon: <FaUsers />,
+      iconBg: 'var(--Blue-50, #eff6ff)',
+      iconColor: COLORS.blue,
+      sparklineData: [50, 45, 40, 35, 25, 30, 15],
+    },
+    {
+      id: 3,
+      title: 'Total Inquiries',
+      value: '78',
+      changeValue: 11.2,
+      vsText: 'vs 03 May - 09 May',
+      icon: <FaComments />,
+      iconBg: 'var(--Green-50, #f0fdf4)',
+      iconColor: COLORS.green,
+      sparklineData: [5, 15, 10, 25, 15, 30, 20],
+    },
+    {
+      id: 4,
+      title: 'Total Listings',
+      value: '12',
+      changeValue: 0,
+      vsText: 'vs 03 May - 09 May',
+      icon: <FaBuilding />,
+      iconBg: 'var(--Purple-50, #faf5ff)',
+      iconColor: COLORS.purple,
+      sparklineData: [12, 12, 12, 12, 12, 12, 12],
+    },
+  ];
+
   return (
     <div className={styles.analyticsContainer}>
       
@@ -194,81 +262,34 @@ const AnalyticsDashboard = () => {
 
       {/* Top Stats */}
       <div className={styles.topStatsGrid}>
-        <div className={styles.card}>
-          <div className={styles.statCardTop}>
-            <div className={styles.iconWrapper} style={{ background: '#fff7ed', color: '#f97316' }}>
-              <FaEye />
-            </div>
-            <div className={styles.statInfo}>
-              <p className={styles.statLabel}>Total Views</p>
-              <div className={styles.statValueRow}>
-                <h2 className={styles.statValue}>2,856</h2>
-                <span className={`${styles.statChange} ${styles.changePositive}`}><FaArrowUp /> 18.7%</span>
-              </div>
-              <p className={styles.statVs}>vs 03 May - 09 May</p>
-            </div>
-          </div>
-          <div className={styles.sparklineChart}>
-            <Line data={createSparklineData(COLORS.orange, [10, 25, 20, 45, 30, 50, 40])} options={sparklineOptions} />
-          </div>
-        </div>
-        
-        <div className={styles.card}>
-          <div className={styles.statCardTop}>
-            <div className={styles.iconWrapper} style={{ background: '#eff6ff', color: COLORS.blue }}>
-              <FaUsers />
-            </div>
-            <div className={styles.statInfo}>
-              <p className={styles.statLabel}>Total Leads</p>
-              <div className={styles.statValueRow}>
-                <h2 className={styles.statValue}>125</h2>
-                <span className={`${styles.statChange} ${styles.changePositive}`}><FaArrowUp /> 14.3%</span>
-              </div>
-              <p className={styles.statVs}>vs 03 May - 09 May</p>
-            </div>
-          </div>
-          <div className={styles.sparklineChart}>
-            <Line data={createSparklineData(COLORS.blue, [15, 10, 35, 25, 45, 30, 50])} options={sparklineOptions} />
-          </div>
-        </div>
+        {topStatsData.map((stat) => {
+          const isPositive = stat.changeValue >= 0;
+          const ChangeIcon = isPositive ? FaArrowUp : FaArrowDown;
+          const graphColor = isPositive ? stat.iconColor : COLORS.red;
 
-        <div className={styles.card}>
-          <div className={styles.statCardTop}>
-            <div className={styles.iconWrapper} style={{ background: '#f0fdf4', color: COLORS.green }}>
-              <FaComments />
-            </div>
-            <div className={styles.statInfo}>
-              <p className={styles.statLabel}>Total Inquiries</p>
-              <div className={styles.statValueRow}>
-                <h2 className={styles.statValue}>78</h2>
-                <span className={`${styles.statChange} ${styles.changePositive}`}><FaArrowUp /> 11.2%</span>
+          return (
+            <div className={styles.card} key={stat.id}>
+              <div className={styles.statCardTop}>
+                <div className={styles.iconWrapper} style={{ background: stat.iconBg, color: stat.iconColor }}>
+                  {stat.icon}
+                </div>
+                <div className={styles.statInfo}>
+                  <p className={styles.statLabel}>{stat.title}</p>
+                  <div className={styles.statValueRow}>
+                    <h2 className={styles.statValue}>{stat.value}</h2>
+                    <span className={`${styles.statChange} ${isPositive ? styles.changePositive : styles.changeNegative}`}>
+                      <ChangeIcon /> {Math.abs(stat.changeValue)}%
+                    </span>
+                  </div>
+                  <p className={styles.statVs}>{stat.vsText}</p>
+                </div>
               </div>
-              <p className={styles.statVs}>vs 03 May - 09 May</p>
-            </div>
-          </div>
-          <div className={styles.sparklineChart}>
-            <Line data={createSparklineData(COLORS.green, [5, 15, 10, 25, 15, 30, 20])} options={sparklineOptions} />
-          </div>
-        </div>
-
-        <div className={styles.card}>
-          <div className={styles.statCardTop}>
-            <div className={styles.iconWrapper} style={{ background: '#faf5ff', color: COLORS.purple }}>
-              <FaBuilding />
-            </div>
-            <div className={styles.statInfo}>
-              <p className={styles.statLabel}>Total Listings</p>
-              <div className={styles.statValueRow}>
-                <h2 className={styles.statValue}>12</h2>
-                <span className={`${styles.statChange} ${styles.changePositive}`}><FaArrowUp /> 0%</span>
+              <div className={styles.sparklineChart}>
+                <Line data={createSparklineData(graphColor, stat.sparklineData)} options={sparklineOptions} />
               </div>
-              <p className={styles.statVs}>vs 03 May - 09 May</p>
             </div>
-          </div>
-          <div className={styles.sparklineChart}>
-            <Line data={createSparklineData(COLORS.purple, [12, 12, 12, 12, 12, 12, 12])} options={sparklineOptions} />
-          </div>
-        </div>
+          );
+        })}
       </div>
 
       {/* Middle Grid */}

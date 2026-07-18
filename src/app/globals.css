@@ -213,6 +213,9 @@ h1 {
   font-family: var(--font-bold);
   font-size: 47.78px;
 }
+.text-right{
+  text-align: right !important;
+}
 
 h2 {
   font-family: var(--font-semibold);
@@ -614,4 +617,8 @@ tr:nth-child(odd) {
   font-size: 16px;
   cursor: pointer;
   font-family: var(--font-bold);
+}
+
+.ant-upload-list-picture-card{
+  margin-bottom: 0px !important;
 }

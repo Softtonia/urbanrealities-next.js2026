@@ -1,13 +1,8 @@
 
-import Step1 from "../components/steps/Basic-DetailsSteps";
-import Step2 from "../components/steps/Location";
-import Step3 from "../components/steps/PropertyProfile";
-import Step4 from "../components/steps/photo-details/photodetails";
-import Step5 from "../components/steps/featurepricing";
 import StepSidebar from "../components/StepperSidebar/StepperSidebar";
 import styles from "../components/post-property.module.css";
 import { get, getssr } from "@/lib/api";
-import AmenitiesSection from "../components/steps/AmenitiesSection";
+import DynamicStep from "../components/DynamicStep/DynamicStep";
 
 async function fetchPurpose() {
   try {
@@ -37,29 +32,37 @@ async function fetchProperties() {
   }
 }
 
-export default async function StepComponent({ step }) {
-  const purposeList = await fetchPurpose()
-  const propertyListing = await fetchProperties()
+async function fetchDynamicSteps() {
+  try {
+    const res = await getssr(`/api/frontend/dynamic-post-step-form/1`);
+    // res is already the JSON payload: { status: true, data: { steps: [] } }
+    if (res?.status === true && res?.data?.steps) {
+      return res.data.steps;
+    }
+    return [];
+  } catch (err) {
+    console.error("Error fetching dynamic steps:", err);
+    return [];
+  }
+}
 
-  const currentStep = step || "basic-details";
+export default async function StepComponent({ step }) {
+  const apiSteps = await fetchDynamicSteps();
+  const currentStep = step || (apiSteps.length > 0 ? apiSteps[0].step_key : "step-1");
+  
+  // Match current step strictly by api step_key
+  const stepIndex = apiSteps.findIndex(s => s.step_key === currentStep);
+  const activeApiStep = stepIndex >= 0 ? apiSteps[stepIndex] : apiSteps[0];
 
   const renderStepContent = () => {
-    switch (currentStep) {
-      case "basic-details":
-        return <Step1 purposeList={purposeList} propertyListing={propertyListing} />;
-      case "location-details":
-        return <Step2 />;
-      case "property-profile":
-        return <Step3 />;
-      case "photodetails":
-        return <Step4 />;
-      case "featurepricing":
-        return <Step5 />;
-      case "amenities":
-        return <AmenitiesSection />;
-      default:
-        return <div>Step not found</div>;
-    }
+    if (!activeApiStep) return <div>Step not found or loading...</div>;
+    return (
+      <DynamicStep 
+        stepData={activeApiStep} 
+        allSteps={apiSteps} 
+        currentStepIndex={stepIndex >= 0 ? stepIndex : 0} 
+      />
+    );
   };
 
   return (
@@ -67,7 +70,7 @@ export default async function StepComponent({ step }) {
       <div className={`${styles.wrapper} `}>
         {/* <div className="col-3 p-0"> */}
           <div className={styles.sidebarCol}>
-            <StepSidebar currentStep={currentStep} />
+            <StepSidebar currentStep={currentStep} apiSteps={apiSteps} />
           </div>
         {/* </div> */}
         {/* <div className="col-9 p-0"> */}

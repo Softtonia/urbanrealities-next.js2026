@@ -98,6 +98,51 @@ export async function resendOtp(token) {
 }
 
 // verifyOtp was using fetch("https://api.holiplaces.com/api/verify-register-otp")
+
+export async function updatePersonalProfile(token, payload) {
+  try {
+    const res = await nextJsApi.post('/api/auth/profile/personal', payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data"
+      }
+    });
+    return res.data;
+  } catch (error) {
+    if (error.response) return { success: false, ...error.response.data };
+    return { success: false, message: error.message };
+  }
+}
+
+export async function updateProfilePhoto(token, payload) {
+  try {
+    const res = await nextJsApi.post('/api/auth/profile/photo', payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data"
+      }
+    });
+    return res.data;
+  } catch (error) {
+    if (error.response) return { success: false, ...error.response.data };
+    return { success: false, message: error.message };
+  }
+}
+
+export async function updateAddressProfile(token, payload) {
+  try {
+    const res = await nextJsApi.post('/api/auth/profile/address', payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data"
+      }
+    });
+    return res.data;
+  } catch (error) {
+    if (error.response) return { success: false, ...error.response.data };
+    return { success: false, message: error.message };
+  }
+}
 // This is the direct laravel backend URL. We can use laravelApi for this since it hits the backend.
 export async function verifyOtp(otp, token) {
   return await laravelApi('/api/verify-register-otp', {
@@ -109,13 +154,12 @@ export async function verifyOtp(otp, token) {
 
 export async function getUserProfile(userId, token) {
   try {
-    const res = await fetch(`/api/auth/user-profile?id=${userId}`, {
-      method: 'GET',
+    const res = await nextJsApi.get('/api/auth/getuser', {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     });
-    return await res.json();
+    return res.data;
   } catch (error) {
     throw error;
   }

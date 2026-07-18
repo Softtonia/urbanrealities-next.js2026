@@ -124,7 +124,6 @@
   background: var(--White, #ffffff);
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-  overflow: hidden;
 }
 
 /* Toolbar (Tabs & Filters) */
@@ -134,12 +133,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 16px;
 }
 .tabs {
   display: flex;
   gap: 24px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .tabBtn {
   background: none;
@@ -168,6 +169,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-shrink: 0;
 }
 .searchBox {
   display: flex;

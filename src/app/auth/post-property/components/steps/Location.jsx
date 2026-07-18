@@ -6,6 +6,7 @@ import styles from "./Location.module.css";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
+import { getCountries, getStates, getCities } from "@/services/location.service";
 
 const locationData = {
   India: {
@@ -62,24 +63,14 @@ const Location = () => {
   const [isFetchingCity, setIsFetchingCity] = useState(false);
 
   console.log(selectedCountry);
-  // fetch country  /api/countries
   useEffect(() => {
     const fetchPurpose = async () => {
       setIsFetchingCountry(true);
-      // console.log(token)
       try {
-        const res = await fetch("/api/post-property/location/country", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
+        const res = await getCountries(token);
         setIsFetchingCountry(false);
-        if (Array.isArray(data)) {
-          setCountries(data);
-        } else if (data?.data) {
-          setCountries(data.data);
+        if (res && res.status) {
+          setCountries(res.data || []);
         }
       } catch (err) {
         setIsFetchingCountry(false);
@@ -90,26 +81,15 @@ const Location = () => {
       fetchPurpose();
     }
   }, [token]);
+
   useEffect(() => {
     const fetchPurpose = async () => {
       setIsFetchingState(true);
-      // console.log(token)
       try {
-        const res = await fetch(
-          `/api/post-property/location/state/${selectedCountry}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = await res.json();
+        const res = await getStates(selectedCountry, token);
         setIsFetchingState(false);
-        if (Array.isArray(data)) {
-          setStates(data);
-        } else if (data?.data) {
-          setStates(data.data);
+        if (res && res.status) {
+          setStates(res.data || []);
         }
       } catch (err) {
         setIsFetchingState(false);
@@ -119,27 +99,16 @@ const Location = () => {
     if (token && selectedCountry) {
       fetchPurpose();
     }
-  }, [selectedCountry]);
+  }, [selectedCountry, token]);
+
   useEffect(() => {
     const fetchPurpose = async () => {
       setIsFetchingCity(true);
-      // console.log(token)
       try {
-        const res = await fetch(
-          `/api/post-property/location/city/${selectedState}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = await res.json();
+        const res = await getCities(selectedState, token);
         setIsFetchingCity(false);
-        if (Array.isArray(data)) {
-          setCities(data);
-        } else if (data?.data) {
-          setCities(data.data);
+        if (res && res.status) {
+          setCities(res.data || []);
         }
       } catch (err) {
         setIsFetchingCity(false);
@@ -149,7 +118,7 @@ const Location = () => {
     if (token && selectedState) {
       fetchPurpose();
     }
-  }, [selectedState]);
+  }, [selectedState, token]);
 
   const handleContinue = () => {
     const newErrors = {};
@@ -329,6 +298,7 @@ const Location = () => {
           placeholder="Select state"
           styles={customStyles}
           className="w-20"
+          isDisabled={!selectedCountry}
           noOptionsMessage={() =>
             isFetchingState ? "Loading states..." : "No states found"
           }
@@ -360,8 +330,9 @@ const Location = () => {
           placeholder="Select City"
           styles={customStyles}
           className="w-20"
+          isDisabled={!selectedState}
           noOptionsMessage={() =>
-            isFetchingCity ? "Loading cities..." : "No city found"
+            isFetchingCity ? "Loading cities..." : "No cities found"
           }
         />
         {errors.city && <p className={styles.error}>{errors.city}</p>}

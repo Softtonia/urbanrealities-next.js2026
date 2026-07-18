@@ -1,22 +1,31 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./StepperSidebar.module.css";
+import { getDynamicPostStepForm } from "@/services/post-property.service";
 
-const steps = [
-  { title: "Basic Details", step: 1, path: "basic-details" },
-  { title: "Location Details", step: 2, path: "location-details" },
-  { title: "Property Profile", step: 3, path: "property-profile" },
-  { title: "Photos, Videos & Voice-over", step: 4, path: "photodetails" },
-  { title: "Property Price ", step: 5, path: "featurepricing" },
-  { title: "Amenities section", step: 6, path: "amenities" },
-];
+// removed default steps
 
-export default function StepperSidebar({ currentStep = "basic-details" }) {
+export default function StepperSidebar({ currentStep, apiSteps = [] }) {
+  const [steps, setSteps] = useState([]);
+
+  useEffect(() => {
+    if (apiSteps && apiSteps.length > 0) {
+      const newSteps = apiSteps.map((apiStep, index) => {
+        return {
+          title: apiStep.step_label || apiStep.step_key,
+          step: index + 1,
+          path: apiStep.step_key // strictly mapped to step_key
+        };
+      });
+      setSteps(newSteps);
+    }
+  }, [apiSteps]);
+
   const currentStepIndex = steps.findIndex((s) => s.path === currentStep);
-const activeStep = steps[currentStepIndex];
+  const activeStep = steps[currentStepIndex];
 
- const progressPercentage =
+  const progressPercentage =
     currentStepIndex > 0
       ? (currentStepIndex / (steps.length - 1)) * 100
       : 0;

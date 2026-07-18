@@ -9,6 +9,9 @@ import Select from "react-select";
 import { FaUser, FaBuilding, FaMapMarkerAlt, FaIdCard, FaCamera, FaCheckCircle, FaExclamationCircle, FaHeadset } from "react-icons/fa";
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
 import KycDocuments from "../KycDocuments/KycDocuments";
+import { updatePersonalProfile, updateProfilePhoto, updateAddressProfile, getUserProfile } from "@/services/auth.service";
+import { getCountries, getStates, getCities } from "@/services/location.service";
+import { toast } from "react-toastify";
 
 const ProfileForm = () => {
   const searchParams = useSearchParams();
@@ -29,6 +32,7 @@ const ProfileForm = () => {
 
   const [profileImage, setProfileImage] = useState("/profile-placeholder.png");
   const [profile, setProfile] = useState({});
+  const [profileCompletion, setProfileCompletion] = useState({ percentage: 0, missing_fields: [] });
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -38,9 +42,9 @@ const ProfileForm = () => {
     alternate_number: "",
     user_name: "",
     unique_id: "",
-    dob: "",
-    gender: "",
-    no_of_employees: "",
+    bussiness_name: "",
+    bussiness_email: "",
+    business_phone: "",
     country_id: "",
     state_id: "",
     city_id: "",
@@ -49,7 +53,7 @@ const ProfileForm = () => {
     street_address: "",
     area_locality: '',
     colony: "",
-    about: "",
+    about_us: "",
   });
 
 
@@ -59,59 +63,55 @@ const ProfileForm = () => {
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/auth/user-profile?id=${id}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const normalize = (value) => {
-        // Converts unwanted values to empty string
-        if (
-          value === null ||
-          value === undefined ||
-          value === "N/A" ||
-          value === "null" ||
-          value === "undefined"
-        ) {
-          return "";
-        }
-        return value;
-      };
-
-      const data = await res.json();
+      const res = await getUserProfile(id, token);
       setLoading(false);
 
-      if (data) {
-        setProfile(data);
+      if (res && res.status && res.data) {
+        const rawData = res.data.raw || {};
+        setProfile(rawData);
+        if (res.data.profile_completion) {
+          setProfileCompletion(res.data.profile_completion);
+        }
+
+        const normalize = (value) => {
+          if (
+            value === null ||
+            value === undefined ||
+            value === "N/A" ||
+            value === "null" ||
+            value === "undefined"
+          ) {
+            return "";
+          }
+          return value;
+        };
 
         // ✅ Pre-fill the form fields with normalization
         setFormData({
-          unique_id: normalize(data.unique_id),
-          email: normalize(data.email),
-          first_name: normalize(data.first_name),
-          last_name: normalize(data.last_name),
-          role_id: normalize(data.role_name),
-          user_name: normalize(data.user_name),
-          phone: normalize(data.phone),
-          alternate_number: normalize(data.alternate_number),
-          dob: normalize(data.dob),
-          gender: normalize(data.gender),
-          no_of_employees: normalize(data.no_of_employees),
-          country_id: normalize(data.country_id),
-          state_id: normalize(data.state_id),
-          city_id: normalize(data.city_id),
-          pin_code: normalize(data.pin_code),
-          area_locality: normalize(data.area_locality),
-          colony: normalize(data.colony),
-          street_address: normalize(data.street_address),
-          address: normalize(data.address),
-          about: normalize(data.about),
+          unique_id: normalize(rawData.unique_id),
+          email: normalize(rawData.email),
+          first_name: normalize(rawData.first_name),
+          last_name: normalize(rawData.last_name),
+          role_id: normalize(rawData.role_name),
+          user_name: normalize(rawData.user_name),
+          phone: normalize(rawData.phone),
+          alternate_number: normalize(rawData.alternate_number),
+          bussiness_name: normalize(rawData.bussiness_name),
+          bussiness_email: normalize(rawData.bussiness_email),
+          business_phone: normalize(rawData.business_phone),
+          country_id: normalize(rawData.country_id),
+          state_id: normalize(rawData.state_id),
+          city_id: normalize(rawData.city_id),
+          pin_code: normalize(rawData.pin_code),
+          area_locality: normalize(rawData.area_locality),
+          colony: normalize(rawData.colony),
+          street_address: normalize(rawData.street_address),
+          address: normalize(rawData.address),
+          about_us: normalize(rawData.about_us || rawData.about),
         });
 
-        if (data.profile_photo) {
-          setProfileImage(data.profile_photo);
+        if (rawData.profile_photo) {
+          setProfileImage(rawData.profile_photo);
         }
       }
 
@@ -129,20 +129,64 @@ const ProfileForm = () => {
     setPageHeading("");
   }, []);
 
+  useEffect(() => {
+    getCountries(token)
+      .then(data => {
+        if (data && data.status) setCountries(data.data || []);
+      })
+      .catch(console.error);
+  }, [token]);
+
+  useEffect(() => {
+    if (formData.country_id) {
+      getStates(formData.country_id, token)
+        .then(data => {
+          if (data && data.status) setStates(data.data || []);
+        })
+        .catch(console.error);
+    } else {
+      setStates([]);
+    }
+  }, [formData.country_id, token]);
+
+  useEffect(() => {
+    if (formData.state_id) {
+      getCities(formData.state_id, token)
+        .then(data => {
+          if (data && data.status) setCities(data.data || []);
+        })
+        .catch(console.error);
+    } else {
+      setCities([]);
+    }
+  }, [formData.state_id, token]);
+
   // ✅ Handle image change
   const handleImageClick = () => {
     fileInputRef.current.click();
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
-      setFormData((prev) => ({
-        ...prev,
-        profile_photo: file,
-      }));
+
+      // Hit API immediately
+      const payload = new FormData();
+      payload.append("profile_photo", file);
+
+      try {
+        const data = await updateProfilePhoto(token, payload);
+        if (data && data.status) {
+          toast.success(data.message || "Profile photo updated successfully!");
+        } else {
+          toast.error(data?.message || "Failed to update profile photo.");
+        }
+      } catch (err) {
+        console.error("Profile photo upload error:", err);
+        toast.error("An error occurred while uploading photo.");
+      }
     }
   };
 
@@ -159,36 +203,40 @@ const ProfileForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const dataToSend = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== 'N/A') {
-        dataToSend.append(key, value);
-        console.log(key, ":", value)
-      }
-    });
-
     try {
-      const res = await fetch(`/api/auth/user-profile/update-profile`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: dataToSend,
-      });
+      let data;
+      if (activeTab === 'personal') {
+        const dataToSend = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== 'N/A') {
+            dataToSend.append(key, value);
+          }
+        });
+        data = await updatePersonalProfile(token, dataToSend);
+      } else if (activeTab === 'address') {
+        const dataToSend = new FormData();
+        const addressKeys = ['country_id', 'state_id', 'city_id', 'street_address', 'pin_code', 'area_locality'];
+        addressKeys.forEach(key => {
+          if (formData[key] !== undefined && formData[key] !== null && formData[key] !== 'N/A') {
+            dataToSend.append(key, formData[key]);
+          }
+        });
+        data = await updateAddressProfile(token, dataToSend);
+      } else {
+        return; // Other tabs not handled here
+      }
 
-      const data = await res.json();
-
-      if (res.ok) {
+      if (data && data.status) {
         console.log("✅ Profile Updated Successfully:", data);
+        toast.success(data.message || "Information updated successfully.");
         router.push("/auth/user/dashboard");
       } else {
         console.error("❌ Update Failed:", data?.message || "Unknown error");
-        alert("Profile update failed. Please try again.");
+        toast.error(data?.message || "Profile update failed. Please try again.");
       }
-      console.log("✅ Updated Successfully:", data);
     } catch (err) {
       console.error("❌ Update Failed:", err);
-      alert("An error occurred. Please try again later.");
+      toast.error("An error occurred. Please try again later.");
     }
   };
 
@@ -366,7 +414,7 @@ const ProfileForm = () => {
         {/* Main Content Area (Left) */}
         <div className={styles.mainContent}>
           
-          <form className={styles.form} onSubmit={handleSubmit}>
+          <form className={styles.form} onSubmit={handleSubmit} autoComplete="off">
             <div className={styles.formHeader}>
               <div className={styles.formHeaderIcon}>
                 <FaUser />
@@ -395,26 +443,11 @@ const ProfileForm = () => {
                   <input type="text" name="user_name" value={formData.user_name || ""} readOnly className={styles.readOnly} />
                 </div>
                 <div className={styles.inputGroup}>
-                  <label>Date of Birth</label>
-                  <input type="date" name="dob" value={formData.dob || ""} onChange={handleChange} />
-                </div>
-
-                {/* Row 3 */}
-                <div className={styles.inputGroup}>
                   <label>Email Address <span className={styles.required}>*</span></label>
                   <input type="email" name="email" value={formData.email || ""} readOnly className={styles.readOnly} />
                 </div>
-                <div className={styles.inputGroup}>
-                  <label>Gender</label>
-                  <select name="gender" value={formData.gender || ""} onChange={handleChange} className={styles.selectInput}>
-                    <option value="">Select gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
 
-                {/* Row 4 */}
+                {/* Row 3 */}
                 <div className={styles.inputGroup}>
                   <label>Mobile Number <span className={styles.required}>*</span></label>
                   <div className={styles.phoneInputWrap}>
@@ -423,58 +456,74 @@ const ProfileForm = () => {
                   </div>
                 </div>
                 <div className={styles.inputGroup}>
-                  <label>No. of Employees</label>
-                  <input type="number" name="no_of_employees" value={formData.no_of_employees || ""} onChange={handleChange} placeholder="Enter number of employees" />
-                </div>
-
-                {/* Row 5 */}
-                <div className={styles.inputGroup}>
                   <label>Alternate Number</label>
                   <input type="tel" name="alternate_number" value={formData.alternate_number || ""} onChange={handleChange} placeholder="Enter alternate number (optional)" />
                 </div>
+
+                {/* Row 4 */}
                 <div className={styles.inputGroup}>
                   <label>Role <span className={styles.required}>*</span></label>
                   <input type="text" name="role_id" value={formData.role_id || ""} readOnly className={styles.readOnly} />
                 </div>
                 
-                {/* Row 6 */}
-                <div className={styles.inputGroup}>
-                  <label>Aadhaar Number</label>
-                  <div className={styles.verifiedInputWrap}>
-                    <input type="text" value="8730 5119 8062" readOnly className={styles.readOnly} />
-                    <span className={styles.verifiedBadge}><FaCheckCircle /> Verified</span>
-                  </div>
-                </div>
-                
                 <div className={styles.inputGroup} style={{gridColumn: "1 / -1"}}>
                   <label>About You</label>
-                  <textarea name="about" value={formData.about || ""} onChange={handleChange} placeholder="Tell us something about yourself..." rows={4}></textarea>
+                  <textarea name="about_us" value={formData.about_us || ""} onChange={handleChange} placeholder="Tell us something about yourself..." rows={4}></textarea>
                 </div>
               </div>
             )}
             
             {activeTab === 'address' && (
               <div className={styles.fieldsGrid}>
-                {/* Simplified address fields for now as they weren't explicitly requested to change structure, but we adapt them to grid */}
                 <div className={styles.inputGroup}>
                   <label>Street Address</label>
-                  <input type="text" name="street_address" value={formData.street_address || ""} onChange={handleChange} placeholder="Enter street address" />
+                  <input type="text" name="street_address" value={formData.street_address || ""} onChange={handleChange} placeholder="Enter street address" autoComplete="new-password" />
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Area / Locality</label>
-                  <input type="text" name="area_locality" value={formData.area_locality || ""} onChange={handleChange} placeholder="Enter area or locality" />
+                  <input type="text" name="area_locality" value={formData.area_locality || ""} onChange={handleChange} placeholder="Enter area or locality" autoComplete="new-password" />
                 </div>
                 <div className={styles.inputGroup}>
-                  <label>City</label>
-                  <Select options={cities.map(c => ({ value: c.id, label: c.name }))} value={cities.map((city) => ({ value: city.id, label: city.name })).find((opt) => opt.value === formData.city_id) || null} onChange={(opt) => setFormData(p => ({ ...p, city_id: opt?.value || null }))} placeholder="Select City" styles={customStyles} instanceId="city-select" />
+                  <label>Country</label>
+                  <Select 
+                    options={countries.map(c => ({ value: c.id, label: c.name }))} 
+                    value={countries.map((c) => ({ value: c.id, label: c.name })).find((opt) => opt.value === formData.country_id) || null} 
+                    onChange={(opt) => setFormData(p => ({ ...p, country_id: opt?.value || null, state_id: null, city_id: null }))} 
+                    placeholder="Select Country" 
+                    styles={customStyles} 
+                    instanceId="country-select-dummy-88" 
+                    name="random_country_select_88"
+                  />
                 </div>
                 <div className={styles.inputGroup}>
                   <label>State</label>
-                  <Select options={states.map(s => ({ value: s.id, label: s.name }))} value={states.map((s) => ({ value: s.id, label: s.name })).find((opt) => opt.value === formData.state_id) || null} onChange={(opt) => setFormData(p => ({ ...p, state_id: opt?.value || null, city_id: null }))} placeholder="Select State" styles={customStyles} instanceId="state-select" />
+                  <Select 
+                    options={states.map(s => ({ value: s.id, label: s.name }))} 
+                    value={states.map((s) => ({ value: s.id, label: s.name })).find((opt) => opt.value === formData.state_id) || null} 
+                    onChange={(opt) => setFormData(p => ({ ...p, state_id: opt?.value || null, city_id: null }))} 
+                    placeholder="Select State" 
+                    styles={customStyles} 
+                    instanceId="state-select-dummy-88" 
+                    name="random_state_select_88"
+                    isDisabled={!formData.country_id}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>City</label>
+                  <Select 
+                    options={cities.map(c => ({ value: c.id, label: c.name }))} 
+                    value={cities.map((city) => ({ value: city.id, label: city.name })).find((opt) => opt.value === formData.city_id) || null} 
+                    onChange={(opt) => setFormData(p => ({ ...p, city_id: opt?.value || null }))} 
+                    placeholder="Select City" 
+                    styles={customStyles} 
+                    instanceId="city-select-dummy-88" 
+                    name="random_city_select_88"
+                    isDisabled={!formData.state_id}
+                  />
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Pin Code</label>
-                  <input type="text" name="pin_code" value={formData.pin_code || ""} onChange={handleChange} placeholder="Enter pin code" />
+                  <input type="text" name="pin_code" value={formData.pin_code || ""} onChange={handleChange} placeholder="Enter pin code" autoComplete="new-password" />
                 </div>
               </div>
             )}
@@ -514,20 +563,26 @@ const ProfileForm = () => {
           <div className={styles.widgetCard}>
             <h4 className={styles.widgetTitle}>Profile Completion</h4>
             <div className={styles.completionHeader}>
-              <div className={styles.circularProgress}><span>72%</span></div>
+              <div className={styles.circularProgress}><span>{profileCompletion.percentage || 0}%</span></div>
               <div>
                 <h5>Profile Strength</h5>
-                <p>Almost there! Keep going.</p>
+                <p>{profileCompletion.percentage === 100 ? "Excellent! Profile complete." : "Almost there! Keep going."}</p>
               </div>
             </div>
-            <div className={styles.progressLine}><div className={styles.progressFill} style={{width: '72%'}}></div></div>
+            <div className={styles.progressLine}><div className={styles.progressFill} style={{width: `${profileCompletion.percentage || 0}%`}}></div></div>
             <ul className={styles.checklist}>
-              <li className={styles.checked}><FaCheckCircle /> Email Verified</li>
-              <li className={styles.checked}><FaCheckCircle /> Mobile Verified</li>
-              <li className={styles.checked}><FaCheckCircle /> Account Approved</li>
-              <li className={styles.pending}><FaExclamationCircle /> Add Profile Photo</li>
-              <li className={styles.pending}><FaExclamationCircle /> Complete Address</li>
-              <li className={styles.pending}><FaExclamationCircle /> Complete KYC</li>
+              {profileCompletion.missing_fields && profileCompletion.missing_fields.length > 0 ? (
+                profileCompletion.missing_fields.map((field, index) => {
+                  const label = field.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                  return (
+                    <li key={index} className={styles.pending}>
+                      <FaExclamationCircle /> {label}
+                    </li>
+                  );
+                })
+              ) : (
+                <li className={styles.checked}><FaCheckCircle /> Profile is 100% Complete!</li>
+              )}
             </ul>
           </div>
 

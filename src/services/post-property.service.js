@@ -16,3 +16,7 @@ export async function getUserDetails(userId, token) {
     }
   });
 }
+
+export async function getDynamicPostStepForm(postTypeId = 1) {
+  return await laravelApi(`/api/frontend/dynamic-post-step-form/${postTypeId}`, { method: "GET" });
+}
