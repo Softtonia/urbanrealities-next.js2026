@@ -54,7 +54,7 @@ const ProfileForm = () => {
     area_locality: '',
     colony: "",
     about_us: "",
-    aadhar_number: "",
+    aadhaar_number: "",
   });
 
 
@@ -109,7 +109,7 @@ const ProfileForm = () => {
           street_address: normalize(rawData.street_address),
           address: normalize(rawData.address),
           about_us: normalize(rawData.about_us || rawData.about),
-          aadhar_number: normalize(rawData.aadhar_number),
+          aadhaar_number: normalize(rawData.aadhaar_number),
         });
 
         if (rawData.profile_photo) {
@@ -185,6 +185,7 @@ const ProfileForm = () => {
 
       try {
         const data = await updateProfilePhoto(token, payload);
+        
         if (data && data.status) {
           if (data.upload_id) {
             const { checkUploadProgress } = await import('@/services/document.service');
@@ -199,9 +200,11 @@ const ProfileForm = () => {
                     setPhotoProgress(fileProgress.percent || 10);
                     if (fileProgress.percent >= 100 || fileProgress.status === "completed" || fileProgress.status === "verified") {
                       clearInterval(pollInterval);
-                      setIsUploadingPhoto(false);
                       setPhotoProgress(100);
-                      toast.success(data.message || "Profile photo updated successfully!");
+                      setTimeout(() => {
+                        setIsUploadingPhoto(false);
+                        toast.success(data.message || "Profile photo updated successfully!");
+                      }, 1000);
                     }
                   }
                 }
@@ -210,9 +213,11 @@ const ProfileForm = () => {
               }
             }, 2000);
           } else {
-            setIsUploadingPhoto(false);
             setPhotoProgress(100);
-            toast.success(data.message || "Profile photo updated successfully!");
+            setTimeout(() => {
+              setIsUploadingPhoto(false);
+              toast.success(data.message || "Profile photo updated successfully!");
+            }, 1000);
           }
         } else {
           setIsUploadingPhoto(false);
@@ -505,7 +510,7 @@ const ProfileForm = () => {
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Aadhar Number</label>
-                  <input type="text" name="aadhar_number" value={formData.aadhar_number || ""} onChange={handleChange} placeholder="Enter Aadhar number" />
+                  <input type="text" name="aadhaar_number" value={formData.aadhaar_number || ""} onChange={handleChange} placeholder="Enter Aadhar number" />
                 </div>
                 
                 <div className={styles.inputGroup} style={{gridColumn: "1 / -1"}}>

@@ -187,8 +187,7 @@ const Dashboard = () => {
             <div className={styles.infoRow}><span>State</span><strong>{profile.state || "-"}</strong></div>
             <div className={styles.infoRow}><span>City</span><strong>{profile.city || "-"}</strong></div>
             <div className={styles.infoRow}><span>Area/Locality</span><strong>{profile.area || "-"}</strong></div>
-            <div className={styles.infoRow}><span>Colony</span><strong>{profile.colony || "-"}</strong></div>
-            <div className={styles.infoRow}><span>Street Address</span><strong>{profile.address || "-"}</strong></div>
+            <div className={styles.infoRow}><span>Street Address</span><strong>{profile.street_address || "-"}</strong></div>
             <div className={styles.infoRow}><span>PIN Code</span><strong>{profile.pincode || "-"}</strong></div>
           </div>
         </div>
@@ -206,9 +205,8 @@ const Dashboard = () => {
             <div className={styles.kycDetails}>
               <div className={styles.infoRow}><span>Account Status</span><span className={styles.statusApproved}>Approved</span></div>
               <div className={styles.infoRow}><span>KYC Status</span><span className={styles.statusPending}>Pending</span></div>
-              <div className={styles.infoRow}><span>Aadhar Number</span><strong>8733 XXXX XXXX</strong></div>
-              <div className={styles.infoRow}><span>License Number</span><strong>Not Uploaded</strong></div>
-              <div className={styles.infoRow}><span>Business Proof</span><strong>Not Uploaded</strong></div>
+              <div className={styles.infoRow}><span>Aadhar Number</span><strong>{styles.}</strong></div>
+    
             </div>
           </div>
         </div>

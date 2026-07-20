@@ -46,7 +46,7 @@ const KycDocuments = ({ profile, token }) => {
       const uploadDate = profile.updated_at ? new Date(profile.updated_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : "Uploaded";
       setDocuments(prev => prev.map(d => ({
         ...d,
-        status: profile[d.field] ? "Verified" : null,
+        status: profile[d.field] ? (profile.kyc_status || "Pending") : null,
         uploadedOn: profile[d.field] ? uploadDate : null,
         previewUrl: profile[d.field] || null
       })));
@@ -83,14 +83,16 @@ const KycDocuments = ({ profile, token }) => {
         if (res.ok) {
           const result = await res.json();
           
-          if (result.upload_id) {
+          if (result.upload_id || result.data?.upload_id) {
+            const actualUploadId = result.upload_id || result.data?.upload_id;
             // Poll for processing progress
             const pollInterval = setInterval(async () => {
               try {
-                const progressRes = await checkUploadProgress(token, result.upload_id);
+                const progressRes = await checkUploadProgress(token, actualUploadId);
                 if (progressRes.ok) {
                   const progressData = await progressRes.json();
-                  const fileProgress = progressData?.data?.files?.[activeDoc.field];
+                  // For backend processing percentage
+                  const fileProgress = progressData?.data?.files?.[activeDoc.field] || progressData?.files?.[activeDoc.field];
                   
                   if (fileProgress) {
                     setDocuments(prev => prev.map(d => 
@@ -101,11 +103,21 @@ const KycDocuments = ({ profile, token }) => {
                     
                     if (fileProgress.percent >= 100 || fileProgress.status === "completed" || fileProgress.status === "verified") {
                       clearInterval(pollInterval);
+                      // Show 100% first
                       setDocuments(prev => prev.map(d => 
                         d.id === activeUploadId 
-                          ? { ...d, uploading: false, progress: 100, status: "Verified", uploadedOn: today, previewUrl: fileProgress.url || result.data?.url || localUrl }
+                          ? { ...d, progress: 100 }
                           : d
                       ));
+                      
+                      // Wait a second before hiding the progress bar
+                      setTimeout(() => {
+                        setDocuments(prev => prev.map(d => 
+                          d.id === activeUploadId 
+                            ? { ...d, uploading: false, progress: 100, status: profile?.kyc_status || "Pending", uploadedOn: today, previewUrl: fileProgress.url || result.data?.url || localUrl }
+                            : d
+                        ));
+                      }, 1000);
                     }
                   }
                 }
@@ -117,9 +129,17 @@ const KycDocuments = ({ profile, token }) => {
             // Fallback if no upload_id
             setDocuments(prev => prev.map(d => 
               d.id === activeUploadId 
-                ? { ...d, uploading: false, progress: 100, status: "Verified", uploadedOn: today, previewUrl: result.data?.url || localUrl }
+                ? { ...d, progress: 100 }
                 : d
             ));
+            
+            setTimeout(() => {
+              setDocuments(prev => prev.map(d => 
+                d.id === activeUploadId 
+                  ? { ...d, uploading: false, progress: 100, status: profile?.kyc_status || "Pending", uploadedOn: today, previewUrl: result.data?.url || localUrl }
+                  : d
+              ));
+            }, 1000);
           }
         } else {
           console.error("Upload failed");
@@ -192,7 +212,7 @@ const KycDocuments = ({ profile, token }) => {
               </div>
             ) : doc.status ? (
               <>
-                <span className={`${styles.badge} ${styles[doc.status.toLowerCase()]}`}>
+                <span className={`${styles.badge} ${styles[doc.status.toLowerCase().replace(" ", "")]}`}>
                   {doc.status}
                 </span>
                 <p className={styles.uploadDate}>

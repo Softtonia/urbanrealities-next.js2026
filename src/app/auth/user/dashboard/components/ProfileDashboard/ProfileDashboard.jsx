@@ -109,11 +109,11 @@ const Dashboard = () => {
           <div className={styles.statusBox}>
             <div className={styles.statusItem}>
               <FaCheckCircle className={styles.successIcon} />
-              <span>Account Status<br/><strong>{loading ? <Skeleton variant="text" width={60} /> : 'Approved'}</strong></span>
+              <span>Account Status<br/><strong>{loading ? <Skeleton variant="text" width={60} /> : (profile.account_status || 'Pending')}</strong></span>
             </div>
             <div className={styles.statusItem}>
-              <div className={styles.pendingDot}></div>
-              <span>KYC Status<br/><strong>{loading ? <Skeleton variant="text" width={60} /> : 'Pending'}</strong></span>
+              <div className={profile.kyc_status === 'Approved' || profile.kyc_status === 'Verified' ? styles.successDot : styles.pendingDot}></div>
+              <span>KYC Status<br/><strong>{loading ? <Skeleton variant="text" width={60} /> : (profile.kyc_status || 'Pending')}</strong></span>
             </div>
             {!loading && (
               <Link href={`/auth/user/dashboard/edit-profile?id=${profile.id}`} className={styles.editBtn}>
@@ -212,10 +212,9 @@ const Dashboard = () => {
             <div className={styles.infoRow}><span>Country</span><strong>{loading ? <Skeleton width={100} /> : (profile.country || "-")}</strong></div>
             <div className={styles.infoRow}><span>State</span><strong>{loading ? <Skeleton width={100} /> : (profile.state || "-")}</strong></div>
             <div className={styles.infoRow}><span>City</span><strong>{loading ? <Skeleton width={100} /> : (profile.city || "-")}</strong></div>
-            <div className={styles.infoRow}><span>Area/Locality</span><strong>{loading ? <Skeleton width={120} /> : (profile.area || "-")}</strong></div>
-            <div className={styles.infoRow}><span>Colony</span><strong>{loading ? <Skeleton width={120} /> : (profile.colony || "-")}</strong></div>
-            <div className={styles.infoRow}><span>Street Address</span><strong>{loading ? <Skeleton width={150} /> : (profile.address || "-")}</strong></div>
-            <div className={styles.infoRow}><span>PIN Code</span><strong>{loading ? <Skeleton width={80} /> : (profile.pincode || "-")}</strong></div>
+            <div className={styles.infoRow}><span>Area/Locality</span><strong>{loading ? <Skeleton width={120} /> : (profile.area_locality || "-")}</strong></div>
+            <div className={styles.infoRow}><span>Street Address</span><strong>{loading ? <Skeleton width={150} /> : (profile.street_address || "-")}</strong></div>
+            <div className={styles.infoRow}><span>PIN Code</span><strong>{loading ? <Skeleton width={80} /> : (profile.pin_code || "-")}</strong></div>
           </div>
         </div>
       </div>
@@ -230,11 +229,23 @@ const Dashboard = () => {
           </div>
           <div className={styles.kycBody}>
             <div className={styles.kycDetails}>
-              <div className={styles.infoRow}><span>Account Status</span><span className={styles.statusApproved}>Approved</span></div>
-              <div className={styles.infoRow}><span>KYC Status</span><span className={styles.statusPending}>Pending</span></div>
-              <div className={styles.infoRow}><span>Aadhar Number</span><strong>8733 XXXX XXXX</strong></div>
-              <div className={styles.infoRow}><span>License Number</span><strong>Not Uploaded</strong></div>
-              <div className={styles.infoRow}><span>Business Proof</span><strong>Not Uploaded</strong></div>
+              <div className={styles.infoRow}>
+                <span>Account Status</span>
+                <span className={profile.account_status === 'Approved' ? styles.statusApproved : styles.statusPending}>
+                  {profile.account_status || "Pending"}
+                </span>
+              </div>
+              <div className={styles.infoRow}>
+                <span>KYC Status</span>
+                <span className={['Verified', 'Approved', 'Completed'].includes(profile.kyc_status) ? styles.statusApproved : styles.statusPending}>
+                  {profile.kyc_status || "Pending"}
+                </span>
+              </div>
+              <div className={styles.infoRow}>
+                <span>Aadhar Number</span>
+                <strong>{profile.aadhaar_number || "-"}</strong>
+              </div>
+
             </div>
           </div>
         </div>

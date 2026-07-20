@@ -62,7 +62,7 @@ const ProfileForm = () => {
     business_street_address: "",
     business_pin_code: "",
     bussiness_address: "",
-    aadhar_number: "",
+    aadhaar_number: "",
     no_of_employees: "",
   });
 
@@ -128,7 +128,7 @@ const ProfileForm = () => {
           business_street_address: normalize(rawData.business_street_address),
           business_pin_code: normalize(rawData.business_pin_code),
           bussiness_address: normalize(rawData.bussiness_address),
-          aadhar_number: normalize(rawData.aadhar_number),
+          aadhaar_number: normalize(rawData.aadhaar_number),
           no_of_employees: normalize(rawData.no_of_employees),
         });
 
@@ -234,6 +234,7 @@ const ProfileForm = () => {
 
       try {
         const data = await updateProfilePhoto(token, payload);
+        
         if (data && data.status) {
           if (data.upload_id) {
             const { checkUploadProgress } = await import('@/services/document.service');
@@ -248,9 +249,11 @@ const ProfileForm = () => {
                     setPhotoProgress(fileProgress.percent || 10);
                     if (fileProgress.percent >= 100 || fileProgress.status === "completed" || fileProgress.status === "verified") {
                       clearInterval(pollInterval);
-                      setIsUploadingPhoto(false);
                       setPhotoProgress(100);
-                      toast.success(data.message || "Profile photo updated successfully!");
+                      setTimeout(() => {
+                        setIsUploadingPhoto(false);
+                        toast.success(data.message || "Profile photo updated successfully!");
+                      }, 1000);
                     }
                   }
                 }
@@ -259,9 +262,11 @@ const ProfileForm = () => {
               }
             }, 2000);
           } else {
-            setIsUploadingPhoto(false);
             setPhotoProgress(100);
-            toast.success(data.message || "Profile photo updated successfully!");
+            setTimeout(() => {
+              setIsUploadingPhoto(false);
+              toast.success(data.message || "Profile photo updated successfully!");
+            }, 1000);
           }
         } else {
           setIsUploadingPhoto(false);
@@ -292,7 +297,7 @@ const ProfileForm = () => {
 
     try {
       let data;
-      if (activeTab === 'personal') {
+      if (activeTab === 'personal' || activeTab === 'business') {
         const dataToSend = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
           if (value !== undefined && value !== null && value !== 'N/A') {
@@ -487,6 +492,12 @@ const ProfileForm = () => {
           <FaUser className={styles.tabIcon} /> Personal Information
         </button>
         <button 
+          className={`${styles.tab} ${activeTab === 'business' ? styles.activeTab : ''}`}
+          onClick={(e) => { e.preventDefault(); setActiveTab('business'); }}
+        >
+          <FaBuilding className={styles.tabIcon} /> Business Information
+        </button>
+        <button 
           className={`${styles.tab} ${activeTab === 'address' ? styles.activeTab : ''}`}
           onClick={(e) => { e.preventDefault(); setActiveTab('address'); }}
         >
@@ -507,10 +518,10 @@ const ProfileForm = () => {
           <form className={styles.form} onSubmit={handleSubmit} autoComplete="off">
             <div className={styles.formHeader}>
               <div className={styles.formHeaderIcon}>
-                <FaUser />
+                {activeTab === 'personal' ? <FaUser /> : activeTab === 'business' ? <FaBuilding /> : activeTab === 'address' ? <FaMapMarkerAlt /> : <FaIdCard />}
               </div>
               <div className={styles.formHeaderText}>
-                <h3>{activeTab === 'personal' ? 'Personal Information' : activeTab === 'address' ? 'Address Information' : 'Documents & KYC'}</h3>
+                <h3>{activeTab === 'personal' ? 'Personal Information' : activeTab === 'business' ? 'Business Information' : activeTab === 'address' ? 'Address Information' : 'Documents & KYC'}</h3>
                 <p>Update your details</p>
               </div>
             </div>
@@ -557,17 +568,8 @@ const ProfileForm = () => {
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Aadhar Number</label>
-                  <input type="text" name="aadhar_number" value={formData.aadhar_number || ""} onChange={handleChange} placeholder="Enter your 12 digit Aadhar number" autoComplete="new-password" />
+                  <input type="text" name="aadhaar_number" value={formData.aadhaar_number || ""} onChange={handleChange} placeholder="Enter your 12 digit Aadhar number" autoComplete="new-password" />
                 </div>
-                <div className={styles.inputGroup}>
-                  <label>Business Email</label>
-                  <input type="email" name="bussiness_email" value={formData.bussiness_email || ""} onChange={handleChange} placeholder="Enter business email" />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Business Phone</label>
-                  <input type="text" name="business_phone" value={formData.business_phone || ""} onChange={handleChange} placeholder="Enter business phone number" />
-                </div>
-                
                 <div className={styles.inputGroup} style={{gridColumn: "1 / -1"}}>
                   <label>About You</label>
                   <textarea name="about_us" value={formData.about_us || ""} onChange={handleChange} placeholder="Tell us something about yourself..." rows={4}></textarea>
@@ -627,79 +629,89 @@ const ProfileForm = () => {
                   <label>Pin Code</label>
                   <input type="text" name="pin_code" value={formData.pin_code || ""} onChange={handleChange} placeholder="Enter pin code" autoComplete="new-password" />
                 </div>
+                
+                <div style={{ gridColumn: "1 / -1", marginTop: '1rem', marginBottom: '0.5rem' }}>
+                  <div className={styles.formHeader}>
+                    <div className={styles.formHeaderIcon}>
+                      <FaBuilding />
+                    </div>
+                    <div className={styles.formHeaderText}>
+                      <h3 style={{ fontSize: '18px', margin: 0 }}>Business Address Information</h3>
+                      <p style={{ margin: 0, opacity: 0.7 }}>Update your business address details</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <label>Business Street Address</label>
+                  <input type="text" name="business_street_address" value={formData.business_street_address || ""} onChange={handleChange} placeholder="Enter business street address" autoComplete="new-password" />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Business Area / Locality</label>
+                  <input type="text" name="business_area_locality" value={formData.business_area_locality || ""} onChange={handleChange} placeholder="Enter business area or locality" autoComplete="new-password" />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Business Country</label>
+                  <Select 
+                    options={countries.map(c => ({ value: c.id, label: c.name }))} 
+                    value={countries.map((c) => ({ value: c.id, label: c.name })).find((opt) => opt.value === formData.business_country_id) || null} 
+                    onChange={(opt) => setFormData(p => ({ ...p, business_country_id: opt?.value || null, business_state_id: null, business_city_id: null }))} 
+                    placeholder="Select Country" 
+                    styles={customStyles} 
+                    instanceId="business-country-select-dummy-88" 
+                    name="business_country_id"
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Business State</label>
+                  <Select 
+                    options={businessStates.map(s => ({ value: s.id, label: s.name }))} 
+                    value={businessStates.map((s) => ({ value: s.id, label: s.name })).find((opt) => opt.value === formData.business_state_id) || null} 
+                    onChange={(opt) => setFormData(p => ({ ...p, business_state_id: opt?.value || null, business_city_id: null }))} 
+                    placeholder="Select State" 
+                    styles={customStyles} 
+                    instanceId="business-state-select-dummy-88" 
+                    name="business_state_id"
+                    isDisabled={!formData.business_country_id}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Business City</label>
+                  <Select 
+                    options={businessCities.map(c => ({ value: c.id, label: c.name }))} 
+                    value={businessCities.map((city) => ({ value: city.id, label: city.name })).find((opt) => opt.value === formData.business_city_id) || null} 
+                    onChange={(opt) => setFormData(p => ({ ...p, business_city_id: opt?.value || null }))} 
+                    placeholder="Select City" 
+                    styles={customStyles} 
+                    instanceId="business-city-select-dummy-88" 
+                    name="business_city_id"
+                    isDisabled={!formData.business_state_id}
+                  />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Business Pin Code</label>
+                  <input type="text" name="business_pin_code" value={formData.business_pin_code || ""} onChange={handleChange} placeholder="Enter business pin code" autoComplete="new-password" />
+                </div>
               </div>
             )}
             
-            {activeTab === 'address' && (
-              <div style={{ marginTop: '2rem' }}>
-                <div className={styles.formHeader}>
-                  <div className={styles.formHeaderIcon}>
-                    <FaBuilding />
-                  </div>
-                  <div className={styles.formHeaderText}>
-                    <h3>Business Address Information</h3>
-                    <p>Update your business address details</p>
-                  </div>
+            {activeTab === 'business' && (
+              <div className={styles.fieldsGrid}>
+                <div className={styles.inputGroup}>
+                  <label>Business Name</label>
+                  <input type="text" name="bussiness_name" value={formData.bussiness_name || ""} onChange={handleChange} placeholder="Enter business name" autoComplete="new-password" />
                 </div>
-                <div className={styles.fieldsGrid}>
-                  <div className={styles.inputGroup}>
-                    <label>Business Name</label>
-                    <input type="text" name="bussiness_name" value={formData.bussiness_name || ""} onChange={handleChange} placeholder="Enter business name" autoComplete="new-password" />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>No. of Employees</label>
-                    <input type="number" name="no_of_employees" value={formData.no_of_employees || ""} onChange={handleChange} placeholder="Enter number of employees" autoComplete="new-password" />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business Street Address</label>
-                    <input type="text" name="business_street_address" value={formData.business_street_address || ""} onChange={handleChange} placeholder="Enter business street address" autoComplete="new-password" />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business Area / Locality</label>
-                    <input type="text" name="business_area_locality" value={formData.business_area_locality || ""} onChange={handleChange} placeholder="Enter business area or locality" autoComplete="new-password" />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business Country</label>
-                    <Select 
-                      options={countries.map(c => ({ value: c.id, label: c.name }))} 
-                      value={countries.map((c) => ({ value: c.id, label: c.name })).find((opt) => opt.value === formData.business_country_id) || null} 
-                      onChange={(opt) => setFormData(p => ({ ...p, business_country_id: opt?.value || null, business_state_id: null, business_city_id: null }))} 
-                      placeholder="Select Country" 
-                      styles={customStyles} 
-                      instanceId="business-country-select-dummy-88" 
-                      name="business_country_id"
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business State</label>
-                    <Select 
-                      options={businessStates.map(s => ({ value: s.id, label: s.name }))} 
-                      value={businessStates.map((s) => ({ value: s.id, label: s.name })).find((opt) => opt.value === formData.business_state_id) || null} 
-                      onChange={(opt) => setFormData(p => ({ ...p, business_state_id: opt?.value || null, business_city_id: null }))} 
-                      placeholder="Select State" 
-                      styles={customStyles} 
-                      instanceId="business-state-select-dummy-88" 
-                      name="business_state_id"
-                      isDisabled={!formData.business_country_id}
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business City</label>
-                    <Select 
-                      options={businessCities.map(c => ({ value: c.id, label: c.name }))} 
-                      value={businessCities.map((city) => ({ value: city.id, label: city.name })).find((opt) => opt.value === formData.business_city_id) || null} 
-                      onChange={(opt) => setFormData(p => ({ ...p, business_city_id: opt?.value || null }))} 
-                      placeholder="Select City" 
-                      styles={customStyles} 
-                      instanceId="business-city-select-dummy-88" 
-                      name="business_city_id"
-                      isDisabled={!formData.business_state_id}
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business Pin Code</label>
-                    <input type="text" name="business_pin_code" value={formData.business_pin_code || ""} onChange={handleChange} placeholder="Enter business pin code" autoComplete="new-password" />
-                  </div>
+                <div className={styles.inputGroup}>
+                  <label>No. of Employees</label>
+                  <input type="number" name="no_of_employees" value={formData.no_of_employees || ""} onChange={handleChange} placeholder="Enter number of employees" autoComplete="new-password" />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Business Email</label>
+                  <input type="email" name="bussiness_email" value={formData.bussiness_email || ""} onChange={handleChange} placeholder="Enter business email" />
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Business Phone</label>
+                  <input type="text" name="business_phone" value={formData.business_phone || ""} onChange={handleChange} placeholder="Enter business phone number" />
                 </div>
               </div>
             )}

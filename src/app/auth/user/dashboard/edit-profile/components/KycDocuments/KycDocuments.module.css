@@ -87,14 +87,19 @@
   gap: 4px;
 }
 
-.badge.verified {
+.badge.verified, .badge.approved {
   background: #ecfdf5;
   color: var(--UFO-Green, #10b981);
 }
 
-.badge.pending {
+.badge.pending, .badge.inprogress {
   background: #fffbeb;
   color: #f59e0b;
+}
+
+.badge.rejected {
+  background: #fef2f2;
+  color: #ef4444;
 }
 
 .uploadDate {
