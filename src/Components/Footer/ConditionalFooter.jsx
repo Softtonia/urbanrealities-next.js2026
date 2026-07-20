@@ -4,7 +4,7 @@ import Footer from './Footer';
 
 export default function ConditionalFooter() {
   const pathname = usePathname();
-  if (pathname?.startsWith('/auth/user')) {
+  if (pathname?.includes('/auth/user') || pathname?.includes('/auth/business')) {
     return null;
   }
   return <Footer />;

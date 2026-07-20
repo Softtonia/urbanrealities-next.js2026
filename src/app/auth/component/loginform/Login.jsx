@@ -97,16 +97,12 @@ export default function LoginPage() {
       if (result) {
         toast.success(result.message || "Login successful");
 
-        // const role = 'company'
-        if (result.role === "company" || result.role === "consultancy" || result.role === "agent" || result.role === "developer") {
-          // 🔑 store token in cookie (shared across subdomains)
-          // document.cookie = `authToken=${result.token}; path=/; domain=.urbanrealities.com; secure; SameSite=None`;
+        const extractedUserId = result.user_id || result.user?.id || result.id;
+        login(extractedUserId, result.token, result.role);
 
-          // Redirect to business domain
-          window.location.href = `${process.env.NEXT_PUBLIC_BUSINESS_DOMAIN}?authtoken=${result.token}&id=${result.user_id}`;
+        if (result.role && result.role.toLowerCase() !== 'owner') {
+          window.location.href = '/auth/business/dashboard';
         } else {
-          const extractedUserId = result.user_id || result.user?.id || result.id;
-          login(extractedUserId, result.token);
           window.location.href = redirect;
         }
 

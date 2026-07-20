@@ -1,0 +1,130 @@
+.summaryContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border: 1px solid var(--Bright-Gray);
+  border-radius: 12px;
+  background: var(--White);
+  padding: 8px 30px;
+  gap: 40px;
+  width: 100%;
+}
+.statSection {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  align-items: center;
+}
+.statItem {
+  display: flex;
+  gap: 7px;
+}
+
+.statDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.statPercentage {
+font-family: var(--font-semibold);  
+font-size: 30px;
+ margin: 0;
+}
+
+.statLabel {
+  font-size: 14px;
+  color: var(--Spanish-Gray);
+  margin: 0;
+}
+
+.chartcontent {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.totalSection {
+  padding: 12px 71px;
+  border-left: 1px solid var(--Bright-Gray);
+  border-right: 1px solid var(--Bright-Gray);
+}
+
+.totalTitle {
+  font-weight: bold;
+  font-size: 20px;
+  font-family: var(--font-medium);
+  margin-bottom: 10px;
+}
+
+.totalItem {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+  font-family: var(--font-regular);
+}
+.totalItem small{
+    font-size: 14px;
+  color: var(--Spanish-Gray);
+}
+.btn {
+  padding: 7px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--White);
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.Active {
+  background-color: var(--UFO-Green);
+}
+.Closed {
+  background-color: var(--Violet-Blue);
+}
+
+@media (max-width: 1250px) {
+  .summaryContainer {
+    padding: 20px 30px;
+    flex-direction: column;
+  }
+  .statSection {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .summaryContainer {
+    gap: 20px;
+  }
+  .chartcontent {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 20px;
+    gap: 0px;
+  }
+
+  .totalSection {
+    padding: 12px 0px;
+    border: none;
+  }
+}
+
+@media (max-width: 632px) {
+  .statSection {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .statItem {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .statDetails {
+    text-align: right;
+  }
+}

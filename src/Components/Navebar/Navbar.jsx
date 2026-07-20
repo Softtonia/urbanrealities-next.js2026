@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import homeLogo from "../../../img/add_home.svg";
 import LocationDropdown from "../LocationDropdown/LocationDropdown";
 import { GoChevronDown } from "react-icons/go";
@@ -80,6 +80,10 @@ export default function Navbar() {
   const [activeCity, setActiveCity] = useState(cityId);
   const [cities, setCities] = useState(staticCities);
   const router = useRouter();
+  const pathname = usePathname();
+  const isBusinessDashboard = pathname?.startsWith("/auth/business");
+  const isUserDashboard = pathname?.startsWith("/auth/user");
+  const isDashboardPanel = isBusinessDashboard || isUserDashboard;
   console.log(city);
 
   const handleSuggestionClick = (city) => {
@@ -139,7 +143,7 @@ export default function Navbar() {
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showHelp, setShowHelp] = useState(false);
-  const { settings, token, logout, isLoadingToken } = useSiteSettings();
+  const { settings, token, logout, isLoadingToken, role } = useSiteSettings();
   const [siteData, setSiteData] = useState(settings);
   const [isLoadingSiteData, setIsLoadingSiteData] = useState(true);
 
@@ -289,7 +293,8 @@ export default function Navbar() {
             </div>
           </div>
 
-          <ul className="navbar-nav d-flex flex-row align-items-center gap-3 mb-0">
+          {!isBusinessDashboard && (
+            <ul className="navbar-nav d-flex flex-row align-items-center gap-3 mb-0">
             <li
               className="nav-item dropdown position-static"
               onClick={() => toggleDropdown("buy")}
@@ -351,6 +356,7 @@ export default function Navbar() {
               </li>
             ))}
           </ul>
+          )}
 
           <div className="d-flex align-items-center gap-3">
             <Link
@@ -459,7 +465,7 @@ export default function Navbar() {
                         <li>
                           <Link
                             className="dropdown-item py-1 px-4"
-                            href="/auth/user/dashboard"
+                            href={isBusinessDashboard || (role && role.toLowerCase() !== 'owner') ? "/auth/business/dashboard" : "/auth/user/dashboard"}
                             style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}
                           >
                             My Profile
@@ -541,7 +547,7 @@ export default function Navbar() {
                     <li>
                       <Link
                         className="dropdown-item py-1 px-4"
-                        href="/auth/user/dashboard"
+                        href={isBusinessDashboard || (role && role.toLowerCase() !== 'owner') ? "/auth/business/dashboard" : "/auth/user/dashboard"}
                         style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}
                       >
                         My Profile
@@ -572,22 +578,24 @@ export default function Navbar() {
 
         <div className="d-flex d-xl-none bg-dark text-white w-100 px-2 px-sm-4 py-3 align-items-center justify-content-between">
           <div className="d-flex align-items-center gap-2 m-0">
-            <div
-              onClick={() => setMobileMenuOpen(true)}
-              className="cursor-pointer"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 64 64"
+            {!isBusinessDashboard && (
+              <div
+                onClick={() => setMobileMenuOpen(true)}
+                className="cursor-pointer"
               >
-                <path
-                  fill="currentColor"
-                  d="M4 26.6h56c1.2 0 2.3-1 2.3-2.3S61.3 22 60 22H4c-1.2 0-2.3 1-2.3 2.3s1.1 2.3 2.3 2.3m56 10.8H4c-1.2 0-2.3 1-2.3 2.3S2.7 42 4 42h56c1.2 0 2.3-1 2.3-2.3s-1.1-2.3-2.3-2.3"
-                />
-              </svg>
-            </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 64 64"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M4 26.6h56c1.2 0 2.3-1 2.3-2.3S61.3 22 60 22H4c-1.2 0-2.3 1-2.3 2.3s1.1 2.3 2.3 2.3m56 10.8H4c-1.2 0-2.3 1-2.3 2.3S2.7 42 4 42h56c1.2 0 2.3-1 2.3-2.3s-1.1-2.3-2.3-2.3"
+                  />
+                </svg>
+              </div>
+            )}
             <div>
               <Link className="" href="/">
                 {isLoadingSiteData ? (

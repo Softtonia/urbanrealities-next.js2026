@@ -67,50 +67,23 @@ export default function CallbackForm({
             'website',
     });
 
-    /**
-     * Redirect user after successful authentication.
-     */
     const redirectAuthenticatedUser = (
         userData
     ) => {
-        const businessRoles = [
-            'company',
-            'consultancy',
-            'developer',
-            'agent',
-        ];
-
-        const roleName = String(
-            userData?.role_name || ''
-        ).toLowerCase();
-
-        if (businessRoles.includes(roleName)) {
-            const businessUrl = new URL(
-                BUSINESS_DOMAIN
-            );
-
-            businessUrl.searchParams.set(
-                'authtoken',
-                userData.token
-            );
-
-            businessUrl.searchParams.set(
-                'id',
-                String(userData.user_id)
-            );
-
-            window.location.href =
-                businessUrl.toString();
-
-            return;
-        }
-
         login(
             userData.user_id,
             userData.token
         );
 
-        router.replace(redirect);
+        const roleName = String(
+            userData?.role_name || ''
+        ).toLowerCase();
+
+        if (roleName && roleName !== 'owner') {
+            router.replace('/auth/business/dashboard');
+        } else {
+            router.replace(redirect);
+        }
     };
 
     /**

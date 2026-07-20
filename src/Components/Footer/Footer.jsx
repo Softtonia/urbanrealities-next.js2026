@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
+import { usePathname } from 'next/navigation';
 import "../Footer/Footer.css";
 import "../../app/globals.css";
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
@@ -8,6 +9,10 @@ import Link from "next/link";
 import { useSiteSettings } from "../mycontext/siteSettingContext";
 
 const Footer = () => {
+  const pathname = usePathname();
+  if (pathname?.includes('/auth/user') || pathname?.includes('/auth/business')) {
+    return null;
+  }
   // const [siteData, setSiteData] = useState(serverData || null); // null for initial state
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);

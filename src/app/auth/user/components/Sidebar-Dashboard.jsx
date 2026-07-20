@@ -2,6 +2,8 @@
 import styles from "./Sidebar-Dashboard.module.css";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { Skeleton } from "@mui/material";
 import {
   FaChartBar, FaBuilding, FaEnvelope, FaBook,
   FaCalendarAlt, FaLifeRing, FaSignOutAlt, FaThLarge
@@ -25,6 +27,14 @@ export default function SidebarDashboard({ onItemClick }) {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useSiteSettings();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleMobileClick = (link) => {
     if (pathname !== link) {
@@ -48,10 +58,14 @@ export default function SidebarDashboard({ onItemClick }) {
             return (
               <Link href={item.link} key={index} className={`${styles.menuItem} ${isActive ? styles.active : ''}`}>
                 <div className={styles.menuContent}>
-                  <div className={styles.icon}>{item.icon}</div>
-                  <span className={styles.label}>{item.label}</span>
+                  <div className={styles.icon}>
+                    {loading ? <Skeleton variant="circular" width={24} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : item.icon}
+                  </div>
+                  <span className={styles.label}>
+                    {loading ? <Skeleton variant="text" width={100} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : item.label}
+                  </span>
                 </div>
-                {item.badge !== undefined && (
+                {item.badge !== undefined && !loading && (
                   <span className={styles.badge}>{item.badge}</span>
                 )}
               </Link>
@@ -60,8 +74,12 @@ export default function SidebarDashboard({ onItemClick }) {
           {/* Logout Button */}
           <div className={styles.menuItem} onClick={handleLogout}>
             <div className={styles.menuContent}>
-              <div className={styles.icon}><FaSignOutAlt /></div>
-              <span className={styles.label}>Logout</span>
+              <div className={styles.icon}>
+                {loading ? <Skeleton variant="circular" width={24} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : <FaSignOutAlt />}
+              </div>
+              <span className={styles.label}>
+                {loading ? <Skeleton variant="text" width={100} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : "Logout"}
+              </span>
             </div>
           </div>
         </div>
@@ -75,13 +93,21 @@ export default function SidebarDashboard({ onItemClick }) {
             className={styles.gridItem} 
             onClick={() => handleMobileClick(item.link)}
           >
-            <div className={styles.gridIcon}>{item.icon}</div>
-            <div className={styles.gridLabel}>{item.label}</div>
+            <div className={styles.gridIcon}>
+              {loading ? <Skeleton variant="circular" width={24} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : item.icon}
+            </div>
+            <div className={styles.gridLabel}>
+              {loading ? <Skeleton variant="text" width={60} height={20} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : item.label}
+            </div>
           </button>
         ))}
         <button className={styles.gridItem} onClick={handleLogout}>
-          <div className={styles.gridIcon}><FaSignOutAlt /></div>
-          <div className={styles.gridLabel}>Logout</div>
+          <div className={styles.gridIcon}>
+            {loading ? <Skeleton variant="circular" width={24} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : <FaSignOutAlt />}
+          </div>
+          <div className={styles.gridLabel}>
+            {loading ? <Skeleton variant="text" width={60} height={20} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : "Logout"}
+          </div>
         </button>
       </div>
     </div>

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   FaCheckCircle, FaUser, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt,
-  FaIdCard, FaClipboardList, FaUsers, FaComments, FaUpload, FaEdit
+  FaIdCard, FaClipboardList, FaUsers, FaComments, FaUpload, FaEdit, FaBriefcase
 } from "react-icons/fa";
 import { Skeleton } from '@mui/material';
 import { useSiteSettings } from '@/Components/mycontext/siteSettingContext';
@@ -167,8 +167,8 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Info Grid - Personal and Address only */}
-      <div className={styles.infoGrid}>
+      {/* Info Grid - Personal, Business (Optional), and Address */}
+      <div className={`${styles.infoGrid} ${profile.role_name && profile.role_name.toLowerCase() !== 'owner' ? styles.infoGridThree : ''}`}>
         {/* Personal Info */}
         <div className={styles.infoCard}>
           <div className={styles.cardHeader}>
@@ -184,6 +184,23 @@ const Dashboard = () => {
             <div className={styles.infoRow}><span>User ID</span><strong>{loading ? <Skeleton width={90} /> : (profile.unique_id || "-")}</strong></div>
           </div>
         </div>
+
+        {/* Business Info - Only if not Owner */}
+        {profile.role_name && profile.role_name.toLowerCase() !== 'owner' && (
+          <div className={styles.infoCard}>
+            <div className={styles.cardHeader}>
+              <FaBriefcase className={styles.cardIcon} />
+              <h3>Business Information</h3>
+            </div>
+            <div className={styles.cardBody}>
+              <div className={styles.infoRow}><span>Business Name</span><strong>{loading ? <Skeleton width={120} /> : (profile.business_name || "Not Added Yet")}</strong></div>
+              <div className={styles.infoRow}><span>Business Email</span><strong>{loading ? <Skeleton width={150} /> : (profile.business_email || "Not Added Yet")}</strong></div>
+              <div className={styles.infoRow}><span>Business Phone</span><strong>{loading ? <Skeleton width={110} /> : (profile.business_phone || "Not Added Yet")}</strong></div>
+              <div className={styles.infoRow}><span>Business Address</span><strong>{loading ? <Skeleton width={150} /> : (profile.business_address || "Not Added Yet")}</strong></div>
+              <div className={styles.infoRow}><span>No. of Employees</span><strong>{loading ? <Skeleton width={80} /> : (profile.no_of_employees || "Not Added Yet")}</strong></div>
+            </div>
+          </div>
+        )}
 
         {/* Address Info */}
         <div className={styles.infoCard}>

@@ -54,6 +54,7 @@ const ProfileForm = () => {
     area_locality: '',
     colony: "",
     about_us: "",
+    aadhar_number: "",
   });
 
 
@@ -108,6 +109,7 @@ const ProfileForm = () => {
           street_address: normalize(rawData.street_address),
           address: normalize(rawData.address),
           about_us: normalize(rawData.about_us || rawData.about),
+          aadhar_number: normalize(rawData.aadhar_number),
         });
 
         if (rawData.profile_photo) {
@@ -166,11 +168,16 @@ const ProfileForm = () => {
     fileInputRef.current.click();
   };
 
+  const [photoProgress, setPhotoProgress] = useState(0);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
+      setIsUploadingPhoto(true);
+      setPhotoProgress(10);
 
       // Hit API immediately
       const payload = new FormData();
@@ -179,12 +186,43 @@ const ProfileForm = () => {
       try {
         const data = await updateProfilePhoto(token, payload);
         if (data && data.status) {
-          toast.success(data.message || "Profile photo updated successfully!");
+          if (data.upload_id) {
+            const { checkUploadProgress } = await import('@/services/document.service');
+            const pollInterval = setInterval(async () => {
+              try {
+                const progressRes = await checkUploadProgress(token, data.upload_id);
+                if (progressRes.ok) {
+                  const progressData = await progressRes.json();
+                  const fileProgress = progressData?.progress?.files?.profile_photo;
+                  
+                  if (fileProgress) {
+                    setPhotoProgress(fileProgress.percent || 10);
+                    if (fileProgress.percent >= 100 || fileProgress.status === "completed" || fileProgress.status === "verified") {
+                      clearInterval(pollInterval);
+                      setIsUploadingPhoto(false);
+                      setPhotoProgress(100);
+                      toast.success(data.message || "Profile photo updated successfully!");
+                    }
+                  }
+                }
+              } catch (err) {
+                console.error("Polling error", err);
+              }
+            }, 2000);
+          } else {
+            setIsUploadingPhoto(false);
+            setPhotoProgress(100);
+            toast.success(data.message || "Profile photo updated successfully!");
+          }
         } else {
+          setIsUploadingPhoto(false);
+          setPhotoProgress(0);
           toast.error(data?.message || "Failed to update profile photo.");
         }
       } catch (err) {
         console.error("Profile photo upload error:", err);
+        setIsUploadingPhoto(false);
+        setPhotoProgress(0);
         toast.error("An error occurred while uploading photo.");
       }
     }
@@ -465,6 +503,10 @@ const ProfileForm = () => {
                   <label>Role <span className={styles.required}>*</span></label>
                   <input type="text" name="role_id" value={formData.role_id || ""} readOnly className={styles.readOnly} />
                 </div>
+                <div className={styles.inputGroup}>
+                  <label>Aadhar Number</label>
+                  <input type="text" name="aadhar_number" value={formData.aadhar_number || ""} onChange={handleChange} placeholder="Enter Aadhar number" />
+                </div>
                 
                 <div className={styles.inputGroup} style={{gridColumn: "1 / -1"}}>
                   <label>About You</label>
@@ -530,14 +572,16 @@ const ProfileForm = () => {
             
             {activeTab === 'kyc' && (
               <div className={styles.fieldsGrid} style={{ display: 'block' }}>
-                <KycDocuments />
+                <KycDocuments profile={profile} token={token} />
               </div>
             )}
 
-            <div className={styles.formActions}>
-              <button type="submit" className={styles.btnSave}>Save Changes</button>
-              <button type="button" className={styles.btnCancel} onClick={() => router.push('/auth/user/dashboard')}>Cancel</button>
-            </div>
+            {activeTab !== 'kyc' && (
+              <div className={styles.formActions}>
+                <button type="submit" className={styles.btnSave}>Save Changes</button>
+                <button type="button" className={styles.btnCancel} onClick={() => router.push('/auth/user/dashboard')}>Cancel</button>
+              </div>
+            )}
           </form>
         </div>
 
@@ -555,7 +599,9 @@ const ProfileForm = () => {
                 <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} />
               </div>
             </div>
-            <button className={styles.uploadPhotoBtn} onClick={handleImageClick}>Upload New Photo</button>
+            <button className={styles.uploadPhotoBtn} onClick={handleImageClick}>
+              {isUploadingPhoto ? `Uploading (${photoProgress}%)` : "Upload New Photo"}
+            </button>
             <p className={styles.photoInfo}>Recommended: JPG, PNG or WEBP<br/>Max size: 2MB. Min dimension: 200x200px</p>
           </div>
 

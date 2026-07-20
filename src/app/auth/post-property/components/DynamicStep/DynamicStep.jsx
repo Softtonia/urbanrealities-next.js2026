@@ -23,7 +23,12 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
   }
 
   const { base_fields = [], custom_fields = [] } = stepData;
-  const fields = [...base_fields, ...custom_fields].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+  let fields = [...base_fields, ...custom_fields].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+
+  // Hide Title, Content, and Excerpt on the first step
+  if (currentStepIndex === 0) {
+    fields = fields.filter(f => !['title', 'excerpt', 'content'].includes(f.key || f.request_key));
+  }
 
   // Taxonomy logic (only for step 1)
   const [taxonomies, setTaxonomies] = useState(cachedTaxonomiesData || []);

@@ -9,6 +9,7 @@ const AuthContext = createContext(null)
 export const SiteSettingsProvider = ({ initialSettings, children }) => {
     const [settings, setSettings] = useState(initialSettings)
     const [user, setUser] = useState('')
+    const [role, setRole] = useState(null)
     const [userId, setUserId] = useState(null)
     const [token, setToken] = useState(null)
     const [isLoadingToken, setIsLoadingToken] = useState(true) // NEW
@@ -20,9 +21,11 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     useEffect(() => {
         const savedToken = localStorage.getItem('token')
         const user_id = localStorage.getItem('userId')
+        const savedRole = localStorage.getItem('userRole')
         if (savedToken && savedToken !== "undefined" && savedToken !== "null") {
             setToken(savedToken)
             setUserId(user_id)
+            if (savedRole) setRole(savedRole)
         }
         setIsLoadingToken(false) // done loading
     }, [])
@@ -33,8 +36,11 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     useEffect(() => {
         const initAuth = async () => {
             setFetchingUser(true)
-            const { isAuthenticated, user, is_otp_verified } = await checkAuth();
-            if (isAuthenticated) setUser(user);
+            const { isAuthenticated, user, role, is_otp_verified } = await checkAuth();
+            if (isAuthenticated) {
+                setUser(user);
+                setRole(role);
+            }
 
             setIsOtpVerified(is_otp_verified);
             // setLoading(false);
@@ -47,10 +53,14 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
 
 
     // Save to localStorage and state
-    const login = (userId, token) => {
+    const login = (userId, token, role) => {
 
         localStorage.setItem('token', token)
         localStorage.setItem('userId', userId)
+        if (role) {
+            localStorage.setItem('userRole', role)
+            setRole(role)
+        }
         setToken(token)
         setUserId(userId)
 
@@ -79,8 +89,10 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
 
             if (res) {
                 localStorage.removeItem('token');
+                localStorage.removeItem('userRole');
                 setToken(null);
-                setUserId(null)
+                setUserId(null);
+                setRole(null);
             } else {
                 console.error('Logout failed');
             }
@@ -91,7 +103,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ token, login, logout, settings, isLoadingToken, isLogeIn, isOtpVerified, fetchingUser, userId }} // pass isLoadingToken
+            value={{ token, login, logout, settings, isLoadingToken, isLogeIn, isOtpVerified, fetchingUser, userId, role }} // pass isLoadingToken
         >
             {children}
         </AuthContext.Provider>

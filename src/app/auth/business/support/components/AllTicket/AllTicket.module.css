@@ -1,0 +1,15 @@
+.pageContainer{
+    background-color: var(--White);
+    padding: 30px;
+    border-radius: 12px;
+}
+.pageContainer h2{
+    margin-bottom: 30px;
+    font-family: var(--font-semibold);
+    font-size: 30px;
+}
+@media (max-width:576px){
+    .pageContainer{
+        padding: 10px;
+    }
+}
