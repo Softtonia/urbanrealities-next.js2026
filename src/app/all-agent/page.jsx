@@ -8,8 +8,8 @@ async function getAgent() {
   try {
     // ✅ Directly call backend API, not your Next.js API route
     const response = await getssr(`/api/get-all-users-by-role?role_id=3&per_page&page`);
-    const data = response?.data?.users?.data;
-    // console.log("==>",data)
+    const data = response?.users?.data || response?.data?.users?.data;
+    console.log("==> Agent",response)
     if (Array.isArray(data)) return data;
     if (data?.data) return data.data;
     return [];

@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { DatePicker } from 'antd';
 import { 
@@ -23,6 +24,7 @@ const ListingDashboard = ({
   perPage = 5,
   setPerPage = () => {}
 }) => {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'grid'
   const [sortValue, setSortValue] = useState('newest');
 
@@ -57,7 +59,7 @@ const ListingDashboard = ({
             format="DD MMM YYYY"
             style={{ padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}
           />
-          <button className={styles.addListingBtn}>
+          <button className={styles.addListingBtn} onClick={() => router.push('/auth/post-property/basic-details')}>
             <FaPlus /> Add New Listing
           </button>
         </div>
@@ -351,7 +353,7 @@ const ListingDashboard = ({
                     <td>
                       <div className={styles.actionCell}>
                         <button className={styles.actionBtn}><FaEye /></button>
-                        <button className={styles.actionBtn}><FaEdit /></button>
+                        <button className={styles.actionBtn} onClick={() => router.push(`/auth/post-property/basic-details?listing_id=${prop.id}`)}><FaEdit /></button>
                         <button className={styles.actionBtn}><FaTrash /></button>
                       </div>
                     </td>
@@ -463,7 +465,7 @@ const ListingDashboard = ({
                       </div>
                       <div className={styles.cardActions}>
                         <button className={styles.actionBtn}><FaEye /></button>
-                        <button className={styles.actionBtn}><FaEdit /></button>
+                        <button className={styles.actionBtn} onClick={() => router.push(`/auth/post-property/basic-details?listing_id=${prop.id}`)}><FaEdit /></button>
                         <button className={styles.actionBtn}><FaTrash /></button>
                       </div>
                     </div>

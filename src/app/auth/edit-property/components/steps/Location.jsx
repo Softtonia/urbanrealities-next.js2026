@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Select, { createFilter } from "react-select";
 import styles from "./Location.module.css";
 import { IoArrowBackSharp } from "react-icons/io5";
-import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
+import { PostPropertyContext } from "@/app/auth/edit-property/context/PostPropertyContext";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { getCountries, getStates, getCities } from "@/services/location.service";
 
@@ -147,7 +147,7 @@ const Location = () => {
             colony:colony,
     });
 
-    router.push("/auth/post-property/property-profile");
+    router.push(`/auth/edit-property/property-profile` + (typeof window !== 'undefined' ? window.location.search : ''));
   };
 
   const goBack = () => {

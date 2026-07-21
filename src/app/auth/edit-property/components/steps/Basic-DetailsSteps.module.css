@@ -1,0 +1,153 @@
+.content {
+  background-color: var(--White);
+  border-radius: 12px;
+}
+.content h3 {
+  font-size: clamp(20px, 2vw, 26px);
+  font-family: var(--font-medium);
+  margin-bottom: 8px;
+}
+.userNameHighlight {
+  color: var(--Orange-Red);
+}
+.optionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 16px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+.formTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  min-height: 80px;
+  resize: vertical; /* Allow vertical resizing */
+}
+
+/* Override bootstrap focus outline for form controls to use orange */
+.formContainer {
+  /* wrapper for dynamic fields */
+}
+.formContainer :global(.form-control:focus) {
+  border-color: var(--Orange-Red) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.orangeBtn {
+  background-color: var(--Orange-Red) !important;
+  border-color: var(--Orange-Red) !important;
+  color: white !important;
+}
+.orangeBtn:hover {
+  opacity: 0.9;
+  color: white !important;
+}
+.optionBtn {
+   padding:8px 16px;
+  border: 1px solid var( --Spanish-Gray);
+   border-radius: 5px;
+  background-color: var(--White);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px !important;
+}
+
+.selected {
+  border-color: var(--Orange-Red);
+  color: var(--Orange-Red);
+  background-color: #fff5e6;
+}
+.radioGroup {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.radioInput {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--Spanish-Gray);
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  margin-right: 8px;
+}
+
+.radioInput:checked {
+  border-color: var(--Orange-Red);
+  background-color: var(--White);
+}
+
+.radioInput:checked::before {
+  content: '';
+  position: absolute;
+  top: 1.5px;
+  left: 1.5px;
+  width: 9px;
+  height: 9px;
+  background-color: var(--Orange-Red);
+  border-radius: 50%;
+}
+
+.subPara {
+  margin-top: 24px;
+  font-size: clamp(14px, 1.5vw, 16px);
+  font-family: var(--font-regular);
+  margin-bottom: 8px;
+  text-transform: capitalize;
+}
+.optionBtn,
+.radioLabel {
+  font-size: clamp(14px, 1.5vw, 16px);
+}
+
+@keyframes skeletonPulse {
+  0% {
+    background-color: var(--Skeleton-Bg);
+  }
+  100% {
+    background-color: var(--Skeleton-Highlight);
+  }
+}
+
+.skeletonText {
+  animation: skeletonPulse 1.2s infinite alternate;
+  border-radius: 4px;
+  height: 20px;
+  width: 150px;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.skeletonButton {
+  animation: skeletonPulse 1.2s infinite alternate;
+  border-radius: 5px;
+  height: 38px;
+  border: 1px solid var(--Skeleton-Bg);
+  display: inline-block;
+}
+

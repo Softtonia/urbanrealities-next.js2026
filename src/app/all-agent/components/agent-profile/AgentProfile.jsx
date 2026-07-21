@@ -17,6 +17,7 @@ export default function AgentProfileDetails({agentProfile}) {
   const handleCloseModal = () => setShowModal(false);
   const handleViewShowModal = async () => {
     console.log("==>,", token)
+    console.log("agent_profile" , agentProfile)
     if (id && token) {
       // await fetchAgent();
       setViewShowModal(true);
@@ -144,11 +145,11 @@ export default function AgentProfileDetails({agentProfile}) {
 
           <div className={styles.statsRow}>
             <div className={styles.statscount}>
-              <h3>{agent?.rent ||0}+</h3>
+              <h3>{agent?.dashboard_counts?.properties_for_rent}+</h3>
               <p>Properties for rent</p>
             </div>
             <div className={styles.statscount}>
-              <h3>{agent?.sale || 0 }+</h3>
+              <h3>{agent?.dashboard_counts?.properties_for_sell  }+</h3>
               <p>Properties for Sell</p>
             </div>
           </div>

@@ -1,0 +1,196 @@
+/* ====== Desktop Sidebar (default) ====== */
+.sidebar {
+  height: max-content;
+  background-color: #f2f3f5;
+  padding: 24px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  margin-bottom: 16px;
+}
+.step:last-child {
+  margin-bottom: 0;
+}
+
+.stepCircle {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #cbd5e0;
+  border-radius: 50%;
+  background-color: #fff;
+  margin-right: 1rem;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.activeCircle {
+  border-color: var(--Orange-Red);
+  background-color: var(--Orange-Red);
+}
+
+.completedCircle {
+  border-color: var(--Orange-Red);
+  background-color: var(--Orange-Red);
+}
+
+.stepLine {
+  position: absolute;
+  top: 20px;
+  left: 9px;
+  width: 2px;
+  height: calc(100% - 20px);
+  background-color: #cbd5e0;
+  z-index: 1;
+}
+
+.stepLineFilled {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--Orange-Red);
+  transform-origin: top;
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.stepLineFilled.full {
+  transform: scaleY(1);
+}
+
+.activeStep .stepTitle {
+  font-family: var(--font-medium);
+}
+
+.stepTitle {
+  margin: 0;
+  color: #4a5568;
+}
+
+.stepSub {
+  font-size: 0.9rem;
+  color: #a0aec0;
+  margin: 0;
+}
+.mobileActiveStepTitle {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  display: none;
+}
+
+/* ====== Mobile Responsive ====== */
+@media (max-width: 992px) {
+  .sidebar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    position: relative;
+  }
+
+  .step {
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    text-align: center;
+    flex-grow: 1;
+  }
+
+  .stepCircle {
+    margin: 0 0 10px 0;
+  }
+
+  .stepLine {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background-color: #cbd5e0;
+    z-index: 1;
+  }
+
+  .step:last-child .stepLine {
+    display: none;
+  }
+
+  .stepLineFilled {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: var(--Orange-Red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .stepLineFilled.full {
+    transform: scaleX(1);
+  }
+  .sidebar::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 60px;
+    right: 60px;
+    height: 2px;
+    background-color: var(--Orange-Red);
+    z-index: 1;
+    width: var(--progress, 0%);
+    transition: width 0.3s ease;
+  }
+  /* .step::after {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: 60px;
+    height: 2px;
+    width: calc(var(--progress, 0) * 100%);
+    background-color: #cbd5e0;
+    z-index: 1;
+  } */
+
+  .step:last-child::after {
+    display: none;
+  }
+
+  .activeStep::after,
+  .completedStep::after {
+    background-color: var(--Orange-Red);
+  }
+  .stepcontent {
+    text-align: center;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .stepSub {
+    font-size: 11px;
+    color: #a0aec0;
+  }
+
+  .stepTitle {
+    display: none;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+  .mobileActiveStepTitle{
+    display: block;
+  }
+}
+

@@ -4,6 +4,10 @@ export async function getRoleListing() {
   return await laravelApi('/api/admin/role-listing', { method: 'GET' });
 }
 
+export async function getUserById(id) {
+  return await laravelApi(`/api/get-userdata-by-id?id=${id}`, { method: 'GET' });
+}
+
 export async function checkUsername(userName) {
   return await laravelApi('/api/auth/usernamecheck', { method: 'POST', body: { user_name: userName } });
 }
@@ -154,7 +158,7 @@ export async function verifyOtp(otp, token) {
 
 export async function getUserProfile(userId, token) {
   try {
-    const res = await nextJsApi.get('/api/auth/getuser', {
+    const res = await nextJsApi.get('/api/auth/getuser?user_id='+ localStorage.getItem("userId"), {
       headers: {
         'Authorization': `Bearer ${token}`,
       },

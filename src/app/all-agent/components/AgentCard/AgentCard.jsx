@@ -5,9 +5,11 @@ import styles from "./AgentCard.module.css";
 import Link from "next/link";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import { useRouter } from "next/navigation";
 
 
 export default function AgentCard({ agent }) {
+  const router = useRouter();
   const [show, setShow] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -18,7 +20,15 @@ export default function AgentCard({ agent }) {
   const [loading, setLoading] = useState(false);
 
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    const token = localStorage.getItem("token")
+    if(!token){
+      const currentUrl = encodeURIComponent(window.location.pathname + window.location.search);
+      router.push(`/auth/login?redirect=${currentUrl}`);
+    }else{
+      setShow(true);
+    }
+  }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

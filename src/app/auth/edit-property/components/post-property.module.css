@@ -1,0 +1,36 @@
+.wrapper {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 32px;
+  align-items: flex-start;
+}
+.sidebarCol{
+  padding: 20px 0 0 48px;
+  width: 356px;     
+  flex-shrink: 0;
+  position: sticky;
+  top: 100px; /* Adjust based on navbar height */
+  z-index: 10;
+}
+.mainContent {
+    flex: 1;
+  padding:54px 48px 20px 48px;
+  background-color: #fff;
+  border-radius: 12px;
+}
+
+/* Mobile wrapper */
+@media (max-width: 992px) {
+  
+  .wrapper {
+    flex-direction: column;
+  }
+
+  .sidebarCol {
+    width:100%;
+    padding: 20px;
+  }
+  .mainContent{
+   padding: 20px;
+  }
+}

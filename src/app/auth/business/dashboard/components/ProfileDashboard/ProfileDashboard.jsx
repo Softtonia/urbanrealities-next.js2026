@@ -6,6 +6,7 @@ import {
   FaCheckCircle, FaUser, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt,
   FaIdCard, FaClipboardList, FaUsers, FaComments, FaUpload, FaEdit, FaBriefcase
 } from "react-icons/fa";
+import { MdVerified } from "react-icons/md";
 import { Skeleton } from '@mui/material';
 import { useSiteSettings } from '@/Components/mycontext/siteSettingContext';
 import { useDashboard } from "../../../DashboardContext/DashboardContext";
@@ -69,7 +70,7 @@ const Dashboard = () => {
                 className={styles.avatar}
               />
             )}
-            {!loading && (
+            {!loading && ['Approved', 'Verified', 'Completed'].includes(profile.kyc_status) && (
               <div className={styles.avatarBadge}>
                 <FaCheckCircle className={styles.verifiedIcon} />
               </div>
@@ -81,7 +82,8 @@ const Dashboard = () => {
               <h2>{loading ? <Skeleton variant="text" width={150} /> : fullName}</h2>
               {!loading && (
                 <span className={styles.statusPill}>
-                  <FaCheckCircle /> Approved
+                  {['Approved', 'Verified', 'Completed'].includes(profile.kyc_status) && <MdVerified style={{ color: 'var(--UFO-Green)', fontSize: '16px' }} />}
+                  {profile.kyc_status || 'Pending'}
                 </span>
               )}
             </div>
@@ -107,10 +109,7 @@ const Dashboard = () => {
 
         <div className={styles.bannerRight}>
           <div className={styles.statusBox}>
-            <div className={styles.statusItem}>
-              <FaCheckCircle className={styles.successIcon} />
-              <span>Account Status<br/><strong>{loading ? <Skeleton variant="text" width={60} /> : (profile.account_status || 'Pending')}</strong></span>
-            </div>
+
             <div className={styles.statusItem}>
               <div className={profile.kyc_status === 'Approved' || profile.kyc_status === 'Verified' ? styles.successDot : styles.pendingDot}></div>
               <span>KYC Status<br/><strong>{loading ? <Skeleton variant="text" width={60} /> : (profile.kyc_status || 'Pending')}</strong></span>
@@ -168,7 +167,7 @@ const Dashboard = () => {
       </div>
 
       {/* Info Grid - Personal, Business (Optional), and Address */}
-      <div className={`${styles.infoGrid} ${profile.role_name && profile.role_name.toLowerCase() !== 'owner' ? styles.infoGridThree : ''}`}>
+      <div className={styles.infoGrid}>
         {/* Personal Info */}
         <div className={styles.infoCard}>
           <div className={styles.cardHeader}>
@@ -193,15 +192,17 @@ const Dashboard = () => {
               <h3>Business Information</h3>
             </div>
             <div className={styles.cardBody}>
-              <div className={styles.infoRow}><span>Business Name</span><strong>{loading ? <Skeleton width={120} /> : (profile.business_name || "Not Added Yet")}</strong></div>
-              <div className={styles.infoRow}><span>Business Email</span><strong>{loading ? <Skeleton width={150} /> : (profile.business_email || "Not Added Yet")}</strong></div>
+              <div className={styles.infoRow}><span>Business Name</span><strong>{loading ? <Skeleton width={120} /> : (profile.bussiness_name || "Not Added Yet")}</strong></div>
+              <div className={styles.infoRow}><span>Business Email</span><strong>{loading ? <Skeleton width={150} /> : (profile.bussiness_email || "Not Added Yet")}</strong></div>
               <div className={styles.infoRow}><span>Business Phone</span><strong>{loading ? <Skeleton width={110} /> : (profile.business_phone || "Not Added Yet")}</strong></div>
-              <div className={styles.infoRow}><span>Business Address</span><strong>{loading ? <Skeleton width={150} /> : (profile.business_address || "Not Added Yet")}</strong></div>
+              <div className={styles.infoRow}><span>Business Address</span><strong>{loading ? <Skeleton width={150} /> : (profile.bussiness_address || "Not Added Yet")}</strong></div>
               <div className={styles.infoRow}><span>No. of Employees</span><strong>{loading ? <Skeleton width={80} /> : (profile.no_of_employees || "Not Added Yet")}</strong></div>
             </div>
           </div>
         )}
+      </div>
 
+      <div className={styles.infoGrid}>
         {/* Address Info */}
         <div className={styles.infoCard}>
           <div className={styles.cardHeader}>
@@ -217,10 +218,7 @@ const Dashboard = () => {
             <div className={styles.infoRow}><span>PIN Code</span><strong>{loading ? <Skeleton width={80} /> : (profile.pin_code || "-")}</strong></div>
           </div>
         </div>
-      </div>
 
-      {/* Bottom Grid */}
-      <div className={styles.bottomGrid}>
         {/* Verification & KYC */}
         <div className={styles.infoCard}>
           <div className={styles.cardHeader}>
@@ -248,7 +246,9 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+      </div>
 
+      <div style={{ width: '100%', marginBottom: '24px' }}>
         {/* About Me */}
         <div className={styles.infoCard}>
           <div className={styles.cardHeader}>

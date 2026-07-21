@@ -5,7 +5,7 @@ import styles from "./ProfileForm.module.css";
 import { useDashboard } from "../../../../DashboardContext/DashboardContext";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { useRouter, useSearchParams } from "next/navigation";
-import Select from "react-select";
+import Select, { createFilter } from "react-select";
 import { FaUser, FaBuilding, FaMapMarkerAlt, FaIdCard, FaCamera, FaCheckCircle, FaExclamationCircle, FaHeadset } from "react-icons/fa";
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
 import KycDocuments from "../KycDocuments/KycDocuments";
@@ -65,6 +65,7 @@ const ProfileForm = () => {
     aadhaar_number: "",
     no_of_employees: "",
   });
+  const [formErrors, setFormErrors] = useState({});
 
 
   const [loading, setLoading] = useState(true);
@@ -282,9 +283,20 @@ const ProfileForm = () => {
     }
   };
 
-  // ✅ Handle input change
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    setFormErrors(prev => ({ ...prev, [name]: null }));
+    
+    // Allow only numeric input for specific fields
+    if (['phone', 'business_phone', 'alternate_number', 'aadhaar_number', 'pin_code'].includes(name)) {
+      value = value.replace(/\D/g, ''); 
+      
+      // Limit phone numbers to 10 digits
+      if (['phone', 'business_phone', 'alternate_number'].includes(name) && value.length > 10) {
+        value = value.slice(0, 10);
+      }
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -327,6 +339,9 @@ const ProfileForm = () => {
         router.push("/auth/business/dashboard");
       } else {
         console.error("❌ Update Failed:", data?.message || "Unknown error");
+        if (data?.errors) {
+          setFormErrors(data.errors);
+        }
         toast.error(data?.message || "Profile update failed. Please try again.");
       }
     } catch (err) {
@@ -531,21 +546,25 @@ const ProfileForm = () => {
                 {/* Row 1 */}
                 <div className={styles.inputGroup}>
                   <label>First Name <span className={styles.required}>*</span></label>
-                  <input type="text" name="first_name" value={formData.first_name || ""} onChange={handleChange} placeholder="First name" />
+                  <input type="text" name="first_name" value={formData.first_name || ""} onChange={handleChange} placeholder="First name"  style={formErrors.first_name ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.first_name && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.first_name[0]}</span>}
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Last Name <span className={styles.required}>*</span></label>
-                  <input type="text" name="last_name" value={formData.last_name || ""} onChange={handleChange} placeholder="Last name" />
+                  <input type="text" name="last_name" value={formData.last_name || ""} onChange={handleChange} placeholder="Last name"  style={formErrors.last_name ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.last_name && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.last_name[0]}</span>}
                 </div>
 
                 {/* Row 2 */}
                 <div className={styles.inputGroup}>
                   <label>Username <span className={styles.required}>*</span></label>
-                  <input type="text" name="user_name" value={formData.user_name || ""} readOnly className={styles.readOnly} />
+                  <input type="text" name="user_name" value={formData.user_name || ""} readOnly className={styles.readOnly}  style={formErrors.user_name ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.user_name && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.user_name[0]}</span>}
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Email Address <span className={styles.required}>*</span></label>
-                  <input type="email" name="email" value={formData.email || ""} readOnly className={styles.readOnly} />
+                  <input type="email" name="email" value={formData.email || ""} readOnly className={styles.readOnly}  style={formErrors.email ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.email && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.email[0]}</span>}
                 </div>
 
                 {/* Row 3 */}
@@ -553,26 +572,31 @@ const ProfileForm = () => {
                   <label>Mobile Number <span className={styles.required}>*</span></label>
                   <div className={styles.phoneInputWrap}>
                     <select className={styles.phoneCode}><option>+91</option></select>
-                    <input type="tel" name="phone" value={formData.phone || ""} onChange={handleChange} placeholder="Mobile Number" />
+                    <input type="tel" name="phone" value={formData.phone || ""} onChange={handleChange} placeholder="Mobile Number"  style={formErrors.phone ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.phone && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.phone[0]}</span>}
                   </div>
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Alternate Number</label>
-                  <input type="tel" name="alternate_number" value={formData.alternate_number || ""} onChange={handleChange} placeholder="Enter alternate number (optional)" />
+                  <input type="tel" name="alternate_number" value={formData.alternate_number || ""} onChange={handleChange} placeholder="Enter alternate number (optional)"  style={formErrors.alternate_number ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.alternate_number && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.alternate_number[0]}</span>}
                 </div>
 
                 {/* Row 4 */}
                 <div className={styles.inputGroup}>
                   <label>Role <span className={styles.required}>*</span></label>
-                  <input type="text" name="role_id" value={formData.role_id || ""} readOnly className={styles.readOnly} />
+                  <input type="text" name="role_id" value={formData.role_id || ""} readOnly className={styles.readOnly}  style={formErrors.role_id ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.role_id && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.role_id[0]}</span>}
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Aadhar Number</label>
-                  <input type="text" name="aadhaar_number" value={formData.aadhaar_number || ""} onChange={handleChange} placeholder="Enter your 12 digit Aadhar number" autoComplete="new-password" />
+                  <input type="text" name="aadhaar_number" value={formData.aadhaar_number || ""} onChange={handleChange} placeholder="Enter your 12 digit Aadhar number" autoComplete="new-password"  style={formErrors.aadhaar_number ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.aadhaar_number && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.aadhaar_number[0]}</span>}
                 </div>
                 <div className={styles.inputGroup} style={{gridColumn: "1 / -1"}}>
                   <label>About You</label>
-                  <textarea name="about_us" value={formData.about_us || ""} onChange={handleChange} placeholder="Tell us something about yourself..." rows={4}></textarea>
+                  <textarea name="about_us" value={formData.about_us || ""} onChange={handleChange} placeholder="Tell us something about yourself..." rows={4} style={formErrors.about_us ? { borderColor: "red", outline: "none" } : {}}></textarea>
+                  {formErrors.about_us && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.about_us[0]}</span>}
                 </div>
               </div>
             )}
@@ -581,15 +605,17 @@ const ProfileForm = () => {
               <div className={styles.fieldsGrid}>
                 <div className={styles.inputGroup}>
                   <label>Street Address</label>
-                  <input type="text" name="street_address" value={formData.street_address || ""} onChange={handleChange} placeholder="Enter street address" autoComplete="new-password" />
+                  <textarea name="street_address" value={formData.street_address || ""} onChange={handleChange} placeholder="Enter street address" autoComplete="new-password" style={{  height: '100px' , ...(formErrors.street_address ? { borderColor: "red", outline: "none" } : {}) }}></textarea>
+                  {formErrors.street_address && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.street_address[0]}</span>}
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Area / Locality</label>
-                  <input type="text" name="area_locality" value={formData.area_locality || ""} onChange={handleChange} placeholder="Enter area or locality" autoComplete="new-password" />
+                  <textarea name="area_locality" value={formData.area_locality || ""} onChange={handleChange} placeholder="Enter area or locality" autoComplete="new-password" style={{  height: '100px' , ...(formErrors.area_locality ? { borderColor: "red", outline: "none" } : {}) }}></textarea>
+                  {formErrors.area_locality && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.area_locality[0]}</span>}
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Country</label>
-                  <Select 
+                  <Select filterOption={(option, inputValue) => { if (!inputValue) return true; return option.label.toLowerCase().startsWith(inputValue.toLowerCase()); }} 
                     options={countries.map(c => ({ value: c.id, label: c.name }))} 
                     value={countries.map((c) => ({ value: c.id, label: c.name })).find((opt) => opt.value === formData.country_id) || null} 
                     onChange={(opt) => setFormData(p => ({ ...p, country_id: opt?.value || null, state_id: null, city_id: null }))} 
@@ -601,7 +627,7 @@ const ProfileForm = () => {
                 </div>
                 <div className={styles.inputGroup}>
                   <label>State</label>
-                  <Select 
+                  <Select filterOption={(option, inputValue) => { if (!inputValue) return true; return option.label.toLowerCase().startsWith(inputValue.toLowerCase()); }} 
                     options={states.map(s => ({ value: s.id, label: s.name }))} 
                     value={states.map((s) => ({ value: s.id, label: s.name })).find((opt) => opt.value === formData.state_id) || null} 
                     onChange={(opt) => setFormData(p => ({ ...p, state_id: opt?.value || null, city_id: null }))} 
@@ -614,7 +640,7 @@ const ProfileForm = () => {
                 </div>
                 <div className={styles.inputGroup}>
                   <label>City</label>
-                  <Select 
+                  <Select filterOption={(option, inputValue) => { if (!inputValue) return true; return option.label.toLowerCase().startsWith(inputValue.toLowerCase()); }} 
                     options={cities.map(c => ({ value: c.id, label: c.name }))} 
                     value={cities.map((city) => ({ value: city.id, label: city.name })).find((opt) => opt.value === formData.city_id) || null} 
                     onChange={(opt) => setFormData(p => ({ ...p, city_id: opt?.value || null }))} 
@@ -627,7 +653,8 @@ const ProfileForm = () => {
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Pin Code</label>
-                  <input type="text" name="pin_code" value={formData.pin_code || ""} onChange={handleChange} placeholder="Enter pin code" autoComplete="new-password" />
+                  <input type="text" name="pin_code" value={formData.pin_code || ""} onChange={handleChange} placeholder="Enter pin code" autoComplete="new-password"  style={formErrors.pin_code ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.pin_code && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.pin_code[0]}</span>}
                 </div>
                 
                 <div style={{ gridColumn: "1 / -1", marginTop: '1rem', marginBottom: '0.5rem' }}>
@@ -644,15 +671,17 @@ const ProfileForm = () => {
 
                 <div className={styles.inputGroup}>
                   <label>Business Street Address</label>
-                  <input type="text" name="business_street_address" value={formData.business_street_address || ""} onChange={handleChange} placeholder="Enter business street address" autoComplete="new-password" />
+                  <textarea name="business_street_address" value={formData.business_street_address || ""} onChange={handleChange} placeholder="Enter business street address" autoComplete="new-password" style={{  height: '100px' , ...(formErrors.business_street_address ? { borderColor: "red", outline: "none" } : {}) }}></textarea>
+                  {formErrors.business_street_address && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.business_street_address[0]}</span>}
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Business Area / Locality</label>
-                  <input type="text" name="business_area_locality" value={formData.business_area_locality || ""} onChange={handleChange} placeholder="Enter business area or locality" autoComplete="new-password" />
+                  <textarea name="business_area_locality" value={formData.business_area_locality || ""} onChange={handleChange} placeholder="Enter business area or locality" autoComplete="new-password" style={{  height: '100px' , ...(formErrors.business_area_locality ? { borderColor: "red", outline: "none" } : {}) }}></textarea>
+                  {formErrors.business_area_locality && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.business_area_locality[0]}</span>}
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Business Country</label>
-                  <Select 
+                  <Select filterOption={(option, inputValue) => { if (!inputValue) return true; return option.label.toLowerCase().startsWith(inputValue.toLowerCase()); }} 
                     options={countries.map(c => ({ value: c.id, label: c.name }))} 
                     value={countries.map((c) => ({ value: c.id, label: c.name })).find((opt) => opt.value === formData.business_country_id) || null} 
                     onChange={(opt) => setFormData(p => ({ ...p, business_country_id: opt?.value || null, business_state_id: null, business_city_id: null }))} 
@@ -664,7 +693,7 @@ const ProfileForm = () => {
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Business State</label>
-                  <Select 
+                  <Select filterOption={(option, inputValue) => { if (!inputValue) return true; return option.label.toLowerCase().startsWith(inputValue.toLowerCase()); }} 
                     options={businessStates.map(s => ({ value: s.id, label: s.name }))} 
                     value={businessStates.map((s) => ({ value: s.id, label: s.name })).find((opt) => opt.value === formData.business_state_id) || null} 
                     onChange={(opt) => setFormData(p => ({ ...p, business_state_id: opt?.value || null, business_city_id: null }))} 
@@ -677,7 +706,7 @@ const ProfileForm = () => {
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Business City</label>
-                  <Select 
+                  <Select filterOption={(option, inputValue) => { if (!inputValue) return true; return option.label.toLowerCase().startsWith(inputValue.toLowerCase()); }} 
                     options={businessCities.map(c => ({ value: c.id, label: c.name }))} 
                     value={businessCities.map((city) => ({ value: city.id, label: city.name })).find((opt) => opt.value === formData.business_city_id) || null} 
                     onChange={(opt) => setFormData(p => ({ ...p, business_city_id: opt?.value || null }))} 
@@ -690,7 +719,8 @@ const ProfileForm = () => {
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Business Pin Code</label>
-                  <input type="text" name="business_pin_code" value={formData.business_pin_code || ""} onChange={handleChange} placeholder="Enter business pin code" autoComplete="new-password" />
+                  <input type="text" name="business_pin_code" value={formData.business_pin_code || ""} onChange={handleChange} placeholder="Enter business pin code" autoComplete="new-password"  style={formErrors.business_pin_code ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.business_pin_code && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.business_pin_code[0]}</span>}
                 </div>
               </div>
             )}
@@ -699,19 +729,23 @@ const ProfileForm = () => {
               <div className={styles.fieldsGrid}>
                 <div className={styles.inputGroup}>
                   <label>Business Name</label>
-                  <input type="text" name="bussiness_name" value={formData.bussiness_name || ""} onChange={handleChange} placeholder="Enter business name" autoComplete="new-password" />
+                  <input type="text" name="bussiness_name" value={formData.bussiness_name || ""} onChange={handleChange} placeholder="Enter business name" autoComplete="new-password"  style={formErrors.bussiness_name ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.bussiness_name && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.bussiness_name[0]}</span>}
                 </div>
                 <div className={styles.inputGroup}>
                   <label>No. of Employees</label>
-                  <input type="number" name="no_of_employees" value={formData.no_of_employees || ""} onChange={handleChange} placeholder="Enter number of employees" autoComplete="new-password" />
+                  <input type="number" name="no_of_employees" value={formData.no_of_employees || ""} onChange={handleChange} placeholder="Enter number of employees" autoComplete="new-password"  style={formErrors.no_of_employees ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.no_of_employees && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.no_of_employees[0]}</span>}
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Business Email</label>
-                  <input type="email" name="bussiness_email" value={formData.bussiness_email || ""} onChange={handleChange} placeholder="Enter business email" />
+                  <input type="email" name="bussiness_email" value={formData.bussiness_email || ""} onChange={handleChange} placeholder="Enter business email"  style={formErrors.bussiness_email ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.bussiness_email && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.bussiness_email[0]}</span>}
                 </div>
                 <div className={styles.inputGroup}>
                   <label>Business Phone</label>
-                  <input type="text" name="business_phone" value={formData.business_phone || ""} onChange={handleChange} placeholder="Enter business phone number" />
+                  <input type="text" name="business_phone" value={formData.business_phone || ""} onChange={handleChange} placeholder="Enter business phone number"  style={formErrors.business_phone ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.business_phone && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.business_phone[0]}</span>}
                 </div>
               </div>
             )}
@@ -782,7 +816,7 @@ const ProfileForm = () => {
           <div className={styles.widgetCard}>
             <h4 className={styles.widgetTitle}>Need Help?</h4>
             <p className={styles.helpText}>If you face any issues while updating your profile, our support team is here to help you.</p>
-            <button className={styles.contactSupportBtn}>
+            <button className={styles.contactSupportBtn} onClick={() => router.push('/auth/business/support')}>
               <FaHeadset /> Contact Support
             </button>
           </div>

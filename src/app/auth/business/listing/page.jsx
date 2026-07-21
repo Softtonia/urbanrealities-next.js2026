@@ -38,6 +38,9 @@ const ListingPage = () => {
       }
     } catch (err) {
       console.error('Error fetching properties:', err);
+      setProperties([]);
+      setMeta(null);
+      setAnalytics(null);
       setLoading(false);
     }
   };

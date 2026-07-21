@@ -1,0 +1,66 @@
+.content {
+  background-color: var(--White);
+  border-radius: 12px;
+}
+.title {
+  font-size: clamp(20px, 2vw, 26px);
+  font-family: var(--font-medium);
+  margin-bottom: 8px;
+}
+
+.inputField {
+  border: 1px solid #9E9E9E;
+  background-color: #fff;
+  border-radius: 8px;
+  padding-left: 4px;
+  min-height: 42px;
+  box-shadow: none;
+  outline: none;
+  width: 100%; /* keep it responsive */
+  font-size: clamp(12px, 1.5vw, 14px);
+  font-family: var(--font-regular);
+  padding-left:10px ;
+  color: #000;
+}
+
+.formTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  min-height: 80px;
+  resize: vertical; /* Allow vertical resizing */
+}
+
+.inputField:focus,
+.inputField:hover {
+  border: 1px solid #9E9E9E;
+}
+
+.inputField:active {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+.subtitle {
+ font-size: clamp(14px, 1.5vw, 16px);
+  margin-bottom: 24px;
+}
+.label {
+font-size: clamp(14px, 1.5vw, 16px);
+font-family: var(--font-regular);
+  margin-bottom: 8px;
+}
+.formGroup{
+    margin-bottom: 14px;
+}
+
+.error {
+  color: var( --KU-Crimson);
+  font-size: clamp(11px, 1.5vw, 13px);
+  font-family: var(--font-regular);
+  margin-top: 4px;
+}
+

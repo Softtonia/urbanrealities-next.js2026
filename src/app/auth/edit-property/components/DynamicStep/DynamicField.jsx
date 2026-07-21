@@ -1,6 +1,6 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
-import { PostPropertyContext } from "@/app/auth/post-property/context/PostPropertyContext";
+import { PostPropertyContext } from "@/app/auth/edit-property/context/PostPropertyContext";
 import Select from "react-select";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import styles from "../steps/Basic-DetailsSteps.module.css"; 
