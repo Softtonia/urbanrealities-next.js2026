@@ -12,7 +12,7 @@ const apiClient = axios.create({
 
 export const fetchUserListings = async (token, filter = 'all', perPage = 5, page = 1) => {
   try {
-    const response = await apiClient.get(`/api/users-property-listing`, {
+    const response = await apiClient.get(`/api/frontend/listings`, {
       headers: {
         Authorization: `Bearer ${token}`
       },

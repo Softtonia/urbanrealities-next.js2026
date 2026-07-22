@@ -58,7 +58,7 @@ export function PostPropertyProvider({ children }) {
   // Fetch listing data on mount
   useEffect(() => {
     if (listing_id && token) {
-      fetch(`${LARAVEL_API_BASE_URL}/api/users-property-listing/${listing_id}`, {
+      fetch(`${LARAVEL_API_BASE_URL}/api/frontend/listings/${listing_id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -97,9 +97,9 @@ export function PostPropertyProvider({ children }) {
               }
               
               // Location Details
-              parsedDynamicData.country_id = propData.country_id || propData.country || "";
-              parsedDynamicData.state_id = propData.state_id || propData.state || "";
-              parsedDynamicData.city_id = propData.city_id || propData.city || "";
+              parsedDynamicData.country_id = propData.location_ids?.country_id || propData.location?.country_id || propData.country_id || propData.country || "";
+              parsedDynamicData.state_id = propData.location_ids?.state_id || propData.location?.state_id || propData.state_id || propData.state || "";
+              parsedDynamicData.city_id = propData.location_ids?.city_id || propData.location?.city_id || propData.city_id || propData.city || "";
               parsedDynamicData.area_locality = propData.area_locality || "";
               parsedDynamicData.full_address = propData.full_address || "";
               
@@ -124,6 +124,9 @@ export function PostPropertyProvider({ children }) {
                 },
                 locationDetails: {
                   ...prev.locationDetails,
+                  country_id: parsedDynamicData.country_id,
+                  state_id: parsedDynamicData.state_id,
+                  city_id: parsedDynamicData.city_id,
                   area_locality: propData.area_locality || "",
                 },
                 dynamicData: parsedDynamicData,

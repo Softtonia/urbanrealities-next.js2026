@@ -53,7 +53,7 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
           const termIds = Object.entries(selectedTaxonomies)
             .filter(([taxId]) => {
               const taxonomy = taxonomies.find(t => String(t.id) === String(taxId));
-              return taxonomy ? taxonomy.hierarchical : true;
+              return taxonomy ? taxonomy.hierarchical : false;
             })
             .map(([_, termId]) => termId); 
           
