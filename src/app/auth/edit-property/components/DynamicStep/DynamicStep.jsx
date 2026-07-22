@@ -50,12 +50,7 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
       const fetchTaxonomiesData = async () => {
         if (taxonomies.length === 0) setLoadingTaxonomies(true);
         try {
-          const termIds = Object.entries(selectedTaxonomies)
-            .filter(([taxId]) => {
-              const taxonomy = taxonomies.find(t => String(t.id) === String(taxId));
-              return taxonomy ? taxonomy.hierarchical : false;
-            })
-            .map(([_, termId]) => termId); 
+          const termIds = Object.values(selectedTaxonomies);
           
           const response = await getTaxonomies(termIds);
           if (response?.data) {
@@ -248,10 +243,19 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
                       <button
                         key={term.id}
                         className={`${styles.optionBtn} ${selectedTaxonomies[taxonomy.id] === term.id ? styles.selected : ""}`}
-                        onClick={() => setSelectedTaxonomies(prev => ({
-                          ...prev,
-                          [taxonomy.id]: term.id
-                        }))}
+                        onClick={() => {
+                          setSelectedTaxonomies(prev => {
+                            const newSelected = { ...prev };
+                            const currentIndex = taxonomies.findIndex(t => String(t.id) === String(taxonomy.id));
+                            if (currentIndex !== -1) {
+                              for (let i = currentIndex + 1; i < taxonomies.length; i++) {
+                                delete newSelected[taxonomies[i].id];
+                              }
+                            }
+                            newSelected[taxonomy.id] = term.id;
+                            return newSelected;
+                          });
+                        }}
                       >
                         {term.name}
                       </button>

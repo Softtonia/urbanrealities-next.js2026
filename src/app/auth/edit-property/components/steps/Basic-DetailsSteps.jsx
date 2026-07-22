@@ -67,14 +67,8 @@ export default function StepContent({ purposeList, propertyListing }) {
         setLoadingTaxonomies(true);
       }
       try {
-        // Only include termIds for taxonomies where hierarchical is true
-        const termIds = Object.entries(selectedTaxonomies)
-          .filter(([taxId]) => {
-            const taxonomy = taxonomies.find(t => String(t.id) === String(taxId));
-            // If taxonomy is known, check hierarchical flag. If unknown (e.g. initial load), include it.
-            return taxonomy ? taxonomy.hierarchical : true;
-          })
-          .map(([_, termId]) => termId); 
+        // Send all selected term IDs so the backend can determine the children
+        const termIds = Object.values(selectedTaxonomies); 
         
         const response = await getTaxonomies(termIds);
         if (response?.data) {
@@ -217,10 +211,20 @@ export default function StepContent({ purposeList, propertyListing }) {
                   <button
                     key={term.id}
                     className={`${styles.optionBtn} ${selectedTaxonomies[taxonomy.id] === term.id ? styles.selected : ""}`}
-                    onClick={() => setSelectedTaxonomies(prev => ({
-                      ...prev,
-                      [taxonomy.id]: term.id
-                    }))}
+                    onClick={() => {
+                      setSelectedTaxonomies(prev => {
+                        const newSelected = { ...prev };
+                        // Clear subsequent taxonomies when a parent is changed
+                        const currentIndex = taxonomies.findIndex(t => String(t.id) === String(taxonomy.id));
+                        if (currentIndex !== -1) {
+                          for (let i = currentIndex + 1; i < taxonomies.length; i++) {
+                            delete newSelected[taxonomies[i].id];
+                          }
+                        }
+                        newSelected[taxonomy.id] = term.id;
+                        return newSelected;
+                      });
+                    }}
                   >
                     {term.name}
                   </button>
