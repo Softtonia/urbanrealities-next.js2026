@@ -353,7 +353,7 @@ const ListingDashboard = ({
                     <td>
                       <div className={styles.actionCell}>
                         <button className={styles.actionBtn}><FaEye /></button>
-                        <button className={styles.actionBtn} onClick={() => router.push(`/auth/post-property/basic-details?listing_id=${prop.id}`)}><FaEdit /></button>
+                        <button className={styles.actionBtn} onClick={() => router.push(`/auth/edit-property/basic-details?listing_id=${prop.id}`)}><FaEdit /></button>
                         <button className={styles.actionBtn}><FaTrash /></button>
                       </div>
                     </td>
@@ -465,7 +465,7 @@ const ListingDashboard = ({
                       </div>
                       <div className={styles.cardActions}>
                         <button className={styles.actionBtn}><FaEye /></button>
-                        <button className={styles.actionBtn} onClick={() => router.push(`/auth/post-property/basic-details?listing_id=${prop.id}`)}><FaEdit /></button>
+                        <button className={styles.actionBtn} onClick={() => router.push(`/auth/edit-property/basic-details?listing_id=${prop.id}`)}><FaEdit /></button>
                         <button className={styles.actionBtn}><FaTrash /></button>
                       </div>
                     </div>

@@ -1,6 +1,6 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { PostPropertyContext } from "@/app/auth/edit-property/context/PostPropertyContext";
 import DynamicField from "./DynamicField";
 import styles from "../steps/Basic-DetailsSteps.module.css"; 
@@ -16,6 +16,8 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
   const { formData, updateFormData, setFormData } = useContext(PostPropertyContext);
   const { token } = useSiteSettings();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const listingId = searchParams.get('listing_id');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   if (!stepData) {
@@ -34,6 +36,12 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
   const [taxonomies, setTaxonomies] = useState(cachedTaxonomiesData || []);
   const [loadingTaxonomies, setLoadingTaxonomies] = useState(!cachedTaxonomiesData);
   const [selectedTaxonomies, setSelectedTaxonomies] = useState(formData.dynamicData?.taxonomies || {});
+
+  useEffect(() => {
+    if (formData.dynamicData?.taxonomies && Object.keys(selectedTaxonomies).length === 0) {
+      setSelectedTaxonomies(formData.dynamicData.taxonomies);
+    }
+  }, [formData.dynamicData?.taxonomies]);
 
   const [errors, setErrors] = useState({});
 
@@ -169,7 +177,7 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
          payload.append(`taxonomies[${taxId}]`, termId);
       });
 
-      const result = await submitListing(token, payload);
+      const result = await submitListing(token, payload, listingId);
       
       if (result && result.status) {
         toast.success("Listing submitted successfully!");

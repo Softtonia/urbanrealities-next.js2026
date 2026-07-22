@@ -105,7 +105,7 @@ export async function resendOtp(token) {
 
 export async function updatePersonalProfile(token, payload) {
   try {
-    const res = await nextJsApi.post('/api/auth/profile/personal', payload, {
+    const res = await nextJsApi.post('/api/auth/user-profile/update-profile', payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data"
@@ -120,7 +120,7 @@ export async function updatePersonalProfile(token, payload) {
 
 export async function updateProfilePhoto(token, payload) {
   try {
-    const res = await nextJsApi.post('/api/auth/profile/photo', payload, {
+    const res = await nextJsApi.post('/api/auth/user-profile/update-profile', payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data"
@@ -135,7 +135,7 @@ export async function updateProfilePhoto(token, payload) {
 
 export async function updateAddressProfile(token, payload) {
   try {
-    const res = await nextJsApi.post('/api/auth/profile/address', payload, {
+    const res = await nextJsApi.post('/api/auth/user-profile/update-profile', payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data"
@@ -156,14 +156,15 @@ export async function verifyOtp(otp, token) {
   });
 }
 
-export async function getUserProfile(userId, token) {
+export async function getUserProfile(userId, token) { 
   try {
-    const res = await nextJsApi.get('/api/auth/getuser?user_id='+ localStorage.getItem("userId"), {
+    const res = await laravelApi(`/api/auth/getuser?user_id=${userId}`, {
+      method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
-      },
+      }
     });
-    return res.data;
+    return res;
   } catch (error) {
     throw error;
   }

@@ -205,7 +205,7 @@ const Dashboard = () => {
             <div className={styles.kycDetails}>
               <div className={styles.infoRow}><span>Account Status</span><span className={styles.statusApproved}>Approved</span></div>
               <div className={styles.infoRow}><span>KYC Status</span><span className={styles.statusPending}>Pending</span></div>
-              <div className={styles.infoRow}><span>Aadhar Number</span><strong>{styles.}</strong></div>
+              <div className={styles.infoRow}><span>Aadhar Number</span><strong>{profile?.aadhaar_number || "-"}</strong></div>
     
             </div>
           </div>

@@ -29,9 +29,13 @@ export const fetchUserListings = async (token, filter = 'all', perPage = 5, page
   }
 };
 
-export const submitListing = async (token, payload) => {
+export const submitListing = async (token, payload, listingId = null) => {
   try {
-    const response = await apiClient.post(`/api/frontend/listings`, payload, {
+    const endpoint = listingId 
+      ? `/api/frontend/listings/${listingId}/update` 
+      : `/api/frontend/listings`;
+      
+    const response = await apiClient.post(endpoint, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",

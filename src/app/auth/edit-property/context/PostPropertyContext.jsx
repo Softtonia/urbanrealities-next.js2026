@@ -1,6 +1,8 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { LARAVEL_API_BASE_URL, APP_TYPE, LARAVEL_APPLICATION_PASSWORD } from "@/lib/config";
+import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 export const PostPropertyContext = createContext();
 
@@ -9,6 +11,8 @@ export function PostPropertyProvider({ children }) {
   const listing_id = searchParams.get('listing_id');
   console.log(listing_id , "ListingId")
   
+  const { token } = useSiteSettings();
+
   // Default empty state
   const defaultState = {
     basicDetails: {
@@ -53,13 +57,63 @@ export function PostPropertyProvider({ children }) {
 
   // Fetch listing data on mount
   useEffect(() => {
-    if (listing_id) {
-      fetch(`/api/users-property-listing?listing_id=${listing_id}`)
+    if (listing_id && token) {
+      fetch(`${LARAVEL_API_BASE_URL}/api/users-property-listing/${listing_id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-App-Type": APP_TYPE,
+          "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+          "Authorization": `Bearer ${token}`,
+        },
+      })
         .then(res => res.json())
         .then(response => {
             console.log("edit-listing", response);
-            if (response?.data?.data && response.data.data.length > 0) {
-              const propData = response.data.data[0];
+            if (response?.status && response?.data) {
+              const propData = response.data;
+              
+              const parsedDynamicData = {
+                title: propData.title || "",
+                content: propData.content || "",
+                excerpt: propData.excerpt || "",
+                taxonomies: {}
+              };
+
+              if (propData.selected_taxonomies && Array.isArray(propData.selected_taxonomies)) {
+                propData.selected_taxonomies.forEach(tax => {
+                  if (tax.taxonomy_id && tax.selected_term_ids && tax.selected_term_ids.length > 0) {
+                    parsedDynamicData.taxonomies[tax.taxonomy_id] = tax.selected_term_ids[0];
+                  }
+                });
+              }
+
+              if (propData.meta && Array.isArray(propData.meta)) {
+                propData.meta.forEach(m => {
+                  if (m.custom_field && m.custom_field.field_name_slug) {
+                    parsedDynamicData[m.custom_field.field_name_slug] = m.value_string || m.value_number || m.value_text || "";
+                  }
+                });
+              }
+              
+              // Location Details
+              parsedDynamicData.country_id = propData.country_id || propData.country || "";
+              parsedDynamicData.state_id = propData.state_id || propData.state || "";
+              parsedDynamicData.city_id = propData.city_id || propData.city || "";
+              parsedDynamicData.area_locality = propData.area_locality || "";
+              parsedDynamicData.full_address = propData.full_address || "";
+              
+              // Media fields mapping
+              const featImgData = propData.featured_image_media ? [propData.featured_image_media] : (propData.featured_image ? [propData.featured_image] : []);
+              const galImgData = propData.gallery_image_files && propData.gallery_image_files.length > 0 ? propData.gallery_image_files : (propData.gallery_images || []);
+
+              parsedDynamicData['featured-image'] = featImgData;
+              parsedDynamicData['featured_image'] = featImgData;
+              parsedDynamicData['featured_image_id'] = featImgData;
+              
+              parsedDynamicData['gallery'] = galImgData;
+              parsedDynamicData['gallery_images'] = galImgData;
+              parsedDynamicData['gallery_image_ids'] = galImgData;
               
               setFormData(prev => ({
                 ...prev,
@@ -67,20 +121,18 @@ export function PostPropertyProvider({ children }) {
                   ...prev.basicDetails,
                   name: propData.title || "",
                   description: propData.content || "",
-                  // Note: mapping taxonomies like purpose_id, property_id needs parsing `propData.selected_taxonomies`
                 },
                 locationDetails: {
                   ...prev.locationDetails,
                   area_locality: propData.area_locality || "",
-                  // other fields like city_id, state_id might need parsing `propData.city_id`
                 },
-                // map other meta fields to propertyProfile and pricingDetails later
+                dynamicData: parsedDynamicData,
               }));
             }
         })
         .catch(err => console.error("Error fetching listing data:", err));
     }
-  }, [listing_id]);
+  }, [listing_id, token]);
 
   const updateFormData = (key, value) => {
     setFormData((prev) => ({

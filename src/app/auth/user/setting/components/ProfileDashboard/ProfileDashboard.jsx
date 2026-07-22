@@ -207,8 +207,6 @@ const Dashboard = () => {
               <div className={styles.infoRow}><span>Account Status</span><span className={styles.statusApproved}>Approved</span></div>
               <div className={styles.infoRow}><span>KYC Status</span><span className={styles.statusPending}>Pending</span></div>
               <div className={styles.infoRow}><span>Aadhar Number</span><strong>8733 XXXX XXXX</strong></div>
-              <div className={styles.infoRow}><span>License Number</span><strong>Not Uploaded</strong></div>
-              <div className={styles.infoRow}><span>Business Proof</span><strong>Not Uploaded</strong></div>
             </div>
           </div>
         </div>

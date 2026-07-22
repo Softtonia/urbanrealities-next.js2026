@@ -68,7 +68,9 @@ export default function DynamicField({ field, error }) {
     multiple 
   } = field;
 
-  const value = formData.dynamicData?.[request_key] || "";
+  const value = formData.dynamicData?.[request_key] || 
+    (type === 'media' ? formData.dynamicData?.['featured-image'] : 
+    (type === 'gallery' ? formData.dynamicData?.['gallery'] : ""));
   const dependencyValue = depends_on ? formData.dynamicData?.[depends_on] : null;
 
   useEffect(() => {
@@ -167,7 +169,10 @@ export default function DynamicField({ field, error }) {
           />
         );
       case "select":
-        const selectedValue = selectOptions.find(opt => opt.value === value) || null;
+        const selectedValue = selectOptions.find(opt => 
+          String(opt.value) === String(value) || 
+          (typeof value === 'string' && opt.label?.toLowerCase() === value.toLowerCase())
+        ) || null;
         const selectStyles = {
           ...customStyles,
           control: (provided, state) => ({
@@ -217,18 +222,23 @@ export default function DynamicField({ field, error }) {
             const files = newFileList.map(f => f.originFileObj).filter(Boolean);
             handleChange(files);
           },
-          fileList: (Array.isArray(value) ? value : (value && typeof value !== 'string' ? [value] : []))
+          fileList: (Array.isArray(value) ? value : (value && typeof value !== 'string' ? [value] : (typeof value === 'string' && value !== '' ? [value] : [])))
             .filter(f => f && f !== "") // Remove null, undefined, or empty strings
             .map((file, index) => {
             const isString = typeof file === 'string';
             const objectUrl = file instanceof File ? URL.createObjectURL(file) : null;
+            
+            const fileUrl = isString ? file : (objectUrl || file.url || file.preview);
+            const fileName = file.name || file.file_name || (isString ? file.split('/').pop() : `file-${index}`);
+            const fileUid = file.uid || file.id ? String(file.id) : String(index);
+
             return {
-              uid: file.uid || index,
-              name: file.name || (isString ? file.split('/').pop() : `file-${index}`),
+              uid: fileUid,
+              name: fileName,
               status: 'done',
-              originFileObj: isString ? null : file,
-              url: isString ? file : (objectUrl || file.url),
-              thumbUrl: isString ? file : (objectUrl || file.thumbUrl),
+              originFileObj: isString ? null : (file instanceof File ? file : null),
+              url: fileUrl,
+              thumbUrl: fileUrl,
             };
           }),
         };
