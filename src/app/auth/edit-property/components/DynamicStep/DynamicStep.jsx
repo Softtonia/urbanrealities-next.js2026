@@ -1,6 +1,7 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { decodeId } from "@/lib/utils";
 import { PostPropertyContext } from "@/app/auth/edit-property/context/PostPropertyContext";
 import DynamicField from "./DynamicField";
 import styles from "../steps/Basic-DetailsSteps.module.css"; 
@@ -17,7 +18,7 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
   const { token } = useSiteSettings();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const listingId = searchParams.get('listing_id');
+  const listingId = decodeId(searchParams.get('listing_id'));
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   if (!stepData) {

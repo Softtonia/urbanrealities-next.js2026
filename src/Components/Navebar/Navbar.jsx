@@ -28,7 +28,7 @@ const staticCities = {
   nearby: [
     { id: 1, name: "New Delhi" },
     { id: 2, name: "Gurgaon" },
-    { id: 3, name: "Greater Noida" }
+    { id: 3, name: "Greater Noida" },
   ],
   popular: [
     { id: 4, name: "Ahmedabad" },
@@ -46,31 +46,71 @@ const staticCities = {
     { id: 16, name: "New Delhi" },
     { id: 17, name: "Noida" },
     { id: 18, name: "Pune" },
-    { id: 19, name: "Thane" }
+    { id: 19, name: "Thane" },
   ],
   other: [
-    { id: 20, name: "Agra" }, { id: 21, name: "Ahmadnagar" }, { id: 22, name: "Allahabad" },
-    { id: 23, name: "Aluva" }, { id: 24, name: "Amritsar" }, { id: 25, name: "Aurangabad" },
-    { id: 26, name: "Badlapur" }, { id: 27, name: "Bareilly" }, { id: 28, name: "Belgaum" },
-    { id: 29, name: "Bhiwadi" }, { id: 30, name: "Bhiwandi" }, { id: 31, name: "Bhopal" },
-    { id: 32, name: "Bhubaneswar" }, { id: 33, name: "Bokaro Steel City" }, { id: 34, name: "Chandigarh" },
-    { id: 35, name: "Chengalpattu" }, { id: 36, name: "Coimbatore" }, { id: 37, name: "Dehradun" },
-    { id: 38, name: "Durgapur" }, { id: 39, name: "Ernakulam" }, { id: 40, name: "Erode" },
-    { id: 41, name: "Faridabad" }, { id: 42, name: "Ghaziabad" }, { id: 43, name: "Goa" },
-    { id: 44, name: "Gorakhpur" }, { id: 45, name: "Greater Noida" }, { id: 46, name: "Guntur" },
-    { id: 47, name: "Guwahati" }, { id: 48, name: "Gwalior" }, { id: 49, name: "Haridwar" },
-    { id: 50, name: "Hosur" }, { id: 51, name: "Hubli" }, { id: 52, name: "Jabalpur" },
-    { id: 53, name: "Jalandhar" }, { id: 54, name: "Jammu" }, { id: 55, name: "Jamshedpur" },
-    { id: 56, name: "Jodhpur" }, { id: 57, name: "Kalyan" }, { id: 58, name: "Kannur" },
-    { id: 59, name: "Kanpur" }, { id: 60, name: "Khopoli" }, { id: 61, name: "Kochi" },
-    { id: 62, name: "Kodaikanal" }, { id: 63, name: "Kottayam" }, { id: 64, name: "Kozhikode" },
-    { id: 65, name: "Lonavala" }, { id: 66, name: "Ludhiana" }, { id: 67, name: "Madurai" },
-    { id: 68, name: "Mangalore" }, { id: 69, name: "Mohali" }, { id: 70, name: "Mysore" },
-    { id: 71, name: "Nagpur" }, { id: 72, name: "Nainital" }, { id: 73, name: "Nanded" },
-    { id: 74, name: "Nashik" }, { id: 75, name: "Navsari" }, { id: 76, name: "Nellore" },
-    { id: 77, name: "Newtown" }, { id: 78, name: "Ooty" }, { id: 79, name: "Palakkad" },
-    { id: 80, name: "Palghar" }
-  ]
+    { id: 20, name: "Agra" },
+    { id: 21, name: "Ahmadnagar" },
+    { id: 22, name: "Allahabad" },
+    { id: 23, name: "Aluva" },
+    { id: 24, name: "Amritsar" },
+    { id: 25, name: "Aurangabad" },
+    { id: 26, name: "Badlapur" },
+    { id: 27, name: "Bareilly" },
+    { id: 28, name: "Belgaum" },
+    { id: 29, name: "Bhiwadi" },
+    { id: 30, name: "Bhiwandi" },
+    { id: 31, name: "Bhopal" },
+    { id: 32, name: "Bhubaneswar" },
+    { id: 33, name: "Bokaro Steel City" },
+    { id: 34, name: "Chandigarh" },
+    { id: 35, name: "Chengalpattu" },
+    { id: 36, name: "Coimbatore" },
+    { id: 37, name: "Dehradun" },
+    { id: 38, name: "Durgapur" },
+    { id: 39, name: "Ernakulam" },
+    { id: 40, name: "Erode" },
+    { id: 41, name: "Faridabad" },
+    { id: 42, name: "Ghaziabad" },
+    { id: 43, name: "Goa" },
+    { id: 44, name: "Gorakhpur" },
+    { id: 45, name: "Greater Noida" },
+    { id: 46, name: "Guntur" },
+    { id: 47, name: "Guwahati" },
+    { id: 48, name: "Gwalior" },
+    { id: 49, name: "Haridwar" },
+    { id: 50, name: "Hosur" },
+    { id: 51, name: "Hubli" },
+    { id: 52, name: "Jabalpur" },
+    { id: 53, name: "Jalandhar" },
+    { id: 54, name: "Jammu" },
+    { id: 55, name: "Jamshedpur" },
+    { id: 56, name: "Jodhpur" },
+    { id: 57, name: "Kalyan" },
+    { id: 58, name: "Kannur" },
+    { id: 59, name: "Kanpur" },
+    { id: 60, name: "Khopoli" },
+    { id: 61, name: "Kochi" },
+    { id: 62, name: "Kodaikanal" },
+    { id: 63, name: "Kottayam" },
+    { id: 64, name: "Kozhikode" },
+    { id: 65, name: "Lonavala" },
+    { id: 66, name: "Ludhiana" },
+    { id: 67, name: "Madurai" },
+    { id: 68, name: "Mangalore" },
+    { id: 69, name: "Mohali" },
+    { id: 70, name: "Mysore" },
+    { id: 71, name: "Nagpur" },
+    { id: 72, name: "Nainital" },
+    { id: 73, name: "Nanded" },
+    { id: 74, name: "Nashik" },
+    { id: 75, name: "Navsari" },
+    { id: 76, name: "Nellore" },
+    { id: 77, name: "Newtown" },
+    { id: 78, name: "Ooty" },
+    { id: 79, name: "Palakkad" },
+    { id: 80, name: "Palghar" },
+  ],
 };
 
 export default function Navbar() {
@@ -127,8 +167,9 @@ export default function Navbar() {
         {citiesArray.map((city) => (
           <div
             key={city.id}
-            className={`city-nametext mb-2 px-4 py-2 ${activeCity === city.id ? "active" : ""
-              }`}
+            className={`city-nametext mb-2 px-4 py-2 ${
+              activeCity === city.id ? "active" : ""
+            }`}
             onClick={() => handleSuggestionClick(city)}
           >
             {city.name}
@@ -152,7 +193,7 @@ export default function Navbar() {
       try {
         const response = await getSiteSettingsData();
         if (response) {
-          setSiteData(response.data || response); 
+          setSiteData(response.data || response);
         }
       } catch (err) {
         console.error("Error fetching site settings:", err);
@@ -198,7 +239,7 @@ export default function Navbar() {
       const fetchCities = async () => {
         try {
           const res = await fetch(
-            `/api/navbar-location?search=${encodeURIComponent(searchText)}`
+            `/api/navbar-location?search=${encodeURIComponent(searchText)}`,
           );
           const data = await res.json();
           console.log("-----=>", data);
@@ -240,8 +281,6 @@ export default function Navbar() {
     window.location.href = "/auth/login";
   };
 
-
-
   return (
     <>
       {/* Desktop Navbar */}
@@ -251,13 +290,19 @@ export default function Navbar() {
             <Link className="navbar-brand d-flex align-items-center" href="/">
               {isLoadingSiteData ? (
                 <div className="placeholder-glow">
-                  <div className="placeholder" style={{ width: "90px", height: "30px", borderRadius: "4px", backgroundColor: "var(--Skeleton-Bg)" }}></div>
+                  <div
+                    className="placeholder"
+                    style={{
+                      width: "90px",
+                      height: "30px",
+                      borderRadius: "4px",
+                      backgroundColor: "var(--Skeleton-Bg)",
+                    }}
+                  ></div>
                 </div>
               ) : (
                 <Image
-                  src={
-                    siteData?.website_logo || siteData?.mobile_logo 
-                  }
+                  src={siteData?.website_logo || siteData?.mobile_logo}
                   alt="Urbanrealities"
                   width={90}
                   height={30}
@@ -269,99 +314,120 @@ export default function Navbar() {
               className="position-relative"
               onClick={() => toggleDropdown("location")}
             >
-              <div className="nav-link d-flex align-items-center pb-1" role="button">
+              <div
+                className="nav-link d-flex align-items-center pb-1"
+                role="button"
+              >
                 {isLoadingCity ? (
                   <div className="placeholder-glow d-flex align-items-center">
-                    <div className="placeholder" style={{ width: "60px", height: "20px", borderRadius: "4px", backgroundColor: "var(--Skeleton-Bg)", marginRight: "5px" }}></div>
+                    <div
+                      className="placeholder"
+                      style={{
+                        width: "60px",
+                        height: "20px",
+                        borderRadius: "4px",
+                        backgroundColor: "var(--Skeleton-Bg)",
+                        marginRight: "5px",
+                      }}
+                    ></div>
                   </div>
                 ) : (
                   <>
                     <FaMapMarkerAlt className="icon-nav-loc me-1" />
-                    <div className="nav-items-name">{city && city.name ? city.name : "Location"}</div>
+                    <div className="nav-items-name">
+                      {city && city.name ? city.name : "Location"}
+                    </div>
                   </>
                 )}
               </div>
               <div
-                className={`transition-opacity duration-300 ${activeDropdown === "location"
-                  ? "d-block"
-                  : "d-none"
-                  } position-absolute top-100 start-0`}
+                className={`transition-opacity duration-300 ${
+                  activeDropdown === "location" ? "d-block" : "d-none"
+                } position-absolute top-100 start-0`}
                 style={{ marginTop: "15px" }}
               >
-                <LocationDropdown cities={cities} onSelectCity={handleSuggestionClick} />
+                <LocationDropdown
+                  cities={cities}
+                  onSelectCity={handleSuggestionClick}
+                />
               </div>
             </div>
           </div>
 
           {!isBusinessDashboard && (
             <ul className="navbar-nav d-flex flex-row align-items-center gap-3 mb-0">
-            <li
-              className="nav-item dropdown position-static"
-              onClick={() => toggleDropdown("buy")}
-            >
-              <div className="nav-items-name">
-                Buy <GoChevronDown />
-              </div>
-              <div
-                className={`dropdown-menu mega-menu p-3 ${activeDropdown === "buy" ? "show" : ""
-                  }`}
-                style={{ width: "50vw", marginTop: "15px" }}
+              <li
+                className="nav-item dropdown position-static"
+                onClick={() => toggleDropdown("buy")}
               >
-                <DropdownMegaMenu />
-              </div>
-            </li>
-
-            <li
-              className="nav-item dropdown position-static"
-              onClick={() => toggleDropdown("rent")}
-            >
-              {" "}
-              <div className="nav-items-name">
-                Rent <GoChevronDown />
-              </div>
-              <div
-                className={`dropdown-menu mega-menu p-3 ${activeDropdown === "rent" ? "show" : ""
+                <div className="nav-items-name">
+                  Buy <GoChevronDown />
+                </div>
+                <div
+                  className={`dropdown-menu mega-menu p-3 ${
+                    activeDropdown === "buy" ? "show" : ""
                   }`}
-                style={{ width: "50vw", marginTop: "15px" }}
-              >
-                <DropdownMegaMenu />
-              </div>
-            </li>
-            <li
-              className="nav-item dropdown position-static"
-              onClick={() => toggleDropdown("sell")}
-            >
-              {" "}
-              <div className="nav-items-name">
-                Sell <GoChevronDown />
-              </div>
-              <div
-                className={`dropdown-menu mega-menu p-3 ${activeDropdown === "sell" ? "show" : ""
-                  }`}
-                style={{ width: "60vw", marginTop: "15px" }}
-              >
-                <SellerDropdown />
-              </div>
-            </li>
-            {[
-              { label: " Agent", href: "/all-agent" },
-              { label: "Projects", href: "/projects" },
-              { label: "Services", href: "/property-services" },
-              { label: "Home Loans", href: "/home-loan" },
-            ].map((item, i) => (
-              <li key={i} className="nav-item">
-                <Link href={item.href} className="nav-items-name">
-                  {item.label}
-                </Link>
+                  style={{ width: "50vw", marginTop: "15px" }}
+                >
+                  <DropdownMegaMenu />
+                </div>
               </li>
-            ))}
-          </ul>
+
+              <li
+                className="nav-item dropdown position-static"
+                onClick={() => toggleDropdown("rent")}
+              >
+                {" "}
+                <div className="nav-items-name">
+                  Rent <GoChevronDown />
+                </div>
+                <div
+                  className={`dropdown-menu mega-menu p-3 ${
+                    activeDropdown === "rent" ? "show" : ""
+                  }`}
+                  style={{ width: "50vw", marginTop: "15px" }}
+                >
+                  <DropdownMegaMenu />
+                </div>
+              </li>
+              <li
+                className="nav-item dropdown position-static"
+                onClick={() => toggleDropdown("sell")}
+              >
+                {" "}
+                <div className="nav-items-name">
+                  Sell <GoChevronDown />
+                </div>
+                <div
+                  className={`dropdown-menu mega-menu p-3 ${
+                    activeDropdown === "sell" ? "show" : ""
+                  }`}
+                  style={{ width: "60vw", marginTop: "15px" }}
+                >
+                  <SellerDropdown />
+                </div>
+              </li>
+              {[
+                { label: " Agent", href: "/all-agent" },
+                { label: "Projects", href: "/projects" },
+                { label: "Services", href: "/property-services" },
+                { label: "Home Loans", href: "/home-loan" },
+              ].map((item, i) => (
+                <li key={i} className="nav-item">
+                  <Link href={item.href} className="nav-items-name">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           )}
 
           <div className="d-flex align-items-center gap-3">
             <Link
               href={
-                !token ? `/auth/login?redirect=/auth/post-property/basic-details` : "/auth/post-property/basic-details"
+                !token
+                  ? `/auth/login?redirect=/auth/post-property/basic-details`
+                  : "/auth/post-property/basic-details"
               }
               className="btn-property d-flex align-items-center gap-2 rounded-pill"
             >
@@ -386,8 +452,9 @@ export default function Navbar() {
                   Help
                 </button>
                 <ul
-                  className={`dropdown-menu  ${activeDropdown === "help" ? "show" : ""
-                    }`}
+                  className={`dropdown-menu  ${
+                    activeDropdown === "help" ? "show" : ""
+                  }`}
                   style={{
                     top: "100%",
                     right: 0,
@@ -434,8 +501,8 @@ export default function Navbar() {
                 </ul>
               </div>
 
-              {!isLoadingToken && (
-                token ? (
+              {!isLoadingToken &&
+                (token ? (
                   <div
                     className="dropdown"
                     onMouseEnter={() => setIsOpen(true)}
@@ -455,7 +522,7 @@ export default function Navbar() {
                           display: "block",
                           position: "absolute",
                           top: "100%",
-                          left: -20,
+                          right: 0,
                           backgroundColor: "#fff",
                           padding: "4px 0",
                           borderRadius: "0",
@@ -465,17 +532,48 @@ export default function Navbar() {
                         <li>
                           <Link
                             className="dropdown-item py-1 px-4"
-                            href={isBusinessDashboard || (role && role.toLowerCase() !== 'owner') ? "/auth/business/dashboard" : "/auth/user/dashboard"}
-                            style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}
+                            href={
+                              isBusinessDashboard ||
+                              (role && role.toLowerCase() !== "owner")
+                                ? "/auth/business/dashboard"
+                                : "/auth/user/dashboard"
+                            }
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "500",
+                              color: "#374151",
+                            }}
                           >
-                            My Profile
+                            Dashboard
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            className="dropdown-item py-1 px-4"
+                            href={
+                              isBusinessDashboard ||
+                              (role && role.toLowerCase() !== "owner")
+                                ? "/auth/business/dashboard/manage-password"
+                                : "/auth/user/dashboard/manage-password"
+                            }
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "500",
+                              color: "#374151",
+                            }}
+                          >
+                            Manage Password
                           </Link>
                         </li>
                         <li>
                           <button
                             className="dropdown-item py-1 px-4"
                             onClick={logout}
-                            style={{ fontSize: "14px", fontWeight: "500", color: "#e40e0e" }}
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "500",
+                              color: "#e40e0e",
+                            }}
                           >
                             Logout
                           </button>
@@ -507,7 +605,16 @@ export default function Navbar() {
             >
               {isLoadingCity ? (
                 <div className="placeholder-glow d-flex align-items-center">
-                  <div className="placeholder" style={{ width: "70px", height: "20px", borderRadius: "4px", backgroundColor: "#e9ecef", marginRight: "5px" }}></div>
+                  <div
+                    className="placeholder"
+                    style={{
+                      width: "70px",
+                      height: "20px",
+                      borderRadius: "4px",
+                      backgroundColor: "#e9ecef",
+                      marginRight: "5px",
+                    }}
+                  ></div>
                 </div>
               ) : (
                 <>
@@ -517,62 +624,94 @@ export default function Navbar() {
             </div>
           </div>
           <div className="nav-items-name d-flex align-items-center gap-3 m-0">
-            {!isLoadingToken && (token ? (
-              <div
-                className="dropdown"
-                onMouseEnter={() => setIsOpen(true)}
-                onMouseLeave={() => setIsOpen(false)}
-                style={{ position: "relative" }}
-              >
-                <button
-                  className="btn btn-link text-black text-decoration-none dropdown-toggle nav-items-name"
-                  type="button"
+            {!isLoadingToken &&
+              (token ? (
+                <div
+                  className="dropdown"
+                  onMouseEnter={() => setIsOpen(true)}
+                  onMouseLeave={() => setIsOpen(false)}
+                  style={{ position: "relative" }}
                 >
-                  My Account
-                </button>
-                {isOpen && (
-                  <ul
-                    className="dropdown-menu show shadow-lg border-0"
-                    style={{
-                      display: "block",
-                      position: "absolute",
-                      top: "100%",
-                      left: -20,
-                      backgroundColor: "#fff",
-                      padding: "4px 0",
-                      borderRadius: "0",
-                      minWidth: "160px",
-                    }}
+                  <button
+                    className="btn btn-link text-black text-decoration-none dropdown-toggle nav-items-name"
+                    type="button"
                   >
-                    <li>
-                      <Link
-                        className="dropdown-item py-1 px-4"
-                        href={isBusinessDashboard || (role && role.toLowerCase() !== 'owner') ? "/auth/business/dashboard" : "/auth/user/dashboard"}
-                        style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}
-                      >
-                        My Profile
-                      </Link>
-                    </li>
-                    <li>
-                      <button
-                        className="dropdown-item py-1 px-4"
-                        onClick={logout}
-                        style={{ fontSize: "14px", fontWeight: "500", color: "#e40e0e" }}
-                      >
-                        Logout
-                      </button>
-                    </li>
-                  </ul>
-                )}
-              </div>
-            ) : (
-              <Link
-                className="text-decoration-none text-dark"
-                href="/auth/login"
-              >
-                Sign In
-              </Link>
-            ))}
+                    My Account
+                  </button>
+                  {isOpen && (
+                    <ul
+                      className="dropdown-menu show shadow-lg border-0"
+                      style={{
+                        display: "block",
+                        position: "absolute",
+                        top: "100%",
+                        right: 0,
+                        backgroundColor: "#fff",
+                        padding: "4px 0",
+                        borderRadius: "0",
+                        minWidth: "160px",
+                      }}
+                    >
+                      <li>
+                        <Link
+                          className="dropdown-item py-1 px-4"
+                          href={
+                            isBusinessDashboard ||
+                            (role && role.toLowerCase() !== "owner")
+                              ? "/auth/business/dashboard"
+                              : "/auth/user/dashboard"
+                          }
+                          style={{
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            color: "#374151",
+                          }}
+                        >
+                          My Profile
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          className="dropdown-item py-1 px-4"
+                          href={
+                            isBusinessDashboard ||
+                            (role && role.toLowerCase() !== "owner")
+                              ? "/auth/business/dashboard/manage-password"
+                              : "/auth/user/dashboard/manage-password"
+                          }
+                          style={{
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            color: "#374151",
+                          }}
+                        >
+                          Manage Password
+                        </Link>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item py-1 px-4"
+                          onClick={logout}
+                          style={{
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            color: "#e40e0e",
+                          }}
+                        >
+                          Logout
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  className="text-decoration-none text-dark"
+                  href="/auth/login"
+                >
+                  Sign In
+                </Link>
+              ))}
           </div>
         </div>
 
@@ -600,7 +739,15 @@ export default function Navbar() {
               <Link className="" href="/">
                 {isLoadingSiteData ? (
                   <div className="placeholder-glow">
-                    <div className="placeholder" style={{ width: "90px", height: "22px", borderRadius: "4px", backgroundColor: "#e9ecef" }}></div>
+                    <div
+                      className="placeholder"
+                      style={{
+                        width: "90px",
+                        height: "22px",
+                        borderRadius: "4px",
+                        backgroundColor: "#e9ecef",
+                      }}
+                    ></div>
                   </div>
                 ) : (
                   <Image
@@ -622,7 +769,11 @@ export default function Navbar() {
           </div>
           <div className="m-0" style={{ flexShrink: 0 }}>
             <Link
-              href={!token ? `/auth/login?redirect=/auth/post-property/basic-details` : "/auth/post-property/basic-details"}
+              href={
+                !token
+                  ? `/auth/login?redirect=/auth/post-property/basic-details`
+                  : "/auth/post-property/basic-details"
+              }
               className="btn-property d-flex align-items-center gap-1 rounded-pill text-sm px-2 py-1"
               style={{ fontSize: "12px" }}
             >
@@ -632,7 +783,13 @@ export default function Navbar() {
                 width={16}
                 height={16}
               />
-              Post <span className="d-none d-sm-inline">Property</span> <span className="badge-property" style={{ padding: "2px 4px", fontSize: "10px" }}>Free</span>
+              Post <span className="d-none d-sm-inline">Property</span>{" "}
+              <span
+                className="badge-property"
+                style={{ padding: "2px 4px", fontSize: "10px" }}
+              >
+                Free
+              </span>
             </Link>
           </div>
         </div>
@@ -731,7 +888,7 @@ export default function Navbar() {
                         className="city-text list-group-item list-group-item-action px-3 py-2"
                         onClick={() =>
                           handleSuggestionClick(
-                            suggestions?.cities?.filter_city
+                            suggestions?.cities?.filter_city,
                           )
                         }
                         style={{ cursor: "pointer" }}

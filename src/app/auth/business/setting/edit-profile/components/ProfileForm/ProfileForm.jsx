@@ -7,10 +7,11 @@ import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import Select from "react-select";
 import { FaUser, FaBuilding, FaMapMarkerAlt, FaIdCard, FaCamera, FaCheckCircle, FaExclamationCircle, FaHeadset } from "react-icons/fa";
+import { decodeId } from "@/lib/utils";
 
 const ProfileForm = () => {
   const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const id = decodeId(searchParams.get("id"));
   const router = useRouter();
   
   const [activeTab, setActiveTab] = useState("personal");

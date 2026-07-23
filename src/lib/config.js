@@ -4,12 +4,16 @@ export const APP_TYPE = "website";
 
 export const NEXT_ORIGIN = process.env.HOLI_ORIGIN || "https://holiplaces.com";
 
-export const LARAVEL_APPLICATION_PASSWORD = ['sk', 'live', 'F4Qm8xT2pL7vA1zC9nB3hF6wD0sK4rY8uPoN5tM2xV7aC1dG'].join('_');
+export const LARAVEL_APPLICATION_PASSWORD = [
+  "sk",
+  "live",
+  "F4Qm8xT2pL7vA1zC9nB3hF6wD0sK4rY8uPoN5tM2xV7aC1dG",
+].join("_");
 
 export const ENABLE_SIGNATURE = true;
 
 export const NEXT_PUBLIC_SITE_URL = "https://holiplaces.com";
 
 export const NEXT_PUBLIC_API_URL = "https://api.holiplaces.com";
- 
-export const NEXT_PUBLIC_BUSINESS_DOMAIN = "https://business.holiplaces.com"; 
+
+export const NEXT_PUBLIC_BUSINESS_DOMAIN = "https://business.holiplaces.com";

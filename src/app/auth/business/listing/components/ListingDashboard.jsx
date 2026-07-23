@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { encodeId } from '@/lib/utils';
 import Image from 'next/image';
 import { DatePicker } from 'antd';
 import { 
@@ -353,7 +354,7 @@ const ListingDashboard = ({
                     <td>
                       <div className={styles.actionCell}>
                         <button className={styles.actionBtn}><FaEye /></button>
-                        <button className={styles.actionBtn} onClick={() => router.push(`/auth/edit-property/basic-details?listing_id=${prop.id}`)}><FaEdit /></button>
+                        <button className={styles.actionBtn} onClick={() => router.push(`/auth/edit-property/basic-details?listing_id=${encodeId(prop.id)}`)}><FaEdit /></button>
                         <button className={styles.actionBtn}><FaTrash /></button>
                       </div>
                     </td>
@@ -465,7 +466,7 @@ const ListingDashboard = ({
                       </div>
                       <div className={styles.cardActions}>
                         <button className={styles.actionBtn}><FaEye /></button>
-                        <button className={styles.actionBtn} onClick={() => router.push(`/auth/edit-property/basic-details?listing_id=${prop.id}`)}><FaEdit /></button>
+                        <button className={styles.actionBtn} onClick={() => router.push(`/auth/edit-property/basic-details?listing_id=${encodeId(prop.id)}`)}><FaEdit /></button>
                         <button className={styles.actionBtn}><FaTrash /></button>
                       </div>
                     </div>

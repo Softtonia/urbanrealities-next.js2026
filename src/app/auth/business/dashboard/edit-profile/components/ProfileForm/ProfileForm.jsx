@@ -5,6 +5,7 @@ import styles from "./ProfileForm.module.css";
 import { useDashboard } from "../../../../DashboardContext/DashboardContext";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { useRouter, useSearchParams } from "next/navigation";
+import { decodeId } from "@/lib/utils";
 import Select, { createFilter } from "react-select";
 import { FaUser, FaBuilding, FaMapMarkerAlt, FaIdCard, FaCamera, FaCheckCircle, FaExclamationCircle, FaHeadset } from "react-icons/fa";
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
@@ -15,7 +16,7 @@ import { toast } from "react-toastify";
 
 const ProfileForm = () => {
   const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const id = decodeId(searchParams.get("id"));
   const router = useRouter();
   
   const [activeTab, setActiveTab] = useState("personal");

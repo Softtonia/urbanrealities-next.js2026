@@ -2,13 +2,14 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { LARAVEL_API_BASE_URL, APP_TYPE, LARAVEL_APPLICATION_PASSWORD } from "@/lib/config";
+import { decodeId } from "@/lib/utils";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 export const PostPropertyContext = createContext();
 
 export function PostPropertyProvider({ children }) {
   const searchParams = useSearchParams();
-  const listing_id = searchParams.get('listing_id');
+  const listing_id = decodeId(searchParams.get('listing_id'));
   console.log(listing_id , "ListingId")
   
   const { token } = useSiteSettings();

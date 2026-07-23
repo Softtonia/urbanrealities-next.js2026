@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FiMoreVertical } from "react-icons/fi";
 import styles from "./ProfileCard.module.css";
 import Link from "next/link";
+import { encodeId } from "@/lib/utils";
 
 const ProfileCard = ({ profile }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -40,7 +41,7 @@ const ProfileCard = ({ profile }) => {
           <FiMoreVertical />
           {dropdownOpen && (
             <div className={styles.dropdownMenu}>
-              <Link href={`/auth/user/dashboard/edit-profile?id=${profile.id}`} className={styles.dropdownItem} role="button">
+              <Link href={`/auth/user/dashboard/edit-profile?id=${encodeId(profile.id)}`} className={styles.dropdownItem} role="button">
                 Edit Profile
               </Link>
             </div>

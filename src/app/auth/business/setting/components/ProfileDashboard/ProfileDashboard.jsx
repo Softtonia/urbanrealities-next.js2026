@@ -6,6 +6,7 @@ import {
   FaCheckCircle, FaUser, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt,
   FaIdCard, FaClipboardList, FaUsers, FaComments, FaUpload, FaEdit
 } from "react-icons/fa";
+import { encodeId } from "@/lib/utils";
 import { useSiteSettings } from '@/Components/mycontext/siteSettingContext';
 import { useDashboard } from "../../../DashboardContext/DashboardContext";
 import { getUserProfile } from '@/services/auth.service';
@@ -108,7 +109,7 @@ const Dashboard = () => {
               <div className={styles.pendingDot}></div>
               <span>KYC Status<br/><strong>Pending</strong></span>
             </div>
-            <Link href={`/auth/business/setting/edit-profile?id=${profile.id}`} className={styles.editBtn}>
+            <Link href={`/auth/business/setting/edit-profile?id=${encodeId(profile.id)}`} className={styles.editBtn}>
               <FaEdit /> Edit Profile
             </Link>
           </div>
