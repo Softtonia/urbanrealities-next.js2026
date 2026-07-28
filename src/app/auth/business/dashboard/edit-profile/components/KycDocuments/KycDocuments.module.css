@@ -465,4 +465,49 @@
   transition: all 0.3s ease;
 }
 
+/* Actions */
+.formActions {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--Anti-Flash-White, #f3f4f6);
+  display: flex;
+  gap: 16px;
+}
+
+.btnSave {
+  background: var(--Orange-Red);
+  color: var(--White, #fff);
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btnSave:hover {
+  opacity: 0.9;
+}
+
+.btnSave:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnCancel {
+  background: var(--Anti-Flash-White, #f3f4f6);
+  color: var(--Eerie-Black, #374151);
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnCancel:hover {
+  background: var(--Light-Gray, #e5e7eb);
+}
 

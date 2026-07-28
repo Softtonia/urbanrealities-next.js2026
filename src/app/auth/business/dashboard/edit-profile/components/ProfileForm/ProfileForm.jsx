@@ -589,11 +589,7 @@ const ProfileForm = () => {
                   <input type="text" name="role_id" value={formData.role_id || ""} readOnly className={styles.readOnly}  style={formErrors.role_id ? { borderColor: "red", outline: "none" } : {}}/>
                   {formErrors.role_id && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.role_id[0]}</span>}
                 </div>
-                <div className={styles.inputGroup}>
-                  <label>Aadhar Number</label>
-                  <input type="text" name="aadhaar_number" value={formData.aadhaar_number || ""} onChange={handleChange} placeholder="Enter your 12 digit Aadhar number" autoComplete="new-password"  style={formErrors.aadhaar_number ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.aadhaar_number && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.aadhaar_number[0]}</span>}
-                </div>
+
                 <div className={styles.inputGroup} style={{gridColumn: "1 / -1"}}>
                   <label>About You</label>
                   <textarea name="about_us" value={formData.about_us || ""} onChange={handleChange} placeholder="Tell us something about yourself..." rows={4} style={formErrors.about_us ? { borderColor: "red", outline: "none" } : {}}></textarea>
