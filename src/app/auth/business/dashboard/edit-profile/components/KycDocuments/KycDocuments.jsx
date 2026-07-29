@@ -2,11 +2,11 @@ import React, { useRef, useState, useEffect } from 'react';
 import { FaIdCard, FaBuilding, FaUpload, FaEye, FaInfoCircle, FaShieldAlt, FaSpinner, FaArrowLeft, FaSearchPlus, FaSearchMinus, FaExpand, FaDownload, FaTimes, FaExclamationCircle } from 'react-icons/fa';
 import styles from './KycDocuments.module.css';
 import { uploadDocument, checkUploadProgress, startKycUpload, checkKycUploadProgress, submitKyc, resubmitKyc } from '@/services/document.service';
-import { LARAVEL_API_BASE_URL } from '@/lib/config';
+import { LARAVEL_API_BASE_URL, LARAVEL_APPLICATION_PASSWORD, APP_TYPE } from '@/lib/config';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
-const KycDocuments = ({ profile, token }) => {
+const KycDocuments = ({ profile, token, onKycError }) => {
   const router = useRouter();
   const fileInputRef = useRef(null);
   const [activeUploadId, setActiveUploadId] = useState(null);
@@ -14,41 +14,32 @@ const KycDocuments = ({ profile, token }) => {
   const [viewingDocUrl, setViewingDocUrl] = useState(null);
   const [isLoadingView, setIsLoadingView] = useState(false);
   const [aadhaarNumber, setAadhaarNumber] = useState('');
-  const [isAadhaarDisabled, setIsAadhaarDisabled] = useState(false);
   
   const [businessName, setBusinessName] = useState('');
-  const [isBusinessNameDisabled, setIsBusinessNameDisabled] = useState(false);
   
   const [gstNumber, setGstNumber] = useState('');
-  const [isGstNumberDisabled, setIsGstNumberDisabled] = useState(false);
   
   const [reraNumber, setReraNumber] = useState('');
-  const [isReraNumberDisabled, setIsReraNumberDisabled] = useState(false);
 
   const [isSaving, setIsSaving] = useState(false);
   const [globalKycStatus, setGlobalKycStatus] = useState(null);
-  const [rejectionReason, setRejectionReason] = useState(null);
+  const [rejectionReasons, setRejectionReasons] = useState([]);
 
   useEffect(() => {
     if (profile) {
-      const isRejected = globalKycStatus && globalKycStatus.toLowerCase() === 'rejected';
       if (profile.aadhaar_number) {
         setAadhaarNumber(profile.aadhaar_number);
-        setIsAadhaarDisabled(!isRejected);
       } else {
         setAadhaarNumber('');
       }
       if (profile.business_name) {
         setBusinessName(profile.business_name);
-        setIsBusinessNameDisabled(!isRejected);
       }
       if (profile.gst_number) {
         setGstNumber(profile.gst_number);
-        setIsGstNumberDisabled(!isRejected);
       }
       if (profile.rera_number) {
         setReraNumber(profile.rera_number);
-        setIsReraNumberDisabled(!isRejected);
       }
     }
   }, [profile, globalKycStatus]);
@@ -126,56 +117,75 @@ const KycDocuments = ({ profile, token }) => {
     }
   ]);
 
+  const getBaseUrl = () => LARAVEL_API_BASE_URL;
+
   const fetchDocs = async () => {
     if (!token) return;
     try {
-        const { getKycDocuments, getKycStatus } = await import('@/services/document.service');
-        const [res, statusRes] = await Promise.all([getKycDocuments(token), getKycStatus(token)]);
-        
-        let kycLabel = null;
-        if (statusRes.ok) {
-          const statusResult = await statusRes.json();
-          if (statusResult.status && statusResult.data) {
-            kycLabel = statusResult.data.user_kyc_label;
-            setGlobalKycStatus(kycLabel);
-            if (kycLabel && kycLabel.toLowerCase() === 'rejected' && statusResult.data.latest_kyc_request) {
-              setRejectionReason(statusResult.data.latest_kyc_request.rejection_reason);
-            }
+      const [statusRes, docsRes] = await Promise.all([
+        fetch(getBaseUrl() + "/api/kyc/status", {
+          headers: { Authorization: `Bearer ${token}`, "X-Application-Password": LARAVEL_APPLICATION_PASSWORD, "X-App-Type": APP_TYPE }
+        }),
+        fetch(getBaseUrl() + "/api/kyc/documents", {
+          headers: { Authorization: `Bearer ${token}`, "X-Application-Password": LARAVEL_APPLICATION_PASSWORD, "X-App-Type": APP_TYPE }
+        })
+      ]);
+
+      let kycLabel = null;
+      let reasons = [];
+      
+      if (statusRes.ok) {
+        const statusResult = await statusRes.json();
+        if (statusResult.status && statusResult.data) {
+          kycLabel = statusResult.data.user_kyc_label;
+          setGlobalKycStatus(kycLabel);
+          if (kycLabel && kycLabel.toLowerCase() === 'rejected' && statusResult.data.latest_kyc_request?.rejection_reason) {
+            reasons.push(statusResult.data.latest_kyc_request.rejection_reason);
           }
         }
+      }
 
-        if (res.ok) {
-          const result = await res.json();
-          if (result.status && result.data) {
-            const apiDocs = result.data;
-            setDocuments(prev => prev.map(d => {
-              const apiDoc = apiDocs.find(ad => ad.document_type === d.field);
-              if (apiDoc) {
-                const dateStr = apiDoc.uploaded_at ? new Date(apiDoc.uploaded_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : "Uploaded";
-                
-                let docStatus = apiDoc.status;
-                if (!apiDoc.rejection_reason && kycLabel && kycLabel.toLowerCase() === 'rejected' && docStatus.toLowerCase() === 'pending') {
-                  docStatus = 'rejected';
-                }
-
-                return {
-                  ...d,
-                  status: docStatus.charAt(0).toUpperCase() + docStatus.slice(1), // Capitalize
-                  uploadedOn: dateStr,
-                  previewUrl: apiDoc.private_file_endpoint,
-                  filename: apiDoc.file_original_name
-                };
-              }
-              return d;
-            }));
-            
-            const frontDoc = apiDocs.find(ad => ad.document_type === 'aadhaar_front');
-            if (frontDoc && frontDoc.document_number) {
-               setAadhaarNumber(frontDoc.document_number);
-               setIsAadhaarDisabled(!(kycLabel && kycLabel.toLowerCase() === 'rejected'));
+      if (docsRes.ok) {
+        const docsResult = await docsRes.json();
+        if (docsResult.status && docsResult.data) {
+          const apiDocs = docsResult.data;
+          
+          apiDocs.forEach(d => {
+            if (d.status === 'rejected' && d.rejection_reason) {
+              reasons.push(d.rejection_reason);
             }
+          });
+          
+          setDocuments(prev => prev.map(d => {
+            const apiDoc = apiDocs.find(ad => ad.document_type === d.field);
+            if (apiDoc) {
+              const dateStr = apiDoc.uploaded_at ? new Date(apiDoc.uploaded_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : "Uploaded";
+              
+              let docStatus = apiDoc.status;
+              return {
+                ...d,
+                status: docStatus.charAt(0).toUpperCase() + docStatus.slice(1),
+                uploadedOn: dateStr,
+                previewUrl: apiDoc.private_file_endpoint,
+                filename: apiDoc.file_original_name
+              };
+            }
+            return d;
+          }));
+          
+          
+          const uniqueReasons = [...new Set(reasons)];
+          setRejectionReasons(uniqueReasons);
+          if (onKycError) {
+            onKycError(kycLabel, uniqueReasons);
+          }
+          
+          const frontDoc = apiDocs.find(ad => ad.document_type === 'aadhaar_front');
+          if (frontDoc && frontDoc.document_number) {
+             setAadhaarNumber(frontDoc.document_number);
           }
         }
+      }
     } catch (err) {
       console.error("Failed to fetch KYC documents:", err);
     }
@@ -378,15 +388,6 @@ const KycDocuments = ({ profile, token }) => {
 
   return (
     <div className={styles.kycContainer}>
-      {globalKycStatus && globalKycStatus.toLowerCase() === 'rejected' && rejectionReason && (
-        <div style={{ padding: '16px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '8px', color: '#991B1B', display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '24px' }}>
-          <FaExclamationCircle style={{ fontSize: '20px', flexShrink: 0, marginTop: '2px' }} />
-          <div>
-            <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '500' }}>Your KYC was rejected</h4>
-            <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#B91C1C' }}>Reason: {rejectionReason}</p>
-          </div>
-        </div>
-      )}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px', marginBottom: '24px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Aadhaar Number</label>
@@ -394,9 +395,9 @@ const KycDocuments = ({ profile, token }) => {
             type="text" 
             value={aadhaarNumber} 
             onChange={(e) => setAadhaarNumber(e.target.value.replace(/\D/g, '').slice(0, 12))}
-            disabled={isAadhaarDisabled}
+            disabled={!showFormActions}
             placeholder="Enter your 12 digit Aadhaar number" 
-            style={{ width: '100%', padding: '12px 16px', border: '1px solid #9E9E9E', borderRadius: '8px', outline: 'none', fontSize: 'clamp(14px, 1.5vw, 16px)', fontFamily: 'var(--font-regular)', backgroundColor: isAadhaarDisabled ? '#f3f4f6' : 'white', cursor: isAadhaarDisabled ? 'not-allowed' : 'text', color: isAadhaarDisabled ? '#6b7280' : 'inherit' }}
+            style={{ width: '100%', padding: '12px 16px', border: '1px solid #9E9E9E', borderRadius: '8px', outline: 'none', fontSize: 'clamp(14px, 1.5vw, 16px)', fontFamily: 'var(--font-regular)', backgroundColor: !showFormActions ? '#f3f4f6' : 'white', cursor: !showFormActions ? 'not-allowed' : 'text', color: !showFormActions ? '#6b7280' : 'inherit' }}
           />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -405,9 +406,9 @@ const KycDocuments = ({ profile, token }) => {
             type="text" 
             value={businessName} 
             onChange={(e) => setBusinessName(e.target.value)}
-            disabled={isBusinessNameDisabled}
+            disabled={!showFormActions}
             placeholder="Enter your Business Name" 
-            style={{ width: '100%', padding: '12px 16px', border: '1px solid #9E9E9E', borderRadius: '8px', outline: 'none', fontSize: 'clamp(14px, 1.5vw, 16px)', fontFamily: 'var(--font-regular)', backgroundColor: isBusinessNameDisabled ? '#f3f4f6' : 'white', cursor: isBusinessNameDisabled ? 'not-allowed' : 'text', color: isBusinessNameDisabled ? '#6b7280' : 'inherit' }}
+            style={{ width: '100%', padding: '12px 16px', border: '1px solid #9E9E9E', borderRadius: '8px', outline: 'none', fontSize: 'clamp(14px, 1.5vw, 16px)', fontFamily: 'var(--font-regular)', backgroundColor: !showFormActions ? '#f3f4f6' : 'white', cursor: !showFormActions ? 'not-allowed' : 'text', color: !showFormActions ? '#6b7280' : 'inherit' }}
           />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -415,21 +416,21 @@ const KycDocuments = ({ profile, token }) => {
           <input 
             type="text" 
             value={gstNumber} 
-            onChange={(e) => setGstNumber(e.target.value)}
-            disabled={isGstNumberDisabled}
-            placeholder="Enter your GST Number" 
-            style={{ width: '100%', padding: '12px 16px', border: '1px solid #9E9E9E', borderRadius: '8px', outline: 'none', fontSize: 'clamp(14px, 1.5vw, 16px)', fontFamily: 'var(--font-regular)', backgroundColor: isGstNumberDisabled ? '#f3f4f6' : 'white', cursor: isGstNumberDisabled ? 'not-allowed' : 'text', color: isGstNumberDisabled ? '#6b7280' : 'inherit' }}
+            onChange={(e) => setGstNumber(e.target.value.toUpperCase().slice(0, 15))}
+            disabled={!showFormActions}
+            placeholder="Enter your 15 char GST number" 
+            style={{ width: '100%', padding: '12px 16px', border: '1px solid #9E9E9E', borderRadius: '8px', outline: 'none', fontSize: 'clamp(14px, 1.5vw, 16px)', fontFamily: 'var(--font-regular)', backgroundColor: !showFormActions ? '#f3f4f6' : 'white', cursor: !showFormActions ? 'not-allowed' : 'text', color: !showFormActions ? '#6b7280' : 'inherit' }}
           />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>RERA Number (Optional)</label>
+          <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>RERA Number</label>
           <input 
             type="text" 
             value={reraNumber} 
-            onChange={(e) => setReraNumber(e.target.value)}
-            disabled={isReraNumberDisabled}
-            placeholder="Enter your RERA Number" 
-            style={{ width: '100%', padding: '12px 16px', border: '1px solid #9E9E9E', borderRadius: '8px', outline: 'none', fontSize: 'clamp(14px, 1.5vw, 16px)', fontFamily: 'var(--font-regular)', backgroundColor: isReraNumberDisabled ? '#f3f4f6' : 'white', cursor: isReraNumberDisabled ? 'not-allowed' : 'text', color: isReraNumberDisabled ? '#6b7280' : 'inherit' }}
+            onChange={(e) => setReraNumber(e.target.value.toUpperCase())}
+            disabled={!showFormActions}
+            placeholder="Enter your RERA number" 
+            style={{ width: '100%', padding: '12px 16px', border: '1px solid #9E9E9E', borderRadius: '8px', outline: 'none', fontSize: 'clamp(14px, 1.5vw, 16px)', fontFamily: 'var(--font-regular)', backgroundColor: !showFormActions ? '#f3f4f6' : 'white', cursor: !showFormActions ? 'not-allowed' : 'text', color: !showFormActions ? '#6b7280' : 'inherit' }}
           />
         </div>
       </div>

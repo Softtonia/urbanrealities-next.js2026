@@ -233,6 +233,9 @@ const ProfileForm = () => {
   const [photoProgress, setPhotoProgress] = useState(0);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
+  const [kycStatus, setKycStatus] = useState(null);
+  const [kycReasons, setKycReasons] = useState([]);
+
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -760,7 +763,14 @@ const ProfileForm = () => {
             
             {activeTab === 'kyc' && (
               <div className={styles.fieldsGrid} style={{ display: 'block' }}>
-                <KycDocuments profile={profile} token={token} />
+                <KycDocuments 
+                  profile={profile} 
+                  token={token} 
+                  onKycError={(status, reasons) => {
+                    setKycStatus(status);
+                    setKycReasons(reasons);
+                  }}
+                />
               </div>
             )}
 
@@ -792,6 +802,21 @@ const ProfileForm = () => {
             </button>
             <p className={styles.photoInfo}>Recommended: JPG, PNG or WEBP<br/>Max size: 2MB. Min dimension: 200x200px</p>
           </div>
+
+          {/* KYC Error Widget */}
+          {activeTab === 'kyc' && kycStatus && kycStatus.toLowerCase() === 'rejected' && kycReasons.length > 0 && (
+            <div className={styles.widgetCard} style={{ backgroundColor: '#FEF2F2', borderColor: '#FCA5A5' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <FaExclamationCircle style={{ color: '#991B1B', fontSize: '16px' }} />
+                <h4 className={styles.widgetTitle} style={{ color: '#991B1B', margin: 0 }}>KYC Rejected</h4>
+              </div>
+              <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px', fontSize: '10px', color: '#B91C1C', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {kycReasons.map((reason, idx) => (
+                  <li key={idx} style={{ lineHeight: '1.4', fontSize: '10px' }}>{reason}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Profile Completion Widget */}
           <div className={styles.widgetCard}>

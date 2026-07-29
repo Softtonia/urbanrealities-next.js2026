@@ -255,7 +255,7 @@
 .widgetTitle {
   margin: 0 0 16px 0;
   font-size: 14px;
-  font-weight: 600;
+  font-weight:500;
   color: var(--Eerie-Black, #111827);
 }
 
