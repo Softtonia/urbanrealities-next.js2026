@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { FaIdCard, FaBuilding, FaUpload, FaEye, FaInfoCircle, FaShieldAlt, FaSpinner, FaArrowLeft, FaSearchPlus, FaSearchMinus, FaExpand, FaDownload, FaTimes } from 'react-icons/fa';
+import { FaIdCard, FaBuilding, FaUpload, FaEye, FaInfoCircle, FaShieldAlt, FaSpinner, FaArrowLeft, FaSearchPlus, FaSearchMinus, FaExpand, FaDownload, FaTimes, FaExclamationCircle } from 'react-icons/fa';
 import styles from './KycDocuments.module.css';
-import { uploadDocument, checkUploadProgress, startKycUpload, checkKycUploadProgress, submitKyc } from '@/services/document.service';
+import { uploadDocument, checkUploadProgress, startKycUpload, checkKycUploadProgress, submitKyc, resubmitKyc } from '@/services/document.service';
 import { LARAVEL_API_BASE_URL } from '@/lib/config';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
@@ -14,13 +14,22 @@ const KycDocuments = ({ profile, token }) => {
   const [viewingDocUrl, setViewingDocUrl] = useState(null);
   const [isLoadingView, setIsLoadingView] = useState(false);
   const [aadhaarNumber, setAadhaarNumber] = useState('');
+  const [isAadhaarDisabled, setIsAadhaarDisabled] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [globalKycStatus, setGlobalKycStatus] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState(null);
 
   useEffect(() => {
     if (profile) {
-      setAadhaarNumber(profile.aadhaar_number || '');
+      const isRejected = globalKycStatus && globalKycStatus.toLowerCase() === 'rejected';
+      if (profile.aadhaar_number) {
+        setAadhaarNumber(profile.aadhaar_number);
+        setIsAadhaarDisabled(!isRejected);
+      } else {
+        setAadhaarNumber('');
+      }
     }
-  }, [profile]);
+  }, [profile, globalKycStatus]);
 
   const [documents, setDocuments] = useState([
     {
@@ -54,11 +63,24 @@ const KycDocuments = ({ profile, token }) => {
    
   ]);
 
-  useEffect(() => {
-    const fetchDocs = async () => {
-      try {
-        const { getKycDocuments } = await import('@/services/document.service');
-        const res = await getKycDocuments(token);
+  const fetchDocs = async () => {
+    if (!token) return;
+    try {
+        const { getKycDocuments, getKycStatus } = await import('@/services/document.service');
+        const [res, statusRes] = await Promise.all([getKycDocuments(token), getKycStatus(token)]);
+        
+        let kycLabel = null;
+        if (statusRes.ok) {
+          const statusResult = await statusRes.json();
+          if (statusResult.status && statusResult.data) {
+            kycLabel = statusResult.data.user_kyc_label;
+            setGlobalKycStatus(kycLabel);
+            if (kycLabel && kycLabel.toLowerCase() === 'rejected' && statusResult.data.latest_kyc_request) {
+              setRejectionReason(statusResult.data.latest_kyc_request.rejection_reason);
+            }
+          }
+        }
+
         if (res.ok) {
           const result = await res.json();
           if (result.status && result.data) {
@@ -67,9 +89,15 @@ const KycDocuments = ({ profile, token }) => {
               const apiDoc = apiDocs.find(ad => ad.document_type === d.field);
               if (apiDoc) {
                 const dateStr = apiDoc.uploaded_at ? new Date(apiDoc.uploaded_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : "Uploaded";
+                
+                let docStatus = apiDoc.status;
+                if (!apiDoc.rejection_reason && kycLabel && kycLabel.toLowerCase() === 'rejected' && docStatus.toLowerCase() === 'pending') {
+                  docStatus = 'rejected';
+                }
+
                 return {
                   ...d,
-                  status: apiDoc.status.charAt(0).toUpperCase() + apiDoc.status.slice(1), // Capitalize
+                  status: docStatus.charAt(0).toUpperCase() + docStatus.slice(1), // Capitalize
                   uploadedOn: dateStr,
                   previewUrl: apiDoc.private_file_endpoint,
                   filename: apiDoc.file_original_name
@@ -80,17 +108,18 @@ const KycDocuments = ({ profile, token }) => {
             
             const frontDoc = apiDocs.find(ad => ad.document_type === 'aadhaar_front');
             if (frontDoc && frontDoc.document_number) {
-               setAadhaarNumber(prev => prev || frontDoc.document_number);
+               setAadhaarNumber(frontDoc.document_number);
+               setIsAadhaarDisabled(!(kycLabel && kycLabel.toLowerCase() === 'rejected'));
             }
           }
         }
-      } catch (err) {
-        console.error("Failed to fetch KYC documents:", err);
-      }
-    };
-    if (token) {
-      fetchDocs();
+    } catch (err) {
+      console.error("Failed to fetch KYC documents:", err);
     }
+  };
+
+  useEffect(() => {
+    fetchDocs();
   }, [token]);
 
   const handleUpload = (doc) => {
@@ -106,7 +135,7 @@ const KycDocuments = ({ profile, token }) => {
       const localUrl = URL.createObjectURL(file);
       setDocuments(prev => prev.map(d => 
         d.id === activeUploadId 
-          ? { ...d, filename: file.name, previewUrl: localUrl, file: file, uploadedOn: 'Selected' }
+          ? { ...d, filename: file.name, previewUrl: localUrl, file: file, uploadedOn: 'Selected', status: null }
           : d
       ));
     }
@@ -133,10 +162,24 @@ const KycDocuments = ({ profile, token }) => {
         return d;
       }));
       
-      const res = await startKycUpload(token, formData);
+      let res;
+      if (globalKycStatus && globalKycStatus.toLowerCase() === 'rejected') {
+        res = await resubmitKyc(token, formData);
+      } else {
+        res = await startKycUpload(token, formData);
+      }
       const result = await res.json();
       
       if (res.ok && result.status) {
+        if (globalKycStatus && globalKycStatus.toLowerCase() === 'rejected') {
+          toast.success(result.message || "KYC resubmitted successfully.");
+          setIsSaving(false);
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+          return;
+        }
+
         const uploadId = result.data?.upload_id || result.upload_id;
         if (uploadId) {
           const pollInterval = setInterval(async () => {
@@ -163,6 +206,9 @@ const KycDocuments = ({ profile, token }) => {
                     const submitResult = await submitRes.json();
                     if (submitRes.ok && submitResult.status) {
                       toast.success(submitResult.message || "KYC submitted successfully.");
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 1000);
                     } else {
                       toast.error(submitResult.message || "KYC submission failed.");
                     }
@@ -260,17 +306,29 @@ const KycDocuments = ({ profile, token }) => {
     return `${LARAVEL_API_BASE_URL}/${clean.replace(/^\//, '')}`;
   };
 
+  const showFormActions = documents.some(d => !d.status || d.status.toLowerCase() === 'rejected' || d.file);
 
   return (
     <div className={styles.kycContainer}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px', marginBottom: '24px' }}>
+      {globalKycStatus && globalKycStatus.toLowerCase() === 'rejected' && rejectionReason && (
+        <div style={{ padding: '16px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: '8px', color: '#991B1B', display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '24px' }}>
+          <FaExclamationCircle style={{ fontSize: '20px', flexShrink: 0, marginTop: '2px' }} />
+          <div>
+            <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '500' }}>Your KYC was rejected</h4>
+            <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#B91C1C' }}>Reason: {rejectionReason}</p>
+          </div>
+        </div>
+      )}
+
+      <div className={styles.inputGroup} style={{ marginBottom: '32px' }}>
         <label style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Aadhaar Number</label>
         <input 
           type="text" 
           value={aadhaarNumber} 
           onChange={(e) => setAadhaarNumber(e.target.value.replace(/\D/g, '').slice(0, 12))}
+          disabled={isAadhaarDisabled}
           placeholder="Enter your 12 digit Aadhaar number" 
-          style={{ width: '100%', padding: '12px 16px', border: '1px solid #9E9E9E', borderRadius: '8px', outline: 'none', fontSize: 'clamp(14px, 1.5vw, 16px)', fontFamily: 'var(--font-regular)' }}
+          style={{ width: '100%', padding: '12px 16px', border: '1px solid #9E9E9E', borderRadius: '8px', outline: 'none', fontSize: 'clamp(14px, 1.5vw, 16px)', fontFamily: 'var(--font-regular)', backgroundColor: isAadhaarDisabled ? '#f3f4f6' : 'white', cursor: isAadhaarDisabled ? 'not-allowed' : 'text', color: isAadhaarDisabled ? '#6b7280' : 'inherit' }}
         />
       </div>
       <input 
@@ -383,23 +441,25 @@ const KycDocuments = ({ profile, token }) => {
         </div>
       ))}
 
-      <div className={styles.formActions}>
-        <button 
-          type="button"
-          onClick={handleSaveKyc}
-          disabled={isSaving}
-          className={styles.btnSave}
-        >
-          {isSaving ? 'Saving...' : 'Save Changes'}
-        </button>
-        <button 
-          type="button" 
-          className={styles.btnCancel} 
-          onClick={() => router.push('/auth/user/dashboard')}
-        >
-          Cancel
-        </button>
-      </div>
+      {showFormActions && (
+        <div className={styles.formActions}>
+          <button 
+            type="button"
+            onClick={handleSaveKyc}
+            disabled={isSaving}
+            className={styles.btnSave}
+          >
+            {isSaving ? 'Saving...' : 'Save Changes'}
+          </button>
+          <button 
+            type="button" 
+            className={styles.btnCancel} 
+            onClick={() => router.push('/auth/user/dashboard')}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
 
       <div className={styles.securityBanner}>
         <FaShieldAlt className={styles.securityBannerIcon} />

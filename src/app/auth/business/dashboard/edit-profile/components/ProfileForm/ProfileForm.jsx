@@ -19,7 +19,18 @@ const ProfileForm = () => {
   const id = decodeId(searchParams.get("id"));
   const router = useRouter();
   
-  const [activeTab, setActiveTab] = useState("personal");
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('activeTab') || "personal";
+    }
+    return "personal";
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('activeTab', activeTab);
+    }
+  }, [activeTab]);
 
 
 

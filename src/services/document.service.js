@@ -32,6 +32,7 @@ export const startKycUpload = async (token, formData) => {
     return await fetch(getBaseUrl() + "/api/kyc/uploads/start", {
         method: "POST",
         headers: {
+            "Accept": "application/json",
             Authorization: `Bearer ${token}`,
             "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
             "X-App-Type": APP_TYPE
@@ -64,8 +65,32 @@ export const submitKyc = async (token, uploadId) => {
     });
 };
 
+export const resubmitKyc = async (token, formData) => {
+    return await fetch(getBaseUrl() + "/api/kyc/resubmit", {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            Authorization: `Bearer ${token}`,
+            "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+            "X-App-Type": APP_TYPE
+        },
+        body: formData
+    });
+};
+
 export const getKycDocuments = async (token) => {
     return await fetch(getBaseUrl() + "/api/kyc/documents", {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+            "X-App-Type": APP_TYPE
+        }
+    });
+};
+
+export const getKycStatus = async (token) => {
+    return await fetch(getBaseUrl() + "/api/kyc/status", {
         method: "GET",
         headers: {
             Authorization: `Bearer ${token}`,
