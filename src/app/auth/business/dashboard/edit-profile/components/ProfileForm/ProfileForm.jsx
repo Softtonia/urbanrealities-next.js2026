@@ -7,9 +7,10 @@ import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { decodeId } from "@/lib/utils";
 import Select, { createFilter } from "react-select";
-import { FaUser, FaBuilding, FaMapMarkerAlt, FaIdCard, FaCamera, FaCheckCircle, FaExclamationCircle, FaHeadset } from "react-icons/fa";
+import { FaUser, FaBuilding, FaMapMarkerAlt, FaIdCard, FaCamera, FaCheckCircle, FaExclamationCircle, FaHeadset, FaClock } from "react-icons/fa";
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
 import KycDocuments from "../KycDocuments/KycDocuments";
+import KycTimeline from "@/app/auth/user/dashboard/edit-profile/components/KycTimeline/KycTimeline";
 import { updatePersonalProfile, updateProfilePhoto, updateAddressProfile, getUserProfile } from "@/services/auth.service";
 import { getCountries, getStates, getCities } from "@/services/location.service";
 import { toast } from "react-toastify";
@@ -539,6 +540,12 @@ const ProfileForm = () => {
         >
           <FaIdCard className={styles.tabIcon} /> Documents & KYC
         </button>
+        <button 
+          className={`${styles.tab} ${activeTab === 'timeline' ? styles.activeTab : ''}`}
+          onClick={(e) => { e.preventDefault(); setActiveTab('timeline'); }}
+        >
+          <FaClock className={styles.tabIcon} /> Remarks
+        </button>
       </div>
 
       <div className={styles.layoutGrid}>
@@ -548,10 +555,10 @@ const ProfileForm = () => {
           <form className={styles.form} onSubmit={handleSubmit} autoComplete="off">
             <div className={styles.formHeader}>
               <div className={styles.formHeaderIcon}>
-                {activeTab === 'personal' ? <FaUser /> : activeTab === 'business' ? <FaBuilding /> : activeTab === 'address' ? <FaMapMarkerAlt /> : <FaIdCard />}
+                {activeTab === 'personal' ? <FaUser /> : activeTab === 'business' ? <FaBuilding /> : activeTab === 'address' ? <FaMapMarkerAlt /> : activeTab === 'kyc' ? <FaIdCard /> : <FaClock />}
               </div>
               <div className={styles.formHeaderText}>
-                <h3>{activeTab === 'personal' ? 'Personal Information' : activeTab === 'business' ? 'Business Information' : activeTab === 'address' ? 'Address Information' : 'Documents & KYC'}</h3>
+                <h3>{activeTab === 'personal' ? 'Personal Information' : activeTab === 'business' ? 'Business Information' : activeTab === 'address' ? 'Address Information' : activeTab === 'kyc' ? 'Documents & KYC' : 'Remarks'}</h3>
                 <p>Update your details</p>
               </div>
             </div>
@@ -774,7 +781,13 @@ const ProfileForm = () => {
               </div>
             )}
 
-            {activeTab !== 'kyc' && (
+            {activeTab === 'timeline' && (
+              <div className={styles.fieldsGrid} style={{ display: 'block' }}>
+                <KycTimeline token={token} />
+              </div>
+            )}
+
+            {(activeTab !== 'kyc' && activeTab !== 'timeline') && (
               <div className={styles.formActions}>
                 <button type="submit" className={styles.btnSave}>Save Changes</button>
                 <button type="button" className={styles.btnCancel} onClick={() => router.push('/auth/business/dashboard')}>Cancel</button>
@@ -803,20 +816,7 @@ const ProfileForm = () => {
             <p className={styles.photoInfo}>Recommended: JPG, PNG or WEBP<br/>Max size: 2MB. Min dimension: 200x200px</p>
           </div>
 
-          {/* KYC Error Widget */}
-          {activeTab === 'kyc' && kycStatus && kycStatus.toLowerCase() === 'rejected' && kycReasons.length > 0 && (
-            <div className={styles.widgetCard} style={{ backgroundColor: '#FEF2F2', borderColor: '#FCA5A5' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <FaExclamationCircle style={{ color: '#991B1B', fontSize: '16px' }} />
-                <h4 className={styles.widgetTitle} style={{ color: '#991B1B', margin: 0 }}>KYC Rejected</h4>
-              </div>
-              <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px', fontSize: '10px', color: '#B91C1C', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {kycReasons.map((reason, idx) => (
-                  <li key={idx} style={{ lineHeight: '1.4', fontSize: '10px' }}>{reason}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+
 
           {/* Profile Completion Widget */}
           <div className={styles.widgetCard}>

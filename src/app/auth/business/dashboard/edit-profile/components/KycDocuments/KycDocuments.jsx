@@ -158,9 +158,16 @@ const KycDocuments = ({ profile, token, onKycError }) => {
         if (docsResult.status && docsResult.data) {
           const apiDocs = docsResult.data;
           
-          apiDocs.forEach(d => {
-            if (d.status === 'rejected' && d.rejection_reason) {
-              reasons.push(d.rejection_reason);
+          documents.forEach(d => {
+            const apiDoc = apiDocs.find(ad => ad.document_type === d.field);
+            if (apiDoc) {
+              let docStatus = apiDoc.status;
+              if (!apiDoc.rejection_reason && kycLabel && kycLabel.toLowerCase() === 'rejected' && docStatus.toLowerCase() === 'pending') {
+                docStatus = 'rejected';
+              }
+              if (docStatus.toLowerCase() === 'rejected' && apiDoc.rejection_reason) {
+                reasons.push(`${apiDoc.rejection_reason} in ${d.title}`);
+              }
             }
           });
           

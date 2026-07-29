@@ -16,9 +16,11 @@ import {
   FaCheckCircle,
   FaExclamationCircle,
   FaHeadset,
+  FaClock,
 } from "react-icons/fa";
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
 import KycDocuments from "../KycDocuments/KycDocuments";
+import KycTimeline from "../KycTimeline/KycTimeline";
 import {
   updatePersonalProfile,
   updateProfilePhoto,
@@ -546,6 +548,15 @@ const ProfileForm = () => {
         >
           <FaIdCard className={styles.tabIcon} /> Documents & KYC
         </button>
+        <button
+          className={`${styles.tab} ${activeTab === "timeline" ? styles.activeTab : ""}`}
+          onClick={(e) => {
+            e.preventDefault();
+            setActiveTab("timeline");
+          }}
+        >
+          <FaClock className={styles.tabIcon} /> Remarks
+        </button>
       </div>
 
       <div className={styles.layoutGrid}>
@@ -566,7 +577,9 @@ const ProfileForm = () => {
                     ? "Personal Information"
                     : activeTab === "address"
                       ? "Address Information"
-                      : "Documents & KYC"}
+                      : activeTab === "kyc"
+                        ? "Documents & KYC"
+                        : "Remarks"}
                 </h3>
                 <p>Update your details</p>
               </div>
@@ -1019,7 +1032,13 @@ const ProfileForm = () => {
               </div>
             )}
 
-            {activeTab !== "kyc" && (
+            {activeTab === "timeline" && (
+              <div className={styles.fieldsGrid} style={{ display: "block" }}>
+                <KycTimeline token={token} />
+              </div>
+            )}
+
+            {(activeTab !== "kyc" && activeTab !== "timeline") && (
               <div className={styles.formActions}>
                 <button type="submit" className={styles.btnSave}>
                   Save Changes
@@ -1074,56 +1093,6 @@ const ProfileForm = () => {
               Max size: 2MB. Min dimension: 200x200px
             </p>
           </div>
-
-          {/* KYC Error Widget */}
-          {activeTab === "kyc" &&
-            kycStatus &&
-            kycStatus.toLowerCase() === "rejected" &&
-            kycReasons.length > 0 && (
-              <div
-                className={styles.widgetCard}
-                style={{ backgroundColor: "#FEF2F2", borderColor: "#FCA5A5" }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    marginBottom: "8px",
-                  }}
-                >
-                  <FaExclamationCircle
-                    style={{ color: "#991B1B", fontSize: "16px" }}
-                  />
-                  <h4
-                    className={styles.widgetTitle}
-                    style={{ color: "#991B1B", margin: 0 }}
-                  >
-                    KYC Rejected
-                  </h4>
-                </div>
-                <ul
-                  style={{
-                    margin: "8px 0 0 0",
-                    paddingLeft: "20px",
-                    fontSize: "10px",
-                    color: "#B91C1C",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "4px",
-                  }}
-                >
-                  {kycReasons.map((reason, idx) => (
-                    <li
-                      key={idx}
-                      style={{ lineHeight: "1.4", fontSize: "12px" }}
-                    >
-                      {reason}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
 
           {/* Profile Completion Widget */}
           <div className={styles.widgetCard}>
