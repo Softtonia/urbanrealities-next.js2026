@@ -60,6 +60,14 @@ const KycDocuments = ({ profile, token, onKycError }) => {
    
   ]);
 
+  const showFormActions = documents.some(d => !d.status || d.status.toLowerCase() === 'rejected' || d.file);
+
+  useEffect(() => {
+    if (showFormActions && aadhaarNumber && aadhaarNumber.includes('X')) {
+      setAadhaarNumber('');
+    }
+  }, [showFormActions, aadhaarNumber]);
+
   const getBaseUrl = () => LARAVEL_API_BASE_URL;
 
   const fetchDocs = async () => {
@@ -129,7 +137,12 @@ const KycDocuments = ({ profile, token, onKycError }) => {
           
           const frontDoc = apiDocs.find(ad => ad.document_type === 'aadhaar_front');
           if (frontDoc && frontDoc.document_number) {
-              setAadhaarNumber(frontDoc.document_number);
+              setAadhaarNumber(prev => {
+                if (prev && !prev.includes('X')) {
+                  return prev;
+                }
+                return frontDoc.document_number;
+              });
           }
         }
       }
@@ -325,8 +338,6 @@ const KycDocuments = ({ profile, token, onKycError }) => {
     }
     return `${LARAVEL_API_BASE_URL}/${clean.replace(/^\//, '')}`;
   };
-
-  const showFormActions = documents.some(d => !d.status || d.status.toLowerCase() === 'rejected' || d.file);
 
   return (
     <div className={styles.kycContainer}>
