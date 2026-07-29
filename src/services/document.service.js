@@ -52,7 +52,7 @@ export const checkKycUploadProgress = async (token, uploadId) => {
     });
 };
 
-export const submitKyc = async (token, uploadId) => {
+export const submitKyc = async (token, uploadId, aadhaarNumber) => {
     return await fetch(getBaseUrl() + "/api/kyc/submit", {
         method: "POST",
         headers: {
@@ -61,7 +61,7 @@ export const submitKyc = async (token, uploadId) => {
             "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
             "X-App-Type": APP_TYPE
         },
-        body: JSON.stringify({ upload_id: uploadId, declaration: true })
+        body: JSON.stringify({ upload_id: uploadId, declaration: true, aadhaar_number: aadhaarNumber })
     });
 };
 

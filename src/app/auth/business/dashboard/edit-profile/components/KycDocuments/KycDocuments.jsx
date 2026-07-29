@@ -384,7 +384,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
                   clearInterval(pollInterval);
 
                   try {
-                    const submitRes = await submitKyc(token, uploadId);
+                    const submitRes = await submitKyc(token, uploadId, aadhaarNumber);
                     const submitResult = await submitRes.json();
                     if (submitRes.ok && submitResult.status) {
                       toast.success(

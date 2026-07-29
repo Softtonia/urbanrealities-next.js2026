@@ -11,6 +11,7 @@ import { FaUser, FaBuilding, FaMapMarkerAlt, FaIdCard, FaCamera, FaCheckCircle, 
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
 import KycDocuments from "../KycDocuments/KycDocuments";
 import KycTimeline from "@/app/auth/user/dashboard/edit-profile/components/KycTimeline/KycTimeline";
+import { LARAVEL_API_BASE_URL, LARAVEL_APPLICATION_PASSWORD, APP_TYPE } from "@/lib/config";
 import { updatePersonalProfile, updateProfilePhoto, updateAddressProfile, getUserProfile } from "@/services/auth.service";
 import { getCountries, getStates, getCities } from "@/services/location.service";
 import { toast } from "react-toastify";
@@ -79,6 +80,11 @@ const ProfileForm = () => {
     no_of_employees: "",
   });
   const [formErrors, setFormErrors] = useState({});
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasTimeline, setHasTimeline] = useState(false);
+
+  const getBaseUrl = () => LARAVEL_API_BASE_URL;
 
 
   const [loading, setLoading] = useState(true);
@@ -158,7 +164,30 @@ const ProfileForm = () => {
   };
 
   useEffect(() => {
-    if (token) fetchProfile();
+    if (token) {
+      fetchProfile();
+      
+      const fetchTimelineCheck = async () => {
+        try {
+          const res = await fetch(getBaseUrl() + "/api/kyc/timeline?per_page=1", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+              "X-App-Type": APP_TYPE,
+            },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.status && data.data && data.data.length > 0) {
+              setHasTimeline(true);
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      };
+      fetchTimelineCheck();
+    }
   }, [token]);
 
   useEffect(() => {
@@ -540,12 +569,14 @@ const ProfileForm = () => {
         >
           <FaIdCard className={styles.tabIcon} /> Documents & KYC
         </button>
-        <button 
-          className={`${styles.tab} ${activeTab === 'timeline' ? styles.activeTab : ''}`}
-          onClick={(e) => { e.preventDefault(); setActiveTab('timeline'); }}
-        >
-          <FaClock className={styles.tabIcon} /> Remarks
-        </button>
+        {hasTimeline && (
+          <button 
+            className={`${styles.tab} ${activeTab === 'timeline' ? styles.activeTab : ''}`}
+            onClick={(e) => { e.preventDefault(); setActiveTab('timeline'); }}
+          >
+            <FaClock className={styles.tabIcon} /> Remarks
+          </button>
+        )}
       </div>
 
       <div className={styles.layoutGrid}>
