@@ -496,15 +496,20 @@ const KycDocuments = ({ profile, token, onKycError }) => {
         <input
           type="text"
           value={
-            aadhaarNumber
-              ? aadhaarNumber.length >= 4 && !aadhaarNumber.includes("X")
-                ? "XXXXXXXX" + aadhaarNumber.slice(-4)
-                : aadhaarNumber
-              : ""
+            documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")
+              ? aadhaarNumber
+                ? aadhaarNumber.length >= 4 && !aadhaarNumber.includes("X")
+                  ? "XXXXXXXX" + aadhaarNumber.slice(-4)
+                  : aadhaarNumber
+                : ""
+              : aadhaarNumber
           }
-          readOnly
-          disabled
-          placeholder=""
+          onChange={(e) =>
+            setAadhaarNumber(e.target.value.replace(/\D/g, "").slice(0, 12))
+          }
+          readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+          disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+          placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your 12 digit Aadhaar number"}
           style={{
             width: "100%",
             padding: "12px 16px",
@@ -513,9 +518,9 @@ const KycDocuments = ({ profile, token, onKycError }) => {
             outline: "none",
             fontSize: "clamp(14px, 1.5vw, 16px)",
             fontFamily: "var(--font-regular)",
-            backgroundColor: "#f3f4f6",
-            cursor: "not-allowed",
-            color: "#6b7280",
+            backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
+            cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
+            color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
           }}
         />
       </div>
