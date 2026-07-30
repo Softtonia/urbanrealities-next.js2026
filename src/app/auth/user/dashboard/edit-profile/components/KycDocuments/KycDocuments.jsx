@@ -52,7 +52,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
         setAadhaarNumber("");
       }
     }
-  }, [profile, globalKycStatus]);
+  }, [profile]);
 
   const [documents, setDocuments] = useState([
     {
@@ -89,11 +89,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
     (d) => !d.status || d.status.toLowerCase() === "rejected" || d.file,
   );
 
-  useEffect(() => {
-    if (showFormActions && aadhaarNumber && aadhaarNumber.includes("X")) {
-      setAadhaarNumber("");
-    }
-  }, [showFormActions, aadhaarNumber]);
+
 
   const getBaseUrl = () => LARAVEL_API_BASE_URL;
 
@@ -499,12 +495,16 @@ const KycDocuments = ({ profile, token, onKycError }) => {
         </label>
         <input
           type="text"
-          value={aadhaarNumber}
-          onChange={(e) =>
-            setAadhaarNumber(e.target.value.replace(/\D/g, "").slice(0, 12))
+          value={
+            aadhaarNumber
+              ? aadhaarNumber.length >= 4 && !aadhaarNumber.includes("X")
+                ? "XXXXXXXX" + aadhaarNumber.slice(-4)
+                : aadhaarNumber
+              : ""
           }
-          disabled={!showFormActions}
-          placeholder="Enter your 12 digit Aadhaar number"
+          readOnly
+          disabled
+          placeholder=""
           style={{
             width: "100%",
             padding: "12px 16px",
@@ -513,9 +513,9 @@ const KycDocuments = ({ profile, token, onKycError }) => {
             outline: "none",
             fontSize: "clamp(14px, 1.5vw, 16px)",
             fontFamily: "var(--font-regular)",
-            backgroundColor: !showFormActions ? "#f3f4f6" : "white",
-            cursor: !showFormActions ? "not-allowed" : "text",
-            color: !showFormActions ? "#6b7280" : "inherit",
+            backgroundColor: "#f3f4f6",
+            cursor: "not-allowed",
+            color: "#6b7280",
           }}
         />
       </div>
