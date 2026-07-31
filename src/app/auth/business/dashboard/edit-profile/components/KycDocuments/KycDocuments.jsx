@@ -41,10 +41,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
   const [isLoadingView, setIsLoadingView] = useState(false);
   const [aadhaarNumber, setAadhaarNumber] = useState("");
 
-  const [businessName, setBusinessName] = useState("");
-
   const [gstNumber, setGstNumber] = useState("");
-
   const [reraNumber, setReraNumber] = useState("");
 
   const [isSaving, setIsSaving] = useState(false);
@@ -52,19 +49,15 @@ const KycDocuments = ({ profile, token, onKycError }) => {
   const [rejectionReasons, setRejectionReasons] = useState([]);
 
   useEffect(() => {
+    // Only fetch from profile as fallback before details API completes
     if (profile) {
-      if (profile.aadhaar_number) {
+      if (profile.aadhaar_number && !aadhaarNumber) {
         setAadhaarNumber(profile.aadhaar_number);
-      } else {
-        setAadhaarNumber("");
       }
-      if (profile.business_name) {
-        setBusinessName(profile.business_name);
-      }
-      if (profile.gst_number) {
+      if (profile.gst_number && !gstNumber) {
         setGstNumber(profile.gst_number);
       }
-      if (profile.rera_number) {
+      if (profile.rera_number && !reraNumber) {
         setReraNumber(profile.rera_number);
       }
     }
@@ -158,7 +151,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
   const fetchDocs = async () => {
     if (!token) return;
     try {
-      const [statusRes, docsRes] = await Promise.all([
+      const [statusRes, docsRes, detailsRes] = await Promise.all([
         fetch(getBaseUrl() + "/api/kyc/status", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -173,10 +166,32 @@ const KycDocuments = ({ profile, token, onKycError }) => {
             "X-App-Type": APP_TYPE,
           },
         }),
+        fetch(getBaseUrl() + "/api/kyc/details", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+            "X-App-Type": APP_TYPE,
+          },
+        }),
       ]);
 
       let kycLabel = null;
       let reasons = [];
+
+      if (detailsRes && detailsRes.ok) {
+        const detailsResult = await detailsRes.json();
+        if (detailsResult.status && detailsResult.data) {
+          if (detailsResult.data.aadhaar_number) {
+            setAadhaarNumber(detailsResult.data.aadhaar_number);
+          }
+          if (detailsResult.data.gst_number) {
+            setGstNumber(detailsResult.data.gst_number);
+          }
+          if (detailsResult.data.rera_number) {
+            setReraNumber(detailsResult.data.rera_number);
+          }
+        }
+      }
 
       if (statusRes.ok) {
         const statusResult = await statusRes.json();
@@ -307,7 +322,6 @@ const KycDocuments = ({ profile, token, onKycError }) => {
       setIsSaving(true);
       const formData = new FormData();
       formData.append("aadhaar_number", aadhaarNumber);
-      formData.append("business_name", businessName);
       formData.append("gst_number", gstNumber);
       if (reraNumber) {
         formData.append("rera_number", reraNumber);
@@ -368,7 +382,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
                         uploading: !isDone,
                         progress: fp.percent || 100,
                         status: isDone
-                          ? profile?.kyc_status || "Pending"
+                          ? "Pending"
                           : d.status,
                       };
                     }
@@ -384,7 +398,11 @@ const KycDocuments = ({ profile, token, onKycError }) => {
                   clearInterval(pollInterval);
 
                   try {
-                    const submitRes = await submitKyc(token, uploadId, aadhaarNumber);
+                    const submitRes = await submitKyc(token, uploadId, {
+                      aadhaar_number: aadhaarNumber,
+                      gst_number: gstNumber,
+                      rera_number: reraNumber
+                    });
                     const submitResult = await submitRes.json();
                     if (submitRes.ok && submitResult.status) {
                       toast.success(
@@ -442,7 +460,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
                     uploading: false,
                     progress: 100,
                     file: null,
-                    status: profile?.kyc_status || "Pending",
+                    status: "Pending",
                     uploadedOn: new Date().toLocaleDateString("en-GB", {
                       day: "2-digit",
                       month: "short",
@@ -561,12 +579,22 @@ const KycDocuments = ({ profile, token, onKycError }) => {
           </label>
           <input
             type="text"
-            value={aadhaarNumber}
+            value={
+              (documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")
+                ? aadhaarNumber
+                  ? aadhaarNumber.length >= 4 && !aadhaarNumber.includes("X")
+                    ? "XXXXXXXX" + aadhaarNumber.slice(-4)
+                    : aadhaarNumber
+                  : ""
+                : aadhaarNumber)
+                ?.match(/.{1,4}/g)?.join(" ") || ""
+            }
             onChange={(e) =>
               setAadhaarNumber(e.target.value.replace(/\D/g, "").slice(0, 12))
             }
-            disabled={!showFormActions}
-            placeholder="Enter your 12 digit Aadhaar number"
+            readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+            disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+            placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your 12 digit Aadhaar number"}
             style={{
               width: "100%",
               padding: "12px 16px",
@@ -575,35 +603,9 @@ const KycDocuments = ({ profile, token, onKycError }) => {
               outline: "none",
               fontSize: "clamp(14px, 1.5vw, 16px)",
               fontFamily: "var(--font-regular)",
-              backgroundColor: !showFormActions ? "#f3f4f6" : "white",
-              cursor: !showFormActions ? "not-allowed" : "text",
-              color: !showFormActions ? "#6b7280" : "inherit",
-            }}
-          />
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <label
-            style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}
-          >
-            Business Name
-          </label>
-          <input
-            type="text"
-            value={businessName}
-            onChange={(e) => setBusinessName(e.target.value)}
-            disabled={!showFormActions}
-            placeholder="Enter your Business Name"
-            style={{
-              width: "100%",
-              padding: "12px 16px",
-              border: "1px solid #9E9E9E",
-              borderRadius: "8px",
-              outline: "none",
-              fontSize: "clamp(14px, 1.5vw, 16px)",
-              fontFamily: "var(--font-regular)",
-              backgroundColor: !showFormActions ? "#f3f4f6" : "white",
-              cursor: !showFormActions ? "not-allowed" : "text",
-              color: !showFormActions ? "#6b7280" : "inherit",
+              backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
+              cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
+              color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
             }}
           />
         </div>
@@ -619,8 +621,9 @@ const KycDocuments = ({ profile, token, onKycError }) => {
             onChange={(e) =>
               setGstNumber(e.target.value.toUpperCase().slice(0, 15))
             }
-            disabled={!showFormActions}
-            placeholder="Enter your 15 char GST number"
+            readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+            disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+            placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your 15 char GST number"}
             style={{
               width: "100%",
               padding: "12px 16px",
@@ -629,9 +632,9 @@ const KycDocuments = ({ profile, token, onKycError }) => {
               outline: "none",
               fontSize: "clamp(14px, 1.5vw, 16px)",
               fontFamily: "var(--font-regular)",
-              backgroundColor: !showFormActions ? "#f3f4f6" : "white",
-              cursor: !showFormActions ? "not-allowed" : "text",
-              color: !showFormActions ? "#6b7280" : "inherit",
+              backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
+              cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
+              color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
             }}
           />
         </div>
@@ -645,8 +648,9 @@ const KycDocuments = ({ profile, token, onKycError }) => {
             type="text"
             value={reraNumber}
             onChange={(e) => setReraNumber(e.target.value.toUpperCase())}
-            disabled={!showFormActions}
-            placeholder="Enter your RERA number"
+            readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+            disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+            placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your RERA number"}
             style={{
               width: "100%",
               padding: "12px 16px",
@@ -655,9 +659,9 @@ const KycDocuments = ({ profile, token, onKycError }) => {
               outline: "none",
               fontSize: "clamp(14px, 1.5vw, 16px)",
               fontFamily: "var(--font-regular)",
-              backgroundColor: !showFormActions ? "#f3f4f6" : "white",
-              cursor: !showFormActions ? "not-allowed" : "text",
-              color: !showFormActions ? "#6b7280" : "inherit",
+              backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
+              cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
+              color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
             }}
           />
         </div>

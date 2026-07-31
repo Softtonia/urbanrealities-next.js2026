@@ -22,6 +22,7 @@ import { Skeleton } from "@mui/material";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { useDashboard } from "../../../DashboardContext/DashboardContext";
 import { getUserProfile } from "@/services/auth.service";
+import { getKycDetails } from "@/services/document.service";
 import styles from "./ProfileDashboard.module.css";
 
 const Dashboard = () => {
@@ -35,19 +36,29 @@ const Dashboard = () => {
     total_inquiries: 0,
   });
   const [profileCompletion, setProfileCompletion] = useState({ percentage: 0 });
+  const [kycDetails, setKycDetails] = useState({});
 
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const data = await getUserProfile(userId, token);
-      setLoading(false);
-      if (data && data.status && data.data) {
-        setProfile(data.data.raw || {});
-        if (data.data.dashboard_counts)
-          setDashboardCounts(data.data.dashboard_counts);
-        if (data.data.profile_completion)
-          setProfileCompletion(data.data.profile_completion);
+      const [profileRes, kycRes] = await Promise.all([
+        getUserProfile(userId, token),
+        getKycDetails(token).then((res) => res.json()).catch(() => null),
+      ]);
+
+      if (profileRes && profileRes.status && profileRes.data) {
+        setProfile(profileRes.data.raw || {});
+        if (profileRes.data.dashboard_counts)
+          setDashboardCounts(profileRes.data.dashboard_counts);
+        if (profileRes.data.profile_completion)
+          setProfileCompletion(profileRes.data.profile_completion);
       }
+
+      if (kycRes && kycRes.status && kycRes.data) {
+        setKycDetails(kycRes.data);
+      }
+
+      setLoading(false);
     } catch (err) {
       console.error("Error fetching profile:", err);
       setLoading(false);
@@ -509,7 +520,15 @@ const Dashboard = () => {
               </div>
               <div className={styles.infoRow}>
                 <span>Aadhar Number</span>
-                <strong>{profile.aadhaar_number || "_"}</strong>
+                <strong>{kycDetails?.aadhaar_number || profile.aadhaar_number || "_"}</strong>
+              </div>
+              <div className={styles.infoRow}>
+                <span>GST Number</span>
+                <strong>{kycDetails?.gst_number || "_"}</strong>
+              </div>
+              <div className={styles.infoRow}>
+                <span>RERA Number</span>
+                <strong>{kycDetails?.rera_number || "_"}</strong>
               </div>
             </div>
           </div>

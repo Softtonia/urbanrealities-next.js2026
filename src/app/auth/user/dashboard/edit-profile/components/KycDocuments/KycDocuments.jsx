@@ -310,7 +310,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
                         uploading: !isDone,
                         progress: fp.percent || 100,
                         status: isDone
-                          ? profile?.kyc_status || "Pending"
+                          ? "Pending"
                           : d.status,
                       };
                     }
@@ -384,7 +384,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
                     uploading: false,
                     progress: 100,
                     file: null,
-                    status: profile?.kyc_status || "Pending",
+                    status: "Pending",
                     uploadedOn: new Date().toLocaleDateString("en-GB", {
                       day: "2-digit",
                       month: "short",
@@ -496,13 +496,14 @@ const KycDocuments = ({ profile, token, onKycError }) => {
         <input
           type="text"
           value={
-            documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")
+            (documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")
               ? aadhaarNumber
                 ? aadhaarNumber.length >= 4 && !aadhaarNumber.includes("X")
                   ? "XXXXXXXX" + aadhaarNumber.slice(-4)
                   : aadhaarNumber
                 : ""
-              : aadhaarNumber
+              : aadhaarNumber)
+              ?.match(/.{1,4}/g)?.join(" ") || ""
           }
           onChange={(e) =>
             setAadhaarNumber(e.target.value.replace(/\D/g, "").slice(0, 12))
