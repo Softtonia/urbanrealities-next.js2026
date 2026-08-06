@@ -11,7 +11,18 @@ import {
 } from 'react-icons/fa';
 import styles from './ListingDashboard.module.css';
 import CustomSelect from '@/Components/CustomSelect/CustomSelect';
-import { TextField, InputAdornment, FormControl, InputLabel, Select, MenuItem, Skeleton } from '@mui/material';
+import { TextField, InputAdornment, FormControl, InputLabel, Select, MenuItem, Skeleton, Dialog, DialogTitle, DialogContent, DialogActions, Button, Checkbox, FormControlLabel, CircularProgress, Box } from '@mui/material';
+import { useSiteSettings } from '@/Components/mycontext/siteSettingContext';
+import { updateListingAvailability } from '@/services/listing.service';
+import { toast } from 'react-toastify';
+
+const STATUS_MAP = {
+  'Available': 'available',
+  'Reserved': 'reserved',
+  'Sold': 'sold',
+  'Rented': 'rented',
+  'Off Market': 'off_market'
+};
 
 const ListingDashboard = ({ 
   properties = [], 
@@ -26,8 +37,38 @@ const ListingDashboard = ({
   setPerPage = () => {}
 }) => {
   const router = useRouter();
+  const { token } = useSiteSettings();
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'grid'
   const [sortValue, setSortValue] = useState('newest');
+
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
+  const [selectedListingId, setSelectedListingId] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [statusOverrides, setStatusOverrides] = useState({});
+
+  const handleStatusClick = (propId) => {
+    setSelectedListingId(propId);
+    setSelectedStatus('');
+    setStatusModalOpen(true);
+  };
+
+  const handleUpdateStatus = async () => {
+    if (!selectedStatus) return;
+    setUpdatingStatus(true);
+    try {
+      await updateListingAvailability(token, selectedListingId, selectedStatus);
+      toast.success('Status updated successfully');
+      // Set the override to the human-readable key
+      const newStatusKey = Object.keys(STATUS_MAP).find(k => STATUS_MAP[k] === selectedStatus) || selectedStatus;
+      setStatusOverrides(prev => ({ ...prev, [selectedListingId]: newStatusKey }));
+      setStatusModalOpen(false);
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to update status');
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
 
   const sortOptions = [
     { label: 'Newest First', value: 'newest' },
@@ -38,8 +79,8 @@ const ListingDashboard = ({
 
   // Dummy Fallback Data for UI since API might not have all these yet
   const getDummyStats = (id) => ({
-    views: Math.floor(Math.random() * 900) + 100,
-    leads: Math.floor(Math.random() * 40) + 5,
+    views: 0,
+    leads: 0,
     status: id % 3 === 0 ? 'Inactive' : id % 5 === 0 ? 'Expired' : 'Active',
     date: '10 May 2026',
     negotiable: id % 2 !== 0,
@@ -256,6 +297,7 @@ const ListingDashboard = ({
                 <th>Type</th>
                 <th>Price</th>
                 <th>Status</th>
+                <th>Availability Status</th>
                 <th>Views</th>
                 <th>Leads</th>
                 <th>Actions</th>
@@ -287,11 +329,21 @@ const ListingDashboard = ({
                 const cityName = prop.city_name || prop.city?.name || 'City';
                 const stateName = prop.state_name || prop.state?.name || 'State';
                 const imageSrc = prop.featured_image || prop.gallery_images?.[0];
-                const rawStatus = prop.status || 'Unknown';
+                const rawStatus = prop.workflow_status || 'Unknown';
+                const displayStatus = rawStatus.replace(/_/g, ' ');
                 const sLower = rawStatus.toLowerCase();
                 let statusClass = styles.badgeInactive;
                 if (sLower === 'published' || sLower === 'active') statusClass = styles.badgeActive;
                 else if (sLower === 'expired' || sLower === 'rejected') statusClass = styles.badgeExpired;
+                else if (sLower === 'in verification') statusClass = styles.badgeWarning;
+
+                const rawAvailability = statusOverrides[prop.id || idx] || prop.availability_status || 'available';
+                const displayAvailability = rawAvailability.replace(/_/g, ' ');
+                const aLower = rawAvailability.toLowerCase();
+                let availClass = styles.badgeInactive;
+                if (aLower === 'available') availClass = styles.badgeActive;
+                else if (aLower === 'reserved' || aLower === 'off market' || aLower === 'off_market') availClass = styles.badgeWarning;
+                else if (aLower === 'sold' || aLower === 'rented') availClass = styles.badgeExpired;
 
                 return (
                   <tr key={prop.id || idx}>
@@ -333,12 +385,25 @@ const ListingDashboard = ({
                       <div>
                         <div className={`${styles.badge} ${statusClass}`}>
                           <div className={styles.badgeDot}></div> 
-                          <span style={{ textTransform: 'capitalize' }}>{rawStatus}</span>
+                          <span style={{ textTransform: 'capitalize' }}>{displayStatus}</span>
                         </div>
                         <span className={styles.subText}>
                           Date
                           <br/>{prop.created_at ? new Date(prop.created_at).toLocaleDateString() : stats.date}
                         </span>
+                      </div>
+                    </td>
+                    <td>
+                      <div>
+                        <div 
+                          className={`${styles.badge} ${availClass}`} 
+                          onClick={() => handleStatusClick(prop.id)}
+                          style={{ cursor: 'pointer' }}
+                          title="Click to update availability"
+                        >
+                          <div className={styles.badgeDot}></div> 
+                          <span style={{ textTransform: 'capitalize' }}>{displayAvailability}</span>
+                        </div>
                       </div>
                     </td>
                     <td>
@@ -368,6 +433,7 @@ const ListingDashboard = ({
                     <td><Skeleton variant="text" width="50%" height={24} /></td>
                     <td><Skeleton variant="text" width="40%" height={24} /></td>
                     <td><Skeleton variant="rounded" width="60%" height={28} /></td>
+                    <td><Skeleton variant="rounded" width="60%" height={28} /></td>
                     <td><Skeleton variant="text" width={40} height={24} /></td>
                     <td><Skeleton variant="text" width={40} height={24} /></td>
                     <td><Skeleton variant="rounded" width={100} height={32} /></td>
@@ -375,7 +441,7 @@ const ListingDashboard = ({
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--Gray-500)' }}>
+                  <td colSpan="9" style={{ textAlign: 'center', padding: '40px', color: 'var(--Gray-500)' }}>
                     No properties found.
                   </td>
                 </tr>
@@ -411,11 +477,21 @@ const ListingDashboard = ({
               const stateName = prop.state_name || prop.state?.name || 'State';
               const imageSrc = prop.featured_image || prop.gallery_images?.[0];
               
-              const rawStatus = prop.status || 'Unknown';
+              const rawStatus = prop.workflow_status || 'Unknown';
+              const displayStatus = rawStatus.replace(/_/g, ' ');
               const sLower = rawStatus.toLowerCase();
               let statusClass = styles.badgeInactive;
               if (sLower === 'published' || sLower === 'active') statusClass = styles.badgeActive;
               else if (sLower === 'expired' || sLower === 'rejected') statusClass = styles.badgeExpired;
+              else if (sLower === 'in verification') statusClass = styles.badgeWarning;
+
+              const rawAvailability = statusOverrides[prop.id || idx] || prop.availability_status || 'available';
+              const displayAvailability = rawAvailability.replace(/_/g, ' ');
+              const aLower = rawAvailability.toLowerCase();
+              let availClass = styles.badgeInactive;
+              if (aLower === 'available') availClass = styles.badgeActive;
+              else if (aLower === 'reserved' || aLower === 'off market' || aLower === 'off_market') availClass = styles.badgeWarning;
+              else if (aLower === 'sold' || aLower === 'rented') availClass = styles.badgeExpired;
 
               return (
                 <div key={prop.id || idx} className={styles.propertyCard}>
@@ -427,7 +503,7 @@ const ListingDashboard = ({
                     />
                     <div className={`${styles.cardBadge} ${statusClass}`}>
                       <div className={styles.badgeDot}></div>
-                      <span style={{ textTransform: 'capitalize' }}>{rawStatus}</span>
+                      <span style={{ textTransform: 'capitalize' }}>{displayStatus}</span>
                     </div>
                   </div>
                   
@@ -439,6 +515,21 @@ const ListingDashboard = ({
                       </div>
                       <div className={styles.cardPrice}>
                         <h4>{displayPrice}</h4>
+                      </div>
+                    </div>
+
+                    <div className={styles.cardInfoRow}>
+                      <div className={styles.cardInfoItem}>
+                        <strong>Availability:</strong>
+                        <div 
+                          className={`${styles.badge} ${availClass}`} 
+                          onClick={() => handleStatusClick(prop.id)}
+                          style={{ cursor: 'pointer', marginLeft: '8px', padding: '2px 8px', fontSize: '12px' }}
+                          title="Click to update availability"
+                        >
+                          <div className={styles.badgeDot}></div> 
+                          <span style={{ textTransform: 'capitalize' }}>{displayAvailability}</span>
+                        </div>
                       </div>
                     </div>
 
@@ -556,6 +647,75 @@ const ListingDashboard = ({
         </div>
         <button className={styles.bannerBtn}>View Best Practices</button>
       </div>
+
+      {/* Status Update Modal */}
+      <Dialog open={statusModalOpen} onClose={() => setStatusModalOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ fontWeight: 600, fontSize: '18px', borderBottom: '1px solid #eee' }}>
+          Update Availability Status
+        </DialogTitle>
+        <DialogContent sx={{ py: 3 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
+            {Object.entries(STATUS_MAP).map(([label, value]) => (
+              <Box 
+                key={value}
+                onClick={() => setSelectedStatus(value)}
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  padding: '12px 16px', 
+                  border: `1px solid ${selectedStatus === value ? 'var(--Orange-500)' : '#e2e8f0'}`,
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  backgroundColor: selectedStatus === value ? '#fff7ed' : '#fff',
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    borderColor: 'var(--Orange-500)',
+                    backgroundColor: '#fff7ed'
+                  }
+                }}
+              >
+                <Checkbox 
+                  checked={selectedStatus === value}
+                  onChange={() => setSelectedStatus(value)}
+                  sx={{ 
+                    color: '#cbd5e1', 
+                    '&.Mui-checked': { color: 'var(--Orange-500)' },
+                    padding: '4px',
+                    marginRight: '12px'
+                  }}
+                />
+                <span style={{ fontSize: '15px', fontWeight: selectedStatus === value ? 600 : 400 }}>
+                  {label}
+                </span>
+              </Box>
+            ))}
+          </div>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, borderTop: '1px solid #eee' }}>
+          <Button 
+            onClick={() => setStatusModalOpen(false)} 
+            disabled={updatingStatus}
+            sx={{ color: 'var(--Gray-500)' }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleUpdateStatus} 
+            variant="contained" 
+            disabled={!selectedStatus || updatingStatus}
+            sx={{ 
+              backgroundColor: '#f97316 !important', 
+              color: '#fff !important',
+              '&:hover': { backgroundColor: '#ea580c !important', color: '#fff !important' },
+              '&.Mui-disabled': { backgroundColor: '#f1f5f9 !important', color: '#94a3b8 !important' },
+              boxShadow: 'none',
+              borderRadius: '6px'
+            }}
+          >
+            {updatingStatus ? <CircularProgress size={24} color="inherit" /> : 'Update Status'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

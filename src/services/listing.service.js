@@ -47,3 +47,19 @@ export const submitListing = async (token, payload, listingId = null) => {
     throw error;
   }
 };
+
+export const updateListingAvailability = async (token, listingId, status) => {
+  try {
+    const response = await apiClient.patch(`/api/user-listings/${listingId}/availability`, {
+      availability_status: status
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating listing availability:", error);
+    throw error;
+  }
+};

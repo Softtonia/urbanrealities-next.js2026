@@ -38,6 +38,24 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      const newErrors = { ...errors };
+      let changed = false;
+      fields.forEach((field) => {
+        const key = field.key || field.request_key;
+        if (newErrors[key]) {
+          const val = formData.dynamicData?.[key];
+          if (val !== undefined && val !== null && val !== "" && !(Array.isArray(val) && val.length === 0)) {
+            delete newErrors[key];
+            changed = true;
+          }
+        }
+      });
+      if (changed) setErrors(newErrors);
+    }
+  }, [formData.dynamicData, errors, fields]);
+
+  useEffect(() => {
     if (currentStepIndex === 0) {
       const fetchTaxonomiesData = async () => {
         if (taxonomies.length === 0) setLoadingTaxonomies(true);
@@ -179,7 +197,8 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
       }
     } catch (error) {
        console.error("Submit error:", error);
-       toast.error("An error occurred during submission");
+       const errorMessage = error.response?.data?.message || error.response?.data?.error || "An error occurred during submission";
+       toast.error(errorMessage);
     } finally {
        setIsSubmitting(false);
     }
@@ -199,6 +218,35 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
         }
       }
     }
+  };
+
+  const handleReset = () => {
+    // If it's the first step, clear taxonomies
+    if (currentStepIndex === 0) {
+      setSelectedTaxonomies({});
+    }
+
+    // Clear fields for this step
+    const keysToClear = fields.map(f => f.key || f.request_key);
+    
+    setFormData(prev => {
+      const newDynamicData = { ...prev.dynamicData };
+      
+      // Delete all fields on this step
+      keysToClear.forEach(key => {
+        delete newDynamicData[key];
+      });
+      
+      // Clear taxonomies from context if step 0
+      if (currentStepIndex === 0) {
+        delete newDynamicData.taxonomies;
+      }
+
+      return {
+        ...prev,
+        dynamicData: newDynamicData
+      };
+    });
   };
 
   return (
@@ -268,6 +316,13 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
       <div className="d-flex gap-3 mt-4">
         <button className={`btn ${styles.orangeBtn} ${styles.btn}`} onClick={handleContinue} disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : (currentStepIndex < allSteps.length - 1 ? "Continue" : "Submit")}
+        </button>
+        <button 
+          className={`btn btn-outline-secondary ${styles.btn}`} 
+          onClick={handleReset}
+          disabled={isSubmitting}
+        >
+          Reset
         </button>
       </div>
     </div>

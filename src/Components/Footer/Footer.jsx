@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { usePathname } from 'next/navigation';
+import { usePathname } from "next/navigation";
 import "../Footer/Footer.css";
 import "../../app/globals.css";
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
@@ -10,7 +10,10 @@ import { useSiteSettings } from "../mycontext/siteSettingContext";
 
 const Footer = () => {
   const pathname = usePathname();
-  if (pathname?.includes('/auth/user') || pathname?.includes('/auth/business')) {
+  if (
+    pathname?.includes("/auth/user") ||
+    pathname?.includes("/auth/business")
+  ) {
     return null;
   }
   // const [siteData, setSiteData] = useState(serverData || null); // null for initial state
@@ -197,12 +200,10 @@ const Footer = () => {
                   { label: "Privacy Policy", href: "/privacy-policy" },
                   { label: "Terms of Use", href: "/terms-of-use" },
                   { label: "Legal", href: "/legal" },
+                  { label: "Membership Plan", href: "/membership-plan" },
                 ].map(({ label, href }) => (
                   <li key={label}>
-                    <Link
-                      href={href}
-                      className="  "
-                    >
+                    <Link href={href} className="  ">
                       {label}
                     </Link>
                   </li>

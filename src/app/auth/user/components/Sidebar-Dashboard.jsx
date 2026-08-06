@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Skeleton } from "@mui/material";
 import {
   FaChartBar, FaBuilding, FaEnvelope, FaBook,
-  FaCalendarAlt, FaLifeRing, FaSignOutAlt, FaThLarge
+  FaCalendarAlt, FaLifeRing, FaSignOutAlt, FaThLarge, FaCrown
 } from "react-icons/fa";
 import { HiDocumentChartBar,HiOutlineTicket } from "react-icons/hi2";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
@@ -20,6 +20,7 @@ const menuItems = [
   { icon: <HiOutlineTicket />, label: "Leads", link: "/auth/user/leads" },
   { icon: <HiDocumentChartBar />, label: "Document", link: "/auth/user/document" },
   { icon: <FaCalendarAlt />, label: "Appointment", link: "/auth/user/appointment" },
+  { icon: <FaCrown />, label: "Membership", link: "/auth/user/my-current-plan" },
   { icon: <FaLifeRing />, label: "Support", link: "/auth/user/support" },
 ];
 

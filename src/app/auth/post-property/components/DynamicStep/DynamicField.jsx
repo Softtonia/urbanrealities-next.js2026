@@ -214,8 +214,8 @@ export default function DynamicField({ field, error }) {
             if (isSingle) {
               newFileList = newFileList.slice(-1);
             }
-            const files = newFileList.map(f => f.originFileObj).filter(Boolean);
-            handleChange(files);
+            const files = newFileList.map(f => f.originFileObj || (f instanceof File ? f : null)).filter(Boolean);
+            handleChange(isSingle ? (files[0] || "") : files);
           },
           fileList: (Array.isArray(value) ? value : (value && typeof value !== 'string' ? [value] : []))
             .filter(f => f && f !== "") // Remove null, undefined, or empty strings

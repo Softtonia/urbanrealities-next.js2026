@@ -47,6 +47,24 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      const newErrors = { ...errors };
+      let changed = false;
+      fields.forEach((field) => {
+        const key = field.key || field.request_key;
+        if (newErrors[key]) {
+          const val = formData.dynamicData?.[key];
+          if (val !== undefined && val !== null && val !== "" && !(Array.isArray(val) && val.length === 0)) {
+            delete newErrors[key];
+            changed = true;
+          }
+        }
+      });
+      if (changed) setErrors(newErrors);
+    }
+  }, [formData.dynamicData, errors, fields]);
+
+  useEffect(() => {
     if (currentStepIndex === 0) {
       const fetchTaxonomiesData = async () => {
         if (taxonomies.length === 0) setLoadingTaxonomies(true);
@@ -184,7 +202,8 @@ export default function DynamicStep({ stepData, allSteps, currentStepIndex }) {
       }
     } catch (error) {
        console.error("Submit error:", error);
-       toast.error("An error occurred during submission");
+       const errorMessage = error.response?.data?.message || error.response?.data?.error || "An error occurred during submission";
+       toast.error(errorMessage);
     } finally {
        setIsSubmitting(false);
     }

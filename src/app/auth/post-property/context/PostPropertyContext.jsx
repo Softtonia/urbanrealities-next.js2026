@@ -57,7 +57,31 @@ export function PostPropertyProvider({ children }) {
   // 
   // Save to localStorage whenever formData changes
   useEffect(() => {
-    localStorage.setItem("postPropertyData", JSON.stringify(formData));
+    const sanitizeData = (data) => {
+      if (!data) return data;
+      if (typeof window !== "undefined" && data instanceof File) return undefined;
+      
+      if (Array.isArray(data)) {
+        const newArr = data.map(sanitizeData).filter(item => item !== undefined);
+        return newArr.length > 0 ? newArr : undefined;
+      }
+      
+      if (typeof data === 'object' && !(data instanceof Date)) {
+        const newObj = {};
+        for (const [key, val] of Object.entries(data)) {
+          const sanitizedVal = sanitizeData(val);
+          if (sanitizedVal !== undefined) {
+            newObj[key] = sanitizedVal;
+          }
+        }
+        return newObj;
+      }
+      
+      return data;
+    };
+
+    const cleanFormData = sanitizeData(formData);
+    localStorage.setItem("postPropertyData", JSON.stringify(cleanFormData));
   }, [formData]);
 
   const updateFormData = (key, value) => {
