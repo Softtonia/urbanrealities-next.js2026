@@ -56,9 +56,13 @@ export const fetchMembershipPlans = async () => {
   }
 };
 
-export const fetchMembershipPlanDetails = async (id) => {
+export const fetchMembershipPlanDetails = async (id, couponCode = null) => {
   try {
-    const response = await apiClient.get(`/api/membership/plans/${id}`);
+    let url = `/api/membership/plans/${id}`;
+    if (couponCode) {
+      url += `?coupon_code=${couponCode}`;
+    }
+    const response = await apiClient.get(url);
     return response.data;
   } catch (error) {
     console.error(`Error fetching membership plan ${id}:`, error);

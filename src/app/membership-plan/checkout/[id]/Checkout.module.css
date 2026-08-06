@@ -253,6 +253,72 @@
   font-family: var(--font-inter-semibold);
 }
 
+.couponSection {
+  margin-bottom: 24px;
+}
+
+.couponInputWrapper {
+  display: flex;
+  gap: 12px;
+}
+
+.couponInput {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid var(--Bright-Gray);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font-inter-regular);
+  outline: none;
+}
+
+.couponInput:focus {
+  border-color: var(--Orange-Red);
+}
+
+.applyCouponBtn {
+  background-color: var(--Orange-Red);
+  color: var(--White);
+  border: 1px solid var(--Orange-Red);
+  border-radius: 8px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-family: var(--font-inter-semibold);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.applyCouponBtn:hover {
+  background-color: var(--White);
+  color: var(--Orange-Red);
+}
+
+.applyCouponBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.appliedCouponMsg {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--Nyanza);
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: var(--Apple);
+  font-size: 14px;
+  font-family: var(--font-inter-medium);
+}
+
+.removeCouponBtn {
+  background: none;
+  border: none;
+  color: var(--Orange-Red);
+  font-size: 14px;
+  cursor: pointer;
+  font-family: var(--font-inter-semibold);
+}
+
 .secureBadge {
   display: flex;
   align-items: center;
