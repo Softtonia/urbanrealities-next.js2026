@@ -166,7 +166,7 @@ const MembershipPlanPage = () => {
           : plans
               .filter(
                 (plan) =>
-                  plan.category?.name?.toLowerCase() === role.toLowerCase(),
+                  plan.category?.name?.toLowerCase() === role?.toLowerCase(),
               )
               .map((plan) => (
                 <div

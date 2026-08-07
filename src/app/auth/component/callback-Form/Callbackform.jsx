@@ -72,7 +72,8 @@ export default function CallbackForm({
     ) => {
         login(
             userData.user_id,
-            userData.token
+            userData.token,
+            userData?.role_name || userData?.role
         );
 
         const roleName = String(
