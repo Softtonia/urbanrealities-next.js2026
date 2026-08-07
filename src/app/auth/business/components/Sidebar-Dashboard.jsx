@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Skeleton } from "@mui/material";
 import {
   FaChartBar, FaBuilding, FaEnvelope, FaBook,
-  FaCalendarAlt, FaLifeRing, FaSignOutAlt, FaThLarge, FaCrown
+  FaCalendarAlt, FaLifeRing, FaSignOutAlt, FaThLarge, FaCrown, FaPuzzlePiece
 } from "react-icons/fa";
 import { HiDocumentChartBar,HiOutlineTicket } from "react-icons/hi2";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
@@ -21,21 +21,43 @@ const menuItems = [
   { icon: <HiDocumentChartBar />, label: "Document", link: "/auth/business/document" },
   { icon: <FaCalendarAlt />, label: "Appointment", link: "/auth/business/appointment" },
   { icon: <FaCrown />, label: "Membership", link: "/auth/business/my-current-plan" },
+  { icon: <FaPuzzlePiece />, label: "Add-ons", link: "/auth/business/addons" },
   { icon: <FaLifeRing />, label: "Support", link: "/auth/business/support" },
 ];
 
 export default function SidebarDashboard({ onItemClick }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { logout } = useSiteSettings();
+  const { logout, token } = useSiteSettings();
   const [loading, setLoading] = useState(true);
+  const [hasActiveMembership, setHasActiveMembership] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+    const fetchStatus = async () => {
+      if (token) {
+        try {
+          const { fetchMyStatus } = await import('@/services/membership.service');
+          const result = await fetchMyStatus(token);
+          if (isMounted && result?.status && result?.data) {
+            setHasActiveMembership(result.data.has_active_membership);
+          }
+        } catch (error) {
+          console.error("Failed to fetch membership status:", error);
+        }
+      }
+    };
+    fetchStatus();
+
     const timer = setTimeout(() => {
-      setLoading(false);
+      if (isMounted) setLoading(false);
     }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [token]);
 
   const handleMobileClick = (link) => {
     if (pathname !== link) {
@@ -55,6 +77,7 @@ export default function SidebarDashboard({ onItemClick }) {
       <div className={styles.sidebarDesktop}>
         <div className={styles.menuList}>
           {menuItems.map((item, index) => {
+            if (item.label === "Add-ons" && !hasActiveMembership) return null;
             const isActive = pathname === item.link;
             return (
               <Link href={item.link} key={index} className={`${styles.menuItem} ${isActive ? styles.active : ''}`}>
@@ -88,7 +111,9 @@ export default function SidebarDashboard({ onItemClick }) {
 
       {/* Mobile Grid Sidebar */}
       <div className={styles.sidebarMobile}>
-        {menuItems.map((item, index) => (
+        {menuItems.map((item, index) => {
+          if (item.label === "Add-ons" && !hasActiveMembership) return null;
+          return (
           <button
             key={index}
             className={styles.gridItem} 
@@ -101,7 +126,7 @@ export default function SidebarDashboard({ onItemClick }) {
               {loading ? <Skeleton variant="text" width={60} height={20} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : item.label}
             </div>
           </button>
-        ))}
+        )})}
         <button className={styles.gridItem} onClick={handleLogout}>
           <div className={styles.gridIcon}>
             {loading ? <Skeleton variant="circular" width={24} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : <FaSignOutAlt />}

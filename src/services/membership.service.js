@@ -56,13 +56,21 @@ export const fetchMembershipPlans = async () => {
   }
 };
 
-export const fetchMembershipPlanDetails = async (id, couponCode = null) => {
+export const fetchMembershipPlanDetails = async (id, couponCode = null, token = null) => {
   try {
     let url = `/api/membership/plans/${id}`;
     if (couponCode) {
       url += `?coupon_code=${couponCode}`;
     }
-    const response = await apiClient.get(url);
+    
+    const config = {};
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+    
+    const response = await apiClient.get(url, config);
     return response.data;
   } catch (error) {
     console.error(`Error fetching membership plan ${id}:`, error);
@@ -119,6 +127,100 @@ export const verifyMembershipPayment = async (token, data) => {
     return response.data;
   } catch (error) {
     console.error("Error verifying membership payment:", error);
+    throw error;
+  }
+};
+
+export const fetchMembershipAddons = async (token) => {
+  try {
+    const config = token ? {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    } : {};
+    const response = await apiClient.get(`/api/membership/addons`, config);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching membership addons:", error);
+    throw error;
+  }
+};
+
+export const fetchAddonOrders = async (token, page = 1) => {
+  try {
+    const response = await apiClient.get(`/api/membership/addon-orders?page=${page}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching addon orders:", error);
+    throw error;
+  }
+};
+
+export const fetchMembershipAddonDetails = async (id, token) => {
+  try {
+    const config = token ? {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    } : {};
+    const response = await apiClient.get(`/api/membership/addons/${id}`, config);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching addon details for ${id}:`, error);
+    throw error;
+  }
+};
+
+export const createAddonOrder = async (data, token) => {
+  try {
+    const response = await apiClient.post(`/api/membership/addon-orders`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating addon order:", error);
+    throw error;
+  }
+};
+
+export const getAddonRazorpayOptions = async (orderId, token) => {
+  try {
+    const response = await apiClient.post(
+      `/api/membership/addon-orders/${orderId}/razorpay`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching Razorpay options for addon order ${orderId}:`, error);
+    throw error;
+  }
+};
+
+export const verifyAddonPayment = async (token, data) => {
+  try {
+    const response = await apiClient.post(
+      `/api/membership/addon-payments/verify`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying addon payment:", error);
     throw error;
   }
 };

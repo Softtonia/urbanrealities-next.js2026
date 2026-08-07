@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Skeleton } from "@mui/material";
+import { Skeleton, CircularProgress } from "@mui/material";
 import {
   FaCheckCircle,
   FaLock,
@@ -30,6 +30,7 @@ const CheckoutPage = () => {
   const [priceSummary, setPriceSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [isVerifyingPayment, setIsVerifyingPayment] = useState(false);
   const [error, setError] = useState(null);
   const [showAllFeatures, setShowAllFeatures] = useState(false);
 
@@ -54,7 +55,7 @@ const CheckoutPage = () => {
     const loadPlan = async () => {
       try {
         const decodedId = decodeId(id);
-        const result = await fetchMembershipPlanDetails(decodedId);
+        const result = await fetchMembershipPlanDetails(decodedId, null, token);
         if (result?.status && result?.data) {
           setPlan(result.data.plan || result.data);
           if (result.data.price_summary) {
@@ -88,6 +89,7 @@ const CheckoutPage = () => {
       const result = await fetchMembershipPlanDetails(
         decodedId,
         couponCode.trim(),
+        token
       );
 
       if (result?.status && result?.data) {
@@ -131,7 +133,7 @@ const CheckoutPage = () => {
     setApplyingCoupon(true);
     try {
       const decodedId = decodeId(id);
-      const result = await fetchMembershipPlanDetails(decodedId);
+      const result = await fetchMembershipPlanDetails(decodedId, null, token);
 
       if (result?.status && result?.data) {
         setPlan(result.data.plan || result.data);
@@ -219,6 +221,7 @@ const CheckoutPage = () => {
         description: `Payment for ${plan.name}`,
         order_id: razorpayOrderId, // Razorpay Order ID
         handler: async function (response) {
+          setIsVerifyingPayment(true);
           try {
             // Step 4: Verify Payment
             const verifyData = {
@@ -231,10 +234,10 @@ const CheckoutPage = () => {
 
             console.log("Verification Payload:", verifyData);
 
-            const verifyResponse = await verifyMembershipPayment(
-              token,
-              verifyData,
-            );
+            const [verifyResponse] = await Promise.all([
+              verifyMembershipPayment(token, verifyData),
+              new Promise((resolve) => setTimeout(resolve, 2000)),
+            ]);
 
             if (verifyResponse?.status) {
               toast.success("Payment successful!");
@@ -254,6 +257,7 @@ const CheckoutPage = () => {
                   "Payment verification failed. Please contact support.",
               );
               setProcessing(false);
+              setIsVerifyingPayment(false);
             }
           } catch (verifyErr) {
             console.error("Verification error:", verifyErr);
@@ -263,6 +267,7 @@ const CheckoutPage = () => {
                 "Error verifying payment.",
             );
             setProcessing(false);
+            setIsVerifyingPayment(false);
           }
         },
         prefill: {
@@ -331,6 +336,25 @@ const CheckoutPage = () => {
 
   return (
     <div className={styles.checkoutContainer}>
+      {isVerifyingPayment && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundColor: "#f5f5f5",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 99999
+        }}>
+          <CircularProgress size={60} style={{ color: "#f97316" }} />
+          <h2 style={{ marginTop: "24px", color: "#333", fontSize: "1.5rem" }}>Verifying payment...</h2>
+          <p style={{ marginTop: "8px", color: "#666" }}>Please do not close or refresh this page.</p>
+        </div>
+      )}
       <button onClick={() => router.back()} className={styles.backLink}>
         <FaArrowLeft /> Back to Plans
       </button>
@@ -441,7 +465,18 @@ const CheckoutPage = () => {
                 (plan.sale_price !== null &&
                   plan.price !== plan.payable_amount)) && (
                 <div className={styles.summaryRowDiscount}>
-                  <span>Discount {appliedCoupon && `(${appliedCoupon})`}</span>
+                  <span>
+                    Discount
+                    {priceSummary?.coupon && (
+                      <span style={{ color: 'gray', marginLeft: '4px' }}>
+                        (<span style={{ color: 'darkgreen' }}>
+                          {priceSummary.coupon.discount_type === 'percentage'
+                            ? `${priceSummary.coupon.discount_value}%`
+                            : `₹${priceSummary.coupon.discount_value}`}
+                        </span>)
+                      </span>
+                    )}
+                  </span>
                   <span>
                     -₹
                     {priceSummary

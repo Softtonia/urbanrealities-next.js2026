@@ -1,0 +1,124 @@
+.addonsContainer {
+  margin-top: 32px;
+  background: var(--White);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid var(--Bright-Gray);
+}
+
+.addonsHeader {
+  margin-bottom: 24px;
+}
+
+.addonsHeader h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--Eerie-Black);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.addonsHeader p {
+  color: var(--Gray);
+  font-size: 14px;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.addonsTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.addonsTable th, .addonsTable td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--Bright-Gray);
+}
+
+.addonsTable th {
+  background-color: var(--off-white);
+  color: var(--Gray);
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.addonsTable td {
+  font-size: 14px;
+  color: var(--Eerie-Black);
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.statusSuccess {
+  background-color: var(--Nyanza);
+  color: var(--Apple);
+}
+
+.statusPending {
+  background-color: var(--Caramel);
+  color: var(--Orange-500);
+}
+
+.statusFailed {
+  background-color: #fee2e2;
+  color: var(--Tart-Orange);
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--Bright-Gray);
+}
+
+.pageInfo {
+  font-size: 14px;
+  color: var(--Gray);
+}
+
+.pageControls {
+  display: flex;
+  gap: 8px;
+}
+
+.pageBtn {
+  padding: 6px 12px;
+  border: 1px solid var(--Bright-Gray);
+  background: var(--White);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--Eerie-Black);
+  transition: all 0.2s;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: var(--off-white);
+}
+
+.pageBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loadingWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+}

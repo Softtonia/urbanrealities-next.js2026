@@ -21,6 +21,7 @@ import { fetchMyStatus } from "@/services/membership.service";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import styles from "./MyCurrentPlan.module.css";
 import Link from "next/link";
+import PurchasedAddons from "../../../components/PurchasedAddons/PurchasedAddons";
 
 const CurrentMembershipStatus = () => {
   const { token, user } = useSiteSettings();
@@ -493,6 +494,8 @@ const CurrentMembershipStatus = () => {
           </div>
         </div>
       </div>
+      
+      <PurchasedAddons />
     </div>
   );
 };

@@ -1,27 +1,20 @@
-importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js");
 
-// IMPORTANT: Replace these with your actual Firebase project configuration
 firebase.initializeApp({
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCIZQWjJsb4yG38QSbSp1aL1C8xAd1MD_4",
+  authDomain: "real-estate-6954c.firebaseapp.com",
+  projectId: "real-estate-6954c",
+  storageBucket: "real-estate-6954c.firebasestorage.app",
+  messagingSenderId: "1037570040827",
+  appId: "1:1037570040827:web:663283655422b93964a15e",
 });
 
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage(function (payload) {
-  console.log("Background message received:", payload);
-  
-  // You can customize the background notification behavior here
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
+messaging.onBackgroundMessage((payload) => {
+  self.registration.showNotification(payload.notification.title, {
     body: payload.notification.body,
-    icon: '/firebase-logo.png'
-  };
-
-  self.registration.showNotification(notificationTitle, notificationOptions);
+    icon: "/favicon.ico",
+  });
 });
