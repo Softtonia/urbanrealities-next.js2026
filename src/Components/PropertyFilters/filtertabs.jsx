@@ -9,7 +9,7 @@ import MoreFiltersPanel from "./MoreFiltersPanel";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { useCity } from "@/utils/CityContext";
 import { useSearch } from "@/hooks/useSearch";
-
+import { LARAVEL_API_BASE_URL, LARAVEL_APPLICATION_PASSWORD, APP_TYPE } from "@/lib/config";
 
 export default function PropertyFilters({ initialFilters, location }) {
   const { city } = useCity();
@@ -24,12 +24,17 @@ export default function PropertyFilters({ initialFilters, location }) {
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredCities, setFilteredCities] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const filterRefs = useRef({}); // all dropdown refs
   const [propertyType, setPropertyType] = useState(null);
   const [properties, setProperties] = useState(null);
   // track selected types per propertyId
   const [selectedTypes, setSelectedTypes] = useState({});
-  const [purposes, setPurpose] = useState([])
+  const purposes = [
+    { name: "Buy", slug: "buy" },
+    { name: "Sell", slug: "sell" },
+    { name: "Rent", slug: "rent" },
+  ];
   const [budgetRange, setBudgetRange] = useState([0, 0]); // [min, max]
   const [openDropdown, setOpenDropdown] = useState(null);
   const [localities, setLocalities] = useState([])
@@ -309,26 +314,7 @@ export default function PropertyFilters({ initialFilters, location }) {
   }, [city]);
 
 
-  useEffect(() => {
-    const fetchPurpose = async () => {
-      try {
-        const res = await fetch(`/api/post-property/get-purpose`);
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          const updated = data.map(item =>
-            item?.name === "Sell" ? { ...item, name: "Buy", slug: 'sell' } : item
-          );
-          setPurpose(updated);
-        } else if (data?.data) {
-          setPurpose(data.data);
-        }
 
-      } catch (err) {
-        console.error("Error fetching purpose:", err);
-      }
-    };
-    fetchPurpose();
-  }, []);
 
   // Fetch property types
   useEffect(() => {
@@ -425,19 +411,50 @@ export default function PropertyFilters({ initialFilters, location }) {
   // console.log("-=->", selectedTypes)
 
 
+  useEffect(() => {
+    if (!searchTerm || searchTerm.length < 2) {
+      setFilteredCities([]);
+      return;
+    }
+    const fetchLocations = async () => {
+      try {
+        const res = await fetch(`${LARAVEL_API_BASE_URL}/api/frontend/property-search/location-suggestions?search=${searchTerm}`, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+            "X-App-Type": APP_TYPE,
+          }
+        });
+        const data = await res.json();
+        if (data?.status && Array.isArray(data.data)) {
+          setFilteredCities(data.data);
+        } else {
+          setFilteredCities([]);
+        }
+      } catch (err) {
+        console.error("Error fetching location suggestions:", err);
+      }
+    };
+    
+    const delayDebounceFn = setTimeout(() => {
+      fetchLocations();
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
+
   const handleSearchChange = (e) => {
-    const val = e.target.value;
-    setSearchTerm(val);
-    setFilteredCities(
-      val
-        ? allCities.filter((c) => c.toLowerCase().includes(val.toLowerCase()))
-        : []
-    );
+    setSearchTerm(e.target.value);
+    setShowSuggestions(true);
   };
 
   const handleCitySelect = (city) => {
-    setSearchTerm(city);
+    setSearchTerm(city.name);
+    setShowSuggestions(false);
     setFilteredCities([]);
+    
+    handleFilterChange("location", city.name, true);
+    handleFilterChange("city_id", city.id, true);
   };
 
   // Close dropdowns on outside click
@@ -455,6 +472,7 @@ export default function PropertyFilters({ initialFilters, location }) {
       if (!clickedInside) {
         setActiveDropdown(null);
         setShowMoreFilters(false);
+        setShowSuggestions(false);
       }
     };
 
@@ -578,16 +596,16 @@ export default function PropertyFilters({ initialFilters, location }) {
               className={styles.searchInput}
               value={searchTerm}
               onChange={handleSearchChange}
-              onFocus={() => setFilteredCities(allCities)}
+              onFocus={() => { if (searchTerm.length >= 2) setShowSuggestions(true); }}
             />
-            {filteredCities.length > 0 && (
+            {showSuggestions && filteredCities.length > 0 && (
               <div
                 className={`${styles.dropdownPanel} ${styles.searchDropdown}`}
               >
                 <ul>
                   {filteredCities.map((city) => (
-                    <li key={city} onClick={() => handleCitySelect(city)}>
-                      {city}
+                    <li key={city.id} onClick={() => handleCitySelect(city)}>
+                      {city.name}
                     </li>
                   ))}
                 </ul>

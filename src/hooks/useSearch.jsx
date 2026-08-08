@@ -33,6 +33,16 @@ export const useSearch = ({
         return Object.keys(urlFilters).length ? urlFilters : {};
     });
 
+    useEffect(() => {
+        const urlFilters = parseParams();
+        setGlobalFilters((prev) => {
+            if (JSON.stringify(prev) !== JSON.stringify(urlFilters)) {
+                return urlFilters;
+            }
+            return prev;
+        });
+    }, [searchParams]);
+
     const [debouncedFilters, setDebouncedFilters] = useState(globalFilters);
 
     // Debounce filter updates
