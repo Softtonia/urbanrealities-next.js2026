@@ -10,6 +10,7 @@ export const useSearch = ({
     const [initialSearch, setInitialSearch] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
     const [dynamicFilter, setDynamicFilter] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const { city } = useCity();
 
     const router = useRouter();
@@ -119,7 +120,7 @@ export const useSearch = ({
     useEffect(() => {
         const fetchSearchResults = async () => {
             if (!payload) return;
-
+            setIsLoading(true);
             try {
                 const queryParams = new URLSearchParams();
                 Object.entries(payload).forEach(([key, value]) => {
@@ -149,6 +150,8 @@ export const useSearch = ({
                 setInitialSearch(false);
             } catch (err) {
                 console.error("Error fetching properties via search api:", err);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -162,5 +165,6 @@ export const useSearch = ({
         search,
         searchResults,
         dynamicFilter,
+        isLoading,
     };
 };

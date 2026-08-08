@@ -20,7 +20,7 @@ import { useSearch } from "@/hooks/useSearch";
 export default function OuterPage() {
   const { city } = useCity();
   const router = useRouter();
-  const {payload,debouncedFilters,searchResults}= useSearch({ autoPush: false })
+  const {payload,debouncedFilters,searchResults, isLoading}= useSearch({ autoPush: false })
   const params = useParams();
   // const [searchResults,setSearchResults] =useState();
   const searchParams = useSearchParams();
@@ -88,7 +88,7 @@ export default function OuterPage() {
       <div className="container">
         <div className={`row ${styles["tab-row"]}`}>
           <div className={`col-lg-9 col-12 ${styles["listing-col"]}`}>
-            <SingleListingWithTab filters={debouncedFilters} searchResults={searchResults} />
+            <SingleListingWithTab filters={debouncedFilters} searchResults={searchResults} isSearchLoading={isLoading} />
           </div>
           <div className={`col-lg-3 col-12 ${styles["search-col"]}`}>
             <SearchAgentCard />
