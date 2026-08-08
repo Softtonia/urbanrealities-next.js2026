@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCity } from "@/utils/CityContext";
+import { LARAVEL_API_BASE_URL, LARAVEL_APPLICATION_PASSWORD, APP_TYPE } from "@/lib/config";
 
 export const useSearch = ({
     autoPush = false,
@@ -69,7 +70,6 @@ export const useSearch = ({
         }
     };
 
-    // --- Build Payload ---
     const payload = useMemo(() => {
         if (!debouncedFilters) return null;
 
@@ -81,6 +81,8 @@ export const useSearch = ({
             propertyId = "",
             propertyType = "",
             topLocalities = "",
+            bedrooms = "",
+            city_id = "",
         } = debouncedFilters;
 
         const normalizePrice = (price) => {
@@ -90,17 +92,14 @@ export const useSearch = ({
         };
 
         return {
-            purpose,
-            property_id: propertyId || "",
-            property_type_id: propertyType || "",
-            property_status_id: "",
-            rent_price_low: normalizePrice(minPrice),
-            rent_price_high: normalizePrice(maxPrice),
-            keyword: "",
-            area_locality: topLocalities,
-            country_id: city?.country_id || "",
-            state_id: city?.state_id || "",
-            city_id: city?.id || "",
+            purpose: purpose || "",
+            property_type: propertyType || "",
+            city_id: city_id || city?.id || "",
+            bedrooms: bedrooms || "",
+            price_min: normalizePrice(minPrice),
+            price_max: normalizePrice(maxPrice),
+            page: 1,
+            per_page: 20
         };
     }, [debouncedFilters, city]);
 
@@ -108,49 +107,43 @@ export const useSearch = ({
     // const prevPayloadRef = useRef(null);
 
     useEffect(() => {
-        const fetchSearchResults = async (type = "later") => {
+        const fetchSearchResults = async () => {
             if (!payload) return;
 
             try {
-                const [res2, res] = await Promise.all([
-                    fetch(
-                        type === "initial"
-                            ? `/api/global-search-filter/global-search`
-                            : `/api/global-search-filter/global-filter`,
-                        {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(payload),
-                        }
-                    ),
-                    fetch(`/api/global-search-filter/apply-filter`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload),
-                    }),
-                ]);
+                const queryParams = new URLSearchParams();
+                Object.entries(payload).forEach(([key, value]) => {
+                    if (value !== "") queryParams.set(key, value);
+                });
+
+                const res = await fetch(`${LARAVEL_API_BASE_URL}/api/frontend/properties/search?${queryParams.toString()}`, {
+                    method: "GET",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+                        "X-App-Type": APP_TYPE,
+                    },
+                });
 
                 const data = await res.json();
-                const data2 = await res2.json();
-
-                setDynamicFilter(data2?.data || data2 || []);
-                setSearchResults(data);
+                
+                // If this endpoint doesn't return dynamic filters separately, we can leave it empty
+                setDynamicFilter([]);
+                // The new search API returns properties directly in data.data
+                setSearchResults({
+                    properties: data?.data || [],
+                    projects: [],
+                    agents: [],
+                    meta: data?.meta || null
+                });
                 setInitialSearch(false);
             } catch (err) {
-                console.error(err);
+                console.error("Error fetching properties via search api:", err);
             }
         };
 
-        // const serialized = JSON.stringify(payload);
-        // if (serialized === prevPayloadRef.current) return; // skip if same
-        // prevPayloadRef.current = serialized;
-
-        if (initialSearch) {
-            fetchSearchResults("initial");
-        } else {
-            fetchSearchResults();
-        }
-    }, [payload, initialSearch]);
+        fetchSearchResults();
+    }, [payload]);
 
     return {
         globalFilters,

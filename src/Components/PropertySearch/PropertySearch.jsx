@@ -9,18 +9,21 @@ import { useCity } from "@/utils/CityContext";
 import { slugify } from "@/utils/slugify";
 import { useSearch } from "@/hooks/useSearch";
 import Search from "antd/es/transfer/search";
+import { LARAVEL_API_BASE_URL, LARAVEL_APPLICATION_PASSWORD, APP_TYPE } from "@/lib/config";
 
 export default function PropertySearch({ purpose }) {
   const [activePriceType, setActivePriceType] = useState("min");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [inputLocation, setInputLocation] = useState("");
-  const [propertyType, setPropertyType] = useState(null);
-  const [properties, setProperties] = useState(null);
+  const [selectedCityId, setSelectedCityId] = useState("");
+  const [searchOptions, setSearchOptions] = useState(null);
   const [selectedTypes, setSelectedTypes] = useState([]);
+  const [localPurpose, setLocalPurpose] = useState(purpose || "sell");
   const [budgetDropdown, setBudgetDropdown] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false)
   const [isTypeOpen, setIsTypeOpen] = useState(false); // ✅ custom dropdown state
+  const [locationSuggestions, setLocationSuggestions] = useState([]);
 
 
   const dropdownRef = useRef(null);
@@ -63,65 +66,30 @@ export default function PropertySearch({ purpose }) {
 
   // to handle property type and type id
 
-  const handleTypeChange = (typeId, propertyId) => {
+  const handleTypeChange = (typeId) => {
     setSelectedTypes((prev) => {
-      const prevTypes = prev[propertyId] || [];
-
-      let updatedTypes;
-      if (prevTypes.includes(typeId)) {
-        // remove the type if already selected
-        updatedTypes = prevTypes.filter((id) => id !== typeId);
-      } else {
-        // add the type
-        updatedTypes = [...prevTypes, typeId];
+      if (prev.includes(typeId)) {
+        return prev.filter((id) => id !== typeId);
       }
-
-      // if no types left for this property → remove propertyId entirely
-      if (updatedTypes.length === 0) {
-        const { [propertyId]: _, ...rest } = prev;
-        return rest;
-      }
-
-      // otherwise update propertyId with new types
-      return {
-        ...prev,
-        [propertyId]: updatedTypes,
-      };
+      return [...prev, typeId];
     });
   };
 
+  const formatPrice = (value) => {
+    if (value >= 10000000) {
+      const cr = value / 10000000;
+      return `₹${Number.isInteger(cr) ? cr : cr.toFixed(1)} Cr`;
+    }
+    if (value >= 100000) {
+      const lac = value / 100000;
+      return `₹${Number.isInteger(lac) ? lac : lac.toFixed(1)} Lac`;
+    }
+    return `₹${value}`;
+  };
 
   const handleTogglePrice = (type) => {
     setActivePriceType(type);
   };
-
-  const priceOptions = [
-    { label: "₹5 Lac", value: 500000 },
-    { label: "₹10 Lac", value: 1000000 },
-    { label: "₹20 Lac", value: 2000000 },
-    { label: "₹30 Lac", value: 3000000 },
-    { label: "₹40 Lac", value: 4000000 },
-    { label: "₹50 Lac", value: 5000000 },
-    { label: "₹60 Lac", value: 6000000 },
-    { label: "₹70 Lac", value: 7000000 },
-    { label: "₹80 Lac", value: 8000000 },
-    { label: "₹90 Lac", value: 9000000 },
-    { label: "₹1 Cr", value: 10000000 },
-    { label: "₹1.2 Cr", value: 12000000 },
-    { label: "₹1.4 Cr", value: 14000000 },
-    { label: "₹1.6 Cr", value: 16000000 },
-    { label: "₹1.8 Cr", value: 18000000 },
-    { label: "₹2 Cr", value: 20000000 },
-    { label: "₹2.3 Cr", value: 23000000 },
-    { label: "₹2.6 Cr", value: 26000000 },
-    { label: "₹3 Cr", value: 30000000 },
-    { label: "₹3.5 Cr", value: 35000000 },
-    { label: "₹4 Cr", value: 40000000 },
-    { label: "₹4.5 Cr", value: 45000000 },
-    { label: "₹5 Cr", value: 50000000 },
-    { label: "₹10 Cr", value: 100000000 },
-    { label: "₹20 Cr", value: 200000000 },
-  ];
 
 
   const selectPrice = (price, e) => {
@@ -133,79 +101,88 @@ export default function PropertySearch({ purpose }) {
     }
   };
 
-  // Fetch all properties
+  // Fetch search options
   useEffect(() => {
-    const fetchProperty = async () => {
+    const fetchOptions = async () => {
       try {
-        const res = await fetch(`/api/post-property/get-property-listing`);
+        const res = await fetch(`${LARAVEL_API_BASE_URL}/api/frontend/property-search/options`, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+            "X-App-Type": APP_TYPE,
+          }
+        });
         const data = await res.json();
-        if (Array.isArray(data)) {
-          setProperties(data);
-        } else if (data?.data) {
-          setProperties(data.data);
+        if (data?.status) {
+          setSearchOptions(data.data);
         }
       } catch (err) {
-        console.error("Error fetching properties listing:", err);
+        console.error("Error fetching property search options:", err);
       }
     };
-    fetchProperty();
+    fetchOptions();
   }, []);
 
-  // Fetch property types
+  // Fetch location suggestions
   useEffect(() => {
-    if (!properties || properties.length === 0) return;
-    const fetchPropertyTypes = async () => {
+    if (!inputLocation || inputLocation.length < 2) {
+      setLocationSuggestions([]);
+      return;
+    }
+    const fetchLocations = async () => {
       try {
-        const typeRequests = properties.map((prop) =>
-          fetch(`/api/post-property/get-property-type/${prop.id}`)
-            .then((res) => res.json())
-            .then((data) => ({
-              ...prop,
-              types: Array.isArray(data) ? data : data?.data || [],
-            }))
-        );
-        const results = await Promise.all(typeRequests);
-        console.log(results , "property type--------------------  ")
-        setPropertyType(results);
+        const res = await fetch(`${LARAVEL_API_BASE_URL}/api/frontend/property-search/location-suggestions?search=${inputLocation}`, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+            "X-App-Type": APP_TYPE,
+          }
+        });
+        const data = await res.json();
+        if (data?.status && Array.isArray(data.data)) {
+          setLocationSuggestions(data.data);
+        } else {
+          setLocationSuggestions([]);
+        }
       } catch (err) {
-        console.error("Error fetching property types:", err);
+        console.error("Error fetching location suggestions:", err);
       }
     };
-    fetchPropertyTypes();
-  }, [properties]);
 
-  // Map selected IDs → names
+    const delayDebounceFn = setTimeout(() => {
+      fetchLocations();
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [inputLocation]);
+
+
+
   const selectedTypeNames = (() => {
-    // flatten all selected type ids from object
-    const allSelectedTypeIds = Object.values(selectedTypes).flat().map(String);
+    const allSelectedTypeSlugs = selectedTypes.map(String);
+    const selected = searchOptions?.property_types?.filter((t) => allSelectedTypeSlugs.includes(String(t.slug))) || [];
+    
+    const purposeName = searchOptions?.purposes?.find(p => p.value === localPurpose)?.name || "";
 
-    // match with propertyType list
-    const selected = propertyType
-      ?.flatMap((p) => p.types || [])
-      .filter((t) => allSelectedTypeIds.includes(String(t.id))) || [];
-
-    if (selected.length === 0) return "Select Type";
-    if (selected.length === 1) return selected[0].name;
-    return `${selected[0].name} +${selected.length - 1} more`;
+    if (selected.length === 0) return purposeName ? `${purposeName} - Type` : "Select Type";
+    if (selected.length === 1) return `${purposeName ? purposeName + ' - ' : ''}${selected[0].name}`;
+    return `${purposeName ? purposeName + ' - ' : ''}${selected[0].name} +${selected.length - 1} more`;
   })();
 
 
   const { search } = useSearch({}, { autoPush: false });
   const handleSearch = () => {
 
-    // extract property ids
-    const propertyIds = Object.keys(selectedTypes);
-
-    // flatten all type ids
-    const typeIds = Object.values(selectedTypes).flat();
+    const typeIds = selectedTypes;
 
     const filters = {
       minPrice,
       maxPrice,
-      propertyId: propertyIds.join(","),   // e.g. 65,70
-      propertyType: typeIds.join(","),     // e.g. 1,2,3,4
-      purpose,
+      propertyId: "",
+      propertyType: typeIds.join(","),
+      purpose: localPurpose,
       location: inputLocation || localCity?.name || "",
+      city_id: selectedCityId || localCity?.id || "",
     };
     search(filters)
     
@@ -213,14 +190,14 @@ export default function PropertySearch({ purpose }) {
   };
 
   // Min options → less than maxPrice (if maxPrice chosen)
-  const filteredMinOptions = priceOptions.filter(
-    (option) => !maxPrice || option.value < maxPrice
-  );
+  const filteredMinOptions = (searchOptions?.budget_options?.min || []).filter(
+    (val) => !maxPrice || val < maxPrice
+  ).map(val => ({ label: formatPrice(val), value: val }));
 
   // Max options → greater than minPrice (if minPrice chosen)
-  const filteredMaxOptions = priceOptions.filter(
-    (option) => !minPrice || option.value > minPrice
-  );
+  const filteredMaxOptions = (searchOptions?.budget_options?.max || []).filter(
+    (val) => !minPrice || val > minPrice
+  ).map(val => ({ label: formatPrice(val), value: val }));
 
 
   // console.log('==>', );
@@ -305,32 +282,18 @@ export default function PropertySearch({ purpose }) {
 
                   {/* Location List */}
                   <ul className="list-unstyled mb-0" style={{ maxHeight: "200px", overflowY: "auto" }}>
-                    {[
-                      "Delhi Ncr",
-                      "New Delhi",
-                      "New Delhi-North",
-                      "New Delhi-South",
-                      "New Delhi-East",
-                      "New Delhi-West",
-                      "New Delhi-Central",
-                      "Gurgaon",
-                      "Noida",
-                      "Bangalore",
-                      "Mumbai",
-                      "Pune"
-                    ]
-                      .filter((loc) => loc.toLowerCase().includes(inputLocation.toLowerCase()))
-                      .map((loc, idx) => {
+                    {locationSuggestions.length > 0 ? (
+                      locationSuggestions.map((loc, idx) => {
                         // Highlight matching text in red
-                        const matchIndex = loc.toLowerCase().indexOf(inputLocation.toLowerCase());
-                        let beforeMatch = loc;
+                        const matchIndex = loc.name.toLowerCase().indexOf(inputLocation.toLowerCase());
+                        let beforeMatch = loc.name;
                         let matchText = "";
                         let afterMatch = "";
 
                         if (inputLocation && matchIndex !== -1) {
-                          beforeMatch = loc.substring(0, matchIndex);
-                          matchText = loc.substring(matchIndex, matchIndex + inputLocation.length);
-                          afterMatch = loc.substring(matchIndex + inputLocation.length);
+                          beforeMatch = loc.name.substring(0, matchIndex);
+                          matchText = loc.name.substring(matchIndex, matchIndex + inputLocation.length);
+                          afterMatch = loc.name.substring(matchIndex + inputLocation.length);
                         }
 
                         return (
@@ -338,16 +301,62 @@ export default function PropertySearch({ purpose }) {
                             key={idx} 
                             style={{ padding: "6px 0", cursor: "pointer", fontSize: "14px", color: "#555" }}
                             onClick={() => {
-                              setInputLocation(loc);
+                              setInputLocation(loc.name);
+                              setSelectedCityId(loc.city_id);
                               setIsLocationOpen(false);
                             }}
                           >
-                            {beforeMatch}
-                            <span style={{ color: "#ff4d4f" }}>{matchText}</span>
-                            {afterMatch}
+                            <div>
+                              {beforeMatch}
+                              <span style={{ color: "#ff4d4f" }}>{matchText}</span>
+                              {afterMatch}
+                            </div>
+                            <div style={{ fontSize: "11px", color: "#888" }}>{loc.full_location}</div>
                           </li>
                         );
-                      })}
+                      })
+                    ) : inputLocation.length >= 2 ? (
+                      <li style={{ padding: "6px 0", fontSize: "14px", color: "#555" }}>No suggestions found</li>
+                    ) : (
+                      // Default locations when input is empty or too short
+                      [
+                        "Delhi Ncr",
+                        "New Delhi",
+                        "Gurgaon",
+                        "Noida",
+                        "Bangalore",
+                        "Mumbai",
+                        "Pune"
+                      ]
+                        .filter((loc) => loc.toLowerCase().includes(inputLocation.toLowerCase()))
+                        .map((loc, idx) => {
+                          const matchIndex = loc.toLowerCase().indexOf(inputLocation.toLowerCase());
+                          let beforeMatch = loc;
+                          let matchText = "";
+                          let afterMatch = "";
+
+                          if (inputLocation && matchIndex !== -1) {
+                            beforeMatch = loc.substring(0, matchIndex);
+                            matchText = loc.substring(matchIndex, matchIndex + inputLocation.length);
+                            afterMatch = loc.substring(matchIndex + inputLocation.length);
+                          }
+
+                          return (
+                            <li 
+                              key={idx} 
+                              style={{ padding: "6px 0", cursor: "pointer", fontSize: "14px", color: "#555" }}
+                              onClick={() => {
+                                setInputLocation(loc);
+                                setIsLocationOpen(false);
+                              }}
+                            >
+                              {beforeMatch}
+                              <span style={{ color: "#ff4d4f" }}>{matchText}</span>
+                              {afterMatch}
+                            </li>
+                          );
+                        })
+                    )}
                   </ul>
                     </>
                   )}
@@ -373,59 +382,55 @@ export default function PropertySearch({ purpose }) {
 
               {isTypeOpen && (
                 <div className="dropdown-menu custom-dropdown-2 show">
-                  <div className="accordion" id="propertyAccordion">
-                    {propertyType &&
-                      propertyType.map((property, index) => (
-                        <div className="accordion-item" key={index}>
-                          <div
-                            className="accordion-header"
-                            id={`heading-${index}`}
-                          >
-                            <button
-                              className="accordion-button collapsed body-text-14"
-                              type="button"
-                              data-bs-toggle="collapse"
-                              data-bs-target={`#collapse${index}`}
-                              aria-expanded="false"
-                              aria-controls={`collapse${index}`}
-                            >
-                              {property.name}
-                            </button>
-                          </div>
-
-                          <div
-                            id={`collapse${index}`}
-                            className="accordion-collapse collapse"
-                          >
-                            <div className="accordion-body w-100 d-flex flex-wrap">
-                              {property.types &&
-                                property.types.map((type, idx) => (
-                                  <div
-                                    className="radio-group  body-text-12 text-muted"
-                                    key={idx}
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      id={`type-${type.id}`}
-                                      checked={selectedTypes[property.id]?.includes(String(type.id)) || false}
-                                      onChange={() =>
-                                        handleTypeChange(String(type.id), String(property.id))
-                                      }
-                                      name="propertyType"
-                                      className="radio-input"
-                                    />
-                                    <label
-                                      htmlFor={`type-${type.id}`}
-                                      className="radio-label"
-                                    >
-                                      {type.name}
-                                    </label>
-                                  </div>
-                                ))}
+                  <div className="w-100 p-3">
+                    {searchOptions?.purposes && searchOptions.purposes.length > 0 && (
+                      <div className="mb-3">
+                        <h6 style={{ fontSize: "12px", fontWeight: "bold", color: "#555", marginBottom: "8px" }}>Purpose</h6>
+                        <div className="d-flex flex-wrap" style={{ gap: "10px" }}>
+                          {searchOptions.purposes.map((p, idx) => (
+                            <div className="radio-group body-text-12 text-muted" key={`purpose-${idx}`}>
+                              <input
+                                type="radio"
+                                id={`purpose-${p.id}`}
+                                checked={localPurpose === p.value}
+                                onChange={() => setLocalPurpose(p.value)}
+                                name="propertyPurpose"
+                                className="radio-input"
+                              />
+                              <label htmlFor={`purpose-${p.id}`} className="radio-label">
+                                {p.name}
+                              </label>
                             </div>
-                          </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
+                    )}
+                    
+                    <h6 style={{ fontSize: "12px", fontWeight: "bold", color: "#555", marginBottom: "8px" }}>Property Type</h6>
+                    <div className="d-flex flex-wrap" style={{ gap: "10px" }}>
+                      {searchOptions?.property_types &&
+                        searchOptions.property_types.map((type, idx) => (
+                          <div
+                            className="radio-group body-text-12 text-muted"
+                            key={idx}
+                          >
+                            <input
+                              type="checkbox"
+                              id={`type-${type.slug}`}
+                              checked={selectedTypes.includes(String(type.slug))}
+                              onChange={() => handleTypeChange(String(type.slug))}
+                              name="propertyType"
+                              className="radio-input"
+                            />
+                            <label
+                              htmlFor={`type-${type.slug}`}
+                              className="radio-label"
+                            >
+                              {type.name}
+                            </label>
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 </div>
               )}
@@ -497,6 +502,8 @@ export default function PropertySearch({ purpose }) {
                           <div
                             key={index}
                             onClick={(e) => selectPrice(price, e)}
+                            style={{ padding: "6px 8px", cursor: "pointer" }}
+                            className="price-option-item"
                           >
                             {price.label}
                           </div>
@@ -519,6 +526,8 @@ export default function PropertySearch({ purpose }) {
                           <div
                             key={index}
                             onClick={(e) => selectPrice(price, e)}
+                            style={{ padding: "6px 8px", cursor: "pointer" }}
+                            className="price-option-item"
                           >
                             {price.label}
                           </div>

@@ -35,13 +35,12 @@ export default function SingleCard({ property }) {
       {/* Middle Section */}
       <div className={styles.cardCenter}>
         <div className={styles.titleRow}>
-          <h3>3BHK Flat for Sale in New Delhi</h3>
-          <p className={styles.priceMobile}>₹ 3 Crore</p>
+          <h3>{property?.title || "Untitled Property"}</h3>
+          <p className={styles.priceMobile}>{property?.display_price}</p>
           <FaShareAlt className={styles.shareIcon} />
         </div>
         <p className={styles.location}>
-          <FaMapMarkerAlt className={styles.locationIcon} /> New Ashok Nagar,
-          Near Metro Station
+          <FaMapMarkerAlt className={styles.locationIcon} /> {property?.full_address}
         </p>
 
         {/* Tags */}
@@ -70,26 +69,24 @@ export default function SingleCard({ property }) {
         {/* Owner + Details */}
         <p className={styles.owner}>Ganesh Property</p>
         <div className={styles.details}>
-          <p>
-            <FaRegCircleCheck className={styles.cardCheck} /> For : Sell
-          </p>
-          <p>
-            <FaRegCircleCheck className={styles.cardCheck} /> Property :
-            Residentials
-          </p>
-          <p>
-            <FaRegCircleCheck className={styles.cardCheck} /> Property Type :
-            Flats
-          </p>
-          <p>
-            <FaRegCircleCheck className={styles.cardCheck} /> Newly Constructed
-            Property
-          </p>
+          {property?.selected_taxonomies?.map((tax, index) => {
+            const terms = tax.selected_terms?.map((t) => t.name).join(", ");
+            if (!terms) return null;
+            return (
+              <p key={index}>
+                <FaRegCircleCheck className={styles.cardCheck} /> {tax.taxonomy_name} : {terms}
+              </p>
+            );
+          })}
         </div>
 
-        <p className={styles.description}>
-          3 bhk newly constructed semi furnished flat with modular kitchen
-        </p>
+        {property?.content && (
+          <p className={styles.description}>
+            {property.content.length > 80
+              ? property.content.substring(0, 80) + "..."
+              : property.content}
+          </p>
+        )}
 
         {/* Buttons for Mobile */}
         <div className={styles.priceSectionButtonsMobile}>
@@ -104,7 +101,7 @@ export default function SingleCard({ property }) {
       {/* Right Side (Desktop only) */}
       <div className={styles.cardRight}>
         <div className={styles.priceSection}>
-          <p className={styles.price}>₹ 3 Crore</p>
+          <p className={styles.price}>{property?.display_price}</p>
           <div className={styles.priceSectionButtons}>
             <button className={`${styles.button} ${styles.outlineButton}`}>
               Request Call-back

@@ -48,7 +48,7 @@ function getPagination(currentPage, totalPages, maxVisible = 6) {
   return pages;
 }
 
-const SingleListingWithTab = ({ searchResults, comeFirst="Properties" }) => {
+const SingleListingWithTab = ({ searchResults, filters, comeFirst="Properties" }) => {
   const { city } = useCity()
   const dataByTab = {
     "Properties": searchResults.properties || [],
@@ -82,7 +82,7 @@ const SingleListingWithTab = ({ searchResults, comeFirst="Properties" }) => {
   return (
     <div>
       <div className={styles.listing}>
-        <h2> {activeTab} in {city && city.name}</h2>
+        <h2> {activeTab} in {filters?.location || (city && city.name)}</h2>
         <SingleTabs activeTab={activeTab} setActiveTab={setActiveTab} searchResults={searchResults} comeFirst={comeFirst} />
 
         {/* Property list + Loader wrapper */}

@@ -88,7 +88,7 @@ export default function OuterPage() {
       <div className="container">
         <div className={`row ${styles["tab-row"]}`}>
           <div className={`col-lg-9 col-12 ${styles["listing-col"]}`}>
-            <SingleListingWithTab filters={filters} searchResults={searchResults} />
+            <SingleListingWithTab filters={debouncedFilters} searchResults={searchResults} />
           </div>
           <div className={`col-lg-3 col-12 ${styles["search-col"]}`}>
             <SearchAgentCard />

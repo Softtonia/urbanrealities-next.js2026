@@ -106,7 +106,7 @@
 
 .custom-dropdown-3 {
   width: 250px;
-  padding: 10px;
+  padding: 10px !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   /* background-color: var(--white) !important; */
   transform: translate(5px, 25px) !important;
