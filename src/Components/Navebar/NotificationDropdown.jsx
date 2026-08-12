@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { FaBell, FaCheck, FaTrash, FaCheckDouble } from "react-icons/fa";
-import { get, post, del } from "@/lib/api";
+import { FaBell, FaCheck, FaCheckDouble } from "react-icons/fa";
+import { get, post } from "@/lib/api";
 import { useSiteSettings } from "../mycontext/siteSettingContext";
 import { useRouter } from "next/navigation";
 import "./navbar.css";
@@ -38,7 +38,7 @@ const NotificationDropdown = ({ isMobile }) => {
     setLoading(true);
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const res = await get("/api/notifications?per_page=20", null, config);
+      const res = await get("/api/notifications?is_read=false", null, config);
       if (res?.data) {
         setNotifications(res.data);
       }
@@ -72,9 +72,7 @@ const NotificationDropdown = ({ isMobile }) => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       await post("/api/notifications/read-all", null, null, config); 
-      setNotifications((prev) =>
-        prev.map((notif) => ({ ...notif, is_read: true }))
-      );
+      setNotifications([]);
       setUnreadCount(0);
     } catch (err) {
       console.error("Error marking all as read", err);
@@ -86,40 +84,17 @@ const NotificationDropdown = ({ isMobile }) => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       await get(`/api/notifications/${id}/read`, null, config);
-      setNotifications((prev) =>
-        prev.map((notif) =>
-          notif.id === id ? { ...notif, is_read: true } : notif
-        )
-      );
+      setNotifications((prev) => prev.filter((notif) => notif.id !== id));
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (err) {
         try {
             const config = { headers: { Authorization: `Bearer ${token}` } };
             await post(`/api/notifications/${id}/read`, null, null, config);
-            setNotifications((prev) =>
-              prev.map((notif) =>
-                notif.id === id ? { ...notif, is_read: true } : notif
-              )
-            );
+            setNotifications((prev) => prev.filter((notif) => notif.id !== id));
             setUnreadCount((prev) => Math.max(0, prev - 1));
         } catch(fallbackErr) {
             console.error(`Error marking notification ${id} as read`, fallbackErr);
         }
-    }
-  };
-
-  const handleDelete = async (e, id) => {
-    e.stopPropagation();
-    try {
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      await del(`/api/notifications/${id}`, null, config);
-      const deletedNotif = notifications.find((n) => n.id === id);
-      setNotifications((prev) => prev.filter((notif) => notif.id !== id));
-      if (deletedNotif && !deletedNotif.is_read) {
-        setUnreadCount((prev) => Math.max(0, prev - 1));
-      }
-    } catch (err) {
-      console.error(`Error deleting notification ${id}`, err);
     }
   };
 
@@ -187,13 +162,6 @@ const NotificationDropdown = ({ isMobile }) => {
                         <FaCheck />
                       </button>
                     )}
-                    <button
-                      className="action-btn delete-btn"
-                      title="Delete"
-                      onClick={(e) => handleDelete(e, notif.id)}
-                    >
-                      <FaTrash />
-                    </button>
                   </div>
                 </div>
               ))
