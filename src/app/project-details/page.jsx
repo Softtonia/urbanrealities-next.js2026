@@ -17,7 +17,7 @@ import ProjectDetail from "./Project-detail";
 
 async function fetchProject(id) {
   try {
-    const response = await getssr(`/api/get-data-project-no-auth/${id}`);
+    const response = await getssr(`/api/guest/posts/property-listing/${id}`);
 
     // Handle non-200 responses
     if (!response || response.status >= 400) {

@@ -5,57 +5,30 @@ import "./ProjectCarousel.css";
 import { useRouter } from "next/navigation";
 import SubHero from "../SubHero/SubHero";
 import ProjectCard from "./ProjectCard";
+import { get } from "@/lib/api";
 
-const projectData = [
-  {
-    location: "Ernakulam, Kerala",
-    builder: "Ganesh Property",
-    reraNo: "HN-604501",
-    rating: 4,
-    propertyType: "Residents",
-    ongoingPrice: "2 - 3 Cr",
-    areaSqft: "1720sqft",
-    bhk: "3BHK",
-    builderFloor: "1700sqft",
-    status: "Underconstruction",
-    image: "/projectcarouselimage.png",
-  },
-  {
-    location: "Mumbai, Maharashtra",
-    builder: "Shriram Realty",
-    reraNo: "MH-892341",
-    rating: 5,
-    propertyType: "Apartments",
-    ongoingPrice: "1.5 - 2.2 Cr",
-    areaSqft: "1500sqft",
-    bhk: "2BHK",
-    builderFloor: "1480sqft",
-    status: "Ready to Move",
-    image: "/projectcarouselimage.png",
-  },
-  {
-    location: "Bangalore, Karnataka",
-    builder: "Prestige Group",
-    reraNo: "KA-123456",
-    rating: 5,
-    propertyType: "Villa",
-    ongoingPrice: "3.2 Cr",
-    areaSqft: "2000sqft",
-    bhk: "4BHK",
-    builderFloor: "1980sqft",
-    status: "Underconstruction",
-    image: "/projectcarouselimage.png",
-  },
-];
-
-const ProjectCarousel = ({projects}) => {
+const ProjectCarousel = ({ projects }) => {
   const router = useRouter();
   const carouselRef = useRef(null);
   const scrollAmount = 850;
   const [hasMounted, setHasMounted] = useState(false);
+  const [featuredProjects, setFeaturedProjects] = useState([]);
 
   useEffect(() => {
     setHasMounted(true);
+    const fetchFeatured = async () => {
+      try {
+        const response = await get(
+          `/api/guest/posts/property-listing?featured=1`,
+        );
+        if (response?.data?.items) {
+          setFeaturedProjects(response.data.items);
+        }
+      } catch (err) {
+        console.error("Error fetching featured properties", err);
+      }
+    };
+    fetchFeatured();
   }, []);
 
   if (!hasMounted) return null;
@@ -73,10 +46,15 @@ const ProjectCarousel = ({projects}) => {
   };
 
   const handleProject = (project) => {
-
-    // const query = new URLSearchParams(project).toString();
-    router.push(`/project-details?name=${project.name}&property-name=${project.property_id_name}&id=${project.id}`);
+    const name = project.name || project.title;
+    const propertyName = project.property_id_name || project.title;
+    router.push(
+      `/project-details?name=${name}&property-name=${propertyName}&id=${project.id}`,
+    );
   };
+
+  const displayProjects =
+    featuredProjects.length > 0 ? featuredProjects : projects || [];
 
   return (
     <div className="container">
@@ -85,8 +63,12 @@ const ProjectCarousel = ({projects}) => {
       </div>
 
       <div className="project-carousel" ref={carouselRef}>
-        {projects.map((project, index) => (
-          <ProjectCard key={index} project={project} onViewProject={handleProject} />
+        {displayProjects.map((project, index) => (
+          <ProjectCard
+            key={index}
+            project={project}
+            onViewProject={handleProject}
+          />
         ))}
       </div>
 

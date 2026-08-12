@@ -22,6 +22,7 @@ import { IoArrowBackSharp } from "react-icons/io5";
 import { useSiteSettings } from "../mycontext/siteSettingContext";
 import { useCity } from "@/utils/CityContext";
 import { getSiteSettingsData } from "@/services/site-setting.service";
+import NotificationDropdown from "./NotificationDropdown";
 
 const staticCities = {
   filter_city: null,
@@ -503,6 +504,8 @@ export default function Navbar() {
 
               {!isLoadingToken &&
                 (token ? (
+                  <>
+                  <NotificationDropdown isMobile={false} />
                   <div
                     className="dropdown"
                     onMouseEnter={() => setIsOpen(true)}
@@ -581,6 +584,7 @@ export default function Navbar() {
                       </ul>
                     )}
                   </div>
+                  </>
                 ) : (
                   <Link
                     className="text-white text-decoration-none"
@@ -626,6 +630,8 @@ export default function Navbar() {
           <div className="nav-items-name d-flex align-items-center gap-3 m-0">
             {!isLoadingToken &&
               (token ? (
+                <>
+                <NotificationDropdown isMobile={true} />
                 <div
                   className="dropdown"
                   onMouseEnter={() => setIsOpen(true)}
@@ -704,6 +710,7 @@ export default function Navbar() {
                     </ul>
                   )}
                 </div>
+                </>
               ) : (
                 <Link
                   className="text-decoration-none text-dark"

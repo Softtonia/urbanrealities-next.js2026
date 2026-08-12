@@ -56,12 +56,7 @@ const ProjectCard = ({ project, onViewProject }) => {
   const heroBanner = heroSectionFields.find(val =>
     val.template.slug.includes("banner")
   )?.field_value[0];
-  // // Now you can fetch values like this:
-  // // const ongoingPrice = customFields["total Price"] || "";  // example
-  // const areaSqft = customFields["super Area"] || "";
-  // const builderFloor = customFields["built Up Area"] || "";
-  const [imgSrc, setImgSrc] = React.useState(heroBanner);
-
+  const [imgSrc, setImgSrc] = React.useState(heroBanner || project.featured_image);
 
   return (
     <div className="project-card">
@@ -84,15 +79,23 @@ const ProjectCard = ({ project, onViewProject }) => {
 
       <div className="project-carousel__content">
         <div className="project-card__body">
-          {project.name &&
+          {(project.name || project.title) &&
             <h3 className="project-card__builder m-0">
-              {project.name}
+              {project.name || project.title}
             </h3>}
           {project.developer &&
             <p className="project-card__rera m-0">
               {project.developer.name}
             </p>}
-          <p className="project-card__location m-0">{project.area_locality + ',' + project.city.name}</p>
+          <p className="project-card__location m-0">
+            {project.location?.full_address || (
+              <>
+                {project.area_locality ? project.area_locality + ', ' : ''}
+                {project.location?.area_locality ? project.location.area_locality + ', ' : ''}
+                {project.city?.name || project.location?.city_name || ''}
+              </>
+            )}
+          </p>
           {project.reraNo &&
             <p className="project-card__rera m-0">
               Rera No: {project.reraNo}
@@ -108,9 +111,9 @@ const ProjectCard = ({ project, onViewProject }) => {
               ({project.rating}.0)
             </span>
           </div> */}
-          {project?.["property_type "] &&
+          {(project?.["property_type "] || project?.selected_taxonomies?.find(t => t.taxonomy_slug === 'property-type')) &&
             <p className="project-card__property-type m-0">
-              {project?.["property_type "]?.map(val => val?.property_type_name)?.join(', ')}
+              {project?.["property_type "] ? project?.["property_type "]?.map(val => val?.property_type_name)?.join(', ') : project?.selected_taxonomies?.find(t => t.taxonomy_slug === 'property-type')?.selected_terms?.map(t => t.name).join(', ')}
             </p>}
           {ongoingPrice &&
             <p className="project-card__price m-0">
@@ -130,9 +133,9 @@ const ProjectCard = ({ project, onViewProject }) => {
               Builder Floor: {builderFloor}
             </p>} */}
           <div className="d-flex justify-content-between align-items-center m-0 w-100">
-            {project.property_status_id_name &&
+            {(project.property_status_id_name || project?.selected_taxonomies?.find(t => t.taxonomy_slug === 'property-status')) &&
               <p className="project-card__status m-0">
-                Status: <strong>{project.property_status_id_name}</strong>
+                Status: <strong>{project.property_status_id_name || project?.selected_taxonomies?.find(t => t.taxonomy_slug === 'property-status')?.selected_terms?.map(t => t.name).join(', ')}</strong>
               </p>}
             <button
               className="project-card__btn-view btn-viewproject m-0"

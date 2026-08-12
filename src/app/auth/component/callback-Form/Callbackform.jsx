@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import styles from '../loginform/Login.module.css';
 import { useSiteSettings } from '@/Components/mycontext/siteSettingContext';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { registerNotificationDevice } from "@/lib/notifications";
+import { LARAVEL_API_BASE_URL, LARAVEL_APPLICATION_PASSWORD, APP_TYPE } from "@/lib/config";
 
 const API_URL =
     process.env.NEXT_PUBLIC_API_URL ||
@@ -67,7 +69,7 @@ export default function CallbackForm({
             'website',
     });
 
-    const redirectAuthenticatedUser = (
+    const redirectAuthenticatedUser = async (
         userData
     ) => {
         login(
@@ -75,6 +77,17 @@ export default function CallbackForm({
             userData.token,
             userData?.role_name || userData?.role
         );
+
+        try {
+            await registerNotificationDevice({
+                apiBaseUrl: `${LARAVEL_API_BASE_URL}/api`,
+                token: userData.token,
+                appPassword: LARAVEL_APPLICATION_PASSWORD,
+                appType: APP_TYPE,
+            });
+        } catch (fcmErr) {
+            console.error("Failed to register notification device:", fcmErr);
+        }
 
         const roleName = String(
             userData?.role_name || ''
