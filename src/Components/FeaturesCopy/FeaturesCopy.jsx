@@ -7,11 +7,13 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import SubHero from "../SubHero/SubHero";
 import slides from "../../../public/slides";
 import { formatprice } from "@/utils/formatprice";
+import { get } from "@/lib/api";
 
 const FeaturesCopy = ({ projects }) => {
   const [current, setCurrent] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
+  const [slides, setSlides] = useState([]);
   const scrollRef = useRef(null);
   // const slides = projects?.map((val) => {
   //   const banner = val?.custom_field_values?.find((f) =>
@@ -36,28 +38,7 @@ const FeaturesCopy = ({ projects }) => {
   console.log("project", projects);
 
 
-  const slides = [
-    {
-      image:
-        "https://images.unsplash.com/photo-1666846795617-5a79453e6f6c?q=80&w=3402&auto=format&fit=crop",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1642878542442-46f76aaae355?q=80&w=1999&auto=format&fit=crop",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1662236337008-e546a2359f45?q=80&w=3687&auto=format&fit=crop",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1642878542442-46f76aaae355?q=80&w=1999&auto=format&fit=crop",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1662236337008-e546a2359f45?q=80&w=3687&auto=format&fit=crop",
-    },
-  ];
+
 
   useEffect(() => {
     const checkMobile = () => {
@@ -67,8 +48,19 @@ const FeaturesCopy = ({ projects }) => {
     checkMobile();
     window.addEventListener("resize", checkMobile);
 
-    setHasMounted(true); // Set mounted state to true after initial render
+    const fetchFeatured = async () => {
+      try {
+        const response = await get("/api/guest/posts/project-listing?featured=1");
+        if (response?.data?.items) {
+          setSlides(response.data.items);
+        }
+      } catch (err) {
+        console.error("Error fetching featured projects", err);
+      }
+    };
+    fetchFeatured();
 
+    setHasMounted(true); // Set mounted state to true after initial render
 
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
@@ -181,35 +173,22 @@ const FeaturesCopy = ({ projects }) => {
                 key={i}
               >
                 <img
-                  src={slide?.banner}
+                  src={slide?.featured_image}
                   onError={(e) => (e.target.src = "/project-placeholder.png")}
-                  alt={`Project ${i + 1}`}
+                  alt={slide?.title || `Project ${i + 1}`}
                   className="slide-image"
                 />
                 <div className="property-overlay">
                   <div className="property-info">
-                    <span className="property-count">{slide.views}+</span>
-                    <span className="property-status">{slide.property_status}</span>
+                    {/* Add fallback for views and status if they exist in future, otherwise hide */}
                   </div>
                   <div className="property-action">
                     <a
-                      href={`/project-details?name=${slide.name}&property-name=${slide.property_id_name}&id=${slide.id}`}
+                      href={`/project-details?name=${encodeURIComponent(slide.title)}&id=${slide.id}`}
                       className="explore-btn"
                     >
-                      {slide.name}
+                      {slide.title || "Explore Project"}
                     </a>
-                    {
-                      slide?.project_type && (
-                        <p className="explore-btn-feature">
-                          {slide.project_type}
-                        </p>
-                      )
-                    }
-
-                    {/* {slide?.price &&
-                      <p className="explore-btn-feature">
-                        ₹<span>{slide?.price}</span> onwards</p>
-                    } */}
                   </div>
 
                 </div>

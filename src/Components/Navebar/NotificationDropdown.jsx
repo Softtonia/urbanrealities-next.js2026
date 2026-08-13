@@ -6,14 +6,33 @@ import { useSiteSettings } from "../mycontext/siteSettingContext";
 import { useRouter } from "next/navigation";
 import "./navbar.css";
 
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return "N/A";
+  const d = new Date(dateStr);
+  if (isNaN(d)) return dateStr;
+  return d
+    .toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    })
+    .replace(/am|pm/i, (m) => m.toUpperCase());
+};
+
 const NotificationDropdown = ({ isMobile }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
   const dropdownRef = useRef(null);
   const { token } = useSiteSettings();
   const router = useRouter();
+
+  console.log("notifications", notifications);
 
   // Fetch unread count
   const fetchUnreadCount = async () => {
@@ -34,13 +53,25 @@ const NotificationDropdown = ({ isMobile }) => {
   }, [token]);
 
   // Fetch notifications
-  const fetchNotifications = async () => {
+  const fetchNotifications = async (tab = activeTab) => {
     setLoading(true);
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const res = await get("/api/notifications?is_read=false", null, config);
+      let url = "/api/notifications";
+      if (tab === "unread") url += "?is_read=false";
+      else if (tab === "read") url += "?is_read=true";
+
+      const res = await get(url, null, config);
       if (res?.data) {
-        setNotifications(res.data);
+        let fetchedData = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data.data)
+            ? res.data.data
+            : Array.isArray(res.data.items)
+              ? res.data.items
+              : [];
+
+        setNotifications(fetchedData);
       }
     } catch (err) {
       console.error("Error fetching notifications", err);
@@ -52,7 +83,7 @@ const NotificationDropdown = ({ isMobile }) => {
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
     if (!isOpen) {
-      fetchNotifications();
+      fetchNotifications(activeTab);
     }
   };
 
@@ -71,7 +102,7 @@ const NotificationDropdown = ({ isMobile }) => {
     e.stopPropagation();
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      await post("/api/notifications/read-all", null, null, config); 
+      await post("/api/notifications/read-all", null, null, config);
       setNotifications([]);
       setUnreadCount(0);
     } catch (err) {
@@ -79,22 +110,27 @@ const NotificationDropdown = ({ isMobile }) => {
     }
   };
 
+  const updateNotifList = (id) => {
+    if (activeTab === "unread") {
+      setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+    } else {
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif.id === id ? { ...notif, is_read: true } : notif,
+        ),
+      );
+    }
+    setUnreadCount((prev) => Math.max(0, prev - 1));
+  };
+
   const handleMarkAsRead = async (e, id) => {
     e.stopPropagation();
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      await get(`/api/notifications/${id}/read`, null, config);
-      setNotifications((prev) => prev.filter((notif) => notif.id !== id));
-      setUnreadCount((prev) => Math.max(0, prev - 1));
+      await post(`/api/notifications/${id}/read`, null, null, config);
+      updateNotifList(id);
     } catch (err) {
-        try {
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-            await post(`/api/notifications/${id}/read`, null, null, config);
-            setNotifications((prev) => prev.filter((notif) => notif.id !== id));
-            setUnreadCount((prev) => Math.max(0, prev - 1));
-        } catch(fallbackErr) {
-            console.error(`Error marking notification ${id} as read`, fallbackErr);
-        }
+      console.error(`Error marking notification ${id} as read`, err);
     }
   };
 
@@ -104,23 +140,28 @@ const NotificationDropdown = ({ isMobile }) => {
       handleMarkAsRead({ stopPropagation: () => {} }, notif.id);
     }
     setIsOpen(false);
-    
+
     // Redirect if screen is a URL
     if (notif.data?.screen && notif.data.screen.startsWith("http")) {
       window.location.href = notif.data.screen;
     } else if (notif.data?.screen === "home") {
-        router.push("/");
+      router.push("/");
     }
   };
 
   if (!token) return null;
 
   return (
-    <div className={`notification-container ${isMobile ? "mobile" : "desktop"}`} ref={dropdownRef}>
+    <div
+      className={`notification-container ${isMobile ? "mobile" : "desktop"}`}
+      ref={dropdownRef}
+    >
       <div className="notification-icon-wrapper" onClick={toggleDropdown}>
         <FaBell className="notification-icon" />
         {unreadCount > 0 && (
-          <span className="notification-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>
+          <span className="notification-badge">
+            {unreadCount > 99 ? "99+" : unreadCount}
+          </span>
         )}
       </div>
 
@@ -134,7 +175,85 @@ const NotificationDropdown = ({ isMobile }) => {
               </button>
             )}
           </div>
-          
+
+          <div
+            className="notification-tabs"
+            style={{ display: "flex", borderBottom: "1px solid #e5e7eb" }}
+          >
+            <button
+              className={`notif-tab ${activeTab === "all" ? "active" : ""}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveTab("all");
+                fetchNotifications("all");
+              }}
+              style={{
+                flex: 1,
+                padding: "8px 0",
+                border: "none",
+                background: "transparent",
+                borderBottom:
+                  activeTab === "all"
+                    ? "2px solid #f97316"
+                    : "2px solid transparent",
+                color: activeTab === "all" ? "#f97316" : "#6b7280",
+                fontWeight: activeTab === "all" ? 600 : 400,
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              All
+            </button>
+            <button
+              className={`notif-tab ${activeTab === "unread" ? "active" : ""}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveTab("unread");
+                fetchNotifications("unread");
+              }}
+              style={{
+                flex: 1,
+                padding: "8px 0",
+                border: "none",
+                background: "transparent",
+                borderBottom:
+                  activeTab === "unread"
+                    ? "2px solid #f97316"
+                    : "2px solid transparent",
+                color: activeTab === "unread" ? "#f97316" : "#6b7280",
+                fontWeight: activeTab === "unread" ? 600 : 400,
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              Unread
+            </button>
+            <button
+              className={`notif-tab ${activeTab === "read" ? "active" : ""}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveTab("read");
+                fetchNotifications("read");
+              }}
+              style={{
+                flex: 1,
+                padding: "8px 0",
+                border: "none",
+                background: "transparent",
+                borderBottom:
+                  activeTab === "read"
+                    ? "2px solid #f97316"
+                    : "2px solid transparent",
+                color: activeTab === "read" ? "#f97316" : "#6b7280",
+                fontWeight: activeTab === "read" ? 600 : 400,
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              Read
+            </button>
+          </div>
+
           <div className="notification-list">
             {loading ? (
               <div className="notification-loading">Loading...</div>
@@ -146,10 +265,30 @@ const NotificationDropdown = ({ isMobile }) => {
                   onClick={() => handleNotificationClick(notif)}
                 >
                   <div className="notification-content">
-                    <p className="notification-title">{notif.title || "Alert"}</p>
+                    <p
+                      className="notification-title"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      {!notif.is_read && (
+                        <span
+                          style={{
+                            width: "8px",
+                            height: "8px",
+                            backgroundColor: "#ef4444",
+                            borderRadius: "50%",
+                            display: "inline-block",
+                          }}
+                        ></span>
+                      )}
+                      {notif.title || "Alert"}
+                    </p>
                     <p className="notification-body">{notif.body}</p>
                     <span className="notification-time">
-                      {new Date(notif.created_at).toLocaleString()}
+                      {formatDateTime(notif.created_at)}
                     </span>
                   </div>
                   <div className="notification-actions">

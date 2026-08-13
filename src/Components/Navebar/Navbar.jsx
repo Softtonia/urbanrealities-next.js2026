@@ -506,84 +506,17 @@ export default function Navbar() {
                 (token ? (
                   <>
                   <NotificationDropdown isMobile={false} />
-                  <div
-                    className="dropdown"
-                    onMouseEnter={() => setIsOpen(true)}
-                    onMouseLeave={() => setIsOpen(false)}
-                    style={{ position: "relative" }}
+                  <Link
+                    className="btn btn-link text-white text-decoration-none nav-items-name"
+                    href={
+                      isBusinessDashboard ||
+                      (role && role.toLowerCase() !== "owner")
+                        ? "/auth/business/dashboard"
+                        : "/auth/user/dashboard"
+                    }
                   >
-                    <button
-                      className="btn btn-link text-white text-decoration-none dropdown-toggle nav-items-name"
-                      type="button"
-                    >
-                      My Account
-                    </button>
-                    {isOpen && (
-                      <ul
-                        className="dropdown-menu show shadow-lg border-0"
-                        style={{
-                          display: "block",
-                          position: "absolute",
-                          top: "100%",
-                          right: 0,
-                          backgroundColor: "#fff",
-                          padding: "4px 0",
-                          borderRadius: "0",
-                          minWidth: "160px",
-                        }}
-                      >
-                        <li>
-                          <Link
-                            className="dropdown-item py-1 px-4"
-                            href={
-                              isBusinessDashboard ||
-                              (role && role.toLowerCase() !== "owner")
-                                ? "/auth/business/dashboard"
-                                : "/auth/user/dashboard"
-                            }
-                            style={{
-                              fontSize: "14px",
-                              fontWeight: "500",
-                              color: "#374151",
-                            }}
-                          >
-                            Dashboard
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            className="dropdown-item py-1 px-4"
-                            href={
-                              isBusinessDashboard ||
-                              (role && role.toLowerCase() !== "owner")
-                                ? "/auth/business/dashboard/manage-password"
-                                : "/auth/user/dashboard/manage-password"
-                            }
-                            style={{
-                              fontSize: "14px",
-                              fontWeight: "500",
-                              color: "#374151",
-                            }}
-                          >
-                            Manage Password
-                          </Link>
-                        </li>
-                        <li>
-                          <button
-                            className="dropdown-item py-1 px-4"
-                            onClick={logout}
-                            style={{
-                              fontSize: "14px",
-                              fontWeight: "500",
-                              color: "#e40e0e",
-                            }}
-                          >
-                            Logout
-                          </button>
-                        </li>
-                      </ul>
-                    )}
-                  </div>
+                    My Account
+                  </Link>
                   </>
                 ) : (
                   <Link
@@ -632,84 +565,17 @@ export default function Navbar() {
               (token ? (
                 <>
                 <NotificationDropdown isMobile={true} />
-                <div
-                  className="dropdown"
-                  onMouseEnter={() => setIsOpen(true)}
-                  onMouseLeave={() => setIsOpen(false)}
-                  style={{ position: "relative" }}
-                >
-                  <button
-                    className="btn btn-link text-black text-decoration-none dropdown-toggle nav-items-name"
-                    type="button"
+                  <Link
+                    className="btn btn-link text-black text-decoration-none nav-items-name"
+                    href={
+                      isBusinessDashboard ||
+                      (role && role.toLowerCase() !== "owner")
+                        ? "/auth/business/dashboard"
+                        : "/auth/user/dashboard"
+                    }
                   >
                     My Account
-                  </button>
-                  {isOpen && (
-                    <ul
-                      className="dropdown-menu show shadow-lg border-0"
-                      style={{
-                        display: "block",
-                        position: "absolute",
-                        top: "100%",
-                        right: 0,
-                        backgroundColor: "#fff",
-                        padding: "4px 0",
-                        borderRadius: "0",
-                        minWidth: "160px",
-                      }}
-                    >
-                      <li>
-                        <Link
-                          className="dropdown-item py-1 px-4"
-                          href={
-                            isBusinessDashboard ||
-                            (role && role.toLowerCase() !== "owner")
-                              ? "/auth/business/dashboard"
-                              : "/auth/user/dashboard"
-                          }
-                          style={{
-                            fontSize: "14px",
-                            fontWeight: "500",
-                            color: "#374151",
-                          }}
-                        >
-                          My Profile
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          className="dropdown-item py-1 px-4"
-                          href={
-                            isBusinessDashboard ||
-                            (role && role.toLowerCase() !== "owner")
-                              ? "/auth/business/dashboard/manage-password"
-                              : "/auth/user/dashboard/manage-password"
-                          }
-                          style={{
-                            fontSize: "14px",
-                            fontWeight: "500",
-                            color: "#374151",
-                          }}
-                        >
-                          Manage Password
-                        </Link>
-                      </li>
-                      <li>
-                        <button
-                          className="dropdown-item py-1 px-4"
-                          onClick={logout}
-                          style={{
-                            fontSize: "14px",
-                            fontWeight: "500",
-                            color: "#e40e0e",
-                          }}
-                        >
-                          Logout
-                        </button>
-                      </li>
-                    </ul>
-                  )}
-                </div>
+                  </Link>
                 </>
               ) : (
                 <Link

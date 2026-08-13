@@ -85,7 +85,7 @@ const Dashboard = () => {
             <div className={styles.detailsRow}>
               <span>User ID: {profile.unique_id || "-"}</span>
               <span className={styles.dotSeparator}>•</span>
-              <span>Member Since: {profile.created_at ? new Date(profile.created_at).toLocaleDateString() : "Jul 2024"}</span>
+              <span>Member Since: {profile.created_at ? new Date(profile.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "Jul 2024"}</span>
             </div>
             
             <div className={styles.contactRow}>

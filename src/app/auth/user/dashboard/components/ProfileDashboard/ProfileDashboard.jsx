@@ -43,7 +43,9 @@ const Dashboard = () => {
     try {
       const [profileRes, kycRes] = await Promise.all([
         getUserProfile(userId, token),
-        getKycDetails(token).then((res) => res.json()).catch(() => null),
+        getKycDetails(token)
+          .then((res) => res.json())
+          .catch(() => null),
       ]);
 
       if (profileRes && profileRes.status && profileRes.data) {
@@ -174,7 +176,7 @@ const Dashboard = () => {
                 {loading ? (
                   <Skeleton variant="text" width={150} />
                 ) : (
-                  `Member Since: ${profile.created_at ? new Date(profile.created_at).toLocaleDateString() : "Jul 2024"}`
+                  `Member Since: ${profile.created_at ? new Date(profile.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : ""}`
                 )}
               </span>
             </div>
@@ -227,12 +229,20 @@ const Dashboard = () => {
               </span>
             </div>
             {!loading && (
-              <Link
-                href={`/auth/user/dashboard/edit-profile?id=${encodeId(profile.id)}`}
-                className={styles.editBtn}
-              >
-                <FaEdit /> Edit Profile
-              </Link>
+              <div className="d-flex flex-column gap-2 mt-2">
+                <Link
+                  href={`/auth/user/dashboard/edit-profile?id=${encodeId(profile.id)}`}
+                  className={styles.editBtn}
+                >
+                  <FaEdit /> Edit Profile
+                </Link>
+                <Link
+                  href={`/auth/user/dashboard/manage-password`}
+                  className={styles.editBtn}
+                >
+                  Manage Password
+                </Link>
+              </div>
             )}
           </div>
         </div>
@@ -523,7 +533,9 @@ const Dashboard = () => {
               </div>
               <div className={styles.infoRow}>
                 <span>Aadhar Number</span>
-                <strong>{kycDetails?.aadhaar_number || profile.aadhaar_number || "-"}</strong>
+                <strong>
+                  {kycDetails?.aadhaar_number || profile.aadhaar_number || "-"}
+                </strong>
               </div>
             </div>
           </div>
