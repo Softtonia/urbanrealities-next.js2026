@@ -308,7 +308,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
                       return {
                         ...d,
                         uploading: !isDone,
-                        progress: fp.percent || 100,
+                        progress: fp.percent !== undefined && fp.percent !== null ? fp.percent : 100,
                         status: isDone
                           ? "Pending"
                           : d.status,
