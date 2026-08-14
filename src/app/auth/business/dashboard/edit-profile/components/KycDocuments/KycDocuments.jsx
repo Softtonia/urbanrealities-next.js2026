@@ -180,15 +180,16 @@ const KycDocuments = ({ profile, token, onKycError }) => {
 
       if (detailsRes && detailsRes.ok) {
         const detailsResult = await detailsRes.json();
-        if (detailsResult.status && detailsResult.data) {
-          if (detailsResult.data.aadhaar_number) {
-            setAadhaarNumber(detailsResult.data.aadhaar_number);
+        const data = detailsResult.data || detailsResult;
+        if (data) {
+          if (data.aadhaar_number) {
+            setAadhaarNumber(data.aadhaar_number);
           }
-          if (detailsResult.data.gst_number) {
-            setGstNumber(detailsResult.data.gst_number);
+          if (data.gst_number) {
+            setGstNumber(data.gst_number);
           }
-          if (detailsResult.data.rera_number) {
-            setReraNumber(detailsResult.data.rera_number);
+          if (data.rera_number) {
+            setReraNumber(data.rera_number);
           }
         }
       }

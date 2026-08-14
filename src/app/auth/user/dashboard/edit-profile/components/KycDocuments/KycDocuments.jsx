@@ -96,7 +96,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
   const fetchDocs = async () => {
     if (!token) return;
     try {
-      const [statusRes, docsRes] = await Promise.all([
+      const [statusRes, docsRes, detailsRes] = await Promise.all([
         fetch(getBaseUrl() + "/api/kyc/status", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -111,10 +111,27 @@ const KycDocuments = ({ profile, token, onKycError }) => {
             "X-App-Type": APP_TYPE,
           },
         }),
+        fetch(getBaseUrl() + "/api/kyc/details", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+            "X-App-Type": APP_TYPE,
+          },
+        }),
       ]);
 
       let kycLabel = null;
       let reasons = [];
+
+      if (detailsRes && detailsRes.ok) {
+        const detailsResult = await detailsRes.json();
+        const data = detailsResult.data || detailsResult;
+        if (data) {
+          if (data.aadhaar_number) {
+            setAadhaarNumber(data.aadhaar_number);
+          }
+        }
+      }
 
       if (statusRes.ok) {
         const statusResult = await statusRes.json();
