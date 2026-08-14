@@ -256,7 +256,7 @@ const CurrentMembershipStatus = () => {
             <h3 className={styles.statValue}>
               {credits?.video_upload?.is_unlimited
                 ? "Unlimited"
-                : `${credits?.video_upload?.used_credits} / ${credits?.video_upload?.total_credits}`}
+                : `${credits?.video_upload?.used_credits || 0} / ${credits?.video_upload?.total_credits || 0}`}
             </h3>
             {!credits?.video_upload?.is_unlimited && (
               <>
@@ -265,15 +265,15 @@ const CurrentMembershipStatus = () => {
                     className={`${styles.statProgressFill} ${styles.statProgressFillVideo}`}
                     style={{
                       width: getProgressWidth(
-                        credits?.video_upload?.used_credits,
-                        credits?.video_upload?.total_credits,
+                        credits?.video_upload?.used_credits || 0,
+                        credits?.video_upload?.total_credits || 0,
                       ),
                     }}
                   ></div>
                 </div>
                 <p className={styles.statFooter}>
-                  {credits?.video_upload?.used_credits} Used •{" "}
-                  {credits?.video_upload?.remaining_credits} Remaining
+                  {credits?.video_upload?.used_credits || 0} Used •{" "}
+                  {credits?.video_upload?.remaining_credits || 0} Remaining
                 </p>
               </>
             )}
@@ -351,7 +351,7 @@ const CurrentMembershipStatus = () => {
             <div className={styles.usageHeader}>
               <span>Video Upload Credits</span>
               <span className={styles.usageValue}>
-                {credits?.video_upload?.used_credits} Used
+                {credits?.video_upload?.used_credits || 0} Used
               </span>
             </div>
             <div className={styles.statProgressBar}>
@@ -359,14 +359,14 @@ const CurrentMembershipStatus = () => {
                 className={`${styles.statProgressFill} ${styles.statProgressFillVideo}`}
                 style={{
                   width: getProgressWidth(
-                    credits?.video_upload?.used_credits,
-                    credits?.video_upload?.total_credits,
+                    credits?.video_upload?.used_credits || 0,
+                    credits?.video_upload?.total_credits || 0,
                   ),
                 }}
               ></div>
             </div>
             <div className={styles.usageRemaining}>
-              {credits?.video_upload?.remaining_credits} Remaining
+              {credits?.video_upload?.remaining_credits || 0} Remaining
             </div>
           </div>
         </div>
