@@ -18,7 +18,7 @@ const MobileSideMenu = () => {
     { name: "Buy", submenu: "buy" },
     { name: "Rent", submenu: "rent" },
     { name: "Sell", submenu: "sell" },
-    { name: "Find Agent", href: "/all-agent" },
+    { name: "Find Agent", href: "/agents" },
     { name: "Projects", href: "/projects" },
     { name: "Property Services", href: "/property-services" },
     { name: "Home Loans", href: "/home-loan" },

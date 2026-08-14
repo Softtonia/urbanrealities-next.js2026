@@ -110,7 +110,7 @@ export default function CallbackForm({
         const fetchRoles = async () => {
             try {
                 const response = await fetch(
-                    '/api/admin/role-listing',
+                    '/api/get-default-roles',
                     {
                         headers: {
                             Accept:

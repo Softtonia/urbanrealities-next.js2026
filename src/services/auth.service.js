@@ -1,7 +1,7 @@
 import { laravelApi } from "@/lib/axios";
 
 export async function getRoleListing() {
-  return await laravelApi("/api/admin/role-listing", { method: "GET" });
+  return await laravelApi("/api/get-default-roles", { method: "GET" });
 }
 
 export async function getUserById(id) {

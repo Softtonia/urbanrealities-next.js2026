@@ -26,7 +26,7 @@ const ProjectBreadcrumb = () => {
                             }
                         </div>
                         <div className="right-info  m-0">
-                            <span className="body-text-rg16 me-1">Posted on : {project.date}</span>
+                            <span className="body-text-rg16 me-1">Posted on : {project.date ? new Date(project.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}</span>
                             <FaChevronRight />
                             <span className="body-text-rg16 ms-3">Project ID : {project.project_unique_id}</span>
                         </div>

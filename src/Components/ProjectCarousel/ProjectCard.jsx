@@ -141,7 +141,7 @@ const ProjectCard = ({ project, onViewProject }) => {
               className="project-card__btn-view btn-viewproject m-0"
               onClick={() => onViewProject(project)}
             >
-              View Project
+              View Property
             </button>
           </div>
         </div>

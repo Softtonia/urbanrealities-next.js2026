@@ -6,9 +6,25 @@ import { get, getssr } from '@/lib/api';
 async function fetchProperty(id) {
   try {
     // ✅ Directly call backend API, not your Next.js API route
-    const response = await getssr(`/api/get-data-properties-no-auth/${id}`);
+    const response = await getssr(`/api/guest/posts/property-listing/${id}`);
     const data = response?.data;
     console.log("=>", data)
+
+    if (data?.post) {
+      const post = data.post;
+      return {
+        ...post,
+        name: post.title,
+        description: post.content,
+        property_id_name: post.listing_code,
+        project_unique_id: post.listing_code,
+        property_unique_id: post.listing_code,
+        date: post.published_at,
+        posted_on: new Date(post.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+        ...(post.location || {}),
+        original_data: data
+      };
+    }
 
     if (data) return data;
     return [];

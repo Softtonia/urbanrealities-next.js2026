@@ -52,7 +52,7 @@ export default function DeveloperCard({ project }) {
   )?.field_value;
 
 
-  const heroBanner = heroSectionFields?.find(val =>
+  const heroBanner = project?.featured_image || heroSectionFields?.find(val =>
     val.template.slug.includes("banner")
   )?.field_value;
 
@@ -89,7 +89,7 @@ export default function DeveloperCard({ project }) {
 
 
   const handleNavigate = () => {
-    router.push(`/project-details?name=${project.name}&property-name=${project.property_id_name}&id=${project.id}`);
+    router.push(`/project-details?name=${project.name || project.title}&property-name=${project.property_id_name || project.slug}&id=${project.id}`);
   }
 
 
@@ -107,15 +107,15 @@ export default function DeveloperCard({ project }) {
       </div>
       {/* Right Side - Content */}
       <div className={styles.cardContent}>
-        <h3 className={styles.title}>{project.name}</h3>
+        <h3 className={styles.title}>{project.name || project.title}</h3>
         {/* Top Section */}
         <div className={styles.cardHeader}>
           <div className={styles.headerLeft}>
             <p className={styles.location}>{project?.developer?.name || project?.developer_name}</p>
             <p className={styles.location}>
-              <FaMapMarkerAlt className={styles.locationIcon} /> {project?.city?.name || project?.area_locality} {project?.state?.name ||project?.city_name}
+              <FaMapMarkerAlt className={styles.locationIcon} /> {project?.location?.city_name || project?.city?.name || project?.area_locality} {project?.location?.state_name || project?.state?.name ||project?.city_name}
             </p>
-            <p className={styles.location}>{project?.property_type[0]?.property_type_name}</p>
+            <p className={styles.location}>{project?.property_type?.[0]?.property_type_name || project?.post_type?.name}</p>
 
             {price &&
               <p className={styles.price}>₹{formatprice(price)} onwards</p>
@@ -129,7 +129,7 @@ export default function DeveloperCard({ project }) {
         {/* Pricing & Description */}
         <div className={styles.pricingAndDescription}>
           <p className={styles.description}>
-            <DeveloperDescription description={project?.description} />
+            <DeveloperDescription description={project?.description || project?.content} />
           </p>
         </div>
 

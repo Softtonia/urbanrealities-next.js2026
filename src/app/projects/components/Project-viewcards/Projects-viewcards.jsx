@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { get } from "@/lib/api";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import styles from "./Projects-viewcards.module.css";
@@ -111,19 +112,37 @@ const ProjectsViewCards = ({ project, onViewProject }) => {
 };
 
 // agar map karna hai
+// agar map karna hai
 const ProjectsList = ({ onViewProject }) => {
-  const { payload, debouncedFilters, searchResults } = useSearch({ autoPush: false })
-  // const [searchResults,setSearchResults] =useState();
+  const { payload, debouncedFilters } = useSearch({ autoPush: false });
+  const [searchResults, setSearchResults] = useState({ projects: [], properties: [], agents: [] });
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
 
-  
-  const filters = []
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setIsSearchLoading(true);
+      try {
+        const res = await get(`/api/guest/posts/project-listing`);
+        if (res?.data?.items) {
+          setSearchResults((prev) => ({ ...prev, projects: res.data.items }));
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsSearchLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
+
+  const filters = [];
 
   return (
     <div>
       <PropertyFilters initialFilters={debouncedFilters} location="project"/>
       <div className={`row ${styles["tab-row"]}`}>
         <div className={`col-12 ${styles["listing-col"]}`}>
-          <SingleListingWithTab filters={filters} searchResults={searchResults} comeFirst="New Project"/>
+          <SingleListingWithTab filters={filters} searchResults={searchResults} comeFirst="New Project" isSearchLoading={isSearchLoading} />
         </div>
         {/* <div className={styles.projectCarousel}>
         {projectData.map((proj, idx) => (

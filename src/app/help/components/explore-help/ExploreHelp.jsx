@@ -27,7 +27,7 @@ async function getSubCategories() {
     // ✅ Directly call backend API, not your Next.js API route
     const response = await getssr(`/api/help-subcategory-list`);
     const data = response?.data;
-    // console.log("==>",data)
+    console.log("==> subcat", data);
     if (Array.isArray(data)) return data;
     if (data?.data) return data.data;
     return [];
@@ -40,7 +40,7 @@ async function getSubCategories() {
 const ExploreHelp = async ({ headingText = "Explore Help Topics" }) => {
   const categories = await getCategories();
   const subCategories = await getSubCategories();
-  console.log(categories)
+  console.log(categories);
   return (
     <section className={`${styles.helpcontent}`}>
       <div>
@@ -54,19 +54,21 @@ const ExploreHelp = async ({ headingText = "Explore Help Topics" }) => {
               <h3>{topic.name}</h3>
             </div>
             <ol className="m-0">
-              {subCategories && subCategories.filter((ctg) => topic.id === ctg.help_category_id).map((item) => (
-                <li key={item.id}>
-                  <Link
-                    href={{
-                      pathname: `/help/${slugify(`${topic.name} ${topic.id}`)}/${slugify(`${item.name} ${item.id}`)}`,
-                    }}
-                    className={styles.itemLink}
-                  >
-                    {item.name}
-                  </Link>
-
-                </li>
-              ))}
+              {subCategories &&
+                subCategories
+                  .filter((ctg) => topic.id === ctg.help_category_id)
+                  .map((item) => (
+                    <li key={item.id}>
+                      <Link
+                        href={{
+                          pathname: `/help/${slugify(`${topic.name} ${topic.id}`)}/${slugify(`${item.name} ${item.id}`)}`,
+                        }}
+                        className={styles.itemLink}
+                      >
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
             </ol>
           </div>
         ))}

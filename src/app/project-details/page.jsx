@@ -17,12 +17,25 @@ import ProjectDetail from "./Project-detail";
 
 async function fetchProject(id) {
   try {
-    const response = await getssr(`/api/guest/posts/property-listing/${id}`);
+    const response = await getssr(`/api/guest/posts/project-listing/${id}`);
 
     // Handle non-200 responses
     if (!response || response.status >= 400) {
       console.error(`❌ API Error ${response?.status}: ${response?.statusText}`);
       return { error: true, status: response?.status || 500 };
+    }
+
+    if (response?.data?.post) {
+      const post = response.data.post;
+      return {
+        ...post,
+        name: post.title,
+        description: post.content,
+        project_unique_id: post.listing_code,
+        date: post.published_at,
+        ...(post.location || {}),
+        original_data: response.data
+      };
     }
 
     const data = response?.data;

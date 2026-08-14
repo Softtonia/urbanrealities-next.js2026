@@ -49,7 +49,7 @@ const ProjectCarousel = ({ projects }) => {
     const name = project.name || project.title;
     const propertyName = project.property_id_name || project.title;
     router.push(
-      `/project-details?name=${name}&property-name=${propertyName}&id=${project.id}`,
+      `/propertydetails/${propertyName}?id=${project.id}`,
     );
   };
 
@@ -59,7 +59,7 @@ const ProjectCarousel = ({ projects }) => {
   return (
     <div className="container">
       <div className="project-caro-title">
-        <SubHero subHeroHeading={"Features Project"} subHeroText={""} />
+        <SubHero subHeroHeading={"Featured Property"} subHeroText={""} />
       </div>
 
       <div className="project-carousel" ref={carouselRef}>

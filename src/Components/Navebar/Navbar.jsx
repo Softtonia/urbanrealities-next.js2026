@@ -409,7 +409,7 @@ export default function Navbar() {
                 </div>
               </li>
               {[
-                { label: " Agent", href: "/all-agent" },
+                { label: " Agent", href: "/agents" },
                 { label: "Projects", href: "/projects" },
                 { label: "Services", href: "/property-services" },
                 { label: "Home Loans", href: "/home-loan" },

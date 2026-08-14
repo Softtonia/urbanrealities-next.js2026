@@ -9,15 +9,8 @@ const ProjectBanner = () => {
   const { project } = useProject();
 
 
-  const heroSectionFields = project?.repeater_fields?.filter(
-    (val) =>
-      val?.template?.slug?.startsWith("herosection") &&
-      (val.template.slug.includes("banner"))
-  ) || [];
-
-
-  const heroBanner = heroSectionFields.find(val =>
-    val.template.slug.includes("banner")
+  const heroBanner = project?.featured_image || project?.repeater_fields?.find(
+    (val) => val?.template?.slug?.includes("banner")
   )?.field_value;
 
   // const overview = project?.repeater_fields?.filter(
@@ -90,6 +83,9 @@ const ProjectBanner = () => {
         className={styles.projectdetailsherosection}
         style={{
           backgroundImage: `url(${bgImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       >
         <div className={`${styles.herosection} container`}>
@@ -101,8 +97,10 @@ const ProjectBanner = () => {
                 <h6 className={styles.name}>{project?.name}</h6>
                 <h6 className={styles.builder}>
                   <FaMapMarkerAlt className={styles.icon} />
-                  {project.area_locality && `${project.area_locality},`} {project?.city_name},{" "}
-                  {project?.state_name}
+                  {project?.full_address || 
+                    [project?.area_locality, project?.city_name, project?.state_name]
+                      .filter(Boolean)
+                      .join(", ")}
                 </h6>
               </div>
               {/* <div
