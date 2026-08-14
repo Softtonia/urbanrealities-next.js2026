@@ -140,11 +140,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
     (d) => !d.status || d.status.toLowerCase() === "rejected" || d.file,
   );
 
-  useEffect(() => {
-    if (showFormActions && aadhaarNumber && aadhaarNumber.includes("X")) {
-      setAadhaarNumber("");
-    }
-  }, [showFormActions, aadhaarNumber]);
+
 
   const getBaseUrl = () => LARAVEL_API_BASE_URL;
 

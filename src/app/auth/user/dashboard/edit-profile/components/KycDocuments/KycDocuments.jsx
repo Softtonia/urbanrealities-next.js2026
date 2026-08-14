@@ -46,10 +46,8 @@ const KycDocuments = ({ profile, token, onKycError }) => {
 
   useEffect(() => {
     if (profile) {
-      if (profile.aadhaar_number) {
+      if (profile.aadhaar_number && !aadhaarNumber) {
         setAadhaarNumber(profile.aadhaar_number);
-      } else {
-        setAadhaarNumber("");
       }
     }
   }, [profile]);
