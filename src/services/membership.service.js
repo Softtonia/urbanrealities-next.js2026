@@ -42,7 +42,7 @@ export const fetchMyStatus = async (token) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching membership status:", error);
-    throw error;
+    return { status: false, data: { has_active_membership: false } };
   }
 };
 
@@ -142,7 +142,7 @@ export const fetchMembershipAddons = async (token) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching membership addons:", error);
-    throw error;
+    return { status: false, data: [] };
   }
 };
 

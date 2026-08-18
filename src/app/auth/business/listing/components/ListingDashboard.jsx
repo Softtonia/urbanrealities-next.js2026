@@ -7,13 +7,13 @@ import { DatePicker } from 'antd';
 import { 
   FaFilter, FaPlus, FaBuilding, FaCheckCircle, FaPauseCircle, 
   FaClock, FaUsers, FaSearch, FaList, FaThLarge, FaMapMarkerAlt, 
-  FaEye, FaEdit, FaTrash, FaLightbulb, FaHome
+  FaEye, FaEdit, FaTrash, FaLightbulb, FaHome, FaStar, FaEllipsisV
 } from 'react-icons/fa';
 import styles from './ListingDashboard.module.css';
 import CustomSelect from '@/Components/CustomSelect/CustomSelect';
-import { TextField, InputAdornment, FormControl, InputLabel, Select, MenuItem, Skeleton, Dialog, DialogTitle, DialogContent, DialogActions, Button, Checkbox, FormControlLabel, CircularProgress, Box } from '@mui/material';
+import { TextField, InputAdornment, FormControl, InputLabel, Select, MenuItem, Skeleton, Dialog, DialogTitle, DialogContent, DialogActions, Button, Checkbox, FormControlLabel, CircularProgress, Box, Menu, IconButton, ListItemIcon } from '@mui/material';
 import { useSiteSettings } from '@/Components/mycontext/siteSettingContext';
-import { updateListingAvailability } from '@/services/listing.service';
+import { updateListingAvailability, toggleFeatureListing, deleteListing } from '@/services/listing.service';
 import { toast } from 'react-toastify';
 
 const STATUS_MAP = {
@@ -31,21 +31,45 @@ const ListingDashboard = ({
   meta = null,
   currentPage = 1,
   setCurrentPage = () => {},
-  filterType = 'all',
+  filterType = "all",
   setFilterType = () => {},
   perPage = 5,
-  setPerPage = () => {}
+  setPerPage = () => {},
+  searchValue = "",
+  setSearchValue = () => {},
+  sortValue = "newest",
+  setSortValue = () => {},
+  refreshData = () => {}
 }) => {
   const router = useRouter();
   const { token } = useSiteSettings();
-  const [viewMode, setViewMode] = useState('list'); // 'list' or 'grid'
-  const [sortValue, setSortValue] = useState('newest');
+  const [viewMode, setViewMode] = useState("list"); // 'list' or 'grid'
+  const [searchInput, setSearchInput] = useState(searchValue);
 
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [selectedListingId, setSelectedListingId] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [statusOverrides, setStatusOverrides] = useState({});
+  const [featuredOverrides, setFeaturedOverrides] = useState({});
+
+  const [deletedListingIds, setDeletedListingIds] = useState([]);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deletingListingId, setDeletingListingId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [activeProperty, setActiveProperty] = useState(null);
+
+  const handleOpenMenu = (event, prop) => {
+    setMenuAnchor(event.currentTarget);
+    setActiveProperty(prop);
+  };
+
+  const handleCloseMenu = () => {
+    setMenuAnchor(null);
+    setActiveProperty(null);
+  };
 
   const handleStatusClick = (propId) => {
     setSelectedListingId(propId);
@@ -67,6 +91,66 @@ const ListingDashboard = ({
       toast.error(err?.response?.data?.message || 'Failed to update status');
     } finally {
       setUpdatingStatus(false);
+    }
+  };
+
+  const handleToggleFeature = async (propId, currentIsFeatured) => {
+    const newFeaturedStatus = !currentIsFeatured;
+
+    // Optimistic UI Update (Instant)
+    setFeaturedOverrides(prev => ({
+      ...prev,
+      [propId]: newFeaturedStatus
+    }));
+
+    try {
+      const res = await toggleFeatureListing(token, propId);
+      const msg = res?.message || res?.data?.message || 'Listing feature toggled successfully';
+      toast.success(msg);
+      
+      // If backend provides concrete state, synchronize just in case
+      let finalStatus = newFeaturedStatus;
+      if (res && res.is_featured !== undefined) {
+        finalStatus = res.is_featured;
+      } else if (res && res.data && res.data.is_featured !== undefined) {
+        finalStatus = res.data.is_featured;
+      }
+
+      if (finalStatus !== newFeaturedStatus) {
+        setFeaturedOverrides(prev => ({
+          ...prev,
+          [propId]: finalStatus
+        }));
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to toggle feature listing');
+      // Revert on error
+      setFeaturedOverrides(prev => ({
+        ...prev,
+        [propId]: currentIsFeatured
+      }));
+    }
+  };
+
+  const handleDeleteClick = (propId) => {
+    setDeletingListingId(propId);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingListingId) return;
+    setIsDeleting(true);
+    try {
+      await deleteListing(token, deletingListingId);
+      toast.success('Listing deleted successfully');
+      setDeletedListingIds(prev => [...prev, deletingListingId]);
+      setDeleteModalOpen(false);
+      setDeletingListingId(null);
+      refreshData();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to delete listing');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -177,7 +261,8 @@ const ListingDashboard = ({
                   { label: 'Draft', value: 'draft' },
                   { label: 'Inactive', value: 'inactive' },
                   { label: 'Expired', value: 'expired' },
-                  { label: 'Rejected', value: 'rejected' }
+                  { label: 'Rejected', value: 'rejected' },
+                  { label: 'Featured', value: 'featured' }
                 ].map(opt => (
                   <MenuItem key={opt.value} value={opt.value} sx={{ fontSize: '13px', fontFamily: 'inherit' }}>
                     {opt.label}
@@ -191,6 +276,20 @@ const ListingDashboard = ({
               variant="outlined"
               size="small"
               label="Search by title, location"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if(e.key === 'Enter') {
+                  setSearchValue(searchInput);
+                  setCurrentPage(1);
+                }
+              }}
+              onBlur={() => {
+                if (searchInput !== searchValue) {
+                  setSearchValue(searchInput);
+                  setCurrentPage(1);
+                }
+              }}
               sx={{ 
                 width: 280,
                 backgroundColor: 'var(--White)',
@@ -259,7 +358,11 @@ const ListingDashboard = ({
                 labelId="sort-select-label"
                 value={sortValue}
                 label="Sort By"
-                onChange={(e) => setSortValue(e.target.value)}
+                onChange={(e) => {
+                  setSortValue(e.target.value);
+                  setCurrentPage(1);
+                }}
+                displayEmpty
               >
                 {sortOptions.map(opt => (
                   <MenuItem key={opt.value} value={opt.value} sx={{ fontSize: '13px', fontFamily: 'inherit' }}>
@@ -292,6 +395,7 @@ const ListingDashboard = ({
           <table className={styles.table}>
             <thead>
               <tr>
+                <th style={{ width: '40px', paddingRight: 0 }}></th>
                 <th>Property</th>
                 <th>Location</th>
                 <th>Type</th>
@@ -304,7 +408,7 @@ const ListingDashboard = ({
               </tr>
             </thead>
             <tbody>
-              {properties.length > 0 ? properties.map((prop, idx) => {
+              {properties.length > 0 ? properties.filter(prop => !deletedListingIds.includes(prop.id)).map((prop, idx) => {
                 const stats = getDummyStats(prop.id || idx);
                 
                 // Map new API data format
@@ -345,8 +449,15 @@ const ListingDashboard = ({
                 else if (aLower === 'reserved' || aLower === 'off market' || aLower === 'off_market') availClass = styles.badgeWarning;
                 else if (aLower === 'sold' || aLower === 'rented') availClass = styles.badgeExpired;
 
+                const isFeatured = featuredOverrides[prop.id || idx] !== undefined ? featuredOverrides[prop.id || idx] : prop.is_featured;
+
                 return (
                   <tr key={prop.id || idx}>
+                    <td style={{ paddingRight: 0 }}>
+                      <IconButton size="small" onClick={() => handleToggleFeature(prop.id, isFeatured)}>
+                        <FaStar size={18} color={isFeatured ? "var(--Orange-500)" : "var(--Gray-300)"} />
+                      </IconButton>
+                    </td>
                     <td>
                       <div className={styles.propCell}>
                         <img 
@@ -356,7 +467,7 @@ const ListingDashboard = ({
                           onError={(e) => { e.target.src = '/property-placeholders.jpg' }}
                         />
                         <div className={styles.propDetails}>
-                          <h4 className='text-capitalize'>{title}</h4>
+                          <h4 className='text-capitalize' title={title}>{title}</h4>
                           <p className={styles.propId}>{idLabel}</p>
                         </div>
                       </div>
@@ -364,7 +475,7 @@ const ListingDashboard = ({
                     <td>
                       <div className={styles.locCell}>
                         <FaMapMarkerAlt className={styles.cellIcon} />
-                        <div>
+                        <div title={`${cityName}, ${stateName}`}>
                           {cityName}
                           <span className={styles.subText}>{stateName}</span>
                         </div>
@@ -388,8 +499,7 @@ const ListingDashboard = ({
                           <span style={{ textTransform: 'capitalize' }}>{displayStatus}</span>
                         </div>
                         <span className={styles.subText}>
-                          Date
-                          <br/>{prop.created_at ? new Date(prop.created_at).toLocaleDateString() : stats.date}
+                          Added: {prop.created_at ? new Date(prop.created_at).toLocaleDateString() : stats.date}
                         </span>
                       </div>
                     </td>
@@ -418,9 +528,9 @@ const ListingDashboard = ({
                     </td>
                     <td>
                       <div className={styles.actionCell}>
-                        <button className={styles.actionBtn}><FaEye /></button>
-                        <button className={styles.actionBtn} onClick={() => router.push(`/auth/edit-property/basic-details?listing_id=${encodeId(prop.id)}`)}><FaEdit /></button>
-                        <button className={styles.actionBtn}><FaTrash /></button>
+                        <IconButton size="small" onClick={(e) => handleOpenMenu(e, prop)}>
+                          <FaEllipsisV size={14} color="var(--Gray-500)" />
+                        </IconButton>
                       </div>
                     </td>
                   </tr>
@@ -428,6 +538,7 @@ const ListingDashboard = ({
               }) : loading ? (
                 [...Array(5)].map((_, i) => (
                   <tr key={i}>
+                    <td><Skeleton variant="circular" width={24} height={24} /></td>
                     <td><Skeleton variant="rounded" width="80%" height={48} /></td>
                     <td><Skeleton variant="text" width="60%" height={24} /></td>
                     <td><Skeleton variant="text" width="50%" height={24} /></td>
@@ -441,7 +552,7 @@ const ListingDashboard = ({
                 ))
               ) : (
                 <tr>
-                  <td colSpan="9" style={{ textAlign: 'center', padding: '40px', color: 'var(--Gray-500)' }}>
+                  <td colSpan="10" style={{ textAlign: 'center', padding: '40px', color: 'var(--Gray-500)' }}>
                     No properties found.
                   </td>
                 </tr>
@@ -451,8 +562,8 @@ const ListingDashboard = ({
         </div>
         ) : (
           <div className={styles.gridContainer}>
-            {properties.length > 0 ? properties.map((prop, idx) => {
-              const stats = getDummyStats(prop.id || idx);
+            {properties.length > 0 ? properties.filter(prop => !deletedListingIds.includes(prop.id)).map((prop, idx) => {
+              const imageSrc = prop.media && prop.media.length > 0 ? prop.media[0].url : (prop.featured_image || prop.gallery_images?.[0] || '/property-placeholders.jpg');
               
               // Map new API data format
               let displayPrice = "N/A";
@@ -475,7 +586,6 @@ const ListingDashboard = ({
               const idLabel = prop.listing_code ? `ID: ${prop.listing_code}` : ``;
               const cityName = prop.city_name || prop.city?.name || 'City';
               const stateName = prop.state_name || prop.state?.name || 'State';
-              const imageSrc = prop.featured_image || prop.gallery_images?.[0];
               
               const rawStatus = prop.workflow_status || 'Unknown';
               const displayStatus = rawStatus.replace(/_/g, ' ');
@@ -493,6 +603,8 @@ const ListingDashboard = ({
               else if (aLower === 'reserved' || aLower === 'off market' || aLower === 'off_market') availClass = styles.badgeWarning;
               else if (aLower === 'sold' || aLower === 'rented') availClass = styles.badgeExpired;
 
+              const isFeatured = featuredOverrides[prop.id || idx] !== undefined ? featuredOverrides[prop.id || idx] : prop.is_featured;
+
               return (
                 <div key={prop.id || idx} className={styles.propertyCard}>
                   <div className={styles.cardImageWrapper}>
@@ -509,9 +621,14 @@ const ListingDashboard = ({
                   
                   <div className={styles.cardContent}>
                     <div className={styles.cardHeaderRow}>
-                      <div>
-                        <h4 className={styles.cardTitle}>{title}</h4>
-                        <p className={styles.cardId}>{idLabel}</p>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                        <IconButton size="small" onClick={() => handleToggleFeature(prop.id, isFeatured)} sx={{ padding: 0, marginTop: '2px' }}>
+                          <FaStar size={18} color={isFeatured ? "var(--Orange-500)" : "var(--Gray-300)"} />
+                        </IconButton>
+                        <div>
+                          <h4 className={styles.cardTitle} title={title}>{title}</h4>
+                          <p className={styles.cardId}>{idLabel}</p>
+                        </div>
                       </div>
                       <div className={styles.cardPrice}>
                         <h4>{displayPrice}</h4>
@@ -534,7 +651,7 @@ const ListingDashboard = ({
                     </div>
 
                     <div className={styles.cardInfoRow}>
-                      <div className={styles.cardInfoItem}>
+                      <div className={styles.cardInfoItem} title={`${cityName}, ${stateName}`}>
                         <FaMapMarkerAlt className={styles.cellIcon} />
                         {cityName}, {stateName}
                       </div>
@@ -556,9 +673,9 @@ const ListingDashboard = ({
                         </div>
                       </div>
                       <div className={styles.cardActions}>
-                        <button className={styles.actionBtn}><FaEye /></button>
-                        <button className={styles.actionBtn} onClick={() => router.push(`/auth/edit-property/basic-details?listing_id=${encodeId(prop.id)}`)}><FaEdit /></button>
-                        <button className={styles.actionBtn}><FaTrash /></button>
+                        <IconButton size="small" onClick={(e) => handleOpenMenu(e, prop)}>
+                          <FaEllipsisV size={14} color="var(--Gray-500)" />
+                        </IconButton>
                       </div>
                     </div>
                   </div>
@@ -713,6 +830,78 @@ const ListingDashboard = ({
             }}
           >
             {updatingStatus ? <CircularProgress size={24} color="inherit" /> : 'Update Status'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Menu
+        anchorEl={menuAnchor}
+        open={Boolean(menuAnchor)}
+        onClose={handleCloseMenu}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.1))',
+            mt: 1,
+            minWidth: 160,
+            '& .MuiMenuItem-root': {
+              fontSize: '14px',
+              padding: '10px 16px',
+              color: 'var(--Gray-700)'
+            }
+          },
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem onClick={() => { handleCloseMenu(); }}>
+          <ListItemIcon><FaEye size={16} color="var(--Gray-500)"/></ListItemIcon>
+          View
+        </MenuItem>
+        <MenuItem onClick={() => { handleCloseMenu(); router.push(`/auth/edit-property/basic-details?listing_id=${encodeId(activeProperty?.id)}`); }}>
+          <ListItemIcon><FaEdit size={16} color="var(--Gray-500)"/></ListItemIcon>
+          Edit
+        </MenuItem>
+        <MenuItem onClick={() => { handleCloseMenu(); handleDeleteClick(activeProperty?.id); }}>
+          <ListItemIcon><FaTrash size={16} color="var(--Gray-500)"/></ListItemIcon>
+          Delete
+        </MenuItem>
+      </Menu>
+      <Dialog 
+        open={deleteModalOpen} 
+        onClose={() => setDeleteModalOpen(false)}
+        PaperProps={{ style: { borderRadius: '12px', minWidth: '400px' } }}
+      >
+        <DialogTitle sx={{ borderBottom: '1px solid #eee', pb: 2, fontWeight: 600, fontSize: '18px' }}>
+          Confirm Delete
+        </DialogTitle>
+        <DialogContent sx={{ py: 3 }}>
+          <p style={{ margin: 0, fontSize: '15px', color: 'var(--Gray-700)' }}>
+            Are you sure you want to delete this listing? This action cannot be undone.
+          </p>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, borderTop: '1px solid #eee' }}>
+          <Button 
+            onClick={() => setDeleteModalOpen(false)} 
+            disabled={isDeleting}
+            sx={{ color: 'var(--Gray-500)' }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleConfirmDelete} 
+            variant="contained" 
+            disabled={isDeleting}
+            sx={{ 
+              backgroundColor: '#ef4444 !important', 
+              color: '#fff !important',
+              '&:hover': { backgroundColor: '#dc2626 !important' },
+              boxShadow: 'none',
+              borderRadius: '6px'
+            }}
+          >
+            {isDeleting ? <CircularProgress size={24} color="inherit" /> : 'Delete'}
           </Button>
         </DialogActions>
       </Dialog>

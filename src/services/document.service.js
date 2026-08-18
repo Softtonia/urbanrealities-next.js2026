@@ -82,8 +82,8 @@ export const resubmitKyc = async (token, formData) => {
     });
 };
 
-export const getKycDocuments = async (token) => {
-    return await fetch(getBaseUrl() + "/api/kyc/documents", {
+export const getKycDocuments = async (token, perPage = 20, page = 1) => {
+    return await fetch(getBaseUrl() + `/api/kyc/documents?per_page=${perPage}&page=${page}`, {
         method: "GET",
         headers: {
             Authorization: `Bearer ${token}`,

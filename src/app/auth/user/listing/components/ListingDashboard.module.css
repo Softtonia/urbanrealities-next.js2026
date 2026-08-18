@@ -242,15 +242,16 @@
   text-align: left;
 }
 .table th {
-  padding: 16px 24px;
+  padding: 16px 12px;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--Gray-500);
   border-bottom: 1px solid var(--Gray-100);
+  white-space: nowrap;
 }
 .table td {
-  padding: 16px 24px;
+  padding: 16px 12px;
   border-bottom: 1px solid var(--Gray-100);
   vertical-align: middle;
 }
@@ -385,7 +386,8 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  min-width: 250px;
+  min-width: 200px;
+  max-width: 320px;
 }
 .propImage {
   width: 80px;
@@ -393,12 +395,23 @@
   border-radius: 8px;
   object-fit: cover;
   background: var(--Gray-100);
+  flex-shrink: 0;
+}
+.propDetails {
+  flex: 1;
+  min-width: 0;
 }
 .propDetails h4 {
   margin: 0 0 4px 0;
   font-size: 14px;
   font-weight: 600;
   color: var(--Gray-900);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }
 .propId {
   margin: 0;
@@ -406,7 +419,21 @@
   color: var(--Gray-500);
 }
 
-.locCell, .typeCell {
+.locCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--Gray-600);
+  max-width: 160px;
+}
+.locCell > div {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.typeCell {
   display: flex;
   align-items: center;
   gap: 8px;
