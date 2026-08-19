@@ -3,7 +3,7 @@ import styles from "./ExploreHelp.module.css";
 
 import Link from "next/link";
 import { helpTopics } from "@/app/help/data/helpData";
-import TextHeading from "@/Components/TextHeading/TextHeading.jsx";
+import TextHeading from "@/Components/SectionHeading/SectionHeading.jsx";
 import { get, getssr } from "@/lib/api";
 import { slugify } from "@/utils/slugify";
 
