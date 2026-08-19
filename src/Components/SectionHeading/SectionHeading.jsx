@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import styles from "./TextHeading.module.css";
+import styles from "./SectionHeading.module.css";
 
 const TextHeading = ({ subHeroHeading, subHeroText }) => {
   return (
