@@ -62,8 +62,7 @@ const ProjectCarousel = ({ projects }) => {
     );
   };
 
-  const displayProjects =
-    featuredProjects.length > 0 ? featuredProjects : projects || [];
+  const displayProjects = (featuredProjects.length > 0 ? featuredProjects : projects || []).filter(p => p && (p.id || p.title || p.name));
 
   return (
     <div className="container">
@@ -71,30 +70,50 @@ const ProjectCarousel = ({ projects }) => {
         <SubHero subHeroHeading={"Featured Property"} subHeroText={""} />
       </div>
 
-      <div className="project-carousel" ref={carouselRef}>
-        {displayProjects.map((project, index) => (
-          <ProjectCard
-            key={index}
-            project={project}
-            onViewProject={handleProject}
-          />
-        ))}
-      </div>
+      {displayProjects.length > 0 ? (
+        <>
+          <div className="project-carousel" ref={carouselRef}>
+            {displayProjects.map((project, index) => (
+              <ProjectCard
+                key={index}
+                project={project}
+                onViewProject={handleProject}
+              />
+            ))}
+          </div>
 
-      <div className="project-carousel__buttons">
-        <button
-          onClick={handlePrev}
-          className="project-carousel__nav-btn project-carousel__nav-btn--prev"
-        >
-          <FaArrowLeft />
-        </button>
-        <button
-          onClick={handleNext}
-          className="project-carousel__nav-btn project-carousel__nav-btn--next"
-        >
-          <FaArrowRight />
-        </button>
-      </div>
+          <div className="project-carousel__buttons">
+            <button
+              onClick={handlePrev}
+              className="project-carousel__nav-btn project-carousel__nav-btn--prev"
+            >
+              <FaArrowLeft />
+            </button>
+            <button
+              onClick={handleNext}
+              className="project-carousel__nav-btn project-carousel__nav-btn--next"
+            >
+              <FaArrowRight />
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="empty-state-wrapper">
+          <div className="empty-state-content">
+            <div className="empty-state-icon">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                <circle cx="10" cy="10" r="4" fill="#fff" stroke="#ff6b35" strokeWidth="2"></circle>
+                <line x1="12.5" y1="12.5" x2="16" y2="16" stroke="#ff6b35" strokeWidth="2"></line>
+              </svg>
+            </div>
+            <h3>No Featured Properties</h3>
+            <p>We couldn't find any featured properties in {city?.name || "this location"} at the moment.</p>
+            <a href="/property-listing" className="empty-state-btn">Explore All Properties</a>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
