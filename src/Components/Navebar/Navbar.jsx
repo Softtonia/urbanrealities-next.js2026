@@ -217,10 +217,17 @@ export default function Navbar() {
                 </div>
               ) : (
                 <Image
-                  src={siteData?.website_logo || siteData?.mobile_logo || "/logo.png"}
+                  src={
+                    siteData?.website_logo?.startsWith("http")
+                      ? siteData.website_logo
+                      : siteData?.mobile_logo?.startsWith("http")
+                        ? siteData.mobile_logo
+                        : "/logo.png"
+                  }
                   alt="Urbanrealities"
                   width={90}
                   height={30}
+                  priority
                 />
               )}
             </Link>
