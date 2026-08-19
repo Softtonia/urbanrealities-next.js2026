@@ -106,9 +106,11 @@
 
 .custom-dropdown-3 {
   width: 250px;
-  padding: 10px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  /* background-color: var(--white) !important; */
+  padding: 15px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: #fff !important;
+  border-radius: 8px;
+  border: 1px solid #eaeaea;
   transform: translate(5px, 25px) !important;
 }
 
@@ -199,26 +201,51 @@
 .price-container {
   height: 200px;
   width: 100%;
-  gap: 10px;
   overflow-y: auto;
+  padding-right: 5px;
 }
 
-.price-text input.form-control {
+/* Custom scrollbar for price container */
+.price-container::-webkit-scrollbar {
+  width: 6px;
+}
+.price-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.price-container::-webkit-scrollbar-thumb {
+  background-color: #a0a0a0;
+  border-radius: 10px;
+}
+
+.price-tab-btn {
+  flex: 1;
+  background-color: transparent;
+  border: 1px solid #ccc;
   border-radius: 25px;
   padding: 8px 16px;
-  border: 1px solid #ccc;
   font-size: 14px;
-  box-shadow: none;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.3s ease;
   text-align: center;
 }
 
+.price-tab-btn:hover {
+  border-color: var(--Orange-Red);
+}
+
+.price-tab-btn.active {
+  border-color: var(--Orange-Red);
+  color: #333;
+}
+
 .price-section {
-  visibility: hidden;
+  display: none;
   width: 100%;
 }
 
-.active {
-  visibility: visible;
+.price-section.active {
+  display: block;
 }
 
 .price-list {
@@ -240,8 +267,21 @@
 
 .toggle-link {
   font-weight: 600;
-  margin-bottom: 5px;
-  cursor: pointer;
+  margin-bottom: 8px;
+  cursor: default;
+  font-size: 16px;
+  color: #555;
+  display: block;
+}
+
+.price-option-item {
+  transition: background-color 0.2s ease, color 0.2s ease;
+  border-radius: 4px;
+}
+
+.price-option-item:hover {
+  background-color: var(--Misty-Rose);
+  color: var(--Orange-Red);
 }
 
 .small-search {

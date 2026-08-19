@@ -5,9 +5,9 @@ import SponsoredProperty from "@/Components/SponsoredProperty/SponsoredProperty"
 import ProjectCarousel from "@/Components/ProjectCarousel/ProjectCarousel";
 import AdviceAndTools from "@/Components/AdviceAndTools/AdviceAndTools";
 import PropertyServices from "@/Components/PropertyServices/PropertyServices";
-import WhyChooseus from "@/Components/WhyChoose/WhyChooseus";
+
 import PopularCities from "@/Components/PopularCities/PopularCities";
-import Testimonials from "@/Components/Testimonials/Testimonials";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import { get, getssr } from "@/lib/api";
@@ -38,7 +38,8 @@ const fetchProject = async (cityId) => {
 
 const fetchProperties = async (cityId) => {
   try {
-    const url = cityId ? `/api/get-all-properties-listing-no-auth?per_page=8&city_id=${cityId}` : `/api/get-all-properties-listing-no-auth?per_page=8`;
+    const postTypes = "property_listing,property-listing,propertylisting";
+    const url = `/api/frontend/properties/search?post_type=${postTypes}&per_page=20&page=1${cityId ? `&city_id=${cityId}` : ""}`;
     const response = await getssr(url);
     return extractArray(response);
   } catch (err) {
@@ -58,16 +59,6 @@ const fetchDeveloper = async (cityId) => {
   }
 }
 
-const fetchReviews = async () => {
-  try {
-    const response = await getssr(`/api/get-client-review`);
-    console.log(response , "client-review-response")
-    return extractArray(response);
-  } catch (err) {
-    console.error("Error fetching reviews", err);
-    return [];
-  }
-};
 
 
 export default async function Home() {
@@ -84,7 +75,7 @@ export default async function Home() {
   const projects = await fetchProject(cityId)
   const propertyList = await fetchProperties(cityId)
   const developer = await fetchDeveloper(cityId)
-  const reviews = await fetchReviews()
+
   return (
     <>
       <SearchPropertySection />
@@ -94,9 +85,9 @@ export default async function Home() {
       <ProjectCarousel projects={projects} />
       <AdviceAndTools />
       <PropertyServices />
-      <WhyChooseus />
+
       <PopularCities />
-      <Testimonials reviews={reviews} />
+
     </>
   );
 }

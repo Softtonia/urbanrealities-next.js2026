@@ -16,7 +16,7 @@ const FeaturesCopy = ({ projects }) => {
   const [hasMounted, setHasMounted] = useState(false);
   const [slides, setSlides] = useState([]);
   const scrollRef = useRef(null);
-  const { city } = useCity();
+  const { city, isLoadingCity } = useCity();
   // const slides = projects?.map((val) => {
   //   const banner = val?.custom_field_values?.find((f) =>
   //     f?.template?.slug?.includes("banner")
@@ -50,11 +50,15 @@ const FeaturesCopy = ({ projects }) => {
     checkMobile();
     window.addEventListener("resize", checkMobile);
 
+    if (isLoadingCity) return; // Wait for city to be loaded
+
     const fetchFeatured = async () => {
       try {
         const cityQuery = city?.id ? `&city_id=${city.id}` : "";
         const response = await get(`/api/guest/posts/project-listing?featured=1${cityQuery}`);
-        if (response?.data?.items) {
+        if (response?.data?.data && Array.isArray(response.data.data)) {
+          setSlides(response.data.data);
+        } else if (response?.data?.items) {
           setSlides(response.data.items);
         } else if (Array.isArray(response?.data)) {
           setSlides(response.data);
@@ -68,7 +72,7 @@ const FeaturesCopy = ({ projects }) => {
     setHasMounted(true); // Set mounted state to true after initial render
 
     return () => window.removeEventListener("resize", checkMobile);
-  }, [city]);
+  }, [city, isLoadingCity]);
 
 
   if (!hasMounted) return null;
@@ -161,54 +165,71 @@ const FeaturesCopy = ({ projects }) => {
       <div className="features-copy container">
         <div className="features-copy-heading">
           <SubHero
-            subHeroHeading={"Popular Projects"}
+            subHeroHeading={city?.name ? `Popular Projects in ${city.name}` : "Popular Projects"}
             subHeroText={"EXPLORE"}
           />
         </div>
 
-        <div className="carousel-wrapper">
-          <div
-            className={`carousel-row ${isMobile ? "mobile-scroll" : ""}`}
-            ref={scrollRef}
-          >
-            {slides.map((slide, i) => (
-              <div
-                className={`slide-card ${isMobile ? "mobile-slide-card" : getSlideClass(i)}`}
-                key={i}
-              >
-                <img
-                  src={slide?.featured_image}
-                  onError={(e) => (e.target.src = "/project-placeholder.png")}
-                  alt={slide?.title || `Project ${i + 1}`}
-                  className="slide-image"
-                />
-                <div className="property-overlay">
-                  <div className="property-info">
-                    {/* Add fallback for views and status if they exist in future, otherwise hide */}
+        {slides && slides.length > 0 ? (
+          <div className="carousel-wrapper">
+            <div
+              className={`carousel-row ${isMobile ? "mobile-scroll" : ""}`}
+              ref={scrollRef}
+            >
+              {slides.map((slide, i) => (
+                <div
+                  className={`slide-card ${isMobile ? "mobile-slide-card" : getSlideClass(i)}`}
+                  key={i}
+                >
+                  <img
+                    src={slide?.featured_image}
+                    onError={(e) => (e.target.src = "/project-placeholder.png")}
+                    alt={slide?.title || `Project ${i + 1}`}
+                    className="slide-image"
+                  />
+                  <div className="property-overlay">
+                    <div className="property-info">
+                      {/* Add fallback for views and status if they exist in future, otherwise hide */}
+                    </div>
+                    <div className="property-action">
+                      <a
+                        href={`/project-details?name=${encodeURIComponent(slide.title)}&id=${slide.id}`}
+                        className="explore-btn"
+                      >
+                        {slide.title || "Explore Project"}
+                      </a>
+                    </div>
                   </div>
-                  <div className="property-action">
-                    <a
-                      href={`/project-details?name=${encodeURIComponent(slide.title)}&id=${slide.id}`}
-                      className="explore-btn"
-                    >
-                      {slide.title || "Explore Project"}
-                    </a>
-                  </div>
-
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          <div className="carousel-controls">
-            <button onClick={handlePrev} className="control-btn prev-btn">
-              <FaArrowLeft />
-            </button>
-            <button onClick={handleNext} className="control-btn next-btn">
-              <FaArrowRight />
-            </button>
+            <div className="carousel-controls">
+              <button onClick={handlePrev} className="control-btn prev-btn">
+                <FaArrowLeft />
+              </button>
+              <button onClick={handleNext} className="control-btn next-btn">
+                <FaArrowRight />
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="empty-state-wrapper">
+            <div className="empty-state-content">
+              <div className="empty-state-icon">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  <circle cx="10" cy="10" r="4" fill="#fff" stroke="#ff6b35" strokeWidth="2"></circle>
+                  <line x1="12.5" y1="12.5" x2="16" y2="16" stroke="#ff6b35" strokeWidth="2"></line>
+                </svg>
+              </div>
+              <h3>No Projects Found</h3>
+              <p>We couldn't find any popular projects in {city?.name || "this location"} at the moment.</p>
+              <a href="/property-listing" className="empty-state-btn">Explore All Properties</a>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

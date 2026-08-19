@@ -14,9 +14,11 @@ const ProjectCarousel = ({ projects }) => {
   const scrollAmount = 850;
   const [hasMounted, setHasMounted] = useState(false);
   const [featuredProjects, setFeaturedProjects] = useState([]);
-  const { city } = useCity();
+  const { city, isLoadingCity } = useCity();
 
   useEffect(() => {
+    if (isLoadingCity) return; // Wait for city to be loaded
+
     setHasMounted(true);
     const fetchFeatured = async () => {
       try {
@@ -24,7 +26,9 @@ const ProjectCarousel = ({ projects }) => {
         const response = await get(
           `/api/frontend/city-explore/featured-properties?city_id=${cityId}&page=1&per_page=15`,
         );
-        if (response?.data?.items) {
+        if (response?.data?.data && Array.isArray(response.data.data)) {
+          setFeaturedProjects(response.data.data);
+        } else if (response?.data?.items) {
           setFeaturedProjects(response.data.items);
         } else if (Array.isArray(response?.data)) {
           setFeaturedProjects(response.data);
@@ -34,7 +38,7 @@ const ProjectCarousel = ({ projects }) => {
       }
     };
     fetchFeatured();
-  }, [city]);
+  }, [city, isLoadingCity]);
 
   if (!hasMounted) return null;
 

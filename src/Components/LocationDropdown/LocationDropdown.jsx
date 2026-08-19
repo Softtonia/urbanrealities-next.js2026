@@ -105,10 +105,7 @@ const renderCityGrid = (citiesArray) => {
         </div>
       )}
 
-      <div>
-        <div className="city-name mb-2">Nearby Cities</div>
-        {renderCityGrid(cities.nearby)}
-      </div>
+
 
       <div>
         <div className="city-name mb-2 mt-2">Popular Cities</div>

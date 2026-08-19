@@ -8,7 +8,8 @@ text-align: center;
 
 .section-header h2 {
 font-size: 32px;
-font-family: var(--font-regular);
+font-family: var(--font-semibold);
+font-weight: bold;
 color: var( --Eerie-Black);
 margin: 36px 0 14px 0;
 }

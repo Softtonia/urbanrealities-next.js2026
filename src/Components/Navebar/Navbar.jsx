@@ -23,103 +23,14 @@ import { useSiteSettings } from "../mycontext/siteSettingContext";
 import { useCity } from "@/utils/CityContext";
 import { getSiteSettingsData } from "@/services/site-setting.service";
 import NotificationDropdown from "./NotificationDropdown";
-
-const staticCities = {
-  filter_city: null,
-  nearby: [
-    { id: 1, name: "New Delhi" },
-    { id: 2, name: "Gurgaon" },
-    { id: 3, name: "Greater Noida" },
-  ],
-  popular: [
-    { id: 4, name: "Ahmedabad" },
-    { id: 5, name: "Bangalore" },
-    { id: 6, name: "Beyond Thane" },
-    { id: 7, name: "Chennai" },
-    { id: 8, name: "Gurgaon" },
-    { id: 9, name: "Hyderabad" },
-    { id: 10, name: "Indore" },
-    { id: 11, name: "Jaipur" },
-    { id: 12, name: "Kolkata" },
-    { id: 13, name: "Lucknow" },
-    { id: 14, name: "Mumbai" },
-    { id: 15, name: "Navi Mumbai" },
-    { id: 16, name: "New Delhi" },
-    { id: 17, name: "Noida" },
-    { id: 18, name: "Pune" },
-    { id: 19, name: "Thane" },
-  ],
-  other: [
-    { id: 20, name: "Agra" },
-    { id: 21, name: "Ahmadnagar" },
-    { id: 22, name: "Allahabad" },
-    { id: 23, name: "Aluva" },
-    { id: 24, name: "Amritsar" },
-    { id: 25, name: "Aurangabad" },
-    { id: 26, name: "Badlapur" },
-    { id: 27, name: "Bareilly" },
-    { id: 28, name: "Belgaum" },
-    { id: 29, name: "Bhiwadi" },
-    { id: 30, name: "Bhiwandi" },
-    { id: 31, name: "Bhopal" },
-    { id: 32, name: "Bhubaneswar" },
-    { id: 33, name: "Bokaro Steel City" },
-    { id: 34, name: "Chandigarh" },
-    { id: 35, name: "Chengalpattu" },
-    { id: 36, name: "Coimbatore" },
-    { id: 37, name: "Dehradun" },
-    { id: 38, name: "Durgapur" },
-    { id: 39, name: "Ernakulam" },
-    { id: 40, name: "Erode" },
-    { id: 41, name: "Faridabad" },
-    { id: 42, name: "Ghaziabad" },
-    { id: 43, name: "Goa" },
-    { id: 44, name: "Gorakhpur" },
-    { id: 45, name: "Greater Noida" },
-    { id: 46, name: "Guntur" },
-    { id: 47, name: "Guwahati" },
-    { id: 48, name: "Gwalior" },
-    { id: 49, name: "Haridwar" },
-    { id: 50, name: "Hosur" },
-    { id: 51, name: "Hubli" },
-    { id: 52, name: "Jabalpur" },
-    { id: 53, name: "Jalandhar" },
-    { id: 54, name: "Jammu" },
-    { id: 55, name: "Jamshedpur" },
-    { id: 56, name: "Jodhpur" },
-    { id: 57, name: "Kalyan" },
-    { id: 58, name: "Kannur" },
-    { id: 59, name: "Kanpur" },
-    { id: 60, name: "Khopoli" },
-    { id: 61, name: "Kochi" },
-    { id: 62, name: "Kodaikanal" },
-    { id: 63, name: "Kottayam" },
-    { id: 64, name: "Kozhikode" },
-    { id: 65, name: "Lonavala" },
-    { id: 66, name: "Ludhiana" },
-    { id: 67, name: "Madurai" },
-    { id: 68, name: "Mangalore" },
-    { id: 69, name: "Mohali" },
-    { id: 70, name: "Mysore" },
-    { id: 71, name: "Nagpur" },
-    { id: 72, name: "Nainital" },
-    { id: 73, name: "Nanded" },
-    { id: 74, name: "Nashik" },
-    { id: 75, name: "Navsari" },
-    { id: 76, name: "Nellore" },
-    { id: 77, name: "Newtown" },
-    { id: 78, name: "Ooty" },
-    { id: 79, name: "Palakkad" },
-    { id: 80, name: "Palghar" },
-  ],
-};
+import { get } from "@/lib/api";
 
 export default function Navbar() {
   const { city, setCity, isLoadingCity } = useCity();
   const cityId = city ? city.id : "";
   const cityName = city ? city.name : "";
   const [activeCity, setActiveCity] = useState(cityId);
-  const [cities, setCities] = useState(staticCities);
+  const [cities, setCities] = useState({ filter_city: null, nearby: [], popular: [], other: [] });
   const router = useRouter();
   const pathname = usePathname();
   const isBusinessDashboard = pathname?.startsWith("/auth/business");
@@ -137,17 +48,20 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    // Commented out to use static data for now
-    /*
+   
     const handler = setTimeout(() => {
       const fetchCities = async () => {
         try {
-          const res = await fetch(
-            `/api/navbar-location?country_id=1&city_id=${cityId}`
-          );
-          const data = await res.json();
-          if (data?.cities) {
-            setCities(data.cities);
+          const res = await get("/api/get-popular-cities");
+          const responseData = res?.data || res;
+          
+          if (responseData) {
+            setCities({
+              filter_city: null,
+              nearby: [],
+              popular: responseData.popular_cities || [],
+              other: responseData.other_cities || []
+            });
           }
         } catch (err) {
           console.error("Error fetching cities:", err);
@@ -157,7 +71,7 @@ export default function Navbar() {
     }, 400);
 
     return () => clearTimeout(handler);
-    */
+    
   }, [activeCity, cityId]);
 
   const renderCityGrid = (citiesArray, handleSuggestionClick) => {
@@ -205,7 +119,7 @@ export default function Navbar() {
     fetchSiteSettings();
   }, []);
 
-  const [activeDropdown, setActiveDropdown] = useState(null); // "buy" | "rent" | "sell" | null
+  const [activeDropdown, setActiveDropdown] = useState(null); 
 
   const toggleDropdown = (menu) => {
     setActiveDropdown((prev) => (prev === menu ? null : menu));
@@ -303,7 +217,7 @@ export default function Navbar() {
                 </div>
               ) : (
                 <Image
-                  src={siteData?.website_logo || siteData?.mobile_logo}
+                  src={siteData?.website_logo || siteData?.mobile_logo || "/logo.png"}
                   alt="Urbanrealities"
                   width={90}
                   height={30}
@@ -807,10 +721,7 @@ export default function Navbar() {
                 )}
               </div>
 
-              <div className="mb-3">
-                <div className="city-heading-mob mb-2 ms-3">Nearby Cities</div>
-                {renderCityGrid(cities.nearby, handleSuggestionClick)}
-              </div>
+
 
               <div className="mb-3">
                 <div className="city-heading-mob mb-2 ms-3">Popular Cities</div>

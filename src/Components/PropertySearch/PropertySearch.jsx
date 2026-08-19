@@ -30,7 +30,7 @@ export default function PropertySearch({ purpose }) {
   const locationRef = useRef(null)
   const budgetDropdownRef = useRef(null);
   const router = useRouter();
-  const { city: globalCity } = useCity();
+  const { city: globalCity, setCity: setGlobalCity } = useCity();
   const [localCity, setLocalCity] = useState(null);
 
   useEffect(() => {
@@ -92,13 +92,15 @@ export default function PropertySearch({ purpose }) {
   };
 
 
-  const selectPrice = (price, e) => {
+  const selectMinPrice = (price, e) => {
     e.stopPropagation();
-    if (activePriceType === "min") {
-      setMinPrice(price.value);
-    } else {
-      setMaxPrice(price.value);
-    }
+    setMinPrice(price.value);
+    setActivePriceType("max");
+  };
+
+  const selectMaxPrice = (price, e) => {
+    e.stopPropagation();
+    setMaxPrice(price.value);
   };
 
   // Fetch search options
@@ -164,7 +166,7 @@ export default function PropertySearch({ purpose }) {
     
     const purposeName = searchOptions?.purposes?.find(p => p.value === localPurpose)?.name || "";
 
-    if (selected.length === 0) return purposeName ? `${purposeName} - Type` : "Select Type";
+    if (selected.length === 0) return purposeName ? `${purposeName} - Type` : "Property Type";
     if (selected.length === 1) return `${purposeName ? purposeName + ' - ' : ''}${selected[0].name}`;
     return `${purposeName ? purposeName + ' - ' : ''}${selected[0].name} +${selected.length - 1} more`;
   })();
@@ -303,6 +305,7 @@ export default function PropertySearch({ purpose }) {
                             onClick={() => {
                               setInputLocation(loc.name);
                               setSelectedCityId(loc.city_id);
+                              setGlobalCity({ id: loc.city_id, name: loc.name });
                               setIsLocationOpen(false);
                             }}
                           >
@@ -375,7 +378,7 @@ export default function PropertySearch({ purpose }) {
                 <FaHouse className={"icon-custom"} />
                 <div className="nav-text">
                   <span className="text-muted nav-text">
-                    {selectedTypeNames || "Select Type"}
+                    {selectedTypeNames || "Property Type"}
                   </span>
                 </div>
               </div>
@@ -461,47 +464,37 @@ export default function PropertySearch({ purpose }) {
               </div>
               {budgetDropdown && (
                 <div className="dropdown-menu custom-dropdown-3 show">
-                  <div className="price-text d-flex gap-2 mb-2 body-text-14">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Min Price"
-                      value={minPrice}
+                  <div className="price-tabs d-flex justify-content-between gap-2 mb-3">
+                    <button
+                      type="button"
+                      className={`price-tab-btn ${activePriceType === "min" ? "active" : ""}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleTogglePrice("min");
                       }}
-                      onChange={(e) => setMinPrice(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Max Price"
-                      value={maxPrice}
+                    >
+                      {minPrice ? formatPrice(minPrice) : "Min Price"}
+                    </button>
+                    <button
+                      type="button"
+                      className={`price-tab-btn ${activePriceType === "max" ? "active" : ""}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleTogglePrice("max");
                       }}
-                      onChange={(e) => setMaxPrice(e.target.value)}
-                    />
+                    >
+                      {maxPrice ? formatPrice(maxPrice) : "Max Price"}
+                    </button>
                   </div>
 
                   <div className="price-container d-flex body-text-12 text-muted">
-                    <div
-                      className={`price-section ${activePriceType === "min" ? "active" : ""
-                        }`}
-                    >
+                    <div className="price-section w-50 pe-2" style={{ display: 'block' }}>
                       <div className="price-list">
-                        <span
-                          className="toggle-link"
-                          onClick={() => handleTogglePrice("min")}
-                        >
-                          Min
-                        </span>
+                        <span className="toggle-link">Min</span>
                         {filteredMinOptions.map((price, index) => (
                           <div
                             key={index}
-                            onClick={(e) => selectPrice(price, e)}
+                            onClick={(e) => selectMinPrice(price, e)}
                             style={{ padding: "6px 8px", cursor: "pointer" }}
                             className="price-option-item"
                           >
@@ -511,21 +504,13 @@ export default function PropertySearch({ purpose }) {
                       </div>
                     </div>
 
-                    <div
-                      className={`price-section ${activePriceType === "max" ? "active" : ""
-                        }`}
-                    >
+                    <div className="price-section w-50 ps-2" style={{ display: 'block', borderLeft: '1px solid #eee' }}>
                       <div className="price-list">
-                        <span
-                          className="toggle-link"
-                          onClick={() => handleTogglePrice("max")}
-                        >
-                          Max
-                        </span>
+                        <span className="toggle-link">Max</span>
                         {filteredMaxOptions.map((price, index) => (
                           <div
                             key={index}
-                            onClick={(e) => selectPrice(price, e)}
+                            onClick={(e) => selectMaxPrice(price, e)}
                             style={{ padding: "6px 8px", cursor: "pointer" }}
                             className="price-option-item"
                           >

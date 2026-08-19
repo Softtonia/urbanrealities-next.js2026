@@ -22,7 +22,7 @@ const TestimonialCard = ({ avatarSrc, name, location, rating, text }) => {
   return (
     <div className={styles['testimonial-card']}>
       <p className={styles['testimonial-text']}>
-        "{displayText}"
+        {displayText}
         {text.length > MAX_LENGTH && (
           <span
             className={styles['read-more']}
@@ -44,15 +44,14 @@ const TestimonialCard = ({ avatarSrc, name, location, rating, text }) => {
           />
         )}
         <div className={styles['author-section']}>
-          {/* Uncomment below if you want to show stars */}
           <div className={styles.rating}>
-            {Array.from({ length: 3 }, (_, i) => (
+            {Array.from({ length: 5 }, (_, i) => (
               <FaStar key={i} />
             ))}
           </div>
           <div className={styles['author-info']}>
-            <p className={styles['author-name']}>{name}</p>
-            <p className={styles['author-location']}>{location}</p>
+            <span className={styles['author-name']}>{name}</span>
+            {location && <span className={styles['author-location']}>, {location}</span>}
           </div>
         </div>
       </div>

@@ -10,8 +10,7 @@ const fetchReviews = async () => {
     if (data) return data;
     return [];
   } catch (error) {
-    console.log(err.response)
-    console.error("Error fetching reviews", err);
+    console.error("Error fetching reviews", error);
     return [];
   }
 };
