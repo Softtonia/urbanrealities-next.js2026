@@ -120,6 +120,12 @@
   padding: 8px 20px;
 }
 
+.btn.search-btn:hover {
+  background-color: var(--Orange-Red);
+  color: #fff !important;
+  opacity: 0.9;
+}
+
 .dropdown-item {
   margin-bottom: 15px;
 }

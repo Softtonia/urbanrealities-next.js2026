@@ -1,6 +1,22 @@
-
 import axios from "axios";
 import CryptoJS from "crypto-js";
+
+// Add a global interceptor to handle 401 responses for all API calls
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // If we are on the client-side, clear storage and log the user out
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("userRole");
+        window.location.reload();
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 import {
   LARAVEL_API_BASE_URL,

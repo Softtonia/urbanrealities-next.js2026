@@ -1,16 +1,23 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const CityContext = createContext();
 
 export function CityProvider({ children }) {
   const [city, setCity] = useState(null);
   const [isLoadingCity, setIsLoadingCity] = useState(true);
+  const router = useRouter();
+
+  const setCookie = (cityObj) => {
+    document.cookie = `selectedCity=${encodeURIComponent(JSON.stringify(cityObj))}; path=/; max-age=31536000`;
+  };
 
   useEffect(() => {
     const storedCity = localStorage.getItem("selectedCity");
     if (storedCity) {
       setCity(JSON.parse(storedCity));
+      setCookie(JSON.parse(storedCity));
       setTimeout(() => {
         setIsLoadingCity(false);
       }, 800);
@@ -28,10 +35,12 @@ export function CityProvider({ children }) {
               const newCity = { id: 16, name: cityName }; 
               setCity(newCity);
               localStorage.setItem("selectedCity", JSON.stringify(newCity));
+              setCookie(newCity);
             } catch (err) {
               const defaultCity = { id: 16, name: "New Delhi" };
               setCity(defaultCity);
               localStorage.setItem("selectedCity", JSON.stringify(defaultCity));
+              setCookie(defaultCity);
             } finally {
               setTimeout(() => setIsLoadingCity(false), 800);
             }
@@ -41,6 +50,7 @@ export function CityProvider({ children }) {
             const defaultCity = { id: 16, name: "New Delhi" };
             setCity(defaultCity);
             localStorage.setItem("selectedCity", JSON.stringify(defaultCity));
+            setCookie(defaultCity);
             setTimeout(() => setIsLoadingCity(false), 800);
           }
         );
@@ -48,6 +58,7 @@ export function CityProvider({ children }) {
         const defaultCity = { id: 16, name: "New Delhi" };
         setCity(defaultCity);
         localStorage.setItem("selectedCity", JSON.stringify(defaultCity));
+        setCookie(defaultCity);
         setTimeout(() => setIsLoadingCity(false), 800);
       }
     }
@@ -57,6 +68,8 @@ export function CityProvider({ children }) {
   const updateCity = (newCity) => {
     setCity(newCity);
     localStorage.setItem("selectedCity", JSON.stringify(newCity)); // ✅ stringify
+    setCookie(newCity);
+    router.refresh();
   };
 
   return (

@@ -47,8 +47,8 @@ const Testimonials = ({reviews}) => {
 
   return (
     <div className="testimonialsssection">
-      <div className="container d-flex flex-column align-items-center">
-        <h6 className="testimonials-title text-center">
+      <div className="container d-flex flex-column align-items-start">
+        <h6 className="testimonials-title text-start">
           Where Every Home Tells a Story:{" "}
         </h6>
         <SubHero

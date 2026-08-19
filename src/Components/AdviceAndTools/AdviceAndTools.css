@@ -5,28 +5,36 @@
 .maincontainer {
     max-width: 1440px;
     margin: 0 auto;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
-    justify-content: center;
     padding-top: 60px;
 }
 
 .advicecard {
     width: 100%;
-    max-width: 335px;
     aspect-ratio: 1/1;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f1f0f0;
-    border-radius: 12px;
-    border: 1px solid var(--Orange-Red);
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.advicecard:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    border-color: rgba(0,0,0,0.02);
 }
 
 .cardinner {
-    width: 230px;
-    height: 225px;
+    width: 100%;
+    padding: 24px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -34,8 +42,14 @@
 }
 
 .iconsection {
-    width: 133.72px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
+
+.advicecard:hover .iconsection {
+    transform: scale(1.08);
 }
 
 .iconsection img {
@@ -45,58 +59,62 @@
 }
 
 .textsection {
-    width: 230px;
-    height: 111px;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
 }
 
 .textcontent {
-    width: 230px;
-    height: 94px;
+    margin-bottom: 15px;
 }
 
 .advicebtndiv {
-    width: 94px;
-    height: 20px;
-    padding: 0;
-    margin: 0;
+    margin-top: auto;
 }
 
 .propertyvaluation {
-    font-family: 'poppins-semibold';
-    font-size: 24px;
+    font-family: var(--font-semibold);
+    font-size: 20px;
+    margin-bottom: 8px;
+    color: var(--Eerie-Black);
 }
 
 .actualvalue {
-    font-family: 'poppins-regular';
-    color: #343339;
+    font-family: var(--font-regular);
+    font-size: 14px;
+    color: #666666;
+    line-height: 1.4;
 }
 
 .advicebtn {
-    font-family: 'poppins-bold';
+    font-family: var(--font-semibold);
     text-decoration: none;
-    margin: 0;
-    padding: 0;
-    width: 94px;
-    height: 20px;
+    color: var(--Orange-Red);
+    font-size: 14px;
+    display: inline-block;
+    transition: color 0.3s ease;
 }
 
+.advicebtn:hover {
+    color: #d14917;
+}
+
+@media (max-width: 992px) {
+    .maincontainer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
 @media (max-width: 768px) {
     .adviceandtools-container {
         padding: 40px 15px;
     }
-    
-    /* .advicecard {
-        max-width: 100%;
-    } */
 }
 @media (max-width: 576px) {
-    .advicecard {
-        max-width: 100%;
-    }
-    
     .maincontainer {
-        flex-direction: column;
-        align-items: center;
+        grid-template-columns: 1fr;
     }
     
     .cardinner {

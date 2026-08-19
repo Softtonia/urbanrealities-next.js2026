@@ -166,9 +166,9 @@ const Dashboard = () => {
           </div>
           <div className={styles.cardBody}>
             <div className={styles.infoRow}><span>Full Name</span><strong>{fullName}</strong></div>
-            <div className={styles.infoRow}><span>Username</span><strong>{profile.user_name || "N/A"}</strong></div>
-            <div className={styles.infoRow}><span>Mobile Number</span><strong>{profile.phone || "N/A"}</strong></div>
-            <div className={styles.infoRow}><span>Email Address</span><strong>{profile.email || "N/A"}</strong></div>
+            <div className={styles.infoRow}><span>Username</span><strong>{profile.user_name || "-"}</strong></div>
+            <div className={styles.infoRow}><span>Mobile Number</span><strong>{profile.phone || "-"}</strong></div>
+            <div className={styles.infoRow}><span>Email Address</span><strong>{profile.email || "-"}</strong></div>
             <div className={styles.infoRow}><span>Role</span><strong>{profile.role_name || "Owner"}</strong></div>
             <div className={styles.infoRow}><span>User ID</span><strong>{profile.unique_id || "-"}</strong></div>
           </div>

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import SubHero from "../SubHero/SubHero";
 import ProjectCard from "./ProjectCard";
 import { get } from "@/lib/api";
+import { useCity } from "@/utils/CityContext";
 
 const ProjectCarousel = ({ projects }) => {
   const router = useRouter();
@@ -13,23 +14,27 @@ const ProjectCarousel = ({ projects }) => {
   const scrollAmount = 850;
   const [hasMounted, setHasMounted] = useState(false);
   const [featuredProjects, setFeaturedProjects] = useState([]);
+  const { city } = useCity();
 
   useEffect(() => {
     setHasMounted(true);
     const fetchFeatured = async () => {
       try {
+        const cityId = city?.id || 16;
         const response = await get(
-          `/api/guest/posts/property-listing?featured=1`,
+          `/api/frontend/city-explore/featured-properties?city_id=${cityId}&page=1&per_page=15`,
         );
         if (response?.data?.items) {
           setFeaturedProjects(response.data.items);
+        } else if (Array.isArray(response?.data)) {
+          setFeaturedProjects(response.data);
         }
       } catch (err) {
         console.error("Error fetching featured properties", err);
       }
     };
     fetchFeatured();
-  }, []);
+  }, [city]);
 
   if (!hasMounted) return null;
 

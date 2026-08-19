@@ -8,6 +8,7 @@ import SubHero from "../SubHero/SubHero";
 import slides from "../../../public/slides";
 import { formatprice } from "@/utils/formatprice";
 import { get } from "@/lib/api";
+import { useCity } from "@/utils/CityContext";
 
 const FeaturesCopy = ({ projects }) => {
   const [current, setCurrent] = useState(0);
@@ -15,6 +16,7 @@ const FeaturesCopy = ({ projects }) => {
   const [hasMounted, setHasMounted] = useState(false);
   const [slides, setSlides] = useState([]);
   const scrollRef = useRef(null);
+  const { city } = useCity();
   // const slides = projects?.map((val) => {
   //   const banner = val?.custom_field_values?.find((f) =>
   //     f?.template?.slug?.includes("banner")
@@ -50,9 +52,12 @@ const FeaturesCopy = ({ projects }) => {
 
     const fetchFeatured = async () => {
       try {
-        const response = await get("/api/guest/posts/project-listing?featured=1");
+        const cityQuery = city?.id ? `&city_id=${city.id}` : "";
+        const response = await get(`/api/guest/posts/project-listing?featured=1${cityQuery}`);
         if (response?.data?.items) {
           setSlides(response.data.items);
+        } else if (Array.isArray(response?.data)) {
+          setSlides(response.data);
         }
       } catch (err) {
         console.error("Error fetching featured projects", err);
@@ -63,7 +68,7 @@ const FeaturesCopy = ({ projects }) => {
     setHasMounted(true); // Set mounted state to true after initial render
 
     return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  }, [city]);
 
 
   if (!hasMounted) return null;
@@ -155,10 +160,9 @@ const FeaturesCopy = ({ projects }) => {
     <div className="features-copy-section">
       <div className="features-copy container">
         <div className="features-copy-heading">
-          <h2>Our diverse range of properties ensures</h2>
           <SubHero
-            subHeroHeading={"there's something for everyone."}
-            subHeroText={""}
+            subHeroHeading={"Popular Projects"}
+            subHeroText={"EXPLORE"}
           />
         </div>
 

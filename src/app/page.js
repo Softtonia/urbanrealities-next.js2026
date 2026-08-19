@@ -12,6 +12,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import { get, getssr } from "@/lib/api";
 import { LARAVEL_API_BASE_URL } from "@/lib/config";
+import { cookies } from "next/headers";
 
 const backendBase = process.env.LARAVEL_API_BASE_URL?.replace(/\/$/, "") || "";
 
@@ -24,9 +25,10 @@ const extractArray = (res) => {
   return [];
 };
 
-const fetchProject = async () => {
+const fetchProject = async (cityId) => {
   try {
-    const response = await getssr(`/api/get-all-project-listing-no-auth?per_page=10`);
+    const url = cityId ? `/api/get-all-project-listing-no-auth?per_page=10&city_id=${cityId}` : `/api/get-all-project-listing-no-auth?per_page=10`;
+    const response = await getssr(url);
     return extractArray(response);
   } catch (err) {
     console.error("Error fetching Projects", err);
@@ -34,9 +36,10 @@ const fetchProject = async () => {
   }
 }
 
-const fetchProperties = async () => {
+const fetchProperties = async (cityId) => {
   try {
-    const response = await getssr(`/api/get-all-properties-listing-no-auth?per_page=8`);
+    const url = cityId ? `/api/get-all-properties-listing-no-auth?per_page=8&city_id=${cityId}` : `/api/get-all-properties-listing-no-auth?per_page=8`;
+    const response = await getssr(url);
     return extractArray(response);
   } catch (err) {
     console.error("Error fetching properties", err);
@@ -44,9 +47,10 @@ const fetchProperties = async () => {
   }
 }
 
-const fetchDeveloper = async () => {
+const fetchDeveloper = async (cityId) => {
   try {
-    const response = await getssr(`/api/fetch-all-developer-listing-no-auth?per_page=5`);
+    const url = cityId ? `/api/fetch-all-developer-listing-no-auth?per_page=5&city_id=${cityId}` : `/api/fetch-all-developer-listing-no-auth?per_page=5`;
+    const response = await getssr(url);
     return extractArray(response);
   } catch (err) {
     console.error("Error fetching Developer", err);
@@ -67,9 +71,19 @@ const fetchReviews = async () => {
 
 
 export default async function Home() {
-  const projects = await fetchProject()
-  const propertyList = await fetchProperties()
-  const developer = await fetchDeveloper()
+  const cookieStore = cookies();
+  const cityCookie = cookieStore.get("selectedCity");
+  let cityId = "";
+  if (cityCookie) {
+    try {
+      const cityData = JSON.parse(decodeURIComponent(cityCookie.value));
+      cityId = cityData.id;
+    } catch (e) {}
+  }
+
+  const projects = await fetchProject(cityId)
+  const propertyList = await fetchProperties(cityId)
+  const developer = await fetchDeveloper(cityId)
   const reviews = await fetchReviews()
   return (
     <>

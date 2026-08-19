@@ -22,10 +22,11 @@ export async function checkAuth() {
         console.error("Auth check failed:", error.response?.data || error.message);
         
         if (error.response?.status === 401) {
-            // localStorage.removeItem("token");
-            // localStorage.removeItem("userId");
+            localStorage.removeItem("token");
+            localStorage.removeItem("userId");
+            localStorage.removeItem("userRole");
             // Option 1: Reload page
-            // window.location.reload();
+            window.location.reload();
 
             // Option 2: Redirect to login page
             // window.location.href = "/auth/login";
