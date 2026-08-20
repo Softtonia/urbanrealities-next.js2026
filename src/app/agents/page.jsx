@@ -22,7 +22,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function FindAgentPage() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const cityCookie = cookieStore.get("selectedCity");
   let cityId = "";
   if (cityCookie) {

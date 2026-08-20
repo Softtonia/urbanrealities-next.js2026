@@ -21,7 +21,7 @@ const AboutPropertyList = ({ userProperties }) => {
     }
   }, [searchParams]);
   const handlepurpose = (purposeId) => {
-    router.push(`/all-agent/${id}?purpose=${purposeId}`);
+    router.push(`/agent-details/${id}?purpose=${purposeId}`);
     setFilter(purposeId);
   };
   console.log("=>>", filter)

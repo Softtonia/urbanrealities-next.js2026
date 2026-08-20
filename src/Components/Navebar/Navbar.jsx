@@ -234,11 +234,11 @@ export default function Navbar() {
 
             <div
               className="position-relative"
-              onClick={() => toggleDropdown("location")}
             >
               <div
                 className="nav-link d-flex align-items-center pb-1"
                 role="button"
+                onClick={() => toggleDropdown("location")}
               >
                 {isLoadingCity ? (
                   <div className="placeholder-glow d-flex align-items-center">
@@ -280,9 +280,8 @@ export default function Navbar() {
             <ul className="navbar-nav d-flex flex-row align-items-center gap-3 mb-0">
               <li
                 className="nav-item dropdown position-static"
-                onClick={() => toggleDropdown("buy")}
               >
-                <div className="nav-items-name">
+                <div className="nav-items-name" onClick={() => toggleDropdown("buy")} style={{ cursor: "pointer" }}>
                   Buy <GoChevronDown />
                 </div>
                 <div
@@ -297,10 +296,9 @@ export default function Navbar() {
 
               <li
                 className="nav-item dropdown position-static"
-                onClick={() => toggleDropdown("rent")}
               >
                 {" "}
-                <div className="nav-items-name">
+                <div className="nav-items-name" onClick={() => toggleDropdown("rent")} style={{ cursor: "pointer" }}>
                   Rent <GoChevronDown />
                 </div>
                 <div
@@ -314,10 +312,9 @@ export default function Navbar() {
               </li>
               <li
                 className="nav-item dropdown position-static"
-                onClick={() => toggleDropdown("sell")}
               >
                 {" "}
-                <div className="nav-items-name">
+                <div className="nav-items-name" onClick={() => toggleDropdown("sell")} style={{ cursor: "pointer" }}>
                   Sell <GoChevronDown />
                 </div>
                 <div
@@ -365,11 +362,11 @@ export default function Navbar() {
               <div
                 className="dropdown"
                 style={{ position: "relative" }}
-                onClick={() => toggleDropdown("help")}
               >
                 <button
                   className="btn btn-link text-white text-decoration-none dropdown-toggle nav-items-name"
                   type="button"
+                  onClick={() => toggleDropdown("help")}
                 >
                   Help
                 </button>

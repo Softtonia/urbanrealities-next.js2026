@@ -94,11 +94,11 @@ export default function AgentCard({ agent }) {
         <div className={` ${styles.middlesection} d-flex justify-content-between align-items-start`}>
           <div className={styles.stats}>
             <div className={styles.agentstats}>
-              <p className={styles.statsNumber}>{agent.rent || '15'}+</p>
+              <p className={styles.statsNumber}>{agent.rent_listings_count ?? agent.purpose_counts?.rent ?? 0}+</p>
               <p className="m-0"> Properties for rent</p>
             </div>
             <div className={styles.agentstats}>
-              <p className={styles.statsNumber}>{agent.sale || '40'}+</p>
+              <p className={styles.statsNumber}>{agent.sell_listings_count ?? agent.purpose_counts?.sell ?? 0}+</p>
               <p className="m-0">Properties for Sell</p>
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function AgentCard({ agent }) {
             <button onClick={handleShow} className={styles.callBtn}>
               Request a Call Back
             </button>
-            <Link href={`/all-agent/${agent.first_name}-${agent.id}`} className={styles.visitBtn}>
+            <Link href={`/agent-details/${agent.first_name}-${agent.id}`} className={styles.visitBtn}>
               View Profile
             </Link>
           </div>

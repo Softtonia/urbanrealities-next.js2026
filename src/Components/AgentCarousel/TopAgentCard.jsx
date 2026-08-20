@@ -9,16 +9,16 @@ import { FaBuilding } from "react-icons/fa";
 export default function TopAgentCard({ agent }) {
   // Use business details if available, fallback to agent details
   const companyName = agent.business_name || agent.role_name || "Independent Agent";
-  const operatesSince = "2020"; // Fallback, API doesn't seem to have this field yet
-  const buyersServed = agent.buyers_served || "100+"; // Fallback
-  const propertiesForSale = agent.sale || agent.properties_for_sale || "15";
-  const propertiesForRent = agent.rent || agent.properties_for_rent || "5";
+  const operatesSince = agent.created_at ? new Date(agent.created_at).getFullYear() : "-";
+  const buyersServed = agent.buyers_served || "-"; // Fallback
+  const propertiesForSale = agent.sell_listings_count ?? agent.purpose_counts?.sell ?? 0;
+  const propertiesForRent = agent.rent_listings_count ?? agent.purpose_counts?.rent ?? 0;
 
   // Generate a fallback logo using initials
   const initials = companyName.substring(0, 2).toUpperCase();
 
   return (
-    <Link href={`/all-agent/${agent.first_name}-${agent.id}`} style={{ textDecoration: 'none' }}>
+    <Link href={`/agent-details/${agent.first_name}-${agent.id}`} style={{ textDecoration: 'none' }}>
       <div className={styles.cardContainer}>
         
         {/* Header Section */}

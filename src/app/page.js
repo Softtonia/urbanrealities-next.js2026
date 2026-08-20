@@ -28,14 +28,16 @@ const extractArray = (res) => {
 
 const fetchProject = async (cityId) => {
   try {
-    const url = cityId ? `/api/get-all-project-listing-no-auth?per_page=10&city_id=${cityId}` : `/api/get-all-project-listing-no-auth?per_page=10`;
+    const url = cityId
+      ? `/api/get-all-project-listing-no-auth?per_page=10&city_id=${cityId}`
+      : `/api/get-all-project-listing-no-auth?per_page=10`;
     const response = await getssr(url);
     return extractArray(response);
   } catch (err) {
     console.error("Error fetching Projects", err);
     return [];
   }
-}
+};
 
 const fetchProperties = async (cityId) => {
   try {
@@ -47,18 +49,20 @@ const fetchProperties = async (cityId) => {
     console.error("Error fetching properties", err);
     return [];
   }
-}
+};
 
 const fetchDeveloper = async (cityId) => {
   try {
-    const url = cityId ? `/api/fetch-all-developer-listing-no-auth?per_page=5&city_id=${cityId}` : `/api/fetch-all-developer-listing-no-auth?per_page=5`;
+    const url = cityId
+      ? `/api/fetch-all-developer-listing-no-auth?per_page=5&city_id=${cityId}`
+      : `/api/fetch-all-developer-listing-no-auth?per_page=5`;
     const response = await getssr(url);
     return extractArray(response);
   } catch (err) {
     console.error("Error fetching Developer", err);
     return [];
   }
-}
+};
 
 const fetchAgents = async (cityId) => {
   try {
@@ -72,13 +76,13 @@ const fetchAgents = async (cityId) => {
     console.error("Error fetching Agents", err);
     return [];
   }
-}
+};
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Home() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const cityCookie = cookieStore.get("selectedCity");
   let cityId = "";
   let cityName = "your area";
@@ -92,9 +96,9 @@ export default async function Home() {
     } catch (e) {}
   }
 
-  const projects = await fetchProject(cityId)
-  const propertyList = await fetchProperties(cityId)
-  const developer = await fetchDeveloper(cityId)
+  const projects = await fetchProject(cityId);
+  const propertyList = await fetchProperties(cityId);
+  const developer = await fetchDeveloper(cityId);
   const agents = await fetchAgents(cityId);
 
   return (
@@ -103,25 +107,41 @@ export default async function Home() {
       <FeaturesCopy projects={projects} />
       <PropertyListing propertyList={propertyList} />
       <SponsoredProperty developer={developer} />
-      
-      <div className="container" style={{ paddingBottom: '2rem' }}>
-        <SubHero subHeroHeading={`Holiplaces Agents in ${cityName}`} subHeroText="Find the best real estate experts" />
-        
-        {agents && agents.length > 0 ? (
-          <div style={{ marginTop: '1.5rem' }}>
-            <AgentCarousel agents={agents} />
-          </div>
-        ) : (
-          <p style={{ color: '#666', marginTop: '1.5rem' }}>No agents are currently available in {cityName}.</p>
-        )}
-      </div>
 
       <ProjectCarousel projects={projects} />
       <AdviceAndTools />
       <PropertyServices />
 
-      <PopularCities />
+      <div className="container" style={{ paddingBottom: "2rem" , marginTop: "25px" }}>
+        <SubHero
+          subHeroHeading={`Holiplaces Agents in ${cityName}`}
+          subHeroText="Find the best real estate experts"
+        />
 
+        {agents && agents.length > 0 ? (
+          <div style={{ marginTop: "1.5rem" }}>
+            <AgentCarousel agents={agents} />
+          </div>
+        ) : (
+          <div className="empty-state-wrapper" style={{ marginTop: "1.5rem" }}>
+            <div className="empty-state-content">
+              <div className="empty-state-icon">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <h3>No Agents Found</h3>
+              <p>We couldn't find any real estate experts in {cityName} at the moment.</p>
+              <a href="/agents" className="empty-state-btn">Explore All Agents</a>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <PopularCities />
     </>
   );
 }
