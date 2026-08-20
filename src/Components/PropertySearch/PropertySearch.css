@@ -97,10 +97,10 @@
 }
 
 .custom-dropdown-2 {
-  width: 510px;
+  width: 527px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   /* background-color: var(--white) !important; */
-  transform: translate(5px, 25px) !important;
+  transform: translate(-21px, 25px) !important;
   padding: 0;
 }
 

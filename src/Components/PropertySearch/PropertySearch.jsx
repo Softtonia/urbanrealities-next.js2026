@@ -21,6 +21,7 @@ export default function PropertySearch({ purpose }) {
   const [searchOptions, setSearchOptions] = useState(null);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [localPurpose, setLocalPurpose] = useState(purpose || "sell");
+  const [isOptionsLoading, setIsOptionsLoading] = useState(true);
 
   useEffect(() => {
     if (purpose) {
@@ -124,6 +125,7 @@ export default function PropertySearch({ purpose }) {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
+        setIsOptionsLoading(true);
         const res = await fetch(`${LARAVEL_API_BASE_URL}/api/frontend/property-search/options`, {
           headers: {
             "Content-Type": "application/json",
@@ -138,6 +140,8 @@ export default function PropertySearch({ purpose }) {
         }
       } catch (err) {
         console.error("Error fetching property search options:", err);
+      } finally {
+        setIsOptionsLoading(false);
       }
     };
     fetchOptions();
@@ -179,12 +183,17 @@ export default function PropertySearch({ purpose }) {
 
 
   const selectedTypeNames = (() => {
-    const allSelectedTypeSlugs = selectedTypes.map(String);
-    const selected = searchOptions?.property_types?.filter((t) => allSelectedTypeSlugs.includes(String(t.slug))) || [];
+    if (selectedTypes.length === 0) return "Property Type";
 
-    if (selected.length === 0) return "Property Type";
-    if (selected.length === 1) return selected[0].name;
-    return `${selected[0].name} +${selected.length - 1} more`;
+    const firstSelectedSlug = selectedTypes[0];
+    const firstSelectedType = searchOptions?.property_types?.find(
+      (t) => String(t.slug) === String(firstSelectedSlug)
+    );
+
+    const firstName = firstSelectedType ? firstSelectedType.name : "Property Type";
+
+    if (selectedTypes.length === 1) return firstName;
+    return `${firstName} +${selectedTypes.length - 1} more`;
   })();
 
 
@@ -392,8 +401,18 @@ export default function PropertySearch({ purpose }) {
                 onClick={() => setIsTypeOpen((prev) => !prev)}
               >
                 <FaHouse className={"icon-custom"} />
-                <div className="nav-text">
-                  <span className="text-muted nav-text">
+                <div className="nav-text" style={{ flex: 1, maxWidth: "125px", margin: "0 auto 0 0" }}>
+                  <span 
+                    className="text-muted"
+                    style={{ 
+                      display: "block",
+                      whiteSpace: "nowrap", 
+                      overflow: "hidden", 
+                      textOverflow: "ellipsis", 
+                      textAlign: "left",
+                      width: "100%"
+                    }}
+                  >
                     {selectedTypeNames || "Property Type"}
                   </span>
                 </div>
@@ -426,11 +445,18 @@ export default function PropertySearch({ purpose }) {
                     )} */}
                     
                     <div className="d-flex flex-column gap-3">
-                      {searchOptions?.grouped_property_types &&
+                      {isOptionsLoading ? (
+                        <div className="d-flex justify-content-center py-4">
+                          <div className="spinner-border text-danger" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      ) : (
+                        searchOptions?.grouped_property_types &&
                         searchOptions.grouped_property_types.map((group, groupIdx) => (
                           <div key={`group-${groupIdx}`}>
                             <h6 
-                              style={{ fontSize: "12px", fontWeight: "bold", color: "#555", marginBottom: "8px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                              style={{ fontSize: "12px", fontWeight: "bold", color: "#555", marginBottom: "8px", cursor: "pointer", display: "flex", justifyContent: "start", alignItems: "center", gap: "10px" }}
                               onClick={() => toggleGroup(groupIdx)}
                             >
                               {group.name}
@@ -463,7 +489,8 @@ export default function PropertySearch({ purpose }) {
                               </div>
                             )}
                           </div>
-                        ))}
+                        ))
+                      )}
                     </div>
                   </div>
                 </div>
