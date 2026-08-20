@@ -1,0 +1,8 @@
+{
+  "success": false,
+  "status": 401,
+  "data": {
+    "status": false,
+    "error": "Please provide an API token."
+  }
+}

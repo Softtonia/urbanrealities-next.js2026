@@ -1,17 +1,16 @@
-
 import { getssr } from "@/lib/api";
 import AgentCard from "./components/AgentCard/AgentCard";
 import styles from "./components/AllAgents.module.css";
+import { cookies } from "next/headers";
 
-
-async function getAgent() {
+async function getAgent(cityId) {
   try {
-    // ✅ Directly call backend API, not your Next.js API route
-    const response = await getssr(`/api/get-all-users-by-role?role_id=3&per_page&page`);
-    const data = response?.users?.data || response?.data?.users?.data;
-    console.log("==> Agent",response)
+    const timestamp = new Date().getTime();
+    const response = await getssr(
+      `/api/frontend/city-explore/agents?city_id=${cityId || 1}&page=1&per_page=15&t=${timestamp}`,
+    );
+    const data = response?.data?.data;
     if (Array.isArray(data)) return data;
-    if (data?.data) return data.data;
     return [];
   } catch (err) {
     console.error("Error fetching agents:", err);
@@ -19,14 +18,34 @@ async function getAgent() {
   }
 }
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function FindAgentPage() {
-  const agents =await getAgent() // <-- initialize as array
+  const cookieStore = cookies();
+  const cityCookie = cookieStore.get("selectedCity");
+  let cityId = "";
+  if (cityCookie) {
+    try {
+      const cityData = JSON.parse(decodeURIComponent(cityCookie.value));
+      cityId = cityData.id;
+    } catch (e) {}
+  }
+
+  const agents = await getAgent(cityId);
 
   return (
     <div className={` ${styles.findAgent} container`}>
-      {agents.map((field, index) => (
-        <AgentCard key={index} agent={field} /> // <-- return component and add key
-      ))}
+      {agents && agents.length > 0 ? (
+        agents.map((field, index) => (
+          <AgentCard key={index} agent={field} />
+        ))
+      ) : (
+        <div style={{ textAlign: 'center', width: '100%', padding: '4rem 2rem', color: '#666' }}>
+          <h3>No agents found</h3>
+          <p>There are currently no agents listed for your selected city.</p>
+        </div>
+      )}
     </div>
   );
 }

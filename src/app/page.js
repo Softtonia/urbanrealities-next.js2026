@@ -5,8 +5,9 @@ import SponsoredProperty from "@/Components/SponsoredProperty/SponsoredProperty"
 import ProjectCarousel from "@/Components/ProjectCarousel/ProjectCarousel";
 import AdviceAndTools from "@/Components/AdviceAndTools/AdviceAndTools";
 import PropertyServices from "@/Components/PropertyServices/PropertyServices";
-
 import PopularCities from "@/Components/PopularCities/PopularCities";
+import AgentCarousel from "@/Components/AgentCarousel/AgentCarousel";
+import SubHero from "@/Components/SubHero/SubHero";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
@@ -59,22 +60,42 @@ const fetchDeveloper = async (cityId) => {
   }
 }
 
+const fetchAgents = async (cityId) => {
+  try {
+    // Adding a timestamp ensures it always bypasses any aggressive caching in Next.js/Axios
+    const timestamp = new Date().getTime();
+    // Setting per_page=15 so the carousel has items to scroll through
+    const url = `/api/frontend/city-explore/agents?city_id=${cityId || 1}&page=1&per_page=15&t=${timestamp}`;
+    const response = await getssr(url);
+    return response?.data?.data || [];
+  } catch (err) {
+    console.error("Error fetching Agents", err);
+    return [];
+  }
+}
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function Home() {
   const cookieStore = cookies();
   const cityCookie = cookieStore.get("selectedCity");
   let cityId = "";
+  let cityName = "your area";
   if (cityCookie) {
     try {
       const cityData = JSON.parse(decodeURIComponent(cityCookie.value));
       cityId = cityData.id;
+      if (cityData.name) {
+        cityName = cityData.name;
+      }
     } catch (e) {}
   }
 
   const projects = await fetchProject(cityId)
   const propertyList = await fetchProperties(cityId)
   const developer = await fetchDeveloper(cityId)
+  const agents = await fetchAgents(cityId);
 
   return (
     <>
@@ -82,6 +103,19 @@ export default async function Home() {
       <FeaturesCopy projects={projects} />
       <PropertyListing propertyList={propertyList} />
       <SponsoredProperty developer={developer} />
+      
+      <div className="container" style={{ paddingBottom: '2rem' }}>
+        <SubHero subHeroHeading={`Holiplaces Agents in ${cityName}`} subHeroText="Find the best real estate experts" />
+        
+        {agents && agents.length > 0 ? (
+          <div style={{ marginTop: '1.5rem' }}>
+            <AgentCarousel agents={agents} />
+          </div>
+        ) : (
+          <p style={{ color: '#666', marginTop: '1.5rem' }}>No agents are currently available in {cityName}.</p>
+        )}
+      </div>
+
       <ProjectCarousel projects={projects} />
       <AdviceAndTools />
       <PropertyServices />

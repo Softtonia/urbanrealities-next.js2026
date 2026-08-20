@@ -1,0 +1,56 @@
+.agent-carousel-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.agent-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 20px;
+  padding: 10px 4px 20px 4px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.agent-carousel::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+.agent-carousel__buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.agent-carousel__nav-btn {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.agent-carousel__nav-btn:hover {
+  background-color: var(--Orange-Red, #ff5e14);
+  color: #fff;
+  border-color: var(--Orange-Red, #ff5e14);
+}
+
+.agent-carousel__nav-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .agent-carousel__buttons {
+    display: none; /* Hide buttons on mobile where swipe is natural */
+  }
+}

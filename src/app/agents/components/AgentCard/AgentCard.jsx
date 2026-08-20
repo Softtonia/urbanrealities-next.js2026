@@ -91,13 +91,13 @@ export default function AgentCard({ agent }) {
           {agent.first_name} <span className={styles.company}>({agent.role_name})</span>
         </h3>
 
-        <div className={` ${styles.middlesection} d-flex justify-content-between`}>
+        <div className={` ${styles.middlesection} d-flex justify-content-between align-items-start`}>
           <div className={styles.stats}>
             <div className={styles.agentstats}>
               <p className={styles.statsNumber}>{agent.rent || '15'}+</p>
               <p className="m-0"> Properties for rent</p>
             </div>
-            <div className={` ${styles.agentstats} borderNone `}>
+            <div className={styles.agentstats}>
               <p className={styles.statsNumber}>{agent.sale || '40'}+</p>
               <p className="m-0">Properties for Sell</p>
             </div>
