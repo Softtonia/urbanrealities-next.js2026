@@ -2,15 +2,18 @@
 import React from "react";
 import styles from "./WhyChooseus.module.css";
 import SubHero from "../SubHero/SubHero";
+import { useSiteSettings } from "../mycontext/siteSettingContext";
 
 const WhyChooseus = () => {
+  const { settings } = useSiteSettings();
+  const siteName = settings?.site_name || "Urbanrealities";
   return (
     <div className={styles.whychoosesection}>
       <div className="container">
         <div className={styles.titlediv}>
           <SubHero
-            subHeroHeading={"Why choose Urbanrealities"}
-            subHeroText={"BENEFITS OF Urbanrealities"}
+            subHeroHeading={`Why choose ${siteName}`}
+            subHeroText={`BENEFITS OF ${siteName}`}
           />
         </div>
       </div>
@@ -37,7 +40,7 @@ const WhyChooseus = () => {
               className={styles['benifit-icon']}
             />
           </div>
-          <h4 className={styles.highlight}>2. Verification by Urbanrealities team</h4>
+          <h4 className={styles.highlight}>2. Verification by {siteName} team</h4>
           <div className={`${styles.description} body-text-16`}>
             Photos/Videos and other details are
             <br /> Verified on location

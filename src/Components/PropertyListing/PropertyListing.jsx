@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import SubHero from "./../SubHero/SubHero";
 import { slugify } from "@/utils/slugify";
 import { formatprice } from "@/utils/formatprice";
+import { useCity } from "@/utils/CityContext";
 // import axios from "axios";
 // import {get} from "@/lib/api";
 // const properties = Array.from({ length: 8 }, (_, index) => ({
@@ -149,6 +150,7 @@ export const PropertyCard = ({ property, handleViewProjectlist }) => {
 };
 
 const PropertyListing = ({ propertyList }) => {
+  const { city } = useCity();
   // const [propertyList, setPropertyList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -184,8 +186,8 @@ const PropertyListing = ({ propertyList }) => {
     <div className="container">
       <div className="property-container">
         <SubHero
-          subHeroHeading={"PROPERTY LISTINGS"}
-          subHeroText={"PROPERTIES FOR RENT"}
+          subHeroHeading={`Owner property in ${city?.name || 'India'}`}
+          subHeroText={""}
         />
 
         <div className="property-listing-scroll">

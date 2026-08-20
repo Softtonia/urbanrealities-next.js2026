@@ -5,6 +5,7 @@ import "./PropertySearch.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { IoLocation, IoSearch } from "react-icons/io5";
 import { FaMapPin, FaHouse, FaRupeeSign, FaBuilding } from "react-icons/fa6";
+import { GoChevronDown, GoChevronUp } from "react-icons/go";
 import { useCity } from "@/utils/CityContext";
 import { slugify } from "@/utils/slugify";
 import { useSearch } from "@/hooks/useSearch";
@@ -20,10 +21,26 @@ export default function PropertySearch({ purpose }) {
   const [searchOptions, setSearchOptions] = useState(null);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [localPurpose, setLocalPurpose] = useState(purpose || "sell");
+
+  useEffect(() => {
+    if (purpose) {
+      // Map 'Buy' to 'sell' to match common API values, otherwise use purpose directly
+      const mappedPurpose = purpose.toLowerCase() === "buy" ? "sell" : purpose.toLowerCase();
+      setLocalPurpose(mappedPurpose);
+    }
+  }, [purpose]);
+
   const [budgetDropdown, setBudgetDropdown] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false)
   const [isTypeOpen, setIsTypeOpen] = useState(false); // ✅ custom dropdown state
+  const [expandedGroups, setExpandedGroups] = useState([0]);
   const [locationSuggestions, setLocationSuggestions] = useState([]);
+
+  const toggleGroup = (groupIdx) => {
+    setExpandedGroups((prev) =>
+      prev.includes(groupIdx) ? prev.filter((id) => id !== groupIdx) : [...prev, groupIdx]
+    );
+  };
 
 
   const dropdownRef = useRef(null);
@@ -116,6 +133,7 @@ export default function PropertySearch({ purpose }) {
         });
         const data = await res.json();
         if (data?.status) {
+
           setSearchOptions(data.data);
         }
       } catch (err) {
@@ -163,12 +181,10 @@ export default function PropertySearch({ purpose }) {
   const selectedTypeNames = (() => {
     const allSelectedTypeSlugs = selectedTypes.map(String);
     const selected = searchOptions?.property_types?.filter((t) => allSelectedTypeSlugs.includes(String(t.slug))) || [];
-    
-    const purposeName = searchOptions?.purposes?.find(p => p.value === localPurpose)?.name || "";
 
-    if (selected.length === 0) return purposeName ? `${purposeName} - Type` : "Property Type";
-    if (selected.length === 1) return `${purposeName ? purposeName + ' - ' : ''}${selected[0].name}`;
-    return `${purposeName ? purposeName + ' - ' : ''}${selected[0].name} +${selected.length - 1} more`;
+    if (selected.length === 0) return "Property Type";
+    if (selected.length === 1) return selected[0].name;
+    return `${selected[0].name} +${selected.length - 1} more`;
   })();
 
 
@@ -386,7 +402,7 @@ export default function PropertySearch({ purpose }) {
               {isTypeOpen && (
                 <div className="dropdown-menu custom-dropdown-2 show">
                   <div className="w-100 p-3">
-                    {searchOptions?.purposes && searchOptions.purposes.length > 0 && (
+                    {/* {searchOptions?.purposes && searchOptions.purposes.length > 0 && (
                       <div className="mb-3">
                         <h6 style={{ fontSize: "12px", fontWeight: "bold", color: "#555", marginBottom: "8px" }}>Purpose</h6>
                         <div className="d-flex flex-wrap" style={{ gap: "10px" }}>
@@ -407,30 +423,45 @@ export default function PropertySearch({ purpose }) {
                           ))}
                         </div>
                       </div>
-                    )}
+                    )} */}
                     
-                    <h6 style={{ fontSize: "12px", fontWeight: "bold", color: "#555", marginBottom: "8px" }}>Property Type</h6>
-                    <div className="d-flex flex-wrap" style={{ gap: "10px" }}>
-                      {searchOptions?.property_types &&
-                        searchOptions.property_types.map((type, idx) => (
-                          <div
-                            className="radio-group body-text-12 text-muted"
-                            key={idx}
-                          >
-                            <input
-                              type="checkbox"
-                              id={`type-${type.slug}`}
-                              checked={selectedTypes.includes(String(type.slug))}
-                              onChange={() => handleTypeChange(String(type.slug))}
-                              name="propertyType"
-                              className="radio-input"
-                            />
-                            <label
-                              htmlFor={`type-${type.slug}`}
-                              className="radio-label"
+                    <div className="d-flex flex-column gap-3">
+                      {searchOptions?.grouped_property_types &&
+                        searchOptions.grouped_property_types.map((group, groupIdx) => (
+                          <div key={`group-${groupIdx}`}>
+                            <h6 
+                              style={{ fontSize: "12px", fontWeight: "bold", color: "#555", marginBottom: "8px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                              onClick={() => toggleGroup(groupIdx)}
                             >
-                              {type.name}
-                            </label>
+                              {group.name}
+                              <span>{expandedGroups.includes(groupIdx) ? <GoChevronUp /> : <GoChevronDown />}</span>
+                            </h6>
+                            {expandedGroups.includes(groupIdx) && (
+                              <div className="d-flex flex-wrap" style={{ gap: "10px" }}>
+                                {group.children &&
+                                  group.children.map((type, idx) => (
+                                    <div
+                                      className="radio-group body-text-12 text-muted"
+                                      key={idx}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        id={`type-${type.slug}`}
+                                        checked={selectedTypes.includes(String(type.slug))}
+                                        onChange={() => handleTypeChange(String(type.slug))}
+                                        name="propertyType"
+                                        className="radio-input"
+                                      />
+                                      <label
+                                        htmlFor={`type-${type.slug}`}
+                                        className="radio-label"
+                                      >
+                                        {type.name}
+                                      </label>
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
                           </div>
                         ))}
                     </div>
