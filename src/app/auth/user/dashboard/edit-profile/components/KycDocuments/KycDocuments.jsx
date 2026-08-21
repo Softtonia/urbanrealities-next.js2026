@@ -32,7 +32,7 @@ import {
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-const KycDocuments = ({ profile, token, onKycError }) => {
+const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
   const router = useRouter();
   const fileInputRef = useRef(null);
   const [activeUploadId, setActiveUploadId] = useState(null);
@@ -52,36 +52,105 @@ const KycDocuments = ({ profile, token, onKycError }) => {
     }
   }, [profile]);
 
-  const [documents, setDocuments] = useState([
-    {
-      id: 1,
-      title: "Aadhaar Card (Front)",
-      subtitle: "Upload clear front side of your Aadhaar card",
-      icon: <FaIdCard />,
-      iconColor: "orange",
-      status: profile?.aadhaar_front ? "Verified" : null,
-      uploadedOn: profile?.aadhaar_front ? "Uploaded" : null,
-      uploading: false,
-      progress: 0,
-      filename: "",
-      field: "aadhaar_front",
-      previewUrl: profile?.aadhaar_front || null,
-    },
-    {
-      id: 2,
-      title: "Aadhaar Card (Back)",
-      subtitle: "Upload clear back side of your Aadhaar card",
-      icon: <FaIdCard />,
-      iconColor: "orange",
-      status: profile?.aadhaar_back ? "Verified" : null,
-      uploadedOn: profile?.aadhaar_back ? "Uploaded" : null,
-      uploading: false,
-      progress: 0,
-      filename: "",
-      field: "aadhaar_back",
-      previewUrl: profile?.aadhaar_back || null,
-    },
-  ]);
+  const getInitialDocs = () => {
+    const roleName = (profile?.role_name || profile?.role || "").toLowerCase();
+    const isBusinessRole = ["agent", "builder", "developer"].includes(roleName);
+    
+    const docs = [
+      {
+        id: 1,
+        title: "Aadhaar Card (Front)",
+        subtitle: "Upload clear front side of your Aadhaar card",
+        icon: <FaIdCard />,
+        iconColor: "orange",
+        status: profile?.aadhaar_front ? "Verified" : null,
+        uploadedOn: profile?.aadhaar_front ? "Uploaded" : null,
+        uploading: false,
+        progress: 0,
+        filename: "",
+        field: "aadhaar_front",
+        previewUrl: profile?.aadhaar_front || null,
+      },
+      {
+        id: 2,
+        title: "Aadhaar Card (Back)",
+        subtitle: "Upload clear back side of your Aadhaar card",
+        icon: <FaIdCard />,
+        iconColor: "orange",
+        status: profile?.aadhaar_back ? "Verified" : null,
+        uploadedOn: profile?.aadhaar_back ? "Uploaded" : null,
+        uploading: false,
+        progress: 0,
+        filename: "",
+        field: "aadhaar_back",
+        previewUrl: profile?.aadhaar_back || null,
+      },
+    ];
+
+    if (isBusinessRole || roleName === "business" || !roleName || roleName === "agency") {
+      docs.push(
+        {
+          id: 3,
+          title: "Business Proof",
+          subtitle: "Upload your business proof document",
+          icon: <FaBuilding />,
+          iconColor: "green",
+          status: profile?.business_proof ? "Verified" : null,
+          uploadedOn: profile?.business_proof ? "Uploaded" : null,
+          uploading: false,
+          progress: 0,
+          filename: "",
+          field: "business_proof",
+          previewUrl: profile?.business_proof || null,
+        },
+        {
+          id: 4,
+          title: "GST Certificate",
+          subtitle: "Upload your GST certificate",
+          icon: <FaIdCard />,
+          iconColor: "blue",
+          status: profile?.gst_certificate ? "Verified" : null,
+          uploadedOn: profile?.gst_certificate ? "Uploaded" : null,
+          uploading: false,
+          progress: 0,
+          filename: "",
+          field: "gst_certificate",
+          previewUrl: profile?.gst_certificate || null,
+        },
+        {
+          id: 5,
+          title: "RERA Certificate",
+          subtitle: "Upload your RERA certificate",
+          icon: <FaBuilding />,
+          iconColor: "purple",
+          status: profile?.rera_certificate ? "Verified" : null,
+          uploadedOn: profile?.rera_certificate ? "Uploaded" : null,
+          uploading: false,
+          progress: 0,
+          filename: "",
+          field: "rera_certificate",
+          previewUrl: profile?.rera_certificate || null,
+        }
+      );
+    }
+    return docs;
+  };
+
+  const [documents, setDocuments] = useState(getInitialDocs());
+
+  useEffect(() => {
+    // If profile changes after mount, we might need to update docs
+    setDocuments((prev) => {
+      const newDocs = getInitialDocs();
+      if (prev.length !== newDocs.length) {
+        return newDocs.map(newDoc => {
+          const existingDoc = prev.find(d => d.id === newDoc.id);
+          return existingDoc ? { ...newDoc, ...existingDoc } : newDoc;
+        });
+      }
+      return prev;
+    });
+  }, [profile?.role_name, profile?.role]);
 
   const showFormActions = documents.some(
     (d) => !d.status || d.status.toLowerCase() === "rejected" || d.file,
@@ -266,17 +335,30 @@ const KycDocuments = ({ profile, token, onKycError }) => {
 
   const handleSaveKyc = async () => {
     try {
-      setIsSaving(true);
       const formData = new FormData();
       formData.append("aadhaar_number", aadhaarNumber);
 
+      let hasNewFiles = false;
       // Append files synchronously using the current state
       documents.forEach((d) => {
         if (d.file) {
           formData.append(d.field, d.file);
+          hasNewFiles = true;
         }
       });
 
+      if (!hasNewFiles) {
+        const allUploaded = documents.every(d => d.status && d.status.toLowerCase() !== 'rejected');
+        if (allUploaded) {
+          toast.success("All documents are already uploaded.");
+          if (onSuccess) onSuccess();
+        } else {
+          toast.error("Please select a file to upload before saving.");
+        }
+        return;
+      }
+
+      setIsSaving(true);
       setDocuments((prev) =>
         prev.map((d) => {
           if (d.file) {
@@ -299,7 +381,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
           toast.success(result.message || "KYC resubmitted successfully.");
           setIsSaving(false);
           setTimeout(() => {
-            window.location.reload();
+            if (onSuccess) onSuccess();
           }, 1000);
           return;
         }
@@ -348,7 +430,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
                         submitResult.message || "KYC submitted successfully.",
                       );
                       setTimeout(() => {
-                        window.location.reload();
+                        if (onSuccess) onSuccess();
                       }, 1000);
                     } else {
                       toast.error(
@@ -547,172 +629,132 @@ const KycDocuments = ({ profile, token, onKycError }) => {
         onChange={handleFileChange}
         accept=".jpg,.png,.jpeg,.pdf"
       />
-      {documents.map((doc) => (
-        <div key={doc.id} className={styles.documentCard}>
-          <div className={styles.leftSection}>
-            <div className={`${styles.iconCircle} ${styles[doc.iconColor]}`}>
-              {doc.icon}
-            </div>
-            <div className={styles.docInfo}>
-              <h4>
-                {doc.title} <FaInfoCircle className={styles.infoIcon} />
-              </h4>
-              <p>{doc.subtitle}</p>
-            </div>
-          </div>
-
-          <div className={styles.middleSection}>
-            {doc.uploading ? (
-              <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  alignItems: "center",
-                  gap: "32px",
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: "13px",
-                    color: "#6b7280",
-                    flex: 1,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {doc.filename}
-                </span>
-                <div
-                  className={styles.progressContainer}
-                  style={{ marginRight: "32px" }}
-                >
-                  <span className={styles.progressText}>{doc.progress}%</span>
-                  <div className={styles.progressBar}>
-                    <div
-                      className={styles.progressFill}
-                      style={{ width: `${doc.progress}%` }}
-                    ></div>
-                  </div>
+      <div className={styles.documentsGrid}>
+        {documents.map((doc) => (
+          <div
+            key={doc.id}
+            className={`${styles.documentCard} ${doc.file || doc.status ? styles.hasFile : ""}`}
+            onClick={() => {
+              if (!doc.file && !doc.status) handleUpload(doc);
+            }}
+          >
+            <div className={styles.cardHeader}>
+              <div className={styles.headerLeft}>
+                <div className={`${styles.iconCircle} ${styles[doc.iconColor]}`}>
+                  {doc.icon}
                 </div>
+                <h4 className={styles.docTitle}>{doc.title}</h4>
               </div>
-            ) : doc.status ? (
-              <>
-                <span
-                  className={`${styles.badge} ${styles[doc.status.toLowerCase().replace(" ", "")]}`}
-                >
-                  {doc.status}
-                </span>
-                <p className={styles.uploadDate}>
-                  {doc.uploadedOn === "Uploaded"
-                    ? "Uploaded"
-                    : `Uploaded on ${doc.uploadedOn}`}
-                </p>
-              </>
-            ) : doc.file ? (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: "4px" }}
-              >
-                <span className={`${styles.badge} ${styles.pending}`}>
-                  Selected
-                </span>
-                <span
-                  style={{
-                    fontSize: "13px",
-                    color: "#6b7280",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    maxWidth: "200px",
-                  }}
-                >
-                  {doc.filename}
-                </span>
-              </div>
-            ) : null}
-          </div>
-
-          <div className={styles.rightSection}>
-            {doc.uploading ? (
-              <button
-                type="button"
-                className={`${styles.actionBtn} ${styles.uploadingBtn}`}
-              >
-                <FaSpinner className={styles.spinner} /> Uploading...
-              </button>
-            ) : doc.status ? (
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button
-                  type="button"
-                  className={`${styles.actionBtn} ${styles.viewBtn}`}
-                  onClick={() => handleView(doc)}
-                >
-                  <FaEye /> View Document
-                </button>
-                {doc.status.toLowerCase() === "rejected" && (
-                  <button
-                    type="button"
-                    className={`${styles.actionBtn} ${styles.uploadBtn}`}
-                    onClick={() => handleUpload(doc)}
-                  >
-                    <FaUpload /> Reupload
-                  </button>
+              <div className={styles.headerRight}>
+                {doc.status && (
+                  <span className={`${styles.statusText} ${styles.uploadedStatus}`}>
+                    Uploaded
+                  </span>
                 )}
               </div>
-            ) : doc.file ? (
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button
-                  type="button"
-                  className={`${styles.actionBtn} ${styles.viewBtn}`}
-                  onClick={() => handleView(doc)}
-                >
-                  <FaEye /> View Document
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.actionBtn} ${styles.uploadBtn}`}
-                  onClick={() => handleUpload(doc)}
-                >
-                  <FaUpload /> Change
-                </button>
+            </div>
+
+            {(doc.file || doc.status || doc.previewUrl) && (
+              <div className={styles.filePreviewBox}>
+                <div className={styles.filePreviewInner}>
+                  {doc.previewUrl ? (
+                    <img
+                      src={
+                        doc.previewUrl.startsWith("blob:")
+                          ? doc.previewUrl
+                          : getFullUrl(doc.previewUrl)
+                      }
+                      alt={doc.title}
+                      className={styles.fileThumbnail}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleView(doc);
+                      }}
+                    />
+                  ) : (
+                    <div className={styles.fileThumbnailPlaceholder}>
+                      <FaIdCard />
+                    </div>
+                  )}
+                  <div className={styles.fileDetails}>
+                    <span className={styles.filename}>
+                      {doc.filename || "document.png"}
+                    </span>
+                    <span className={styles.filesize}>
+                      {doc.file ? `${(doc.file.size / 1024).toFixed(2)} KB` : "3.07 KB"}
+                    </span>
+                  </div>
+                  <button
+                    className={styles.removeFileBtn}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (doc.status === "Pending" || doc.status === "Verified") {
+                        // Normally you'd call an API to remove
+                      }
+                      setDocuments((prev) =>
+                        prev.map((d) =>
+                          d.id === doc.id
+                            ? {
+                                ...d,
+                                file: null,
+                                filename: "",
+                                previewUrl: null,
+                                status: null,
+                                uploadedOn: null,
+                              }
+                            : d
+                        )
+                      );
+                    }}
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
               </div>
-            ) : (
-              <div className={styles.uploadWrapper}>
-                <button
-                  type="button"
-                  className={`${styles.actionBtn} ${styles.uploadBtn}`}
-                  onClick={() => handleUpload(doc)}
-                >
-                  <FaUpload /> Upload Document
-                </button>
-                <span className={styles.uploadText}>
-                  JPG, PNG or PDF (Max. 5MB)
-                </span>
+            )}
+
+            {!doc.file && !doc.status && !doc.previewUrl && (
+              <div className={styles.uploadPlaceholder}>
+                <span className={styles.uploadPlaceholderText}>Click to upload</span>
               </div>
             )}
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
-      {showFormActions && (
-        <div className={styles.formActions}>
-          <button
-            type="button"
-            onClick={handleSaveKyc}
-            disabled={isSaving}
-            className={styles.btnSave}
-          >
-            {isSaving ? "Saving..." : "Save Changes"}
-          </button>
-          <button
-            type="button"
-            className={styles.btnCancel}
-            onClick={() => router.push("/auth/user/dashboard")}
-          >
-            Cancel
-          </button>
-        </div>
-      )}
+      <div className={styles.infoBanner}>
+        <FaExclamationCircle className={styles.infoBannerIcon} />
+        <span className={styles.infoBannerText}>
+          Supported formats: JPG, PNG, PDF | Max size: 5MB per file
+        </span>
+      </div>
+
+      <div className={styles.formActions}>
+        <button
+          type="button"
+          className={styles.btnBack}
+          onClick={() => {
+            // Logic to go back to previous tab
+            // Assuming this component is rendered via ProfileForm which controls activeTab
+            // Since activeTab isn't passed as a prop, you might need to handle this differently.
+            // But per design, there's a back button.
+            if (typeof document !== 'undefined') {
+              const personalTabBtn = document.querySelector('button:has(span:contains("Personal Details"))');
+              if(personalTabBtn) personalTabBtn.click();
+            }
+          }}
+        >
+          <FaArrowLeft style={{ marginRight: '8px' }}/> Back
+        </button>
+        <button
+          type="button"
+          onClick={handleSaveKyc}
+          disabled={isSaving}
+          className={styles.btnSave}
+        >
+          {isSaving ? "Saving..." : "Save & Continue \u2192"}
+        </button>
+      </div>
 
       <div className={styles.securityBanner}>
         <FaShieldAlt className={styles.securityBannerIcon} />

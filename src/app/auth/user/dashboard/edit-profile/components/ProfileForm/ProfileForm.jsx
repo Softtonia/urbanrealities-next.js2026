@@ -21,6 +21,9 @@ import {
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
 import KycDocuments from "../KycDocuments/KycDocuments";
 import KycTimeline from "../KycTimeline/KycTimeline";
+import ReviewSubmit from "../ReviewSubmit/ReviewSubmit";
+import VerificationStep from "../VerificationStep/VerificationStep";
+import ProfileTabs from "../ProfileTabs/ProfileTabs";
 import { LARAVEL_API_BASE_URL, LARAVEL_APPLICATION_PASSWORD, APP_TYPE } from "@/lib/config";
 import {
   updatePersonalProfile,
@@ -39,19 +42,8 @@ const ProfileForm = () => {
   const searchParams = useSearchParams();
   const id = decodeId(searchParams.get("id"));
   const router = useRouter();
-
-  const [activeTab, setActiveTab] = useState(() => {
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("activeTab") || "personal";
-    }
-    return "personal";
-  });
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("activeTab", activeTab);
-    }
-  }, [activeTab]);
+  const tabParam = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState(tabParam || "personal");
 
   const { setShowSidebar, setPageHeading } = useDashboard();
   const { token } = useSiteSettings();
@@ -191,6 +183,13 @@ const ProfileForm = () => {
   useEffect(() => {
     setPageHeading("");
   }, []);
+
+  useEffect(() => {
+    setShowSidebar(false);
+
+    // Restore the sidebar when the component is unmounted (user leaves the page)
+    return () => setShowSidebar(true);
+  }, [activeTab, setShowSidebar]);
 
   useEffect(() => {
     getCountries(token)
@@ -382,7 +381,13 @@ const ProfileForm = () => {
       if (data && data.status) {
         console.log("✅ Profile Updated Successfully:", data);
         toast.success(data.message || "Information updated successfully.");
-        router.push("/auth/user/dashboard");
+        
+        // Advance to the next step
+        if (activeTab === "personal") {
+          setActiveTab("document");
+        } else {
+          router.push("/auth/user/dashboard");
+        }
       } else {
         console.error("❌ Update Failed:", data?.message || "Unknown error");
         if (data?.errors) {
@@ -549,48 +554,13 @@ const ProfileForm = () => {
         ]}
       />
       {/* Tabs */}
-      <div className={styles.tabsContainer}>
-        <button
-          className={`${styles.tab} ${activeTab === "personal" ? styles.activeTab : ""}`}
-          onClick={(e) => {
-            e.preventDefault();
-            setActiveTab("personal");
-          }}
-        >
-          <FaUser className={styles.tabIcon} /> Personal Information
-        </button>
-        <button
-          className={`${styles.tab} ${activeTab === "address" ? styles.activeTab : ""}`}
-          onClick={(e) => {
-            e.preventDefault();
-            setActiveTab("address");
-          }}
-        >
-          <FaMapMarkerAlt className={styles.tabIcon} /> Address Information
-        </button>
-        <button
-          className={`${styles.tab} ${activeTab === "kyc" ? styles.activeTab : ""}`}
-          onClick={(e) => {
-            e.preventDefault();
-            setActiveTab("kyc");
-          }}
-        >
-          <FaIdCard className={styles.tabIcon} /> Documents & KYC
-        </button>
-        {hasTimeline && (
-          <button
-            className={`${styles.tab} ${activeTab === "timeline" ? styles.activeTab : ""}`}
-            onClick={(e) => {
-              e.preventDefault();
-              setActiveTab("timeline");
-            }}
-          >
-            <FaClock className={styles.tabIcon} /> Remarks
-          </button>
-        )}
-      </div>
+      <ProfileTabs
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        hasTimeline={hasTimeline}
+      />
 
-      <div className={styles.layoutGrid}>
+      <div className={styles.layoutGrid} style={["document", "review", "verification"].includes(activeTab) ? { gridTemplateColumns: "1fr" } : {}}>
         {/* Main Content Area (Left) */}
         <div className={styles.mainContent}>
           <form
@@ -605,30 +575,34 @@ const ProfileForm = () => {
               <div className={styles.formHeaderText}>
                 <h3>
                   {activeTab === "personal"
-                    ? "Personal Information"
+                    ? "Personal & Business Details"
                     : activeTab === "address"
                       ? "Address Information"
                       : activeTab === "kyc"
                         ? "Documents & KYC"
                         : "Remarks"}
                 </h3>
-                <p>Update your details</p>
+                <p>
+                  {activeTab === "personal"
+                    ? "Please enter your details as per official documents."
+                    : "Update your details"}
+                </p>
               </div>
             </div>
 
             {activeTab === "personal" && (
               <div className={styles.fieldsGrid}>
-                {/* Row 1 */}
-                <div className={styles.inputGroup}>
+                {/* Row 1: Full Name */}
+                <div className={styles.inputGroup} style={{ gridColumn: "1 / -1" }}>
                   <label>
-                    First Name <span className={styles.required}>*</span>
+                    Full Name <span className={styles.required}>*</span>
                   </label>
                   <input
                     type="text"
                     name="first_name"
                     value={formData.first_name || ""}
                     onChange={handleChange}
-                    placeholder="First name"
+                    placeholder="Full Name"
                     style={
                       formErrors.first_name
                         ? { borderColor: "red", outline: "none" }
@@ -648,66 +622,8 @@ const ProfileForm = () => {
                     </span>
                   )}
                 </div>
-                <div className={styles.inputGroup}>
-                  <label>
-                    Last Name <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="last_name"
-                    value={formData.last_name || ""}
-                    onChange={handleChange}
-                    placeholder="Last name"
-                    style={
-                      formErrors.last_name
-                        ? { borderColor: "red", outline: "none" }
-                        : {}
-                    }
-                  />
-                  {formErrors.last_name && (
-                    <span
-                      style={{
-                        color: "red",
-                        fontSize: "12px",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {formErrors.last_name[0]}
-                    </span>
-                  )}
-                </div>
 
-                {/* Row 2 */}
-                <div className={styles.inputGroup}>
-                  <label>
-                    Username <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="user_name"
-                    value={formData.user_name || ""}
-                    readOnly
-                    className={styles.readOnly}
-                    style={
-                      formErrors.user_name
-                        ? { borderColor: "red", outline: "none" }
-                        : {}
-                    }
-                  />
-                  {formErrors.user_name && (
-                    <span
-                      style={{
-                        color: "red",
-                        fontSize: "12px",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {formErrors.user_name[0]}
-                    </span>
-                  )}
-                </div>
+                {/* Row 2: Email and Mobile */}
                 <div className={styles.inputGroup}>
                   <label>
                     Email Address <span className={styles.required}>*</span>
@@ -738,15 +654,11 @@ const ProfileForm = () => {
                   )}
                 </div>
 
-                {/* Row 3 */}
                 <div className={styles.inputGroup}>
                   <label>
                     Mobile Number <span className={styles.required}>*</span>
                   </label>
                   <div className={styles.phoneInputWrap}>
-                    <select className={styles.phoneCode}>
-                      <option>+91</option>
-                    </select>
                     <input
                       type="tel"
                       name="phone"
@@ -773,35 +685,8 @@ const ProfileForm = () => {
                     )}
                   </div>
                 </div>
-                <div className={styles.inputGroup}>
-                  <label>Alternate Number</label>
-                  <input
-                    type="tel"
-                    name="alternate_number"
-                    value={formData.alternate_number || ""}
-                    onChange={handleChange}
-                    placeholder="Enter alternate number (optional)"
-                    style={
-                      formErrors.alternate_number
-                        ? { borderColor: "red", outline: "none" }
-                        : {}
-                    }
-                  />
-                  {formErrors.alternate_number && (
-                    <span
-                      style={{
-                        color: "red",
-                        fontSize: "12px",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {formErrors.alternate_number[0]}
-                    </span>
-                  )}
-                </div>
 
-                {/* Row 4 */}
+                {/* Row 3: Role */}
                 <div className={styles.inputGroup}>
                   <label>
                     Role <span className={styles.required}>*</span>
@@ -831,36 +716,41 @@ const ProfileForm = () => {
                     </span>
                   )}
                 </div>
+                {/* Empty div to fill the second column for Row 3 */}
+                <div></div>
 
-                <div
-                  className={styles.inputGroup}
-                  style={{ gridColumn: "1 / -1" }}
-                >
-                  <label>About You</label>
-                  <textarea
-                    name="about_us"
-                    value={formData.about_us || ""}
-                    onChange={handleChange}
-                    placeholder="Tell us something about yourself..."
-                    rows={4}
-                    style={
-                      formErrors.about_us
-                        ? { borderColor: "red", outline: "none" }
-                        : {}
-                    }
-                  ></textarea>
-                  {formErrors.about_us && (
-                    <span
-                      style={{
-                        color: "red",
-                        fontSize: "12px",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {formErrors.about_us[0]}
-                    </span>
-                  )}
+                {/* Row 4: Aadhaar, GST, RERA */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "20px", gridColumn: "1 / -1" }}>
+                  <div className={styles.inputGroup}>
+                    <label>Aadhaar Number</label>
+                    <input
+                      type="text"
+                      name="aadhaar_number"
+                      value={formData.aadhaar_number || ""}
+                      onChange={handleChange}
+                      placeholder="Aadhaar Number"
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>GST Number</label>
+                    <input
+                      type="text"
+                      name="gst_number"
+                      value={formData.gst_number || ""}
+                      onChange={handleChange}
+                      placeholder="GST Number"
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>RERA Number</label>
+                    <input
+                      type="text"
+                      name="rera_number"
+                      value={formData.rera_number || ""}
+                      onChange={handleChange}
+                      placeholder="RERA Number"
+                    />
+                  </div>
                 </div>
               </div>
             )}
@@ -1050,7 +940,7 @@ const ProfileForm = () => {
               </div>
             )}
 
-            {activeTab === "kyc" && (
+            {activeTab === "document" && (
               <div className={styles.fieldsGrid} style={{ display: "block" }}>
                 <KycDocuments
                   profile={profile}
@@ -1059,6 +949,17 @@ const ProfileForm = () => {
                     setKycStatus(status);
                     setKycReasons(reasons);
                   }}
+                  onSuccess={() => setActiveTab("review")}
+                />
+              </div>
+            )}
+
+            {activeTab === "review" && (
+              <div className={styles.fieldsGrid} style={{ display: "block" }}>
+                <ReviewSubmit
+                  formData={formData}
+                  setActiveTab={setActiveTab}
+                  token={token}
                 />
               </div>
             )}
@@ -1069,121 +970,87 @@ const ProfileForm = () => {
               </div>
             )}
 
-            {(activeTab !== "kyc" && activeTab !== "timeline") && (
-              <div className={styles.formActions}>
+            {activeTab === "verification" && (
+              <div className={styles.fieldsGrid} style={{ display: "block" }}>
+                <VerificationStep formData={formData} profile={profile} setActiveTab={setActiveTab} />
+              </div>
+            )}
+
+            {(activeTab !== "document" && activeTab !== "timeline" && activeTab !== "review" && activeTab !== "verification") && (
+              <div className={styles.formActions} style={activeTab === "personal" ? { justifyContent: "flex-end" } : {}}>
                 <button type="submit" className={styles.btnSave}>
-                  Save Changes
+                  {activeTab === "personal" ? "Save & Continue \u2192" : "Save Changes"}
                 </button>
-                <button
-                  type="button"
-                  className={styles.btnCancel}
-                  onClick={() => router.push("/auth/user/dashboard")}
-                >
-                  Cancel
-                </button>
+                {activeTab !== "personal" && (
+                  <button
+                    type="button"
+                    className={styles.btnCancel}
+                    onClick={() => router.push("/auth/user/dashboard")}
+                  >
+                    Cancel
+                  </button>
+                )}
               </div>
             )}
           </form>
         </div>
 
         {/* Sidebar Widgets (Right) */}
-        <div className={styles.sidebarWidgets}>
-          {/* Profile Photo Widget */}
-          <div className={styles.widgetCard}>
-            <h4 className={styles.widgetTitle}>Profile Photo</h4>
-            <div className={styles.photoContainer}>
-              <div className={styles.photoWrapper}>
-                <img
-                  src={profileImage}
-                  alt="Profile"
-                  className={styles.avatarImg}
-                />
-                <button className={styles.cameraBtn} onClick={handleImageClick}>
-                  <FaCamera />
-                </button>
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  style={{ display: "none" }}
-                  onChange={handleFileChange}
-                />
+        {!["document", "review", "verification"].includes(activeTab) && (
+          <div className={styles.sidebarWidgets}>
+            {/* Profile Photo Widget */}
+            <div className={styles.widgetCard}>
+              <h4 className={styles.widgetTitle}>Profile Photo</h4>
+              <div className={styles.photoContainer}>
+                <div className={styles.photoWrapper}>
+                  <img
+                    src={profileImage}
+                    alt="Profile"
+                    className={styles.avatarImg}
+                  />
+                  <button className={styles.cameraBtn} onClick={handleImageClick}>
+                    <FaCamera />
+                  </button>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                  />
+                </div>
               </div>
+              <button
+                className={styles.uploadPhotoBtn}
+                onClick={handleImageClick}
+              >
+                {isUploadingPhoto
+                  ? `Uploading (${photoProgress}%)`
+                  : "Upload New Photo"}
+              </button>
+              <p className={styles.photoInfo}>
+                Recommended: JPG, PNG or WEBP
+                <br />
+                Max size: 2MB. Min dimension: 200x200px
+              </p>
             </div>
-            <button
-              className={styles.uploadPhotoBtn}
-              onClick={handleImageClick}
-            >
-              {isUploadingPhoto
-                ? `Uploading (${photoProgress}%)`
-                : "Upload New Photo"}
-            </button>
-            <p className={styles.photoInfo}>
-              Recommended: JPG, PNG or WEBP
-              <br />
-              Max size: 2MB. Min dimension: 200x200px
-            </p>
-          </div>
 
-          {/* Profile Completion Widget */}
-          <div className={styles.widgetCard}>
-            <h4 className={styles.widgetTitle}>Profile Completion</h4>
-            <div className={styles.completionHeader}>
-              <div className={styles.circularProgress}>
-                <span>{profileCompletion.percentage || 0}%</span>
-              </div>
-              <div>
-                <h5>Profile Strength</h5>
-                <p>
-                  {profileCompletion.percentage === 100
-                    ? "Excellent! Profile complete."
-                    : "Almost there! Keep going."}
-                </p>
-              </div>
+            {/* Need Help Widget */}
+            <div className={styles.widgetCard}>
+              <h4 className={styles.widgetTitle}>Need Help?</h4>
+              <p className={styles.helpText}>
+                If you face any issues while updating your profile, our support
+                team is here to help you.
+              </p>
+              <button
+                className={styles.contactSupportBtn}
+                onClick={() => router.push("/auth/user/support")}
+              >
+                <FaHeadset /> Contact Support
+              </button>
             </div>
-            <div className={styles.progressLine}>
-              <div
-                className={styles.progressFill}
-                style={{ width: `${profileCompletion.percentage || 0}%` }}
-              ></div>
-            </div>
-            <ul className={styles.checklist}>
-              {profileCompletion.missing_fields &&
-              profileCompletion.missing_fields.length > 0 ? (
-                profileCompletion.missing_fields.map((field, index) => {
-                  const label = field
-                    .split("_")
-                    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                    .join(" ");
-                  return (
-                    <li key={index} className={styles.pending}>
-                      <FaExclamationCircle /> {label}
-                    </li>
-                  );
-                })
-              ) : (
-                <li className={styles.checked}>
-                  <FaCheckCircle /> Profile is 100% Complete!
-                </li>
-              )}
-            </ul>
           </div>
-
-          {/* Need Help Widget */}
-          <div className={styles.widgetCard}>
-            <h4 className={styles.widgetTitle}>Need Help?</h4>
-            <p className={styles.helpText}>
-              If you face any issues while updating your profile, our support
-              team is here to help you.
-            </p>
-            <button
-              className={styles.contactSupportBtn}
-              onClick={() => router.push("/auth/user/support")}
-            >
-              <FaHeadset /> Contact Support
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

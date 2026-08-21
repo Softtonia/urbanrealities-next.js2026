@@ -11,6 +11,9 @@ import { FaUser, FaBuilding, FaMapMarkerAlt, FaIdCard, FaCamera, FaCheckCircle, 
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
 import KycDocuments from "../KycDocuments/KycDocuments";
 import KycTimeline from "@/app/auth/user/dashboard/edit-profile/components/KycTimeline/KycTimeline";
+import ProfileTabs from "@/app/auth/user/dashboard/edit-profile/components/ProfileTabs/ProfileTabs";
+import ReviewSubmit from "@/app/auth/user/dashboard/edit-profile/components/ReviewSubmit/ReviewSubmit";
+import VerificationStep from "@/app/auth/user/dashboard/edit-profile/components/VerificationStep/VerificationStep";
 import { LARAVEL_API_BASE_URL, LARAVEL_APPLICATION_PASSWORD, APP_TYPE } from "@/lib/config";
 import { updatePersonalProfile, updateProfilePhoto, updateAddressProfile, getUserProfile } from "@/services/auth.service";
 import { getCountries, getStates, getCities } from "@/services/location.service";
@@ -20,19 +23,8 @@ const ProfileForm = () => {
   const searchParams = useSearchParams();
   const id = decodeId(searchParams.get("id"));
   const router = useRouter();
-  
-  const [activeTab, setActiveTab] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return sessionStorage.getItem('activeTab') || "personal";
-    }
-    return "personal";
-  });
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('activeTab', activeTab);
-    }
-  }, [activeTab]);
+  const tabParam = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState(tabParam || "personal");
 
 
 
@@ -195,6 +187,13 @@ const ProfileForm = () => {
   }, []);
 
   useEffect(() => {
+    setShowSidebar(false);
+
+    // Restore the sidebar when the component is unmounted (user leaves the page)
+    return () => setShowSidebar(true);
+  }, [activeTab, setShowSidebar]);
+
+  useEffect(() => {
     getCountries(token)
       .then(data => {
         if (Array.isArray(data)) setCountries(data);
@@ -348,46 +347,45 @@ const ProfileForm = () => {
     }));
   };
 
-  // ✅ Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      let data;
-      if (activeTab === 'personal' || activeTab === 'business') {
-        const dataToSend = new FormData();
+      if (activeTab === 'personal') {
+        // 1. Update Personal & Business Info
+        const personalDataToSend = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
           if (value !== undefined && value !== null && value !== 'N/A') {
-            dataToSend.append(key, value);
+            personalDataToSend.append(key, value);
           }
         });
-        data = await updatePersonalProfile(token, dataToSend);
-      } else if (activeTab === 'address') {
-        const dataToSend = new FormData();
+        const personalRes = await updatePersonalProfile(token, personalDataToSend);
+
+        // 2. Update Address Info
+        const addressDataToSend = new FormData();
         const addressKeys = [
           'country_id', 'state_id', 'city_id', 'street_address', 'pin_code', 'area_locality', 'colony', 'address',
           'business_country_id', 'business_state_id', 'business_city_id', 'business_area_locality', 'business_colony', 'business_street_address', 'business_pin_code', 'bussiness_address'
         ];
         addressKeys.forEach(key => {
           if (formData[key] !== undefined && formData[key] !== null && formData[key] !== 'N/A') {
-            dataToSend.append(key, formData[key]);
+            addressDataToSend.append(key, formData[key]);
           }
         });
-        data = await updateAddressProfile(token, dataToSend);
+        const addressRes = await updateAddressProfile(token, addressDataToSend);
+
+        if (personalRes?.status && addressRes?.status) {
+          console.log("✅ Profile Updated Successfully");
+          toast.success("Information updated successfully.");
+          setActiveTab('document');
+        } else {
+          console.error("❌ Update Failed");
+          if (personalRes?.errors) setFormErrors(prev => ({ ...prev, ...personalRes.errors }));
+          if (addressRes?.errors) setFormErrors(prev => ({ ...prev, ...addressRes.errors }));
+          toast.error("Profile update failed. Please check the fields and try again.");
+        }
       } else {
         return; // Other tabs not handled here
-      }
-
-      if (data && data.status) {
-        console.log("✅ Profile Updated Successfully:", data);
-        toast.success(data.message || "Information updated successfully.");
-        router.push("/auth/business/dashboard");
-      } else {
-        console.error("❌ Update Failed:", data?.message || "Unknown error");
-        if (data?.errors) {
-          setFormErrors(data.errors);
-        }
-        toast.error(data?.message || "Profile update failed. Please try again.");
       }
     } catch (err) {
       console.error("❌ Update Failed:", err);
@@ -544,58 +542,30 @@ const ProfileForm = () => {
         { label: 'Edit Profile', link: '' }
       ]} />
       {/* Tabs */}
-      <div className={styles.tabsContainer}>
-        <button 
-          className={`${styles.tab} ${activeTab === 'personal' ? styles.activeTab : ''}`}
-          onClick={(e) => { e.preventDefault(); setActiveTab('personal'); }}
-        >
-          <FaUser className={styles.tabIcon} /> Personal Information
-        </button>
-        <button 
-          className={`${styles.tab} ${activeTab === 'business' ? styles.activeTab : ''}`}
-          onClick={(e) => { e.preventDefault(); setActiveTab('business'); }}
-        >
-          <FaBuilding className={styles.tabIcon} /> Business Information
-        </button>
-        <button 
-          className={`${styles.tab} ${activeTab === 'address' ? styles.activeTab : ''}`}
-          onClick={(e) => { e.preventDefault(); setActiveTab('address'); }}
-        >
-          <FaMapMarkerAlt className={styles.tabIcon} /> Address Information
-        </button>
-        <button 
-          className={`${styles.tab} ${activeTab === 'kyc' ? styles.activeTab : ''}`}
-          onClick={(e) => { e.preventDefault(); setActiveTab('kyc'); }}
-        >
-          <FaIdCard className={styles.tabIcon} /> Documents & KYC
-        </button>
-        {hasTimeline && (
-          <button 
-            className={`${styles.tab} ${activeTab === 'timeline' ? styles.activeTab : ''}`}
-            onClick={(e) => { e.preventDefault(); setActiveTab('timeline'); }}
-          >
-            <FaClock className={styles.tabIcon} /> Remarks
-          </button>
-        )}
-      </div>
+      <ProfileTabs
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        hasTimeline={hasTimeline}
+      />
 
-      <div className={styles.layoutGrid}>
+      <div className={styles.layoutGrid} style={['document', 'review', 'verification'].includes(activeTab) ? { gridTemplateColumns: '1fr' } : {}}>
         {/* Main Content Area (Left) */}
         <div className={styles.mainContent}>
           
           <form className={styles.form} onSubmit={handleSubmit} autoComplete="off">
             <div className={styles.formHeader}>
               <div className={styles.formHeaderIcon}>
-                {activeTab === 'personal' ? <FaUser /> : activeTab === 'business' ? <FaBuilding /> : activeTab === 'address' ? <FaMapMarkerAlt /> : activeTab === 'kyc' ? <FaIdCard /> : <FaClock />}
+                {activeTab === 'personal' ? <FaUser /> : activeTab === 'document' ? <FaIdCard /> : <FaClock />}
               </div>
               <div className={styles.formHeaderText}>
-                <h3>{activeTab === 'personal' ? 'Personal Information' : activeTab === 'business' ? 'Business Information' : activeTab === 'address' ? 'Address Information' : activeTab === 'kyc' ? 'Documents & KYC' : 'Remarks'}</h3>
-                <p>Update your details</p>
+                <h3>{activeTab === 'personal' ? 'Personal & Business Details' : activeTab === 'document' ? 'Documents & KYC' : 'Remarks'}</h3>
+                <p>{activeTab === 'personal' ? 'Update your personal, business, and address details' : 'Update your details'}</p>
               </div>
             </div>
 
             {activeTab === 'personal' && (
-              <div className={styles.fieldsGrid}>
+              <>
+                <div className={styles.fieldsGrid}>
                 {/* Row 1 */}
                 <div className={styles.inputGroup}>
                   <label>First Name <span className={styles.required}>*</span></label>
@@ -648,9 +618,56 @@ const ProfileForm = () => {
                   {formErrors.about_us && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.about_us[0]}</span>}
                 </div>
               </div>
-            )}
-            
-            {activeTab === 'address' && (
+
+              {/* === BUSINESS INFORMATION SECTION === */}
+              <div style={{ gridColumn: "1 / -1", marginTop: '1rem', marginBottom: '0.5rem' }}>
+                <div className={styles.formHeader}>
+                  <div className={styles.formHeaderIcon}>
+                    <FaBuilding />
+                  </div>
+                  <div className={styles.formHeaderText}>
+                    <h3 style={{ fontSize: '18px', margin: 0 }}>Business Information</h3>
+                    <p style={{ margin: 0, opacity: 0.7 }}>Update your business details</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.fieldsGrid}>
+                <div className={styles.inputGroup}>
+                  <label>Business Name</label>
+                  <input type="text" name="bussiness_name" value={formData.bussiness_name || ""} onChange={handleChange} placeholder="Enter business name" autoComplete="new-password"  style={formErrors.bussiness_name ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.bussiness_name && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.bussiness_name[0]}</span>}
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>No. of Employees</label>
+                  <input type="number" name="no_of_employees" value={formData.no_of_employees || ""} onChange={handleChange} placeholder="Enter number of employees" autoComplete="new-password"  style={formErrors.no_of_employees ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.no_of_employees && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.no_of_employees[0]}</span>}
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Business Email</label>
+                  <input type="email" name="bussiness_email" value={formData.bussiness_email || ""} onChange={handleChange} placeholder="Enter business email"  style={formErrors.bussiness_email ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.bussiness_email && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.bussiness_email[0]}</span>}
+                </div>
+                <div className={styles.inputGroup}>
+                  <label>Business Phone</label>
+                  <input type="text" name="business_phone" value={formData.business_phone || ""} onChange={handleChange} placeholder="Enter business phone number"  style={formErrors.business_phone ? { borderColor: "red", outline: "none" } : {}}/>
+                  {formErrors.business_phone && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.business_phone[0]}</span>}
+                </div>
+              </div>
+
+              {/* === ADDRESS INFORMATION SECTION === */}
+              <div style={{ gridColumn: "1 / -1", marginTop: '1rem', marginBottom: '0.5rem' }}>
+                <div className={styles.formHeader}>
+                  <div className={styles.formHeaderIcon}>
+                    <FaMapMarkerAlt />
+                  </div>
+                  <div className={styles.formHeaderText}>
+                    <h3 style={{ fontSize: '18px', margin: 0 }}>Address Information</h3>
+                    <p style={{ margin: 0, opacity: 0.7 }}>Update your personal and business address</p>
+                  </div>
+                </div>
+              </div>
+
               <div className={styles.fieldsGrid}>
                 <div className={styles.inputGroup}>
                   <label>Street Address</label>
@@ -772,119 +789,114 @@ const ProfileForm = () => {
                   {formErrors.business_pin_code && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.business_pin_code[0]}</span>}
                 </div>
               </div>
+              </>
             )}
             
-            {activeTab === 'business' && (
-              <div className={styles.fieldsGrid}>
-                <div className={styles.inputGroup}>
-                  <label>Business Name</label>
-                  <input type="text" name="bussiness_name" value={formData.bussiness_name || ""} onChange={handleChange} placeholder="Enter business name" autoComplete="new-password"  style={formErrors.bussiness_name ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.bussiness_name && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.bussiness_name[0]}</span>}
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>No. of Employees</label>
-                  <input type="number" name="no_of_employees" value={formData.no_of_employees || ""} onChange={handleChange} placeholder="Enter number of employees" autoComplete="new-password"  style={formErrors.no_of_employees ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.no_of_employees && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.no_of_employees[0]}</span>}
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Business Email</label>
-                  <input type="email" name="bussiness_email" value={formData.bussiness_email || ""} onChange={handleChange} placeholder="Enter business email"  style={formErrors.bussiness_email ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.bussiness_email && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.bussiness_email[0]}</span>}
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Business Phone</label>
-                  <input type="text" name="business_phone" value={formData.business_phone || ""} onChange={handleChange} placeholder="Enter business phone number"  style={formErrors.business_phone ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.business_phone && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.business_phone[0]}</span>}
-                </div>
-              </div>
-            )}
-            
-            {activeTab === 'kyc' && (
+            {activeTab === 'document' && (
               <div className={styles.fieldsGrid} style={{ display: 'block' }}>
                 <KycDocuments 
                   profile={profile} 
                   token={token} 
                   onKycError={(status, reasons) => {
-                    setKycStatus(status);
-                    setKycReasons(reasons);
+                    if (status) setKycStatus(status);
+                    if (reasons) setKycReasons(reasons);
                   }}
+                  onSuccess={() => setActiveTab("review")}
                 />
               </div>
             )}
 
-            {activeTab === 'timeline' && (
+            {activeTab === 'review' && (
               <div className={styles.fieldsGrid} style={{ display: 'block' }}>
-                <KycTimeline token={token} />
+                <ReviewSubmit
+                  formData={formData}
+                  setActiveTab={setActiveTab}
+                  token={token}
+                />
               </div>
             )}
 
-            {(activeTab !== 'kyc' && activeTab !== 'timeline') && (
-              <div className={styles.formActions}>
-                <button type="submit" className={styles.btnSave}>Save Changes</button>
-                <button type="button" className={styles.btnCancel} onClick={() => router.push('/auth/business/dashboard')}>Cancel</button>
+            {activeTab === 'verification' && (
+              <div className={styles.fieldsGrid} style={{ display: 'block' }}>
+                <VerificationStep formData={formData} profile={profile} setActiveTab={setActiveTab} />
+              </div>
+            )}
+
+            {(activeTab !== 'document' && activeTab !== 'timeline' && activeTab !== 'review' && activeTab !== 'verification') && (
+              <div className={styles.formActions} style={activeTab === 'personal' ? { justifyContent: 'flex-end' } : {}}>
+                <button type="submit" className={styles.btnSave}>
+                  {activeTab === 'personal' ? "Save & Continue \u2192" : "Save Changes"}
+                </button>
+                {activeTab !== 'personal' && (
+                  <button type="button" className={styles.btnCancel} onClick={() => router.push('/auth/business/dashboard')}>
+                    Cancel
+                  </button>
+                )}
               </div>
             )}
           </form>
         </div>
 
         {/* Sidebar Widgets (Right) */}
-        <div className={styles.sidebarWidgets}>
-          {/* Profile Photo Widget */}
-          <div className={styles.widgetCard}>
-            <h4 className={styles.widgetTitle}>Profile Photo</h4>
-            <div className={styles.photoContainer}>
-              <div className={styles.photoWrapper}>
-                <img src={profileImage} alt="Profile" className={styles.avatarImg} />
-                <button className={styles.cameraBtn} onClick={handleImageClick}>
-                  <FaCamera />
-                </button>
-                <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} />
+        {!['document', 'review', 'verification'].includes(activeTab) && (
+          <div className={styles.sidebarWidgets}>
+            {/* Profile Photo Widget */}
+            <div className={styles.widgetCard}>
+              <h4 className={styles.widgetTitle}>Profile Photo</h4>
+              <div className={styles.photoContainer}>
+                <div className={styles.photoWrapper}>
+                  <img src={profileImage} alt="Profile" className={styles.avatarImg} />
+                  <button className={styles.cameraBtn} onClick={handleImageClick}>
+                    <FaCamera />
+                  </button>
+                  <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} />
+                </div>
               </div>
+              <button className={styles.uploadPhotoBtn} onClick={handleImageClick}>
+                {isUploadingPhoto ? `Uploading (${photoProgress}%)` : "Upload New Photo"}
+              </button>
+              <p className={styles.photoInfo}>Recommended: JPG, PNG or WEBP<br/>Max size: 2MB. Min dimension: 200x200px</p>
             </div>
-            <button className={styles.uploadPhotoBtn} onClick={handleImageClick}>
-              {isUploadingPhoto ? `Uploading (${photoProgress}%)` : "Upload New Photo"}
-            </button>
-            <p className={styles.photoInfo}>Recommended: JPG, PNG or WEBP<br/>Max size: 2MB. Min dimension: 200x200px</p>
-          </div>
 
 
 
-          {/* Profile Completion Widget */}
-          <div className={styles.widgetCard}>
-            <h4 className={styles.widgetTitle}>Profile Completion</h4>
-            <div className={styles.completionHeader}>
-              <div className={styles.circularProgress}><span>{profileCompletion.percentage || 0}%</span></div>
-              <div>
-                <h5>Profile Strength</h5>
-                <p>{profileCompletion.percentage === 100 ? "Excellent! Profile complete." : "Almost there! Keep going."}</p>
+            {/* Profile Completion Widget */}
+            <div className={styles.widgetCard}>
+              <h4 className={styles.widgetTitle}>Profile Completion</h4>
+              <div className={styles.completionHeader}>
+                <div className={styles.circularProgress}><span>{profileCompletion.percentage || 0}%</span></div>
+                <div>
+                  <h5>Profile Strength</h5>
+                  <p>{profileCompletion.percentage === 100 ? "Excellent! Profile complete." : "Almost there! Keep going."}</p>
+                </div>
               </div>
+              <div className={styles.progressLine}><div className={styles.progressFill} style={{width: `${profileCompletion.percentage || 0}%`}}></div></div>
+              <ul className={styles.checklist}>
+                {profileCompletion.missing_fields && profileCompletion.missing_fields.length > 0 ? (
+                  profileCompletion.missing_fields.map((field, index) => {
+                    const label = field.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    return (
+                      <li key={index} className={styles.pending}>
+                        <FaExclamationCircle /> {label}
+                      </li>
+                    );
+                  })
+                ) : (
+                  <li className={styles.checked}><FaCheckCircle /> Profile is 100% Complete!</li>
+                )}
+              </ul>
             </div>
-            <div className={styles.progressLine}><div className={styles.progressFill} style={{width: `${profileCompletion.percentage || 0}%`}}></div></div>
-            <ul className={styles.checklist}>
-              {profileCompletion.missing_fields && profileCompletion.missing_fields.length > 0 ? (
-                profileCompletion.missing_fields.map((field, index) => {
-                  const label = field.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                  return (
-                    <li key={index} className={styles.pending}>
-                      <FaExclamationCircle /> {label}
-                    </li>
-                  );
-                })
-              ) : (
-                <li className={styles.checked}><FaCheckCircle /> Profile is 100% Complete!</li>
-              )}
-            </ul>
-          </div>
 
-          {/* Need Help Widget */}
-          <div className={styles.widgetCard}>
-            <h4 className={styles.widgetTitle}>Need Help?</h4>
-            <p className={styles.helpText}>If you face any issues while updating your profile, our support team is here to help you.</p>
-            <button className={styles.contactSupportBtn} onClick={() => router.push('/auth/business/support')}>
-              <FaHeadset /> Contact Support
-            </button>
+            {/* Need Help Widget */}
+            <div className={styles.widgetCard}>
+              <h4 className={styles.widgetTitle}>Need Help?</h4>
+              <p className={styles.helpText}>If you face any issues while updating your profile, our support team is here to help you.</p>
+              <button className={styles.contactSupportBtn} onClick={() => router.push('/auth/business/support')}>
+                <FaHeadset /> Contact Support
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
 

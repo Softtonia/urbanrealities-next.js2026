@@ -97,6 +97,25 @@ const Dashboard = () => {
         </p>
       </div>
 
+      {/* KYC Alert Banner */}
+      {!loading && !["Submitted", "Pending", "Under Review", "Approved", "Verified", "Completed"].includes(profile?.kyc_status) && (
+        <div style={{ backgroundColor: '#fff4e5', borderLeft: '4px solid #f37021', padding: '16px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <FaIdCard style={{ color: '#f37021', fontSize: '24px' }} />
+            <div>
+              <h4 style={{ margin: 0, color: '#b95000', fontSize: '16px' }}>Complete Your KYC First</h4>
+              <p style={{ margin: 0, color: '#d97706', fontSize: '14px', marginTop: '4px' }}>You must upload your KYC documents to verify your account and unlock full features.</p>
+            </div>
+          </div>
+          <Link 
+            href={`/auth/user/dashboard/edit-profile?id=${encodeId(userId)}&tab=document`}
+            style={{ backgroundColor: '#f37021', color: 'white', padding: '8px 16px', borderRadius: '6px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}
+          >
+            Complete KYC Now
+          </Link>
+        </div>
+      )}
+
       {/* Orange Banner Card */}
       <div className={styles.bannerCard}>
         <div className={styles.bannerLeft}>

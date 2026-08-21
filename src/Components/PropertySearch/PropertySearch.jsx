@@ -453,7 +453,9 @@ export default function PropertySearch({ purpose }) {
                         </div>
                       ) : (
                         searchOptions?.grouped_property_types &&
-                        searchOptions.grouped_property_types.map((group, groupIdx) => (
+                        searchOptions.grouped_property_types.map((group, groupIdx) => {
+                          if (!group.children || group.children.length === 0) return null;
+                          return (
                           <div key={`group-${groupIdx}`}>
                             <h6 
                               style={{ fontSize: "12px", fontWeight: "bold", color: "#555", marginBottom: "8px", cursor: "pointer", display: "flex", justifyContent: "start", alignItems: "center", gap: "10px" }}
@@ -489,7 +491,7 @@ export default function PropertySearch({ purpose }) {
                               </div>
                             )}
                           </div>
-                        ))
+                        )})
                       )}
                     </div>
                   </div>

@@ -7,15 +7,16 @@ justify-content: space-around;
 align-items: center;
 }
 .popularcitiesmainbody{
-display: flex;
-justify-content: space-evenly;
+display: grid;
+grid-template-columns: repeat(4, 1fr);
 gap: 20px;
-flex-wrap: wrap;
 padding-top: 60px;
-
+width: 100%;
 }
 .placecard{
-width: 338px;
+width: 100%;
+max-width: 338px;
+margin: 0 auto;
 height: 128px;
 border: 1px solid var(--Orange-Red);
 border-radius: 12px;

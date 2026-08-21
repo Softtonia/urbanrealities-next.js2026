@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import styles from './TestimonialCard.module.css';
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaRegStar } from "react-icons/fa";
 
 const MAX_LENGTH = 120; // number of characters to show before truncating
 
@@ -21,8 +21,8 @@ const TestimonialCard = ({ avatarSrc, name, location, rating, text }) => {
 
   return (
     <div className={styles['testimonial-card']}>
-      <p className={styles['testimonial-text']}>
-        {displayText}
+      <div className={styles['testimonial-text']}>
+        <span>{displayText}</span>
         {text.length > MAX_LENGTH && (
           <span
             className={styles['read-more']}
@@ -31,7 +31,7 @@ const TestimonialCard = ({ avatarSrc, name, location, rating, text }) => {
             {isExpanded ? ' Less' : ' More'}
           </span>
         )}
-      </p>
+      </div>
 
       <div className={styles['testimonial-footer']}>
         {avatarSrc && (
@@ -46,7 +46,9 @@ const TestimonialCard = ({ avatarSrc, name, location, rating, text }) => {
         <div className={styles['author-section']}>
           <div className={styles.rating}>
             {Array.from({ length: 5 }, (_, i) => (
-              <FaStar key={i} />
+              <span key={i}>
+                {i < (rating || 5) ? <FaStar /> : <FaRegStar />}
+              </span>
             ))}
           </div>
           <div className={styles['author-info']}>

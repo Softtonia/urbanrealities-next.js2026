@@ -1,0 +1,251 @@
+.reviewContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.reviewHeader h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #111827;
+  font-weight: 600;
+}
+
+.reviewHeader p {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.panelsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .panelsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 12px;
+}
+
+.panelHeader h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #111827;
+  font-weight: 600;
+}
+
+.editBtn {
+  background: #FFF7ED;
+  color: #EA580C;
+  border: 1px solid #FFEDD5;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.editBtn:hover {
+  background: #FFEDD5;
+}
+
+/* Personal Details Table */
+.detailsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detailRow {
+  display: flex;
+  align-items: flex-start;
+  font-size: 14px;
+}
+
+.detailLabel {
+  width: 40%;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.detailValue {
+  width: 60%;
+  color: #111827;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+/* Documents List */
+.documentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.documentItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.docLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.docIconWrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.docIconWrap.orange {
+  background: #FFF1F2;
+  color: #E11D48;
+}
+
+.docIconWrap.green {
+  background: #ECFDF5;
+  color: #059669;
+}
+
+.docIconWrap.blue {
+  background: #EFF6FF;
+  color: #2563EB;
+}
+
+.docIconWrap.purple {
+  background: #F5F3FF;
+  color: #7C3AED;
+}
+
+.docInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.docName {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 600;
+}
+
+.docFilename {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.docRight {
+  color: #10B981;
+  font-size: 20px;
+}
+
+/* Declaration & Actions */
+.declaration {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.declaration input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: #ea580c;
+}
+
+.declaration label {
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.formActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.backBtn {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  padding: 10px 20px;
+  border-radius: 6px;
+  color: #374151;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.backBtn:hover {
+  background: #f9fafb;
+}
+
+.submitBtn {
+  background: #ea580c;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+
+.submitBtn:hover {
+  background: #c2410c;
+}
+
+.submitBtn:disabled {
+  background: #fdba74;
+  cursor: not-allowed;
+}
+
+.loadingWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}

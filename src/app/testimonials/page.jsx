@@ -7,6 +7,7 @@ const fetchReviews = async () => {
     
     // Handle both direct array and paginated response structures
     let data = response?.data;
+    console.log("dataaaaaaaaaaaaaaa", data)
     if (data?.data) {
       data = data.data;
     }
