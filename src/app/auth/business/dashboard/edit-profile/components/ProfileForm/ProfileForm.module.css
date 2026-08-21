@@ -203,6 +203,7 @@
   border-top: 1px solid var(--Anti-Flash-White, #f3f4f6);
   display: flex;
   gap: 16px;
+  justify-content: space-between;
 }
 
 .btnSave {
@@ -215,6 +216,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: opacity 0.2s;
+  margin-left: auto;
 }
 
 .btnSave:hover {

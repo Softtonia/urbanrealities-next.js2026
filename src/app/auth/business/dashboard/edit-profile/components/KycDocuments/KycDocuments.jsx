@@ -32,7 +32,7 @@ import {
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-const KycDocuments = ({ profile, token, onKycError }) => {
+const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
   const router = useRouter();
   const fileInputRef = useRef(null);
   const [activeUploadId, setActiveUploadId] = useState(null);
@@ -40,16 +40,14 @@ const KycDocuments = ({ profile, token, onKycError }) => {
   const [viewingDocUrl, setViewingDocUrl] = useState(null);
   const [isLoadingView, setIsLoadingView] = useState(false);
   const [aadhaarNumber, setAadhaarNumber] = useState("");
-
   const [gstNumber, setGstNumber] = useState("");
   const [reraNumber, setReraNumber] = useState("");
-
   const [isSaving, setIsSaving] = useState(false);
   const [globalKycStatus, setGlobalKycStatus] = useState(null);
   const [rejectionReasons, setRejectionReasons] = useState([]);
+  const [imageErrors, setImageErrors] = useState({});
 
   useEffect(() => {
-    // Only fetch from profile as fallback before details API completes
     if (profile) {
       if (profile.aadhaar_number && !aadhaarNumber) {
         setAadhaarNumber(profile.aadhaar_number);
@@ -61,80 +59,107 @@ const KycDocuments = ({ profile, token, onKycError }) => {
         setReraNumber(profile.rera_number);
       }
     }
-  }, [profile, globalKycStatus]);
+  }, [profile]);
 
-  const [documents, setDocuments] = useState([
-    {
-      id: 1,
-      title: "Aadhaar Card (Front)",
-      subtitle: "Upload clear front side of your Aadhaar card",
-      icon: <FaIdCard />,
-      iconColor: "orange",
-      status: profile?.aadhaar_front ? "Verified" : null,
-      uploadedOn: profile?.aadhaar_front ? "Uploaded" : null,
-      uploading: false,
-      progress: 0,
-      filename: "",
-      field: "aadhaar_front",
-      previewUrl: profile?.aadhaar_front || null,
-    },
-    {
-      id: 2,
-      title: "Aadhaar Card (Back)",
-      subtitle: "Upload clear back side of your Aadhaar card",
-      icon: <FaIdCard />,
-      iconColor: "orange",
-      status: profile?.aadhaar_back ? "Verified" : null,
-      uploadedOn: profile?.aadhaar_back ? "Uploaded" : null,
-      uploading: false,
-      progress: 0,
-      filename: "",
-      field: "aadhaar_back",
-      previewUrl: profile?.aadhaar_back || null,
-    },
-    {
-      id: 3,
-      title: "Business Proof",
-      subtitle: "Upload your Business Registration / Shop Act",
-      icon: <FaShieldAlt />,
-      iconColor: "purple",
-      status: profile?.business_proof ? "Verified" : null,
-      uploadedOn: profile?.business_proof ? "Uploaded" : null,
-      uploading: false,
-      progress: 0,
-      filename: "",
-      field: "business_proof",
-      previewUrl: profile?.business_proof || null,
-    },
-    {
-      id: 4,
-      title: "GST Certificate",
-      subtitle: "Upload your GST Registration Certificate",
-      icon: <FaBuilding />,
-      iconColor: "blue",
-      status: profile?.gst_certificate ? "Verified" : null,
-      uploadedOn: profile?.gst_certificate ? "Uploaded" : null,
-      uploading: false,
-      progress: 0,
-      filename: "",
-      field: "gst_certificate",
-      previewUrl: profile?.gst_certificate || null,
-    },
-    {
-      id: 5,
-      title: "RERA Certificate",
-      subtitle: "Upload your RERA Registration Certificate (Optional)",
-      icon: <FaShieldAlt />,
-      iconColor: "green",
-      status: profile?.rera_certificate ? "Verified" : null,
-      uploadedOn: profile?.rera_certificate ? "Uploaded" : null,
-      uploading: false,
-      progress: 0,
-      filename: "",
-      field: "rera_certificate",
-      previewUrl: profile?.rera_certificate || null,
-    },
-  ]);
+  const getInitialDocs = () => {
+    const roleName = (profile?.role_name || profile?.role || "").toLowerCase();
+    const isBusinessRole = ["agent", "builder", "developer"].includes(roleName);
+    
+    const docs = [
+      {
+        id: 1,
+        title: "Aadhaar Card (Front)",
+        subtitle: "Upload clear front side of your Aadhaar card",
+        icon: <FaIdCard />,
+        iconColor: "orange",
+        status: profile?.aadhaar_front ? "Verified" : null,
+        uploadedOn: profile?.aadhaar_front ? "Uploaded" : null,
+        uploading: false,
+        progress: 0,
+        filename: "",
+        field: "aadhaar_front",
+        previewUrl: profile?.aadhaar_front || null,
+      },
+      {
+        id: 2,
+        title: "Aadhaar Card (Back)",
+        subtitle: "Upload clear back side of your Aadhaar card",
+        icon: <FaIdCard />,
+        iconColor: "orange",
+        status: profile?.aadhaar_back ? "Verified" : null,
+        uploadedOn: profile?.aadhaar_back ? "Uploaded" : null,
+        uploading: false,
+        progress: 0,
+        filename: "",
+        field: "aadhaar_back",
+        previewUrl: profile?.aadhaar_back || null,
+      },
+    ];
+
+    if (isBusinessRole || roleName === "business" || !roleName || roleName === "agency") {
+      docs.push(
+        {
+          id: 3,
+          title: "Business Proof",
+          subtitle: "Upload your business proof document",
+          icon: <FaBuilding />,
+          iconColor: "green",
+          status: profile?.business_proof ? "Verified" : null,
+          uploadedOn: profile?.business_proof ? "Uploaded" : null,
+          uploading: false,
+          progress: 0,
+          filename: "",
+          field: "business_proof",
+          previewUrl: profile?.business_proof || null,
+        },
+        {
+          id: 4,
+          title: "GST Certificate",
+          subtitle: "Upload your GST certificate",
+          icon: <FaIdCard />,
+          iconColor: "blue",
+          status: profile?.gst_certificate ? "Verified" : null,
+          uploadedOn: profile?.gst_certificate ? "Uploaded" : null,
+          uploading: false,
+          progress: 0,
+          filename: "",
+          field: "gst_certificate",
+          previewUrl: profile?.gst_certificate || null,
+        },
+        {
+          id: 5,
+          title: "RERA Certificate",
+          subtitle: "Upload your RERA certificate",
+          icon: <FaBuilding />,
+          iconColor: "purple",
+          status: profile?.rera_certificate ? "Verified" : null,
+          uploadedOn: profile?.rera_certificate ? "Uploaded" : null,
+          uploading: false,
+          progress: 0,
+          filename: "",
+          field: "rera_certificate",
+          previewUrl: profile?.rera_certificate || null,
+        }
+      );
+    }
+    return docs;
+  };
+
+  const [documents, setDocuments] = useState(getInitialDocs());
+
+  useEffect(() => {
+    // If profile changes after mount, we might need to update docs
+    setDocuments((prev) => {
+      const newDocs = getInitialDocs();
+      if (prev.length !== newDocs.length) {
+        return newDocs.map(newDoc => {
+          const existingDoc = prev.find(d => d.id === newDoc.id);
+          return existingDoc ? { ...newDoc, ...existingDoc } : newDoc;
+        });
+      }
+      return prev;
+    });
+  }, [profile?.role_name, profile?.role]);
 
   const showFormActions = documents.some(
     (d) => !d.status || d.status.toLowerCase() === "rejected" || d.file,
@@ -244,6 +269,15 @@ const KycDocuments = ({ profile, token, onKycError }) => {
                   : "Uploaded";
 
                 let docStatus = apiDoc.status;
+                if (
+                  !apiDoc.rejection_reason &&
+                  kycLabel &&
+                  kycLabel.toLowerCase() === "rejected" &&
+                  docStatus.toLowerCase() === "pending"
+                ) {
+                  docStatus = "rejected";
+                }
+
                 return {
                   ...d,
                   status:
@@ -316,21 +350,32 @@ const KycDocuments = ({ profile, token, onKycError }) => {
 
   const handleSaveKyc = async () => {
     try {
-      setIsSaving(true);
       const formData = new FormData();
       formData.append("aadhaar_number", aadhaarNumber);
-      formData.append("gst_number", gstNumber);
-      if (reraNumber) {
-        formData.append("rera_number", reraNumber);
-      }
+      if (gstNumber) formData.append("gst_number", gstNumber);
+      if (reraNumber) formData.append("rera_number", reraNumber);
 
+      let hasNewFiles = false;
       // Append files synchronously using the current state
       documents.forEach((d) => {
         if (d.file) {
           formData.append(d.field, d.file);
+          hasNewFiles = true;
         }
       });
 
+      if (!hasNewFiles) {
+        const allUploaded = documents.every(d => d.status && d.status.toLowerCase() !== 'rejected');
+        if (allUploaded) {
+          toast.success("All documents are already uploaded.");
+          if (onSuccess) onSuccess();
+        } else {
+          toast.error("Please select a file to upload before saving.");
+        }
+        return;
+      }
+
+      setIsSaving(true);
       setDocuments((prev) =>
         prev.map((d) => {
           if (d.file) {
@@ -353,7 +398,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
           toast.success(result.message || "KYC resubmitted successfully.");
           setIsSaving(false);
           setTimeout(() => {
-            window.location.reload();
+            if (onSuccess) onSuccess();
           }, 1000);
           return;
         }
@@ -406,7 +451,7 @@ const KycDocuments = ({ profile, token, onKycError }) => {
                         submitResult.message || "KYC submitted successfully.",
                       );
                       setTimeout(() => {
-                        window.location.reload();
+                        if (onSuccess) onSuccess();
                       }, 1000);
                     } else {
                       toast.error(
@@ -560,18 +605,9 @@ const KycDocuments = ({ profile, token, onKycError }) => {
 
   return (
     <div className={styles.kycContainer}>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "16px",
-          marginBottom: "24px",
-        }}
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <label
-            style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}
-          >
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+        <div className={styles.inputGroup}>
+          <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151", display: 'block', marginBottom: '8px' }}>
             Aadhaar Number
           </label>
           <input
@@ -606,62 +642,64 @@ const KycDocuments = ({ profile, token, onKycError }) => {
             }}
           />
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <label
-            style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}
-          >
-            GST Number
-          </label>
-          <input
-            type="text"
-            value={gstNumber}
-            onChange={(e) =>
-              setGstNumber(e.target.value.toUpperCase().slice(0, 15))
-            }
-            readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
-            disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
-            placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your 15 char GST number"}
-            style={{
-              width: "100%",
-              padding: "12px 16px",
-              border: "1px solid #9E9E9E",
-              borderRadius: "8px",
-              outline: "none",
-              fontSize: "clamp(14px, 1.5vw, 16px)",
-              fontFamily: "var(--font-regular)",
-              backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
-              cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
-              color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
-            }}
-          />
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <label
-            style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}
-          >
-            RERA Number
-          </label>
-          <input
-            type="text"
-            value={reraNumber}
-            onChange={(e) => setReraNumber(e.target.value.toUpperCase())}
-            readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
-            disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
-            placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your RERA number"}
-            style={{
-              width: "100%",
-              padding: "12px 16px",
-              border: "1px solid #9E9E9E",
-              borderRadius: "8px",
-              outline: "none",
-              fontSize: "clamp(14px, 1.5vw, 16px)",
-              fontFamily: "var(--font-regular)",
-              backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
-              cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
-              color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
-            }}
-          />
-        </div>
+
+        {documents.some(d => d.field === 'gst_certificate') && (
+          <div className={styles.inputGroup}>
+            <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151", display: 'block', marginBottom: '8px' }}>
+              GST Number
+            </label>
+            <input
+              type="text"
+              value={gstNumber}
+              onChange={(e) => setGstNumber(e.target.value)}
+              readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+              disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+              placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your GST number"}
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                border: "1px solid #9E9E9E",
+                borderRadius: "8px",
+                outline: "none",
+                fontSize: "clamp(14px, 1.5vw, 16px)",
+                fontFamily: "var(--font-regular)",
+                backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
+                cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
+                textTransform: "uppercase",
+                color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
+              }}
+            />
+          </div>
+        )}
+
+        {documents.some(d => d.field === 'rera_certificate') && (
+          <div className={styles.inputGroup}>
+            <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151", display: 'block', marginBottom: '8px' }}>
+              RERA Number
+            </label>
+            <input
+              type="text"
+              value={reraNumber}
+              onChange={(e) => setReraNumber(e.target.value)}
+              readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+              disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+              placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your RERA number"}
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                border: "1px solid #9E9E9E",
+                borderRadius: "8px",
+                outline: "none",
+                fontSize: "clamp(14px, 1.5vw, 16px)",
+                fontFamily: "var(--font-regular)",
+                backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
+                cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
+                textTransform: "uppercase",
+                color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
+              }}
+            />
+          </div>
+        )}
       </div>
       <input
         type="file"
@@ -670,172 +708,144 @@ const KycDocuments = ({ profile, token, onKycError }) => {
         onChange={handleFileChange}
         accept=".jpg,.png,.jpeg,.pdf"
       />
-      {documents.map((doc) => (
-        <div key={doc.id} className={styles.documentCard}>
-          <div className={styles.leftSection}>
-            <div className={`${styles.iconCircle} ${styles[doc.iconColor]}`}>
-              {doc.icon}
-            </div>
-            <div className={styles.docInfo}>
-              <h4>
-                {doc.title} <FaInfoCircle className={styles.infoIcon} />
-              </h4>
-              <p>{doc.subtitle}</p>
-            </div>
-          </div>
-
-          <div className={styles.middleSection}>
-            {doc.uploading ? (
-              <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  alignItems: "center",
-                  gap: "32px",
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: "13px",
-                    color: "#6b7280",
-                    flex: 1,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {doc.filename}
-                </span>
-                <div
-                  className={styles.progressContainer}
-                  style={{ marginRight: "32px" }}
-                >
-                  <span className={styles.progressText}>{doc.progress}%</span>
-                  <div className={styles.progressBar}>
-                    <div
-                      className={styles.progressFill}
-                      style={{ width: `${doc.progress}%` }}
-                    ></div>
-                  </div>
+      <div className={styles.documentsGrid}>
+        {documents.map((doc) => (
+          <div
+            key={doc.id}
+            className={`${styles.documentCard} ${doc.file || doc.status ? styles.hasFile : ""}`}
+            onClick={() => {
+              if (!doc.file && !doc.status) handleUpload(doc);
+            }}
+          >
+            <div className={styles.cardHeader}>
+              <div className={styles.headerLeft}>
+                <div className={`${styles.iconCircle} ${styles[doc.iconColor]}`}>
+                  {doc.icon}
                 </div>
+                <h4 className={styles.docTitle}>{doc.title}</h4>
               </div>
-            ) : doc.status ? (
-              <>
-                <span
-                  className={`${styles.badge} ${styles[doc.status.toLowerCase().replace(" ", "")]}`}
-                >
-                  {doc.status}
-                </span>
-                <p className={styles.uploadDate}>
-                  {doc.uploadedOn === "Uploaded"
-                    ? "Uploaded"
-                    : `Uploaded on ${doc.uploadedOn}`}
-                </p>
-              </>
-            ) : doc.file ? (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: "4px" }}
-              >
-                <span className={`${styles.badge} ${styles.pending}`}>
-                  Selected
-                </span>
-                <span
-                  style={{
-                    fontSize: "13px",
-                    color: "#6b7280",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    maxWidth: "200px",
-                  }}
-                >
-                  {doc.filename}
-                </span>
-              </div>
-            ) : null}
-          </div>
-
-          <div className={styles.rightSection}>
-            {doc.uploading ? (
-              <button
-                type="button"
-                className={`${styles.actionBtn} ${styles.uploadingBtn}`}
-              >
-                <FaSpinner className={styles.spinner} /> Uploading...
-              </button>
-            ) : doc.status ? (
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button
-                  type="button"
-                  className={`${styles.actionBtn} ${styles.viewBtn}`}
-                  onClick={() => handleView(doc)}
-                >
-                  <FaEye /> View Document
-                </button>
-                {doc.status.toLowerCase() === "rejected" && (
-                  <button
-                    type="button"
-                    className={`${styles.actionBtn} ${styles.uploadBtn}`}
-                    onClick={() => handleUpload(doc)}
-                  >
-                    <FaUpload /> Reupload
-                  </button>
+              <div className={styles.headerRight}>
+                {doc.status && (
+                  <span className={`${styles.statusText} ${styles.uploadedStatus}`}>
+                    Uploaded
+                  </span>
                 )}
               </div>
-            ) : doc.file ? (
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button
-                  type="button"
-                  className={`${styles.actionBtn} ${styles.viewBtn}`}
-                  onClick={() => handleView(doc)}
-                >
-                  <FaEye /> View Document
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.actionBtn} ${styles.uploadBtn}`}
-                  onClick={() => handleUpload(doc)}
-                >
-                  <FaUpload /> Change
-                </button>
-              </div>
-            ) : (
-              <div className={styles.uploadWrapper}>
-                <button
-                  type="button"
-                  className={`${styles.actionBtn} ${styles.uploadBtn}`}
-                  onClick={() => handleUpload(doc)}
-                >
-                  <FaUpload /> Upload Document
-                </button>
-                <span className={styles.uploadText}>
-                  JPG, PNG or PDF (Max. 5MB)
-                </span>
+            </div>
+
+            {(doc.file || doc.status || doc.previewUrl) && (
+              <div className={styles.filePreviewBox}>
+                <div className={styles.filePreviewInner}>
+                  {doc.previewUrl && !imageErrors[doc.id] ? (
+                    <img
+                      src={
+                        doc.previewUrl.startsWith("blob:")
+                          ? doc.previewUrl
+                          : getFullUrl(doc.previewUrl)
+                      }
+                      alt={doc.title}
+                      className={styles.fileThumbnail}
+                      onError={() => {
+                        setImageErrors((prev) => ({ ...prev, [doc.id]: true }));
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleView(doc);
+                      }}
+                    />
+                  ) : (
+                    <div className={styles.fileThumbnailPlaceholder}>
+                      {doc.icon || <FaIdCard />}
+                    </div>
+                  )}
+                  <div className={styles.fileDetails}>
+                    <span className={styles.filename}>
+                      {doc.filename || "document.png"}
+                    </span>
+                    <span className={styles.filesize}>
+                      {doc.file ? `${(doc.file.size / 1024).toFixed(2)} KB` : "3.07 KB"}
+                    </span>
+                  </div>
+                  <button
+                    className={styles.removeFileBtn}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (doc.status === "Pending" || doc.status === "Verified") {
+                        // Normally you'd call an API to remove
+                      }
+                      setDocuments((prev) =>
+                        prev.map((d) =>
+                          d.id === doc.id
+                            ? {
+                                ...d,
+                                file: null,
+                                filename: "",
+                                previewUrl: null,
+                                status: null,
+                                uploadedOn: null,
+                              }
+                            : d
+                        )
+                      );
+                    }}
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
               </div>
             )}
-          </div>
-        </div>
-      ))}
 
-      {showFormActions && (
-        <div className={styles.formActions}>
-          <button
-            type="button"
-            onClick={handleSaveKyc}
-            disabled={isSaving}
-            className={styles.btnSave}
-          >
-            {isSaving ? "Saving..." : "Save Changes"}
-          </button>
-          <button
-            type="button"
-            className={styles.btnCancel}
-            onClick={() => router.push("/auth/business/dashboard")}
-          >
-            Cancel
-          </button>
-        </div>
-      )}
+            {!doc.file && !doc.status && !doc.previewUrl && (
+              <button 
+                type="button"
+                className={styles.uploadPlaceholder}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUpload(doc);
+                }}
+              >
+                <FaUpload style={{ color: '#6B7280' }} />
+                <span className={styles.uploadPlaceholderText}>Click to upload document</span>
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className={styles.infoBanner}>
+        <FaExclamationCircle className={styles.infoBannerIcon} />
+        <span className={styles.infoBannerText}>
+          Supported formats: JPG, PNG, PDF | Max size: 5MB per file
+        </span>
+      </div>
+
+      <div className={styles.formActions}>
+        <button
+          type="button"
+          className={styles.btnBack}
+          onClick={() => {
+            // Logic to go back to previous tab
+            // Assuming this component is rendered via ProfileForm which controls activeTab
+            // Since activeTab isn't passed as a prop, you might need to handle this differently.
+            // But per design, there's a back button.
+            if (typeof document !== 'undefined') {
+              const buttons = Array.from(document.querySelectorAll('button'));
+              const businessTabBtn = buttons.find(btn => btn.textContent.includes('Business Details'));
+              if(businessTabBtn) businessTabBtn.click();
+            }
+          }}
+        >
+          <FaArrowLeft style={{ marginRight: '8px' }}/> Back
+        </button>
+        <button
+          type="button"
+          onClick={handleSaveKyc}
+          disabled={isSaving}
+          className={styles.btnSave}
+        >
+          {isSaving ? "Saving..." : "Save & Continue \u2192"}
+        </button>
+      </div>
 
       <div className={styles.securityBanner}>
         <FaShieldAlt className={styles.securityBannerIcon} />

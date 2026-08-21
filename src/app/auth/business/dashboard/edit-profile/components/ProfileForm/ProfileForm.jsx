@@ -7,16 +7,42 @@ import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { decodeId } from "@/lib/utils";
 import Select, { createFilter } from "react-select";
-import { FaUser, FaBuilding, FaMapMarkerAlt, FaIdCard, FaCamera, FaCheckCircle, FaExclamationCircle, FaHeadset, FaClock } from "react-icons/fa";
+import {
+  FaUser,
+  FaBuilding,
+  FaMapMarkerAlt,
+  FaIdCard,
+  FaCamera,
+  FaCheckCircle,
+  FaExclamationCircle,
+  FaHeadset,
+  FaClock,
+  FaArrowLeft,
+} from "react-icons/fa";
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
 import KycDocuments from "../KycDocuments/KycDocuments";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 import KycTimeline from "@/app/auth/user/dashboard/edit-profile/components/KycTimeline/KycTimeline";
 import ProfileTabs from "@/app/auth/user/dashboard/edit-profile/components/ProfileTabs/ProfileTabs";
 import ReviewSubmit from "@/app/auth/user/dashboard/edit-profile/components/ReviewSubmit/ReviewSubmit";
 import VerificationStep from "@/app/auth/user/dashboard/edit-profile/components/VerificationStep/VerificationStep";
-import { LARAVEL_API_BASE_URL, LARAVEL_APPLICATION_PASSWORD, APP_TYPE } from "@/lib/config";
-import { updatePersonalProfile, updateProfilePhoto, updateAddressProfile, getUserProfile } from "@/services/auth.service";
-import { getCountries, getStates, getCities } from "@/services/location.service";
+import {
+  LARAVEL_API_BASE_URL,
+  LARAVEL_APPLICATION_PASSWORD,
+  APP_TYPE,
+} from "@/lib/config";
+import {
+  updatePersonalProfile,
+  updateProfilePhoto,
+  updateAddressProfile,
+  getUserProfile,
+} from "@/services/auth.service";
+import {
+  getCountries,
+  getStates,
+  getCities,
+} from "@/services/location.service";
 import { toast } from "react-toastify";
 
 const ProfileForm = () => {
@@ -25,8 +51,6 @@ const ProfileForm = () => {
   const router = useRouter();
   const tabParam = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState(tabParam || "personal");
-
-
 
   const { setShowSidebar, setPageHeading } = useDashboard();
   const { token } = useSiteSettings();
@@ -38,13 +62,16 @@ const ProfileForm = () => {
 
   const [profileImage, setProfileImage] = useState("/profile-placeholder.png");
   const [profile, setProfile] = useState({});
-  const [profileCompletion, setProfileCompletion] = useState({ percentage: 0, missing_fields: [] });
+  const [profileCompletion, setProfileCompletion] = useState({
+    percentage: 0,
+    missing_fields: [],
+  });
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
     email: "",
     phone: "",
-    role: '',
+    role: "",
     alternate_number: "",
     user_name: "",
     unique_id: "",
@@ -57,7 +84,7 @@ const ProfileForm = () => {
     pin_code: "",
     address: "",
     street_address: "",
-    area_locality: '',
+    area_locality: "",
     colony: "",
     about_us: "",
     business_country_id: "",
@@ -77,7 +104,6 @@ const ProfileForm = () => {
   const [hasTimeline, setHasTimeline] = useState(false);
 
   const getBaseUrl = () => LARAVEL_API_BASE_URL;
-
 
   const [loading, setLoading] = useState(true);
   const [businessStates, setBusinessStates] = useState([]);
@@ -141,6 +167,8 @@ const ProfileForm = () => {
           business_pin_code: normalize(rawData.business_pin_code),
           bussiness_address: normalize(rawData.bussiness_address),
           aadhaar_number: normalize(rawData.aadhaar_number),
+          gst_number: normalize(rawData.gst_number),
+          rera_number: normalize(rawData.rera_number),
           no_of_employees: normalize(rawData.no_of_employees),
         });
 
@@ -148,7 +176,6 @@ const ProfileForm = () => {
           setProfileImage(rawData.profile_photo);
         }
       }
-
     } catch (err) {
       console.error("Error fetching profile:", err);
       setLoading(false);
@@ -158,16 +185,19 @@ const ProfileForm = () => {
   useEffect(() => {
     if (token) {
       fetchProfile();
-      
+
       const fetchTimelineCheck = async () => {
         try {
-          const res = await fetch(getBaseUrl() + "/api/kyc/timeline?per_page=1", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
-              "X-App-Type": APP_TYPE,
+          const res = await fetch(
+            getBaseUrl() + "/api/kyc/timeline?per_page=1",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+                "X-App-Type": APP_TYPE,
+              },
             },
-          });
+          );
           if (res.ok) {
             const data = await res.json();
             if (data.status && data.data && data.data.length > 0) {
@@ -179,6 +209,28 @@ const ProfileForm = () => {
         }
       };
       fetchTimelineCheck();
+
+      const fetchKycStatus = async () => {
+        try {
+          const res = await fetch(getBaseUrl() + "/api/kyc/status", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+              "X-App-Type": APP_TYPE,
+            },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            const status = data?.data?.latest_kyc_request?.status;
+            if (status && status.toLowerCase() === "submitted") {
+              setActiveTab("verification");
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      };
+      fetchKycStatus();
     }
   }, [token]);
 
@@ -195,7 +247,7 @@ const ProfileForm = () => {
 
   useEffect(() => {
     getCountries(token)
-      .then(data => {
+      .then((data) => {
         if (Array.isArray(data)) setCountries(data);
         else if (data && data.status) setCountries(data.data || []);
       })
@@ -205,7 +257,7 @@ const ProfileForm = () => {
   useEffect(() => {
     if (formData.country_id) {
       getStates(formData.country_id, token)
-        .then(data => {
+        .then((data) => {
           if (Array.isArray(data)) setStates(data);
           else if (data && data.status) setStates(data.data || []);
         })
@@ -218,7 +270,7 @@ const ProfileForm = () => {
   useEffect(() => {
     if (formData.state_id) {
       getCities(formData.state_id, token)
-        .then(data => {
+        .then((data) => {
           if (Array.isArray(data)) setCities(data);
           else if (data && data.status) setCities(data.data || []);
         })
@@ -231,7 +283,7 @@ const ProfileForm = () => {
   useEffect(() => {
     if (formData.business_country_id) {
       getStates(formData.business_country_id, token)
-        .then(data => {
+        .then((data) => {
           if (Array.isArray(data)) setBusinessStates(data);
           else if (data && data.status) setBusinessStates(data.data || []);
         })
@@ -244,7 +296,7 @@ const ProfileForm = () => {
   useEffect(() => {
     if (formData.business_state_id) {
       getCities(formData.business_state_id, token)
-        .then(data => {
+        .then((data) => {
           if (Array.isArray(data)) setBusinessCities(data);
           else if (data && data.status) setBusinessCities(data.data || []);
         })
@@ -279,25 +331,36 @@ const ProfileForm = () => {
 
       try {
         const data = await updateProfilePhoto(token, payload);
-        
+
         if (data && data.status) {
           if (data.upload_id) {
-            const { checkUploadProgress } = await import('@/services/document.service');
+            const { checkUploadProgress } =
+              await import("@/services/document.service");
             const pollInterval = setInterval(async () => {
               try {
-                const progressRes = await checkUploadProgress(token, data.upload_id);
+                const progressRes = await checkUploadProgress(
+                  token,
+                  data.upload_id,
+                );
                 if (progressRes.ok) {
                   const progressData = await progressRes.json();
-                  const fileProgress = progressData?.progress?.files?.profile_photo;
-                  
+                  const fileProgress =
+                    progressData?.progress?.files?.profile_photo;
+
                   if (fileProgress) {
                     setPhotoProgress(fileProgress.percent || 10);
-                    if (fileProgress.percent >= 100 || fileProgress.status === "completed" || fileProgress.status === "verified") {
+                    if (
+                      fileProgress.percent >= 100 ||
+                      fileProgress.status === "completed" ||
+                      fileProgress.status === "verified"
+                    ) {
                       clearInterval(pollInterval);
                       setPhotoProgress(100);
                       setTimeout(() => {
                         setIsUploadingPhoto(false);
-                        toast.success(data.message || "Profile photo updated successfully!");
+                        toast.success(
+                          data.message || "Profile photo updated successfully!",
+                        );
                       }, 1000);
                     }
                   }
@@ -310,7 +373,9 @@ const ProfileForm = () => {
             setPhotoProgress(100);
             setTimeout(() => {
               setIsUploadingPhoto(false);
-              toast.success(data.message || "Profile photo updated successfully!");
+              toast.success(
+                data.message || "Profile photo updated successfully!",
+              );
             }, 1000);
           }
         } else {
@@ -329,15 +394,35 @@ const ProfileForm = () => {
 
   const handleChange = (e) => {
     let { name, value } = e.target;
-    setFormErrors(prev => ({ ...prev, [name]: null }));
-    
+    setFormErrors((prev) => ({ ...prev, [name]: null }));
+
     // Allow only numeric input for specific fields
-    if (['phone', 'business_phone', 'alternate_number', 'aadhaar_number', 'pin_code'].includes(name)) {
-      value = value.replace(/\D/g, ''); 
-      
+    if (
+      [
+        "phone",
+        "business_phone",
+        "alternate_number",
+        "aadhaar_number",
+        "pin_code",
+        "business_pin_code",
+      ].includes(name)
+    ) {
+      value = value.replace(/\D/g, "");
+
       // Limit phone numbers to 10 digits
-      if (['phone', 'business_phone', 'alternate_number'].includes(name) && value.length > 10) {
+      if (
+        ["phone", "business_phone", "alternate_number"].includes(name) &&
+        value.length > 10
+      ) {
         value = value.slice(0, 10);
+      }
+
+      // Limit pin codes to 6 digits
+      if (
+        ["pin_code", "business_pin_code"].includes(name) &&
+        value.length > 6
+      ) {
+        value = value.slice(0, 6);
       }
     }
 
@@ -351,24 +436,69 @@ const ProfileForm = () => {
     e.preventDefault();
 
     try {
-      if (activeTab === 'personal') {
+      if (activeTab === "personal" || activeTab === "business") {
+        
+        // Basic validation for phone
+        if (activeTab === "personal" && formData.phone && formData.phone.length < 10) {
+          toast.error("Please enter a valid personal mobile number.");
+          return;
+        }
+
+        // Basic validation for business phone
+        if (activeTab === "business" && formData.business_phone && formData.business_phone.length < 10) {
+          toast.error("Please enter a valid business phone number.");
+          return;
+        }
+
+        // Basic validation for pin code
+        if (activeTab === "personal" && formData.pin_code && formData.pin_code.length !== 6) {
+          toast.error("Please enter a valid 6-digit pin code.");
+          return;
+        }
+        
+        if (activeTab === "business" && formData.business_pin_code && formData.business_pin_code.length !== 6) {
+          toast.error("Please enter a valid 6-digit business pin code.");
+          return;
+        }
+
         // 1. Update Personal & Business Info
         const personalDataToSend = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
-          if (value !== undefined && value !== null && value !== 'N/A') {
+          if (value !== undefined && value !== null && value !== "N/A") {
             personalDataToSend.append(key, value);
           }
         });
-        const personalRes = await updatePersonalProfile(token, personalDataToSend);
+        const personalRes = await updatePersonalProfile(
+          token,
+          personalDataToSend,
+        );
 
         // 2. Update Address Info
         const addressDataToSend = new FormData();
         const addressKeys = [
-          'country_id', 'state_id', 'city_id', 'street_address', 'pin_code', 'area_locality', 'colony', 'address',
-          'business_country_id', 'business_state_id', 'business_city_id', 'business_area_locality', 'business_colony', 'business_street_address', 'business_pin_code', 'bussiness_address'
+          "country_id",
+          "state_id",
+          "city_id",
+          "street_address",
+          "pin_code",
+          "area_locality",
+          "colony",
+          "address",
+          "business_country_id",
+          "business_state_id",
+          "business_city_id",
+          "business_area_locality",
+          "business_colony",
+          "business_street_address",
+          "business_pin_code",
+          "bussiness_address",
         ];
-        addressKeys.forEach(key => {
-          if (formData[key] !== undefined && formData[key] !== null && formData[key] !== 'N/A') {
+        addressKeys.forEach((key) => {
+          if (
+            formData[key] !== undefined &&
+            formData[key] !== null &&
+            formData[key] !== "N/A"
+          ) {
             addressDataToSend.append(key, formData[key]);
           }
         });
@@ -377,12 +507,20 @@ const ProfileForm = () => {
         if (personalRes?.status && addressRes?.status) {
           console.log("✅ Profile Updated Successfully");
           toast.success("Information updated successfully.");
-          setActiveTab('document');
+          if (activeTab === "personal") {
+            setActiveTab("business");
+          } else {
+            setActiveTab("document");
+          }
         } else {
           console.error("❌ Update Failed");
-          if (personalRes?.errors) setFormErrors(prev => ({ ...prev, ...personalRes.errors }));
-          if (addressRes?.errors) setFormErrors(prev => ({ ...prev, ...addressRes.errors }));
-          toast.error("Profile update failed. Please check the fields and try again.");
+          if (personalRes?.errors)
+            setFormErrors((prev) => ({ ...prev, ...personalRes.errors }));
+          if (addressRes?.errors)
+            setFormErrors((prev) => ({ ...prev, ...addressRes.errors }));
+          toast.error(
+            "Profile update failed. Please check the fields and try again.",
+          );
         }
       } else {
         return; // Other tabs not handled here
@@ -432,7 +570,7 @@ const ProfileForm = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         const data = await res.json();
         // setIsFetchingState(false);
@@ -462,7 +600,7 @@ const ProfileForm = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         const data = await res.json();
         // setIsFetchingCity(false);
@@ -532,271 +670,924 @@ const ProfileForm = () => {
         <div className={styles.spinner}></div>
         <p></p>
       </div>
-    )
+    );
   }
 
   return (
     <div className={styles.profileWraper}>
-      <Breadcrumb items={[
-        { label: 'Dashboard', link: '/auth/business/dashboard' },
-        { label: 'Edit Profile', link: '' }
-      ]} />
+      <Breadcrumb
+        items={[
+          { label: "Dashboard", link: "/auth/business/dashboard" },
+          { label: "Edit Profile", link: "" },
+        ]}
+      />
       {/* Tabs */}
       <ProfileTabs
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         hasTimeline={hasTimeline}
+        steps={[
+          { id: "personal", label: "Personal Details" },
+          { id: "business", label: "Business Details" },
+          { id: "document", label: "Document Upload" },
+          { id: "review", label: "Review & Submit" },
+          { id: "verification", label: "Verification" },
+        ]}
       />
 
-      <div className={styles.layoutGrid} style={['document', 'review', 'verification'].includes(activeTab) ? { gridTemplateColumns: '1fr' } : {}}>
+      <div className={styles.layoutGrid} style={{ gridTemplateColumns: "1fr" }}>
         {/* Main Content Area (Left) */}
         <div className={styles.mainContent}>
-          
-          <form className={styles.form} onSubmit={handleSubmit} autoComplete="off">
+          <form
+            className={styles.form}
+            onSubmit={handleSubmit}
+            autoComplete="off"
+          >
             <div className={styles.formHeader}>
               <div className={styles.formHeaderIcon}>
-                {activeTab === 'personal' ? <FaUser /> : activeTab === 'document' ? <FaIdCard /> : <FaClock />}
+                {activeTab === "personal" ? (
+                  <FaUser />
+                ) : activeTab === "business" ? (
+                  <FaBuilding />
+                ) : activeTab === "document" ? (
+                  <FaIdCard />
+                ) : (
+                  <FaClock />
+                )}
               </div>
               <div className={styles.formHeaderText}>
-                <h3>{activeTab === 'personal' ? 'Personal & Business Details' : activeTab === 'document' ? 'Documents & KYC' : 'Remarks'}</h3>
-                <p>{activeTab === 'personal' ? 'Update your personal, business, and address details' : 'Update your details'}</p>
+                <h3>
+                  {activeTab === "personal"
+                    ? "Personal Details"
+                    : activeTab === "business"
+                      ? "Business Details"
+                      : activeTab === "document"
+                        ? "Documents & KYC"
+                        : "Remarks"}
+                </h3>
+                <p>
+                  {activeTab === "personal"
+                    ? "Update your personal and address details"
+                    : activeTab === "business"
+                      ? "Update your business and address details"
+                      : "Update your details"}
+                </p>
               </div>
             </div>
 
-            {activeTab === 'personal' && (
+            {activeTab === "personal" && (
               <>
                 <div className={styles.fieldsGrid}>
-                {/* Row 1 */}
-                <div className={styles.inputGroup}>
-                  <label>First Name <span className={styles.required}>*</span></label>
-                  <input type="text" name="first_name" value={formData.first_name || ""} onChange={handleChange} placeholder="First name"  style={formErrors.first_name ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.first_name && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.first_name[0]}</span>}
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Last Name <span className={styles.required}>*</span></label>
-                  <input type="text" name="last_name" value={formData.last_name || ""} onChange={handleChange} placeholder="Last name"  style={formErrors.last_name ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.last_name && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.last_name[0]}</span>}
-                </div>
+                  {/* Row 1 */}
+                  <div className={styles.inputGroup}>
+                    <label>
+                      First Name <span className={styles.required}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="first_name"
+                      value={formData.first_name || ""}
+                      onChange={handleChange}
+                      placeholder="First name"
+                      style={
+                        formErrors.first_name
+                          ? { borderColor: "red", outline: "none" }
+                          : {}
+                      }
+                    />
+                    {formErrors.first_name && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.first_name[0]}
+                      </span>
+                    )}
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>
+                      Last Name <span className={styles.required}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="last_name"
+                      value={formData.last_name || ""}
+                      onChange={handleChange}
+                      placeholder="Last name"
+                      style={
+                        formErrors.last_name
+                          ? { borderColor: "red", outline: "none" }
+                          : {}
+                      }
+                    />
+                    {formErrors.last_name && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.last_name[0]}
+                      </span>
+                    )}
+                  </div>
 
-                {/* Row 2 */}
-                <div className={styles.inputGroup}>
-                  <label>Username <span className={styles.required}>*</span></label>
-                  <input type="text" name="user_name" value={formData.user_name || ""} readOnly className={styles.readOnly}  style={formErrors.user_name ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.user_name && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.user_name[0]}</span>}
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Email Address <span className={styles.required}>*</span></label>
-                  <input type="email" name="email" value={formData.email || ""} readOnly className={styles.readOnly}  style={formErrors.email ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.email && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.email[0]}</span>}
-                </div>
+                  {/* Row 2 */}
+                  <div className={styles.inputGroup}>
+                    <label>
+                      Username <span className={styles.required}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="user_name"
+                      value={formData.user_name || ""}
+                      readOnly
+                      className={styles.readOnly}
+                      style={
+                        formErrors.user_name
+                          ? { borderColor: "red", outline: "none" }
+                          : {}
+                      }
+                    />
+                    {formErrors.user_name && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.user_name[0]}
+                      </span>
+                    )}
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>
+                      Email Address <span className={styles.required}>*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email || ""}
+                      readOnly
+                      className={styles.readOnly}
+                      style={
+                        formErrors.email
+                          ? { borderColor: "red", outline: "none" }
+                          : {}
+                      }
+                    />
+                    {formErrors.email && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.email[0]}
+                      </span>
+                    )}
+                  </div>
 
-                {/* Row 3 */}
-                <div className={styles.inputGroup}>
-                  <label>Mobile Number <span className={styles.required}>*</span></label>
-                  <div className={styles.phoneInputWrap}>
-                    <select className={styles.phoneCode}><option>+91</option></select>
-                    <input type="tel" name="phone" value={formData.phone || ""} onChange={handleChange} placeholder="Mobile Number"  style={formErrors.phone ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.phone && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.phone[0]}</span>}
+                  {/* Row 3 */}
+                  <div className={styles.inputGroup}>
+                    <label>
+                      Mobile Number <span className={styles.required}>*</span>
+                    </label>
+                    <PhoneInput
+                      country={'in'}
+                      value={formData.phone || ""}
+                      onChange={(val) => setFormData(p => ({ ...p, phone: val }))}
+                      isValid={(value) => {
+                        if (value && value.length < 10) return false;
+                        return true;
+                      }}
+                      inputStyle={{
+                        width: '100%',
+                        height: '45px',
+                        fontSize: '14px',
+                        fontFamily: 'var(--font-regular)',
+                        borderRadius: '8px',
+                        border: formErrors.phone ? '1px solid red' : '1px solid #E0E0E0',
+                        boxShadow: 'none',
+                        paddingLeft: '48px',
+                      }}
+                      buttonStyle={{
+                        border: formErrors.phone ? '1px solid red' : '1px solid #E0E0E0',
+                        borderRight: 'none',
+                        borderTopLeftRadius: '8px',
+                        borderBottomLeftRadius: '8px',
+                        backgroundColor: '#fff',
+                        padding: '2px',
+                      }}
+                      placeholder="Mobile Number"
+                    />
+                      {formErrors.phone && (
+                        <span
+                          style={{
+                            color: "red",
+                            fontSize: "12px",
+                            marginTop: "4px",
+                            display: "block",
+                          }}
+                        >
+                          {formErrors.phone[0]}
+                        </span>
+                      )}
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Alternate Number</label>
+                    <PhoneInput
+                      country={'in'}
+                      value={formData.alternate_number || ""}
+                      onChange={(val) => setFormData(p => ({ ...p, alternate_number: val }))}
+                      isValid={(value) => {
+                        if (value && value.length > 0 && value.length < 10) return false;
+                        return true;
+                      }}
+                      inputStyle={{
+                        width: '100%',
+                        height: '45px',
+                        fontSize: '14px',
+                        fontFamily: 'var(--font-regular)',
+                        borderRadius: '8px',
+                        border: formErrors.alternate_number ? '1px solid red' : '1px solid #E0E0E0',
+                        boxShadow: 'none',
+                        paddingLeft: '48px',
+                      }}
+                      buttonStyle={{
+                        border: formErrors.alternate_number ? '1px solid red' : '1px solid #E0E0E0',
+                        borderRight: 'none',
+                        borderTopLeftRadius: '8px',
+                        borderBottomLeftRadius: '8px',
+                        backgroundColor: '#fff',
+                        padding: '2px',
+                      }}
+                      placeholder="Enter alternate number (optional)"
+                    />
+                    {formErrors.alternate_number && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.alternate_number[0]}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Row 4 */}
+                  <div className={styles.inputGroup}>
+                    <label>
+                      Role <span className={styles.required}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="role_id"
+                      value={formData.role_id || ""}
+                      readOnly
+                      className={styles.readOnly}
+                      style={
+                        formErrors.role_id
+                          ? { borderColor: "red", outline: "none" }
+                          : {}
+                      }
+                    />
+                    {formErrors.role_id && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.role_id[0]}
+                      </span>
+                    )}
+                  </div>
+
+                  <div
+                    className={styles.inputGroup}
+                    style={{ gridColumn: "1 / -1" }}
+                  >
+                    <label>About You</label>
+                    <textarea
+                      name="about_us"
+                      value={formData.about_us || ""}
+                      onChange={handleChange}
+                      placeholder="Tell us something about yourself..."
+                      rows={4}
+                      style={
+                        formErrors.about_us
+                          ? { borderColor: "red", outline: "none" }
+                          : {}
+                      }
+                    ></textarea>
+                    {formErrors.about_us && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.about_us[0]}
+                      </span>
+                    )}
                   </div>
                 </div>
-                <div className={styles.inputGroup}>
-                  <label>Alternate Number</label>
-                  <input type="tel" name="alternate_number" value={formData.alternate_number || ""} onChange={handleChange} placeholder="Enter alternate number (optional)"  style={formErrors.alternate_number ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.alternate_number && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.alternate_number[0]}</span>}
-                </div>
 
-                {/* Row 4 */}
-                <div className={styles.inputGroup}>
-                  <label>Role <span className={styles.required}>*</span></label>
-                  <input type="text" name="role_id" value={formData.role_id || ""} readOnly className={styles.readOnly}  style={formErrors.role_id ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.role_id && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.role_id[0]}</span>}
-                </div>
-
-                <div className={styles.inputGroup} style={{gridColumn: "1 / -1"}}>
-                  <label>About You</label>
-                  <textarea name="about_us" value={formData.about_us || ""} onChange={handleChange} placeholder="Tell us something about yourself..." rows={4} style={formErrors.about_us ? { borderColor: "red", outline: "none" } : {}}></textarea>
-                  {formErrors.about_us && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.about_us[0]}</span>}
-                </div>
-              </div>
-
-              {/* === BUSINESS INFORMATION SECTION === */}
-              <div style={{ gridColumn: "1 / -1", marginTop: '1rem', marginBottom: '0.5rem' }}>
-                <div className={styles.formHeader}>
-                  <div className={styles.formHeaderIcon}>
-                    <FaBuilding />
-                  </div>
-                  <div className={styles.formHeaderText}>
-                    <h3 style={{ fontSize: '18px', margin: 0 }}>Business Information</h3>
-                    <p style={{ margin: 0, opacity: 0.7 }}>Update your business details</p>
+                {/* === ADDRESS INFORMATION SECTION === */}
+                <div
+                  style={{
+                    gridColumn: "1 / -1",
+                    marginTop: "1rem",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  <div className={styles.formHeader}>
+                    <div className={styles.formHeaderIcon}>
+                      <FaMapMarkerAlt />
+                    </div>
+                    <div className={styles.formHeaderText}>
+                      <h3 style={{ fontSize: "18px", margin: 0 }}>
+                        Address Information
+                      </h3>
+                      <p style={{ margin: 0, opacity: 0.7 }}>
+                        Update your personal address
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className={styles.fieldsGrid}>
-                <div className={styles.inputGroup}>
-                  <label>Business Name</label>
-                  <input type="text" name="bussiness_name" value={formData.bussiness_name || ""} onChange={handleChange} placeholder="Enter business name" autoComplete="new-password"  style={formErrors.bussiness_name ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.bussiness_name && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.bussiness_name[0]}</span>}
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>No. of Employees</label>
-                  <input type="number" name="no_of_employees" value={formData.no_of_employees || ""} onChange={handleChange} placeholder="Enter number of employees" autoComplete="new-password"  style={formErrors.no_of_employees ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.no_of_employees && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.no_of_employees[0]}</span>}
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Business Email</label>
-                  <input type="email" name="bussiness_email" value={formData.bussiness_email || ""} onChange={handleChange} placeholder="Enter business email"  style={formErrors.bussiness_email ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.bussiness_email && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.bussiness_email[0]}</span>}
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Business Phone</label>
-                  <input type="text" name="business_phone" value={formData.business_phone || ""} onChange={handleChange} placeholder="Enter business phone number"  style={formErrors.business_phone ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.business_phone && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.business_phone[0]}</span>}
-                </div>
-              </div>
-
-              {/* === ADDRESS INFORMATION SECTION === */}
-              <div style={{ gridColumn: "1 / -1", marginTop: '1rem', marginBottom: '0.5rem' }}>
-                <div className={styles.formHeader}>
-                  <div className={styles.formHeaderIcon}>
-                    <FaMapMarkerAlt />
+                <div className={styles.fieldsGrid}>
+                  <div className={styles.inputGroup}>
+                    <label>Street Address</label>
+                    <textarea
+                      name="street_address"
+                      value={formData.street_address || ""}
+                      onChange={handleChange}
+                      placeholder="Enter street address"
+                      autoComplete="new-password"
+                      style={{
+                        height: "100px",
+                        ...(formErrors.street_address
+                          ? { borderColor: "red", outline: "none" }
+                          : {}),
+                      }}
+                    ></textarea>
+                    {formErrors.street_address && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.street_address[0]}
+                      </span>
+                    )}
                   </div>
-                  <div className={styles.formHeaderText}>
-                    <h3 style={{ fontSize: '18px', margin: 0 }}>Address Information</h3>
-                    <p style={{ margin: 0, opacity: 0.7 }}>Update your personal and business address</p>
+                  <div className={styles.inputGroup}>
+                    <label>Area / Locality</label>
+                    <textarea
+                      name="area_locality"
+                      value={formData.area_locality || ""}
+                      onChange={handleChange}
+                      placeholder="Enter area or locality"
+                      autoComplete="new-password"
+                      style={{
+                        height: "100px",
+                        ...(formErrors.area_locality
+                          ? { borderColor: "red", outline: "none" }
+                          : {}),
+                      }}
+                    ></textarea>
+                    {formErrors.area_locality && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.area_locality[0]}
+                      </span>
+                    )}
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Country</label>
+                    <Select
+                      filterOption={(option, inputValue) => {
+                        if (!inputValue) return true;
+                        return option.label
+                          .toLowerCase()
+                          .startsWith(inputValue.toLowerCase());
+                      }}
+                      options={countries.map((c) => ({
+                        value: c.id,
+                        label: c.name,
+                      }))}
+                      value={
+                        countries
+                          .map((c) => ({ value: c.id, label: c.name }))
+                          .find((opt) => opt.value === formData.country_id) ||
+                        null
+                      }
+                      onChange={(opt) =>
+                        setFormData((p) => ({
+                          ...p,
+                          country_id: opt?.value || null,
+                          state_id: null,
+                          city_id: null,
+                        }))
+                      }
+                      placeholder="Select Country"
+                      styles={customStyles}
+                      instanceId="country-select-dummy-88"
+                      name="random_country_select_88"
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>State</label>
+                    <Select
+                      filterOption={(option, inputValue) => {
+                        if (!inputValue) return true;
+                        return option.label
+                          .toLowerCase()
+                          .startsWith(inputValue.toLowerCase());
+                      }}
+                      options={states.map((s) => ({
+                        value: s.id,
+                        label: s.name,
+                      }))}
+                      value={
+                        states
+                          .map((s) => ({ value: s.id, label: s.name }))
+                          .find((opt) => opt.value === formData.state_id) ||
+                        null
+                      }
+                      onChange={(opt) =>
+                        setFormData((p) => ({
+                          ...p,
+                          state_id: opt?.value || null,
+                          city_id: null,
+                        }))
+                      }
+                      placeholder="Select State"
+                      styles={customStyles}
+                      instanceId="state-select-dummy-88"
+                      name="random_state_select_88"
+                      isDisabled={!formData.country_id}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>City</label>
+                    <Select
+                      filterOption={(option, inputValue) => {
+                        if (!inputValue) return true;
+                        return option.label
+                          .toLowerCase()
+                          .startsWith(inputValue.toLowerCase());
+                      }}
+                      options={cities.map((c) => ({
+                        value: c.id,
+                        label: c.name,
+                      }))}
+                      value={
+                        cities
+                          .map((city) => ({ value: city.id, label: city.name }))
+                          .find((opt) => opt.value === formData.city_id) || null
+                      }
+                      onChange={(opt) =>
+                        setFormData((p) => ({
+                          ...p,
+                          city_id: opt?.value || null,
+                        }))
+                      }
+                      placeholder="Select City"
+                      styles={customStyles}
+                      instanceId="city-select-dummy-88"
+                      name="random_city_select_88"
+                      isDisabled={!formData.state_id}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Pin Code</label>
+                    <input
+                      type="text"
+                      name="pin_code"
+                      value={formData.pin_code || ""}
+                      onChange={handleChange}
+                      placeholder="Enter pin code"
+                      autoComplete="new-password"
+                      style={
+                        formErrors.pin_code
+                          ? { borderColor: "red", outline: "none" }
+                          : {}
+                      }
+                    />
+                    {formErrors.pin_code && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.pin_code[0]}
+                      </span>
+                    )}
                   </div>
                 </div>
-              </div>
+                <div className={styles.formActions}>
+                  <button type="submit" className={styles.btnSave}>
+                    Save & Continue &rarr;
+                  </button>
+                </div>
+              </>
+            )}
 
-              <div className={styles.fieldsGrid}>
-                <div className={styles.inputGroup}>
-                  <label>Street Address</label>
-                  <textarea name="street_address" value={formData.street_address || ""} onChange={handleChange} placeholder="Enter street address" autoComplete="new-password" style={{  height: '100px' , ...(formErrors.street_address ? { borderColor: "red", outline: "none" } : {}) }}></textarea>
-                  {formErrors.street_address && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.street_address[0]}</span>}
+            {activeTab === "business" && (
+              <>
+                <div className={styles.fieldsGrid}>
+                  <div className={styles.inputGroup}>
+                    <label>Business Name</label>
+                    <input
+                      type="text"
+                      name="bussiness_name"
+                      value={formData.bussiness_name || ""}
+                      onChange={handleChange}
+                      placeholder="Enter business name"
+                      autoComplete="new-password"
+                      style={
+                        formErrors.bussiness_name
+                          ? { borderColor: "red", outline: "none" }
+                          : {}
+                      }
+                    />
+                    {formErrors.bussiness_name && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.bussiness_name[0]}
+                      </span>
+                    )}
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>No. of Employees</label>
+                    <input
+                      type="number"
+                      name="no_of_employees"
+                      value={formData.no_of_employees || ""}
+                      onChange={handleChange}
+                      placeholder="Enter number of employees"
+                      autoComplete="new-password"
+                      style={
+                        formErrors.no_of_employees
+                          ? { borderColor: "red", outline: "none" }
+                          : {}
+                      }
+                    />
+                    {formErrors.no_of_employees && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.no_of_employees[0]}
+                      </span>
+                    )}
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Business Email</label>
+                    <input
+                      type="email"
+                      name="bussiness_email"
+                      value={formData.bussiness_email || ""}
+                      onChange={handleChange}
+                      placeholder="Enter business email"
+                      style={
+                        formErrors.bussiness_email
+                          ? { borderColor: "red", outline: "none" }
+                          : {}
+                      }
+                    />
+                    {formErrors.bussiness_email && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.bussiness_email[0]}
+                      </span>
+                    )}
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Business Phone</label>
+                    <PhoneInput
+                      country={'in'}
+                      value={formData.business_phone || ""}
+                      onChange={(phone) => setFormData(p => ({ ...p, business_phone: phone }))}
+                      isValid={(value, country) => {
+                        if (value && value.length < 10) {
+                          return false;
+                        }
+                        return true;
+                      }}
+                      inputStyle={{
+                        width: '100%',
+                        height: '45px',
+                        fontSize: '14px',
+                        fontFamily: 'var(--font-regular)',
+                        borderRadius: '8px',
+                        border: formErrors.business_phone ? '1px solid red' : '1px solid #E0E0E0',
+                        boxShadow: 'none',
+                        paddingLeft: '48px',
+                      }}
+                      buttonStyle={{
+                        border: formErrors.business_phone ? '1px solid red' : '1px solid #E0E0E0',
+                        borderRight: 'none',
+                        borderTopLeftRadius: '8px',
+                        borderBottomLeftRadius: '8px',
+                        backgroundColor: '#fff',
+                        padding: '2px',
+                      }}
+                      placeholder="Enter business phone number"
+                    />
+                    {formErrors.business_phone && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.business_phone[0]}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className={styles.inputGroup}>
-                  <label>Area / Locality</label>
-                  <textarea name="area_locality" value={formData.area_locality || ""} onChange={handleChange} placeholder="Enter area or locality" autoComplete="new-password" style={{  height: '100px' , ...(formErrors.area_locality ? { borderColor: "red", outline: "none" } : {}) }}></textarea>
-                  {formErrors.area_locality && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.area_locality[0]}</span>}
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Country</label>
-                  <Select filterOption={(option, inputValue) => { if (!inputValue) return true; return option.label.toLowerCase().startsWith(inputValue.toLowerCase()); }} 
-                    options={countries.map(c => ({ value: c.id, label: c.name }))} 
-                    value={countries.map((c) => ({ value: c.id, label: c.name })).find((opt) => opt.value === formData.country_id) || null} 
-                    onChange={(opt) => setFormData(p => ({ ...p, country_id: opt?.value || null, state_id: null, city_id: null }))} 
-                    placeholder="Select Country" 
-                    styles={customStyles} 
-                    instanceId="country-select-dummy-88" 
-                    name="random_country_select_88"
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>State</label>
-                  <Select filterOption={(option, inputValue) => { if (!inputValue) return true; return option.label.toLowerCase().startsWith(inputValue.toLowerCase()); }} 
-                    options={states.map(s => ({ value: s.id, label: s.name }))} 
-                    value={states.map((s) => ({ value: s.id, label: s.name })).find((opt) => opt.value === formData.state_id) || null} 
-                    onChange={(opt) => setFormData(p => ({ ...p, state_id: opt?.value || null, city_id: null }))} 
-                    placeholder="Select State" 
-                    styles={customStyles} 
-                    instanceId="state-select-dummy-88" 
-                    name="random_state_select_88"
-                    isDisabled={!formData.country_id}
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>City</label>
-                  <Select filterOption={(option, inputValue) => { if (!inputValue) return true; return option.label.toLowerCase().startsWith(inputValue.toLowerCase()); }} 
-                    options={cities.map(c => ({ value: c.id, label: c.name }))} 
-                    value={cities.map((city) => ({ value: city.id, label: city.name })).find((opt) => opt.value === formData.city_id) || null} 
-                    onChange={(opt) => setFormData(p => ({ ...p, city_id: opt?.value || null }))} 
-                    placeholder="Select City" 
-                    styles={customStyles} 
-                    instanceId="city-select-dummy-88" 
-                    name="random_city_select_88"
-                    isDisabled={!formData.state_id}
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Pin Code</label>
-                  <input type="text" name="pin_code" value={formData.pin_code || ""} onChange={handleChange} placeholder="Enter pin code" autoComplete="new-password"  style={formErrors.pin_code ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.pin_code && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.pin_code[0]}</span>}
-                </div>
-                
-                <div style={{ gridColumn: "1 / -1", marginTop: '1rem', marginBottom: '0.5rem' }}>
+
+                {/* === BUSINESS ADDRESS INFORMATION SECTION === */}
+                <div
+                  style={{
+                    gridColumn: "1 / -1",
+                    marginTop: "1rem",
+                    marginBottom: "0.5rem",
+                  }}
+                >
                   <div className={styles.formHeader}>
                     <div className={styles.formHeaderIcon}>
                       <FaBuilding />
                     </div>
                     <div className={styles.formHeaderText}>
-                      <h3 style={{ fontSize: '18px', margin: 0 }}>Business Address Information</h3>
-                      <p style={{ margin: 0, opacity: 0.7 }}>Update your business address details</p>
+                      <h3 style={{ fontSize: "18px", margin: 0 }}>
+                        Business Address Information
+                      </h3>
+                      <p style={{ margin: 0, opacity: 0.7 }}>
+                        Update your business address details
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                <div className={styles.inputGroup}>
-                  <label>Business Street Address</label>
-                  <textarea name="business_street_address" value={formData.business_street_address || ""} onChange={handleChange} placeholder="Enter business street address" autoComplete="new-password" style={{  height: '100px' , ...(formErrors.business_street_address ? { borderColor: "red", outline: "none" } : {}) }}></textarea>
-                  {formErrors.business_street_address && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.business_street_address[0]}</span>}
+                <div className={styles.fieldsGrid}>
+                  <div className={styles.inputGroup}>
+                    <label>Business Street Address</label>
+                    <textarea
+                      name="business_street_address"
+                      value={formData.business_street_address || ""}
+                      onChange={handleChange}
+                      placeholder="Enter business street address"
+                      autoComplete="new-password"
+                      style={{
+                        height: "100px",
+                        ...(formErrors.business_street_address
+                          ? { borderColor: "red", outline: "none" }
+                          : {}),
+                      }}
+                    ></textarea>
+                    {formErrors.business_street_address && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.business_street_address[0]}
+                      </span>
+                    )}
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Business Area / Locality</label>
+                    <textarea
+                      name="business_area_locality"
+                      value={formData.business_area_locality || ""}
+                      onChange={handleChange}
+                      placeholder="Enter business area or locality"
+                      autoComplete="new-password"
+                      style={{
+                        height: "100px",
+                        ...(formErrors.business_area_locality
+                          ? { borderColor: "red", outline: "none" }
+                          : {}),
+                      }}
+                    ></textarea>
+                    {formErrors.business_area_locality && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.business_area_locality[0]}
+                      </span>
+                    )}
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Business Country</label>
+                    <Select
+                      filterOption={(option, inputValue) => {
+                        if (!inputValue) return true;
+                        return option.label
+                          .toLowerCase()
+                          .startsWith(inputValue.toLowerCase());
+                      }}
+                      options={countries.map((c) => ({
+                        value: c.id,
+                        label: c.name,
+                      }))}
+                      value={
+                        countries
+                          .map((c) => ({ value: c.id, label: c.name }))
+                          .find(
+                            (opt) => opt.value === formData.business_country_id,
+                          ) || null
+                      }
+                      onChange={(opt) =>
+                        setFormData((p) => ({
+                          ...p,
+                          business_country_id: opt?.value || null,
+                          business_state_id: null,
+                          business_city_id: null,
+                        }))
+                      }
+                      placeholder="Select Country"
+                      styles={customStyles}
+                      instanceId="business-country-select-dummy-88"
+                      name="business_country_id"
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Business State</label>
+                    <Select
+                      filterOption={(option, inputValue) => {
+                        if (!inputValue) return true;
+                        return option.label
+                          .toLowerCase()
+                          .startsWith(inputValue.toLowerCase());
+                      }}
+                      options={businessStates.map((s) => ({
+                        value: s.id,
+                        label: s.name,
+                      }))}
+                      value={
+                        businessStates
+                          .map((s) => ({ value: s.id, label: s.name }))
+                          .find(
+                            (opt) => opt.value === formData.business_state_id,
+                          ) || null
+                      }
+                      onChange={(opt) =>
+                        setFormData((p) => ({
+                          ...p,
+                          business_state_id: opt?.value || null,
+                          business_city_id: null,
+                        }))
+                      }
+                      placeholder="Select State"
+                      styles={customStyles}
+                      instanceId="business-state-select-dummy-88"
+                      name="business_state_id"
+                      isDisabled={!formData.business_country_id}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Business City</label>
+                    <Select
+                      filterOption={(option, inputValue) => {
+                        if (!inputValue) return true;
+                        return option.label
+                          .toLowerCase()
+                          .startsWith(inputValue.toLowerCase());
+                      }}
+                      options={businessCities.map((c) => ({
+                        value: c.id,
+                        label: c.name,
+                      }))}
+                      value={
+                        businessCities
+                          .map((city) => ({ value: city.id, label: city.name }))
+                          .find(
+                            (opt) => opt.value === formData.business_city_id,
+                          ) || null
+                      }
+                      onChange={(opt) =>
+                        setFormData((p) => ({
+                          ...p,
+                          business_city_id: opt?.value || null,
+                        }))
+                      }
+                      placeholder="Select City"
+                      styles={customStyles}
+                      instanceId="business-city-select-dummy-88"
+                      name="business_city_id"
+                      isDisabled={!formData.business_state_id}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <label>Business Pin Code</label>
+                    <input
+                      type="text"
+                      name="business_pin_code"
+                      value={formData.business_pin_code || ""}
+                      onChange={handleChange}
+                      placeholder="Enter business pin code"
+                      autoComplete="new-password"
+                      style={
+                        formErrors.business_pin_code
+                          ? { borderColor: "red", outline: "none" }
+                          : {}
+                      }
+                    />
+                    {formErrors.business_pin_code && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.business_pin_code[0]}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className={styles.inputGroup}>
-                  <label>Business Area / Locality</label>
-                  <textarea name="business_area_locality" value={formData.business_area_locality || ""} onChange={handleChange} placeholder="Enter business area or locality" autoComplete="new-password" style={{  height: '100px' , ...(formErrors.business_area_locality ? { borderColor: "red", outline: "none" } : {}) }}></textarea>
-                  {formErrors.business_area_locality && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.business_area_locality[0]}</span>}
+                <div className={styles.formActions}>
+                  <button
+                    type="button"
+                    className={styles.btnCancel}
+                    onClick={() => setActiveTab("personal")}
+                  >
+                    <FaArrowLeft style={{ marginRight: "8px" }} /> Back
+                  </button>
+                  <button type="submit" className={styles.btnSave}>
+                    Save & Continue &rarr;
+                  </button>
                 </div>
-                <div className={styles.inputGroup}>
-                  <label>Business Country</label>
-                  <Select filterOption={(option, inputValue) => { if (!inputValue) return true; return option.label.toLowerCase().startsWith(inputValue.toLowerCase()); }} 
-                    options={countries.map(c => ({ value: c.id, label: c.name }))} 
-                    value={countries.map((c) => ({ value: c.id, label: c.name })).find((opt) => opt.value === formData.business_country_id) || null} 
-                    onChange={(opt) => setFormData(p => ({ ...p, business_country_id: opt?.value || null, business_state_id: null, business_city_id: null }))} 
-                    placeholder="Select Country" 
-                    styles={customStyles} 
-                    instanceId="business-country-select-dummy-88" 
-                    name="business_country_id"
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Business State</label>
-                  <Select filterOption={(option, inputValue) => { if (!inputValue) return true; return option.label.toLowerCase().startsWith(inputValue.toLowerCase()); }} 
-                    options={businessStates.map(s => ({ value: s.id, label: s.name }))} 
-                    value={businessStates.map((s) => ({ value: s.id, label: s.name })).find((opt) => opt.value === formData.business_state_id) || null} 
-                    onChange={(opt) => setFormData(p => ({ ...p, business_state_id: opt?.value || null, business_city_id: null }))} 
-                    placeholder="Select State" 
-                    styles={customStyles} 
-                    instanceId="business-state-select-dummy-88" 
-                    name="business_state_id"
-                    isDisabled={!formData.business_country_id}
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Business City</label>
-                  <Select filterOption={(option, inputValue) => { if (!inputValue) return true; return option.label.toLowerCase().startsWith(inputValue.toLowerCase()); }} 
-                    options={businessCities.map(c => ({ value: c.id, label: c.name }))} 
-                    value={businessCities.map((city) => ({ value: city.id, label: city.name })).find((opt) => opt.value === formData.business_city_id) || null} 
-                    onChange={(opt) => setFormData(p => ({ ...p, business_city_id: opt?.value || null }))} 
-                    placeholder="Select City" 
-                    styles={customStyles} 
-                    instanceId="business-city-select-dummy-88" 
-                    name="business_city_id"
-                    isDisabled={!formData.business_state_id}
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Business Pin Code</label>
-                  <input type="text" name="business_pin_code" value={formData.business_pin_code || ""} onChange={handleChange} placeholder="Enter business pin code" autoComplete="new-password"  style={formErrors.business_pin_code ? { borderColor: "red", outline: "none" } : {}}/>
-                  {formErrors.business_pin_code && <span style={{ color: "red", fontSize: "12px", marginTop: "4px", display: "block" }}>{formErrors.business_pin_code[0]}</span>}
-                </div>
-              </div>
               </>
             )}
-            
-            {activeTab === 'document' && (
-              <div className={styles.fieldsGrid} style={{ display: 'block' }}>
-                <KycDocuments 
-                  profile={profile} 
-                  token={token} 
+
+            {activeTab === "document" && (
+              <div className={styles.fieldsGrid} style={{ display: "block" }}>
+                <KycDocuments
+                  profile={profile}
+                  token={token}
                   onKycError={(status, reasons) => {
                     if (status) setKycStatus(status);
                     if (reasons) setKycReasons(reasons);
@@ -806,102 +1597,31 @@ const ProfileForm = () => {
               </div>
             )}
 
-            {activeTab === 'review' && (
-              <div className={styles.fieldsGrid} style={{ display: 'block' }}>
+            {activeTab === "review" && (
+              <div className={styles.fieldsGrid} style={{ display: "block" }}>
                 <ReviewSubmit
                   formData={formData}
                   setActiveTab={setActiveTab}
                   token={token}
+                  fetchProfile={fetchProfile}
                 />
               </div>
             )}
 
-            {activeTab === 'verification' && (
-              <div className={styles.fieldsGrid} style={{ display: 'block' }}>
-                <VerificationStep formData={formData} profile={profile} setActiveTab={setActiveTab} />
-              </div>
-            )}
-
-            {(activeTab !== 'document' && activeTab !== 'timeline' && activeTab !== 'review' && activeTab !== 'verification') && (
-              <div className={styles.formActions} style={activeTab === 'personal' ? { justifyContent: 'flex-end' } : {}}>
-                <button type="submit" className={styles.btnSave}>
-                  {activeTab === 'personal' ? "Save & Continue \u2192" : "Save Changes"}
-                </button>
-                {activeTab !== 'personal' && (
-                  <button type="button" className={styles.btnCancel} onClick={() => router.push('/auth/business/dashboard')}>
-                    Cancel
-                  </button>
-                )}
+            {activeTab === "verification" && (
+              <div className={styles.fieldsGrid} style={{ display: "block" }}>
+                <VerificationStep
+                  formData={formData}
+                  profile={profile}
+                  setActiveTab={setActiveTab}
+                />
               </div>
             )}
           </form>
         </div>
-
-        {/* Sidebar Widgets (Right) */}
-        {!['document', 'review', 'verification'].includes(activeTab) && (
-          <div className={styles.sidebarWidgets}>
-            {/* Profile Photo Widget */}
-            <div className={styles.widgetCard}>
-              <h4 className={styles.widgetTitle}>Profile Photo</h4>
-              <div className={styles.photoContainer}>
-                <div className={styles.photoWrapper}>
-                  <img src={profileImage} alt="Profile" className={styles.avatarImg} />
-                  <button className={styles.cameraBtn} onClick={handleImageClick}>
-                    <FaCamera />
-                  </button>
-                  <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} />
-                </div>
-              </div>
-              <button className={styles.uploadPhotoBtn} onClick={handleImageClick}>
-                {isUploadingPhoto ? `Uploading (${photoProgress}%)` : "Upload New Photo"}
-              </button>
-              <p className={styles.photoInfo}>Recommended: JPG, PNG or WEBP<br/>Max size: 2MB. Min dimension: 200x200px</p>
-            </div>
-
-
-
-            {/* Profile Completion Widget */}
-            <div className={styles.widgetCard}>
-              <h4 className={styles.widgetTitle}>Profile Completion</h4>
-              <div className={styles.completionHeader}>
-                <div className={styles.circularProgress}><span>{profileCompletion.percentage || 0}%</span></div>
-                <div>
-                  <h5>Profile Strength</h5>
-                  <p>{profileCompletion.percentage === 100 ? "Excellent! Profile complete." : "Almost there! Keep going."}</p>
-                </div>
-              </div>
-              <div className={styles.progressLine}><div className={styles.progressFill} style={{width: `${profileCompletion.percentage || 0}%`}}></div></div>
-              <ul className={styles.checklist}>
-                {profileCompletion.missing_fields && profileCompletion.missing_fields.length > 0 ? (
-                  profileCompletion.missing_fields.map((field, index) => {
-                    const label = field.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                    return (
-                      <li key={index} className={styles.pending}>
-                        <FaExclamationCircle /> {label}
-                      </li>
-                    );
-                  })
-                ) : (
-                  <li className={styles.checked}><FaCheckCircle /> Profile is 100% Complete!</li>
-                )}
-              </ul>
-            </div>
-
-            {/* Need Help Widget */}
-            <div className={styles.widgetCard}>
-              <h4 className={styles.widgetTitle}>Need Help?</h4>
-              <p className={styles.helpText}>If you face any issues while updating your profile, our support team is here to help you.</p>
-              <button className={styles.contactSupportBtn} onClick={() => router.push('/auth/business/support')}>
-                <FaHeadset /> Contact Support
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
-
   );
-
 };
 
 export default ProfileForm;

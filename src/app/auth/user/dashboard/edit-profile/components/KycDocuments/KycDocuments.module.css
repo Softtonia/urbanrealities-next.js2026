@@ -6,7 +6,7 @@
 
 .documentsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
 
@@ -184,11 +184,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 72px;
-  width: 72px;
+  height: 48px;
+  width: 100%;
   border: 1px dashed #D1D5DB;
   border-radius: 8px;
-  background: transparent;
+  background: #F9FAFB;
+  cursor: pointer;
+  transition: all 0.2s;
+  gap: 8px;
+}
+.uploadPlaceholder:hover {
+  background: #F3F4F6;
+  border-color: #9CA3AF;
 }
 
 .uploadPlaceholderText {

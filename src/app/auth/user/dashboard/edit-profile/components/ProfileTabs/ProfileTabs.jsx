@@ -2,14 +2,16 @@
 
 import React from "react";
 import styles from "./ProfileTabs.module.css";
+import { FaCheck } from "react-icons/fa";
 
-const ProfileTabs = ({ activeTab, setActiveTab }) => {
-  const steps = [
+import { toast } from "react-toastify";
+
+const ProfileTabs = ({ activeTab, setActiveTab, completedSteps = null, steps = [
     { id: "personal", label: "Personal Details" },
     { id: "document", label: "Document Upload" },
     { id: "review", label: "Review & Submit" },
     { id: "verification", label: "Verification" },
-  ];
+  ] }) => {
 
   // Determine current active index for completed line styles
   const activeIndex = steps.findIndex((step) => step.id === activeTab);
@@ -18,7 +20,7 @@ const ProfileTabs = ({ activeTab, setActiveTab }) => {
     <div className={styles.stepperContainer}>
       {steps.map((step, index) => {
         const isActive = step.id === activeTab;
-        const isCompleted = index < activeIndex;
+        const isCompleted = completedSteps ? completedSteps.includes(step.id) : index < activeIndex;
 
         return (
           <React.Fragment key={step.id}>
@@ -26,7 +28,16 @@ const ProfileTabs = ({ activeTab, setActiveTab }) => {
               className={styles.stepButton}
               onClick={(e) => {
                 e.preventDefault();
-                setActiveTab(step.id);
+                if (activeTab === "verification") {
+                  toast.warning("Your KYC is already submitted. You cannot go back to edit details.");
+                  return;
+                }
+                
+                if (index <= activeIndex || isCompleted) {
+                  setActiveTab(step.id);
+                } else {
+                  toast.warning("Please save the current step to proceed forward.");
+                }
               }}
             >
               <div
@@ -34,7 +45,7 @@ const ProfileTabs = ({ activeTab, setActiveTab }) => {
                   isActive ? styles.circleActive : ""
                 } ${isCompleted ? styles.circleCompleted : ""}`}
               >
-                {index + 1}
+                {isCompleted ? <FaCheck /> : index + 1}
               </div>
               <span
                 className={`${styles.stepLabel} ${

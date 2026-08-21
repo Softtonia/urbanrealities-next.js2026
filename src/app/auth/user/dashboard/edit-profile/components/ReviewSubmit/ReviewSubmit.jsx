@@ -9,7 +9,7 @@ import {
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-const ReviewSubmit = ({ formData, setActiveTab, token }) => {
+const ReviewSubmit = ({ formData, setActiveTab, token, fetchProfile }) => {
   const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
   const [documents, setDocuments] = useState([]);
@@ -55,6 +55,10 @@ const ReviewSubmit = ({ formData, setActiveTab, token }) => {
       // Depending on the exact API flow, a final submission API might be called here.
       // If the submission is just for UX and KYC was already submitted in the previous step,
       // we can just show a success message and navigate.
+      
+      if (fetchProfile) {
+        await fetchProfile();
+      }
       
       toast.success("Profile submitted for verification successfully!");
       setActiveTab("verification");

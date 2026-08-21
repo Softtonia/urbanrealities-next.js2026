@@ -40,14 +40,23 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
   const [viewingDocUrl, setViewingDocUrl] = useState(null);
   const [isLoadingView, setIsLoadingView] = useState(false);
   const [aadhaarNumber, setAadhaarNumber] = useState("");
+  const [gstNumber, setGstNumber] = useState("");
+  const [reraNumber, setReraNumber] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [globalKycStatus, setGlobalKycStatus] = useState(null);
   const [rejectionReasons, setRejectionReasons] = useState([]);
+  const [imageErrors, setImageErrors] = useState({});
 
   useEffect(() => {
     if (profile) {
       if (profile.aadhaar_number && !aadhaarNumber) {
         setAadhaarNumber(profile.aadhaar_number);
+      }
+      if (profile.gst_number && !gstNumber) {
+        setGstNumber(profile.gst_number);
+      }
+      if (profile.rera_number && !reraNumber) {
+        setReraNumber(profile.rera_number);
       }
     }
   }, [profile]);
@@ -197,6 +206,12 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
           if (data.aadhaar_number) {
             setAadhaarNumber(data.aadhaar_number);
           }
+          if (data.gst_number) {
+            setGstNumber(data.gst_number);
+          }
+          if (data.rera_number) {
+            setReraNumber(data.rera_number);
+          }
         }
       }
 
@@ -337,6 +352,8 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
     try {
       const formData = new FormData();
       formData.append("aadhaar_number", aadhaarNumber);
+      if (gstNumber) formData.append("gst_number", gstNumber);
+      if (reraNumber) formData.append("rera_number", reraNumber);
 
       let hasNewFiles = false;
       // Append files synchronously using the current state
@@ -423,7 +440,11 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
                   clearInterval(pollInterval);
 
                   try {
-                    const submitRes = await submitKyc(token, uploadId, aadhaarNumber);
+                    const submitRes = await submitKyc(token, uploadId, {
+                      aadhaar_number: aadhaarNumber,
+                      gst_number: gstNumber,
+                      rera_number: reraNumber
+                    });
                     const submitResult = await submitRes.json();
                     if (submitRes.ok && submitResult.status) {
                       toast.success(
@@ -584,43 +605,101 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
 
   return (
     <div className={styles.kycContainer}>
-      <div className={styles.inputGroup} style={{ marginBottom: "32px" }}>
-        <label
-          style={{ fontSize: "14px", fontWeight: "500", color: "#374151" }}
-        >
-          Aadhaar Number
-        </label>
-        <input
-          type="text"
-          value={
-            (documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")
-              ? aadhaarNumber
-                ? aadhaarNumber.length >= 4 && !aadhaarNumber.includes("X")
-                  ? "XXXXXXXX" + aadhaarNumber.slice(-4)
-                  : aadhaarNumber
-                : ""
-              : aadhaarNumber)
-              ?.match(/.{1,4}/g)?.join(" ") || ""
-          }
-          onChange={(e) =>
-            setAadhaarNumber(e.target.value.replace(/\D/g, "").slice(0, 12))
-          }
-          readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
-          disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
-          placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your 12 digit Aadhaar number"}
-          style={{
-            width: "100%",
-            padding: "12px 16px",
-            border: "1px solid #9E9E9E",
-            borderRadius: "8px",
-            outline: "none",
-            fontSize: "clamp(14px, 1.5vw, 16px)",
-            fontFamily: "var(--font-regular)",
-            backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
-            cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
-            color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
-          }}
-        />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+        <div className={styles.inputGroup}>
+          <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151", display: 'block', marginBottom: '8px' }}>
+            Aadhaar Number
+          </label>
+          <input
+            type="text"
+            value={
+              (documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")
+                ? aadhaarNumber
+                  ? aadhaarNumber.length >= 4 && !aadhaarNumber.includes("X")
+                    ? "XXXXXXXX" + aadhaarNumber.slice(-4)
+                    : aadhaarNumber
+                  : ""
+                : aadhaarNumber)
+                ?.match(/.{1,4}/g)?.join(" ") || ""
+            }
+            onChange={(e) =>
+              setAadhaarNumber(e.target.value.replace(/\D/g, "").slice(0, 12))
+            }
+            readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+            disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+            placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your 12 digit Aadhaar number"}
+            style={{
+              width: "100%",
+              padding: "12px 16px",
+              border: "1px solid #9E9E9E",
+              borderRadius: "8px",
+              outline: "none",
+              fontSize: "clamp(14px, 1.5vw, 16px)",
+              fontFamily: "var(--font-regular)",
+              backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
+              cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
+              color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
+            }}
+          />
+        </div>
+
+        {documents.some(d => d.field === 'gst_certificate') && (
+          <div className={styles.inputGroup}>
+            <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151", display: 'block', marginBottom: '8px' }}>
+              GST Number
+            </label>
+            <input
+              type="text"
+              value={gstNumber}
+              onChange={(e) => setGstNumber(e.target.value)}
+              readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+              disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+              placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your GST number"}
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                border: "1px solid #9E9E9E",
+                borderRadius: "8px",
+                outline: "none",
+                fontSize: "clamp(14px, 1.5vw, 16px)",
+                fontFamily: "var(--font-regular)",
+                backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
+                cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
+                textTransform: "uppercase",
+                color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
+              }}
+            />
+          </div>
+        )}
+
+        {documents.some(d => d.field === 'rera_certificate') && (
+          <div className={styles.inputGroup}>
+            <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151", display: 'block', marginBottom: '8px' }}>
+              RERA Number
+            </label>
+            <input
+              type="text"
+              value={reraNumber}
+              onChange={(e) => setReraNumber(e.target.value)}
+              readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+              disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
+              placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your RERA number"}
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                border: "1px solid #9E9E9E",
+                borderRadius: "8px",
+                outline: "none",
+                fontSize: "clamp(14px, 1.5vw, 16px)",
+                fontFamily: "var(--font-regular)",
+                backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
+                cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
+                textTransform: "uppercase",
+                color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
+              }}
+            />
+          </div>
+        )}
       </div>
       <input
         type="file"
@@ -657,7 +736,7 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
             {(doc.file || doc.status || doc.previewUrl) && (
               <div className={styles.filePreviewBox}>
                 <div className={styles.filePreviewInner}>
-                  {doc.previewUrl ? (
+                  {doc.previewUrl && !imageErrors[doc.id] ? (
                     <img
                       src={
                         doc.previewUrl.startsWith("blob:")
@@ -666,6 +745,9 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
                       }
                       alt={doc.title}
                       className={styles.fileThumbnail}
+                      onError={() => {
+                        setImageErrors((prev) => ({ ...prev, [doc.id]: true }));
+                      }}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleView(doc);
@@ -673,7 +755,7 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
                     />
                   ) : (
                     <div className={styles.fileThumbnailPlaceholder}>
-                      <FaIdCard />
+                      {doc.icon || <FaIdCard />}
                     </div>
                   )}
                   <div className={styles.fileDetails}>
@@ -714,9 +796,17 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
             )}
 
             {!doc.file && !doc.status && !doc.previewUrl && (
-              <div className={styles.uploadPlaceholder}>
-                <span className={styles.uploadPlaceholderText}>Click to upload</span>
-              </div>
+              <button 
+                type="button"
+                className={styles.uploadPlaceholder}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUpload(doc);
+                }}
+              >
+                <FaUpload style={{ color: '#6B7280' }} />
+                <span className={styles.uploadPlaceholderText}>Click to upload document</span>
+              </button>
             )}
           </div>
         ))}
@@ -739,7 +829,8 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
             // Since activeTab isn't passed as a prop, you might need to handle this differently.
             // But per design, there's a back button.
             if (typeof document !== 'undefined') {
-              const personalTabBtn = document.querySelector('button:has(span:contains("Personal Details"))');
+              const buttons = Array.from(document.querySelectorAll('button'));
+              const personalTabBtn = buttons.find(btn => btn.textContent.includes('Personal Details'));
               if(personalTabBtn) personalTabBtn.click();
             }
           }}

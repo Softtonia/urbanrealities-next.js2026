@@ -20,6 +20,8 @@ import {
 } from "react-icons/fa";
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
 import KycDocuments from "../KycDocuments/KycDocuments";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 import KycTimeline from "../KycTimeline/KycTimeline";
 import ReviewSubmit from "../ReviewSubmit/ReviewSubmit";
 import VerificationStep from "../VerificationStep/VerificationStep";
@@ -141,6 +143,8 @@ const ProfileForm = () => {
           address: normalize(rawData.address),
           about_us: normalize(rawData.about_us || rawData.about),
           aadhaar_number: normalize(rawData.aadhaar_number),
+          gst_number: normalize(rawData.gst_number),
+          rera_number: normalize(rawData.rera_number),
         });
 
         if (rawData.profile_photo) {
@@ -177,6 +181,28 @@ const ProfileForm = () => {
         }
       };
       fetchTimelineCheck();
+
+      const fetchKycStatus = async () => {
+        try {
+          const res = await fetch(getBaseUrl() + "/api/kyc/status", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+              "X-App-Type": APP_TYPE,
+            },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            const status = data?.data?.latest_kyc_request?.status;
+            if (status && status.toLowerCase() === "submitted") {
+              setActiveTab("verification");
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      };
+      fetchKycStatus();
     }
   }, [token]);
 
@@ -332,6 +358,11 @@ const ProfileForm = () => {
       ) {
         value = value.slice(0, 10);
       }
+
+      // Limit pin codes to 6 digits
+      if (name === "pin_code" && value.length > 6) {
+        value = value.slice(0, 6);
+      }
     }
 
     setFormData((prev) => ({
@@ -355,6 +386,12 @@ const ProfileForm = () => {
         });
         data = await updatePersonalProfile(token, dataToSend);
       } else if (activeTab === "address") {
+        // Basic validation for pin code
+        if (formData.pin_code && formData.pin_code.length !== 6) {
+          toast.error("Please enter a valid 6-digit pin code.");
+          return;
+        }
+
         const dataToSend = new FormData();
         const addressKeys = [
           "country_id",
@@ -658,33 +695,47 @@ const ProfileForm = () => {
                   <label>
                     Mobile Number <span className={styles.required}>*</span>
                   </label>
-                  <div className={styles.phoneInputWrap}>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone || ""}
-                      onChange={handleChange}
-                      placeholder="Mobile Number"
-                      style={
-                        formErrors.phone
-                          ? { borderColor: "red", outline: "none" }
-                          : {}
-                      }
-                    />
-                    {formErrors.phone && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.phone[0]}
-                      </span>
+                  <PhoneInput
+                    country={'in'}
+                    value={formData.phone || ""}
+                    onChange={(val) => setFormData(p => ({ ...p, phone: val }))}
+                    isValid={(value) => {
+                      if (value && value.length < 10) return false;
+                      return true;
+                    }}
+                    inputStyle={{
+                      width: '100%',
+                      height: '45px',
+                      fontSize: '14px',
+                      fontFamily: 'var(--font-regular)',
+                      borderRadius: '8px',
+                      border: formErrors.phone ? '1px solid red' : '1px solid #E0E0E0',
+                      boxShadow: 'none',
+                      paddingLeft: '48px',
+                    }}
+                    buttonStyle={{
+                      border: formErrors.phone ? '1px solid red' : '1px solid #E0E0E0',
+                      borderRight: 'none',
+                      borderTopLeftRadius: '8px',
+                      borderBottomLeftRadius: '8px',
+                      backgroundColor: '#fff',
+                      padding: '2px',
+                    }}
+                    placeholder="Mobile Number"
+                  />
+                  {formErrors.phone && (
+                    <span
+                      style={{
+                        color: "red",
+                        fontSize: "12px",
+                        marginTop: "4px",
+                        display: "block",
+                      }}
+                    >
+                      {formErrors.phone[0]}
+                    </span>
                     )}
                   </div>
-                </div>
 
                 {/* Row 3: Role */}
                 <div className={styles.inputGroup}>
@@ -960,6 +1011,7 @@ const ProfileForm = () => {
                   formData={formData}
                   setActiveTab={setActiveTab}
                   token={token}
+                  fetchProfile={fetchProfile}
                 />
               </div>
             )}
