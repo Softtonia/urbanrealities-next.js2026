@@ -21,8 +21,8 @@ import {
 } from "react-icons/fa";
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
 import KycDocuments from "../KycDocuments/KycDocuments";
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import KycTimeline from "@/app/auth/user/dashboard/edit-profile/components/KycTimeline/KycTimeline";
 import ProfileTabs from "@/app/auth/user/dashboard/edit-profile/components/ProfileTabs/ProfileTabs";
 import ReviewSubmit from "@/app/auth/user/dashboard/edit-profile/components/ReviewSubmit/ReviewSubmit";
@@ -110,11 +110,11 @@ const ProfileForm = () => {
   const [businessCities, setBusinessCities] = useState([]);
 
   // ✅ Fetch profile data
-  const fetchProfile = async () => {
-    setLoading(true);
+  const fetchProfile = async (manageLoading = true) => {
+    if (manageLoading) setLoading(true);
     try {
       const res = await getUserProfile(id, token);
-      setLoading(false);
+      if (manageLoading) setLoading(false);
 
       if (res && res.status && res.data) {
         const rawData = res.data.raw || {};
@@ -178,59 +178,71 @@ const ProfileForm = () => {
       }
     } catch (err) {
       console.error("Error fetching profile:", err);
-      setLoading(false);
+      if (manageLoading) setLoading(false);
     }
   };
 
   useEffect(() => {
     if (token) {
-      fetchProfile();
+      const loadAllData = async () => {
+        setLoading(true);
 
-      const fetchTimelineCheck = async () => {
-        try {
-          const res = await fetch(
-            getBaseUrl() + "/api/kyc/timeline?per_page=1",
-            {
+        const fetchTimelineCheck = async () => {
+          try {
+            const res = await fetch(
+              getBaseUrl() + "/api/kyc/timeline?per_page=1",
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+                  "X-App-Type": APP_TYPE,
+                },
+              },
+            );
+            if (res.ok) {
+              const data = await res.json();
+              if (data.status && data.data && data.data.length > 0) {
+                setHasTimeline(true);
+              }
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        };
+
+        const fetchKycStatus = async () => {
+          try {
+            const res = await fetch(getBaseUrl() + "/api/kyc/status", {
               headers: {
                 Authorization: `Bearer ${token}`,
                 "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
                 "X-App-Type": APP_TYPE,
               },
-            },
-          );
-          if (res.ok) {
-            const data = await res.json();
-            if (data.status && data.data && data.data.length > 0) {
-              setHasTimeline(true);
+            });
+            if (res.ok) {
+              const data = await res.json();
+              const status = data?.data?.latest_kyc_request?.status;
+              if (status && status.toLowerCase() === "submitted") {
+                setActiveTab("verification");
+              }
             }
+          } catch (e) {
+            console.error(e);
           }
-        } catch (e) {
-          console.error(e);
-        }
-      };
-      fetchTimelineCheck();
+        };
 
-      const fetchKycStatus = async () => {
         try {
-          const res = await fetch(getBaseUrl() + "/api/kyc/status", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
-              "X-App-Type": APP_TYPE,
-            },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            const status = data?.data?.latest_kyc_request?.status;
-            if (status && status.toLowerCase() === "submitted") {
-              setActiveTab("verification");
-            }
-          }
-        } catch (e) {
-          console.error(e);
+          await Promise.all([
+            fetchProfile(false),
+            fetchTimelineCheck(),
+            fetchKycStatus(),
+          ]);
+        } finally {
+          setLoading(false);
         }
       };
-      fetchKycStatus();
+      
+      loadAllData();
     }
   }, [token]);
 
@@ -437,26 +449,41 @@ const ProfileForm = () => {
 
     try {
       if (activeTab === "personal" || activeTab === "business") {
-        
         // Basic validation for phone
-        if (activeTab === "personal" && formData.phone && formData.phone.length < 10) {
+        if (
+          activeTab === "personal" &&
+          formData.phone &&
+          formData.phone.length < 10
+        ) {
           toast.error("Please enter a valid personal mobile number.");
           return;
         }
 
         // Basic validation for business phone
-        if (activeTab === "business" && formData.business_phone && formData.business_phone.length < 10) {
+        if (
+          activeTab === "business" &&
+          formData.business_phone &&
+          formData.business_phone.length < 10
+        ) {
           toast.error("Please enter a valid business phone number.");
           return;
         }
 
         // Basic validation for pin code
-        if (activeTab === "personal" && formData.pin_code && formData.pin_code.length !== 6) {
+        if (
+          activeTab === "personal" &&
+          formData.pin_code &&
+          formData.pin_code.length !== 6
+        ) {
           toast.error("Please enter a valid 6-digit pin code.");
           return;
         }
-        
-        if (activeTab === "business" && formData.business_pin_code && formData.business_pin_code.length !== 6) {
+
+        if (
+          activeTab === "business" &&
+          formData.business_pin_code &&
+          formData.business_pin_code.length !== 6
+        ) {
           toast.error("Please enter a valid 6-digit business pin code.");
           return;
         }
@@ -664,7 +691,7 @@ const ProfileForm = () => {
       zIndex: 9999,
     }),
   };
-  if (loading) {
+  if (loading || isSaving) {
     return (
       <div className={styles.loadingOverlay}>
         <div className={styles.spinner}></div>
@@ -864,73 +891,86 @@ const ProfileForm = () => {
                       Mobile Number <span className={styles.required}>*</span>
                     </label>
                     <PhoneInput
-                      country={'in'}
+                      country={"in"}
                       value={formData.phone || ""}
-                      onChange={(val) => setFormData(p => ({ ...p, phone: val }))}
+                      onChange={(val) =>
+                        setFormData((p) => ({ ...p, phone: val }))
+                      }
                       isValid={(value) => {
                         if (value && value.length < 10) return false;
                         return true;
                       }}
                       inputStyle={{
-                        width: '100%',
-                        height: '45px',
-                        fontSize: '14px',
-                        fontFamily: 'var(--font-regular)',
-                        borderRadius: '8px',
-                        border: formErrors.phone ? '1px solid red' : '1px solid #E0E0E0',
-                        boxShadow: 'none',
-                        paddingLeft: '48px',
+                        width: "100%",
+                        height: "45px",
+                        fontSize: "14px",
+                        fontFamily: "var(--font-regular)",
+                        borderRadius: "8px",
+                        border: formErrors.phone
+                          ? "1px solid red"
+                          : "1px solid #E0E0E0",
+                        boxShadow: "none",
+                        paddingLeft: "48px",
                       }}
                       buttonStyle={{
-                        border: formErrors.phone ? '1px solid red' : '1px solid #E0E0E0',
-                        borderRight: 'none',
-                        borderTopLeftRadius: '8px',
-                        borderBottomLeftRadius: '8px',
-                        backgroundColor: '#fff',
-                        padding: '2px',
+                        border: formErrors.phone
+                          ? "1px solid red"
+                          : "1px solid #E0E0E0",
+                        borderRight: "none",
+                        borderTopLeftRadius: "8px",
+                        borderBottomLeftRadius: "8px",
+                        backgroundColor: "#fff",
+                        padding: "2px",
                       }}
                       placeholder="Mobile Number"
                     />
-                      {formErrors.phone && (
-                        <span
-                          style={{
-                            color: "red",
-                            fontSize: "12px",
-                            marginTop: "4px",
-                            display: "block",
-                          }}
-                        >
-                          {formErrors.phone[0]}
-                        </span>
-                      )}
+                    {formErrors.phone && (
+                      <span
+                        style={{
+                          color: "red",
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {formErrors.phone[0]}
+                      </span>
+                    )}
                   </div>
                   <div className={styles.inputGroup}>
                     <label>Alternate Number</label>
                     <PhoneInput
-                      country={'in'}
+                      country={"in"}
                       value={formData.alternate_number || ""}
-                      onChange={(val) => setFormData(p => ({ ...p, alternate_number: val }))}
+                      onChange={(val) =>
+                        setFormData((p) => ({ ...p, alternate_number: val }))
+                      }
                       isValid={(value) => {
-                        if (value && value.length > 0 && value.length < 10) return false;
+                        if (value && value.length > 0 && value.length < 10)
+                          return false;
                         return true;
                       }}
                       inputStyle={{
-                        width: '100%',
-                        height: '45px',
-                        fontSize: '14px',
-                        fontFamily: 'var(--font-regular)',
-                        borderRadius: '8px',
-                        border: formErrors.alternate_number ? '1px solid red' : '1px solid #E0E0E0',
-                        boxShadow: 'none',
-                        paddingLeft: '48px',
+                        width: "100%",
+                        height: "45px",
+                        fontSize: "14px",
+                        fontFamily: "var(--font-regular)",
+                        borderRadius: "8px",
+                        border: formErrors.alternate_number
+                          ? "1px solid red"
+                          : "1px solid #E0E0E0",
+                        boxShadow: "none",
+                        paddingLeft: "48px",
                       }}
                       buttonStyle={{
-                        border: formErrors.alternate_number ? '1px solid red' : '1px solid #E0E0E0',
-                        borderRight: 'none',
-                        borderTopLeftRadius: '8px',
-                        borderBottomLeftRadius: '8px',
-                        backgroundColor: '#fff',
-                        padding: '2px',
+                        border: formErrors.alternate_number
+                          ? "1px solid red"
+                          : "1px solid #E0E0E0",
+                        borderRight: "none",
+                        borderTopLeftRadius: "8px",
+                        borderBottomLeftRadius: "8px",
+                        backgroundColor: "#fff",
+                        padding: "2px",
                       }}
                       placeholder="Enter alternate number (optional)"
                     />
@@ -1314,9 +1354,11 @@ const ProfileForm = () => {
                   <div className={styles.inputGroup}>
                     <label>Business Phone</label>
                     <PhoneInput
-                      country={'in'}
+                      country={"in"}
                       value={formData.business_phone || ""}
-                      onChange={(phone) => setFormData(p => ({ ...p, business_phone: phone }))}
+                      onChange={(phone) =>
+                        setFormData((p) => ({ ...p, business_phone: phone }))
+                      }
                       isValid={(value, country) => {
                         if (value && value.length < 10) {
                           return false;
@@ -1324,22 +1366,26 @@ const ProfileForm = () => {
                         return true;
                       }}
                       inputStyle={{
-                        width: '100%',
-                        height: '45px',
-                        fontSize: '14px',
-                        fontFamily: 'var(--font-regular)',
-                        borderRadius: '8px',
-                        border: formErrors.business_phone ? '1px solid red' : '1px solid #E0E0E0',
-                        boxShadow: 'none',
-                        paddingLeft: '48px',
+                        width: "100%",
+                        height: "45px",
+                        fontSize: "14px",
+                        fontFamily: "var(--font-regular)",
+                        borderRadius: "8px",
+                        border: formErrors.business_phone
+                          ? "1px solid red"
+                          : "1px solid #E0E0E0",
+                        boxShadow: "none",
+                        paddingLeft: "48px",
                       }}
                       buttonStyle={{
-                        border: formErrors.business_phone ? '1px solid red' : '1px solid #E0E0E0',
-                        borderRight: 'none',
-                        borderTopLeftRadius: '8px',
-                        borderBottomLeftRadius: '8px',
-                        backgroundColor: '#fff',
-                        padding: '2px',
+                        border: formErrors.business_phone
+                          ? "1px solid red"
+                          : "1px solid #E0E0E0",
+                        borderRight: "none",
+                        borderTopLeftRadius: "8px",
+                        borderBottomLeftRadius: "8px",
+                        backgroundColor: "#fff",
+                        padding: "2px",
                       }}
                       placeholder="Enter business phone number"
                     />

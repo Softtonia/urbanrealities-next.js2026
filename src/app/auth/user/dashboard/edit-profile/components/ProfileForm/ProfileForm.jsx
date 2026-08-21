@@ -20,13 +20,17 @@ import {
 } from "react-icons/fa";
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
 import KycDocuments from "../KycDocuments/KycDocuments";
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import KycTimeline from "../KycTimeline/KycTimeline";
 import ReviewSubmit from "../ReviewSubmit/ReviewSubmit";
 import VerificationStep from "../VerificationStep/VerificationStep";
 import ProfileTabs from "../ProfileTabs/ProfileTabs";
-import { LARAVEL_API_BASE_URL, LARAVEL_APPLICATION_PASSWORD, APP_TYPE } from "@/lib/config";
+import {
+  LARAVEL_API_BASE_URL,
+  LARAVEL_APPLICATION_PASSWORD,
+  APP_TYPE,
+} from "@/lib/config";
 import {
   updatePersonalProfile,
   updateProfilePhoto,
@@ -94,11 +98,11 @@ const ProfileForm = () => {
   const [loading, setLoading] = useState(true);
 
   // ✅ Fetch profile data
-  const fetchProfile = async () => {
-    setLoading(true);
+  const fetchProfile = async (manageLoading = true) => {
+    if (manageLoading) setLoading(true);
     try {
       const res = await getUserProfile(id, token);
-      setLoading(false);
+      if (manageLoading) setLoading(false);
 
       if (res && res.status && res.data) {
         const rawData = res.data.raw || {};
@@ -153,56 +157,71 @@ const ProfileForm = () => {
       }
     } catch (err) {
       console.error("Error fetching profile:", err);
-      setLoading(false);
+      if (manageLoading) setLoading(false);
     }
   };
 
   useEffect(() => {
     if (token) {
-      fetchProfile();
-      
-      const fetchTimelineCheck = async () => {
-        try {
-          const res = await fetch(getBaseUrl() + "/api/kyc/timeline?per_page=1", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
-              "X-App-Type": APP_TYPE,
-            },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data.status && data.data && data.data.length > 0) {
-              setHasTimeline(true);
-            }
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      };
-      fetchTimelineCheck();
+      const loadAllData = async () => {
+        setLoading(true);
 
-      const fetchKycStatus = async () => {
-        try {
-          const res = await fetch(getBaseUrl() + "/api/kyc/status", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
-              "X-App-Type": APP_TYPE,
-            },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            const status = data?.data?.latest_kyc_request?.status;
-            if (status && status.toLowerCase() === "submitted") {
-              setActiveTab("verification");
+        const fetchTimelineCheck = async () => {
+          try {
+            const res = await fetch(
+              getBaseUrl() + "/api/kyc/timeline?per_page=1",
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+                  "X-App-Type": APP_TYPE,
+                },
+              },
+            );
+            if (res.ok) {
+              const data = await res.json();
+              if (data.status && data.data && data.data.length > 0) {
+                setHasTimeline(true);
+              }
             }
+          } catch (e) {
+            console.error(e);
           }
-        } catch (e) {
-          console.error(e);
+        };
+
+        const fetchKycStatus = async () => {
+          try {
+            const res = await fetch(getBaseUrl() + "/api/kyc/status", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+                "X-App-Type": APP_TYPE,
+              },
+            });
+            if (res.ok) {
+              const data = await res.json();
+              const status = data?.data?.latest_kyc_request?.status;
+              if (status && status.toLowerCase() === "submitted") {
+                setActiveTab("verification");
+              }
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        };
+
+        try {
+          await Promise.all([
+            fetchProfile(false),
+            fetchTimelineCheck(),
+            fetchKycStatus(),
+          ]);
+        } finally {
+          setLoading(false);
         }
       };
-      fetchKycStatus();
+      
+      loadAllData();
     }
   }, [token]);
 
@@ -418,7 +437,7 @@ const ProfileForm = () => {
       if (data && data.status) {
         console.log("✅ Profile Updated Successfully:", data);
         toast.success(data.message || "Information updated successfully.");
-        
+
         // Advance to the next step
         if (activeTab === "personal") {
           setActiveTab("document");
@@ -573,7 +592,7 @@ const ProfileForm = () => {
       zIndex: 9999,
     }),
   };
-  if (loading) {
+  if (loading || isSaving) {
     return (
       <div className={styles.loadingOverlay}>
         <div className={styles.spinner}></div>
@@ -597,7 +616,14 @@ const ProfileForm = () => {
         hasTimeline={hasTimeline}
       />
 
-      <div className={styles.layoutGrid} style={["document", "review", "verification"].includes(activeTab) ? { gridTemplateColumns: "1fr" } : {}}>
+      <div
+        className={styles.layoutGrid}
+        style={
+          ["document", "review", "verification"].includes(activeTab)
+            ? { gridTemplateColumns: "1fr" }
+            : {}
+        }
+      >
         {/* Main Content Area (Left) */}
         <div className={styles.mainContent}>
           <form
@@ -630,7 +656,10 @@ const ProfileForm = () => {
             {activeTab === "personal" && (
               <div className={styles.fieldsGrid}>
                 {/* Row 1: Full Name */}
-                <div className={styles.inputGroup} style={{ gridColumn: "1 / -1" }}>
+                <div
+                  className={styles.inputGroup}
+                  style={{ gridColumn: "1 / -1" }}
+                >
                   <label>
                     Full Name <span className={styles.required}>*</span>
                   </label>
@@ -696,30 +725,36 @@ const ProfileForm = () => {
                     Mobile Number <span className={styles.required}>*</span>
                   </label>
                   <PhoneInput
-                    country={'in'}
+                    country={"in"}
                     value={formData.phone || ""}
-                    onChange={(val) => setFormData(p => ({ ...p, phone: val }))}
+                    onChange={(val) =>
+                      setFormData((p) => ({ ...p, phone: val }))
+                    }
                     isValid={(value) => {
                       if (value && value.length < 10) return false;
                       return true;
                     }}
                     inputStyle={{
-                      width: '100%',
-                      height: '45px',
-                      fontSize: '14px',
-                      fontFamily: 'var(--font-regular)',
-                      borderRadius: '8px',
-                      border: formErrors.phone ? '1px solid red' : '1px solid #E0E0E0',
-                      boxShadow: 'none',
-                      paddingLeft: '48px',
+                      width: "100%",
+                      height: "45px",
+                      fontSize: "14px",
+                      fontFamily: "var(--font-regular)",
+                      borderRadius: "8px",
+                      border: formErrors.phone
+                        ? "1px solid red"
+                        : "1px solid #E0E0E0",
+                      boxShadow: "none",
+                      paddingLeft: "48px",
                     }}
                     buttonStyle={{
-                      border: formErrors.phone ? '1px solid red' : '1px solid #E0E0E0',
-                      borderRight: 'none',
-                      borderTopLeftRadius: '8px',
-                      borderBottomLeftRadius: '8px',
-                      backgroundColor: '#fff',
-                      padding: '2px',
+                      border: formErrors.phone
+                        ? "1px solid red"
+                        : "1px solid #E0E0E0",
+                      borderRight: "none",
+                      borderTopLeftRadius: "8px",
+                      borderBottomLeftRadius: "8px",
+                      backgroundColor: "#fff",
+                      padding: "2px",
                     }}
                     placeholder="Mobile Number"
                   />
@@ -734,8 +769,8 @@ const ProfileForm = () => {
                     >
                       {formErrors.phone[0]}
                     </span>
-                    )}
-                  </div>
+                  )}
+                </div>
 
                 {/* Row 3: Role */}
                 <div className={styles.inputGroup}>
@@ -771,7 +806,14 @@ const ProfileForm = () => {
                 <div></div>
 
                 {/* Row 4: Aadhaar, GST, RERA */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "20px", gridColumn: "1 / -1" }}>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+                    gap: "20px",
+                    gridColumn: "1 / -1",
+                  }}
+                >
                   <div className={styles.inputGroup}>
                     <label>Aadhaar Number</label>
                     <input
@@ -1024,26 +1066,42 @@ const ProfileForm = () => {
 
             {activeTab === "verification" && (
               <div className={styles.fieldsGrid} style={{ display: "block" }}>
-                <VerificationStep formData={formData} profile={profile} setActiveTab={setActiveTab} />
+                <VerificationStep
+                  formData={formData}
+                  profile={profile}
+                  setActiveTab={setActiveTab}
+                />
               </div>
             )}
 
-            {(activeTab !== "document" && activeTab !== "timeline" && activeTab !== "review" && activeTab !== "verification") && (
-              <div className={styles.formActions} style={activeTab === "personal" ? { justifyContent: "flex-end" } : {}}>
-                <button type="submit" className={styles.btnSave}>
-                  {activeTab === "personal" ? "Save & Continue \u2192" : "Save Changes"}
-                </button>
-                {activeTab !== "personal" && (
-                  <button
-                    type="button"
-                    className={styles.btnCancel}
-                    onClick={() => router.push("/auth/user/dashboard")}
-                  >
-                    Cancel
+            {activeTab !== "document" &&
+              activeTab !== "timeline" &&
+              activeTab !== "review" &&
+              activeTab !== "verification" && (
+                <div
+                  className={styles.formActions}
+                  style={
+                    activeTab === "personal"
+                      ? { justifyContent: "flex-end" }
+                      : {}
+                  }
+                >
+                  <button type="submit" className={styles.btnSave}>
+                    {activeTab === "personal"
+                      ? "Save & Continue \u2192"
+                      : "Save Changes"}
                   </button>
-                )}
-              </div>
-            )}
+                  {activeTab !== "personal" && (
+                    <button
+                      type="button"
+                      className={styles.btnCancel}
+                      onClick={() => router.push("/auth/user/dashboard")}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              )}
           </form>
         </div>
 
@@ -1060,7 +1118,10 @@ const ProfileForm = () => {
                     alt="Profile"
                     className={styles.avatarImg}
                   />
-                  <button className={styles.cameraBtn} onClick={handleImageClick}>
+                  <button
+                    className={styles.cameraBtn}
+                    onClick={handleImageClick}
+                  >
                     <FaCamera />
                   </button>
                   <input
