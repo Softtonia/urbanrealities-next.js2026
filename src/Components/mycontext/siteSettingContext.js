@@ -15,6 +15,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     const [isLoadingToken, setIsLoadingToken] = useState(true) // NEW
     const [isLogeIn, setIsLogeIn] = useState(false)
     const [isOtpVerified, setIsOtpVerified] = useState(1);
+    const [kycStatus, setKycStatus] = useState(null);
 
 
     // On load, read token from localStorage
@@ -36,10 +37,11 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
     useEffect(() => {
         const initAuth = async () => {
             setFetchingUser(true)
-            const { isAuthenticated, user, role, is_otp_verified } = await checkAuth();
+            const { isAuthenticated, user, role, is_otp_verified, kyc_status } = await checkAuth();
             if (isAuthenticated) {
                 setUser(user);
                 setRole(role);
+                setKycStatus(kyc_status);
             }
 
             setIsOtpVerified(is_otp_verified);
@@ -103,7 +105,7 @@ export const SiteSettingsProvider = ({ initialSettings, children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ token, login, logout, settings, isLoadingToken, isLogeIn, isOtpVerified, fetchingUser, userId, role }} // pass isLoadingToken
+            value={{ token, login, logout, settings, isLoadingToken, isLogeIn, isOtpVerified, fetchingUser, userId, role, kycStatus }} // pass isLoadingToken
         >
             {children}
         </AuthContext.Provider>

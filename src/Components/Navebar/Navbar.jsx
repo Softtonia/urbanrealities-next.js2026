@@ -20,6 +20,7 @@ import LocationDropdown from "../LocationDropdown/LocationDropdown";
 import { GoChevronDown } from "react-icons/go";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { useSiteSettings } from "../mycontext/siteSettingContext";
+import { toast } from "react-toastify";
 import { useCity } from "@/utils/CityContext";
 import { getSiteSettingsData } from "@/services/site-setting.service";
 import NotificationDropdown from "./NotificationDropdown";
@@ -99,9 +100,10 @@ export default function Navbar() {
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showHelp, setShowHelp] = useState(false);
-  const { settings, token, logout, isLoadingToken, role } = useSiteSettings();
+  const { settings, token, logout, isLoadingToken, role, kycStatus } = useSiteSettings();
   const [siteData, setSiteData] = useState(settings);
   const [isLoadingSiteData, setIsLoadingSiteData] = useState(true);
+  const isKycComplete = !token || ["Submitted", "Pending", "Under Review", "Approved", "Verified", "Completed"].includes(kycStatus);
 
   useEffect(() => {
     const fetchSiteSettings = async () => {
@@ -342,22 +344,38 @@ export default function Navbar() {
           )}
 
           <div className="d-flex align-items-center gap-3">
-            <Link
-              href={
-                !token
-                  ? `/auth/login?redirect=/auth/post-property/basic-details`
-                  : "/auth/post-property/basic-details"
-              }
-              className="btn-property d-flex align-items-center gap-2 rounded-pill"
-            >
-              <Image
-                src={homeLogo}
-                alt="Post Property"
-                width={22}
-                height={22}
-              />
-              Post Property <span className="badge-property">Free</span>
-            </Link>
+            {!isKycComplete ? (
+              <button
+                onClick={() => toast.error("Please complete your KYC first.")}
+                className="btn-property d-flex align-items-center gap-2 rounded-pill border-0"
+                style={{ background: 'var(--primary-color)', color: '#fff' }}
+              >
+                <Image
+                  src={homeLogo}
+                  alt="Post Property"
+                  width={22}
+                  height={22}
+                />
+                Post Property <span className="badge-property">Free</span>
+              </button>
+            ) : (
+              <Link
+                href={
+                  !token
+                    ? `/auth/login?redirect=/auth/post-property/basic-details`
+                    : "/auth/post-property/basic-details"
+                }
+                className="btn-property d-flex align-items-center gap-2 rounded-pill"
+              >
+                <Image
+                  src={homeLogo}
+                  alt="Post Property"
+                  width={22}
+                  height={22}
+                />
+                Post Property <span className="badge-property">Free</span>
+              </Link>
+            )}
             <div className="nav-items-name d-flex align-items-center  position-relative">
               <div
                 className="dropdown"
@@ -559,29 +577,51 @@ export default function Navbar() {
             </div>
           </div>
           <div className="m-0" style={{ flexShrink: 0 }}>
-            <Link
-              href={
-                !token
-                  ? `/auth/login?redirect=/auth/post-property/basic-details`
-                  : "/auth/post-property/basic-details"
-              }
-              className="btn-property d-flex align-items-center gap-1 rounded-pill text-sm px-2 py-1"
-              style={{ fontSize: "12px" }}
-            >
-              <Image
-                src={homeLogo}
-                alt="Post Property"
-                width={16}
-                height={16}
-              />
-              Post <span className="d-none d-sm-inline">Property</span>{" "}
-              <span
-                className="badge-property"
-                style={{ padding: "2px 4px", fontSize: "10px" }}
+            {!isKycComplete ? (
+              <button
+                onClick={() => toast.error("Please complete your KYC first.")}
+                className="btn-property d-flex align-items-center gap-1 rounded-pill text-sm px-2 py-1 border-0"
+                style={{ fontSize: "12px", background: 'var(--primary-color)', color: '#fff' }}
               >
-                Free
-              </span>
-            </Link>
+                <Image
+                  src={homeLogo}
+                  alt="Post Property"
+                  width={16}
+                  height={16}
+                />
+                Post <span className="d-none d-sm-inline">Property</span>{" "}
+                <span
+                  className="badge-property"
+                  style={{ padding: "2px 4px", fontSize: "10px" }}
+                >
+                  Free
+                </span>
+              </button>
+            ) : (
+              <Link
+                href={
+                  !token
+                    ? `/auth/login?redirect=/auth/post-property/basic-details`
+                    : "/auth/post-property/basic-details"
+                }
+                className="btn-property d-flex align-items-center gap-1 rounded-pill text-sm px-2 py-1"
+                style={{ fontSize: "12px" }}
+              >
+                <Image
+                  src={homeLogo}
+                  alt="Post Property"
+                  width={16}
+                  height={16}
+                />
+                Post <span className="d-none d-sm-inline">Property</span>{" "}
+                <span
+                  className="badge-property"
+                  style={{ padding: "2px 4px", fontSize: "10px" }}
+                >
+                  Free
+                </span>
+              </Link>
+            )}
           </div>
         </div>
       </nav>

@@ -17,7 +17,8 @@ export async function checkAuth() {
         });
 
         const fetchedRole = res.data?.role || res.data?.role_name || res.data?.data?.role || res.data?.data?.role_name;
-        return { isAuthenticated: true, user: res.data?.name, role: fetchedRole, is_otp_verified: res.data?.is_otp_verified };
+        const kycStatus = res.data?.kyc_status || res.data?.data?.kyc_status || res.data?.data?.raw?.kyc_status;
+        return { isAuthenticated: true, user: res.data?.name, role: fetchedRole, is_otp_verified: res.data?.is_otp_verified, kyc_status: kycStatus };
     } catch (error) {
         console.error("Auth check failed:", error.response?.data || error.message);
         
@@ -31,6 +32,6 @@ export async function checkAuth() {
             // Option 2: Redirect to login page
             // window.location.href = "/auth/login";
         }
-        return { isAuthenticated: false, user: null, role: null, is_otp_verified: false};
+        return { isAuthenticated: false, user: null, role: null, is_otp_verified: false, kyc_status: null };
     }
 }

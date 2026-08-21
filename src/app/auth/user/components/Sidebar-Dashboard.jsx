@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import { HiDocumentChartBar,HiOutlineTicket } from "react-icons/hi2";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
+import { toast } from "react-toastify";
 
 const menuItems = [
   { icon: <FaThLarge />, label: "Dashboard", link: "/auth/user/dashboard" },
@@ -28,9 +29,11 @@ const menuItems = [
 export default function SidebarDashboard({ onItemClick }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { logout, token } = useSiteSettings();
+  const { logout, token, kycStatus } = useSiteSettings();
   const [loading, setLoading] = useState(true);
   const [hasActiveMembership, setHasActiveMembership] = useState(false);
+
+  const isKycComplete = ["Submitted", "Pending", "Under Review", "Approved", "Verified", "Completed"].includes(kycStatus);
 
   useEffect(() => {
     let isMounted = true;
@@ -60,6 +63,10 @@ export default function SidebarDashboard({ onItemClick }) {
   }, [token]);
 
   const handleMobileClick = (link) => {
+    if (!isKycComplete && link !== "/auth/user/dashboard") {
+      toast.error("Please complete your KYC first.");
+      return;
+    }
     if (pathname !== link) {
       router.push(link);
     }
@@ -79,6 +86,25 @@ export default function SidebarDashboard({ onItemClick }) {
           {menuItems.map((item, index) => {
             if (item.label === "Add-ons" && !hasActiveMembership) return null;
             const isActive = pathname === item.link;
+
+            if (!isKycComplete && item.link !== "/auth/user/dashboard") {
+              return (
+                <div key={index} onClick={() => toast.error("Please complete your KYC first.")} className={`${styles.menuItem} ${isActive ? styles.active : ''}`} style={{ cursor: "pointer" }}>
+                  <div className={styles.menuContent}>
+                    <div className={styles.icon}>
+                      {loading ? <Skeleton variant="circular" width={24} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : item.icon}
+                    </div>
+                    <span className={styles.label}>
+                      {loading ? <Skeleton variant="text" width={100} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : item.label}
+                    </span>
+                  </div>
+                  {item.badge !== undefined && !loading && (
+                    <span className={styles.badge}>{item.badge}</span>
+                  )}
+                </div>
+              );
+            }
+
             return (
               <Link href={item.link} key={index} className={`${styles.menuItem} ${isActive ? styles.active : ''}`}>
                 <div className={styles.menuContent}>
