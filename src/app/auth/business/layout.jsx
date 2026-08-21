@@ -11,6 +11,7 @@ import {
 } from "./DashboardContext/DashboardContext";
 import checkAuth from "../checkAuth";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
+import { toast } from "react-toastify";
 
 function Layout({ children }) {
   const pathname = usePathname();
@@ -19,11 +20,17 @@ function Layout({ children }) {
   const [isMobile, setIsMobile] = useState(false);
   const [mode, setMode] = useState("desktop"); // Default desktop
   const [hasMounted, setHasMounted] = useState(false);
- 
+  const router = useRouter();
+  const { kycStatus } = useSiteSettings();
 
+  const isKycComplete = kycStatus === null ? true : ["Submitted", "Pending", "Under Review", "Approved", "Verified", "Completed"].includes(kycStatus);
 
-
- 
+  useEffect(() => {
+    if (kycStatus !== null && !isKycComplete && pathname !== "/auth/business/dashboard" && !pathname.startsWith("/auth/business/dashboard/edit-profile")) {
+      toast.error("Please complete your KYC first.");
+      router.replace("/auth/business/dashboard");
+    }
+  }, [kycStatus, pathname, isKycComplete, router]);
   useEffect(() => {
     setHasMounted(true);
 
