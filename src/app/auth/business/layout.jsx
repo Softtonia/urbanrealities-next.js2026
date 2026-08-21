@@ -23,7 +23,7 @@ function Layout({ children }) {
   const router = useRouter();
   const { kycStatus } = useSiteSettings();
 
-  const isKycComplete = kycStatus === null ? true : ["Submitted", "Pending", "Under Review", "Approved", "Verified", "Completed"].includes(kycStatus);
+  const isKycComplete = !kycStatus ? true : ["submitted", "pending", "under review", "approved", "verified", "completed"].includes(kycStatus.toLowerCase());
 
   useEffect(() => {
     if (kycStatus !== null && !isKycComplete && pathname !== "/auth/business/dashboard" && !pathname.startsWith("/auth/business/dashboard/edit-profile")) {

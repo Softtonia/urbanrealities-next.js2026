@@ -127,6 +127,25 @@ export default async function RootLayout({ children }) {
           <main>{children}</main>
           <ConditionalFooter />
           <ToastContainer />
+          <div 
+            id="global-api-loader" 
+            style={{ 
+              display: 'none', 
+              position: 'fixed', 
+              top: 0, 
+              left: 0, 
+              right: 0, 
+              bottom: 0, 
+              backgroundColor: 'rgba(255,255,255,0.7)', 
+              zIndex: 9999, 
+              justifyContent: 'center', 
+              alignItems: 'center' 
+            }}
+          >
+            <div className="loaderWrapper" style={{ height: 'auto' }}>
+              <div className="spinner"></div>
+            </div>
+          </div>
         </SiteSettingsProvider>
         </CityProvider>
       </body>

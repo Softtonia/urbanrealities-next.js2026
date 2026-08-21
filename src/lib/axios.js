@@ -2,9 +2,40 @@ import axios from "axios";
 import CryptoJS from "crypto-js";
 
 // Add a global interceptor to handle 401 responses for all API calls
-axios.interceptors.response.use(
-  (response) => response,
+let activeRequests = 0;
+
+function updateLoader() {
+  if (typeof window !== "undefined") {
+    const loader = document.getElementById("global-api-loader");
+    if (loader) {
+      loader.style.display = activeRequests > 0 ? "flex" : "none";
+    }
+  }
+}
+
+axios.interceptors.request.use(
+  (config) => {
+    activeRequests++;
+    updateLoader();
+    return config;
+  },
   (error) => {
+    activeRequests = Math.max(0, activeRequests - 1);
+    updateLoader();
+    return Promise.reject(error);
+  }
+);
+
+axios.interceptors.response.use(
+  (response) => {
+    activeRequests = Math.max(0, activeRequests - 1);
+    updateLoader();
+    return response;
+  },
+  (error) => {
+    activeRequests = Math.max(0, activeRequests - 1);
+    updateLoader();
+    
     if (error.response && error.response.status === 401) {
       // If we are on the client-side, clear storage and log the user out
       if (typeof window !== "undefined") {

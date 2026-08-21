@@ -33,7 +33,7 @@ export default function SidebarDashboard({ onItemClick }) {
   const [loading, setLoading] = useState(true);
   const [hasActiveMembership, setHasActiveMembership] = useState(false);
 
-  const isKycComplete = ["Submitted", "Pending", "Under Review", "Approved", "Verified", "Completed"].includes(kycStatus);
+  const isKycComplete = !kycStatus || ["submitted", "pending", "under review", "approved", "verified", "completed"].includes(kycStatus.toLowerCase());
 
   useEffect(() => {
     let isMounted = true;

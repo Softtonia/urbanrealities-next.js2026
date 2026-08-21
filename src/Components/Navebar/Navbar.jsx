@@ -103,7 +103,7 @@ export default function Navbar() {
   const { settings, token, logout, isLoadingToken, role, kycStatus } = useSiteSettings();
   const [siteData, setSiteData] = useState(settings);
   const [isLoadingSiteData, setIsLoadingSiteData] = useState(true);
-  const isKycComplete = !token || ["Submitted", "Pending", "Under Review", "Approved", "Verified", "Completed"].includes(kycStatus);
+  const isKycComplete = !token || !kycStatus || ["submitted", "pending", "under review", "approved", "verified", "completed"].includes(kycStatus.toLowerCase());
 
   useEffect(() => {
     const fetchSiteSettings = async () => {
