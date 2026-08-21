@@ -8,6 +8,9 @@ import AuthInput from "../AuthInput/AuthInput";
 import { useDebounce } from "@/hooks/useDebounce";
 import { FaGoogle } from "react-icons/fa";
 import { getRoleListing, checkUsername, checkUserDuplicate } from "@/services/auth.service";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import authInputStyles from "../AuthInput/AuthInput.module.css";
 
 const Register = ({ roles = [] }) => {
   const { formData, updateField } = useRegisterForm();
@@ -21,6 +24,7 @@ const Register = ({ roles = [] }) => {
   const [isAgreed, setIsAgreed] = useState(false);
   const [agreeError, setAgreeError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [fullPhone, setFullPhone] = useState(formData.phone || "");
 
   const router = useRouter();
 
@@ -261,20 +265,51 @@ const Register = ({ roles = [] }) => {
         error={emailError}
       />
 
-      <AuthInput
-        label={data.phoneLabel}
-        type="tel"
-        id="phone"
-        value={formData.phone}
-        placeholder={data.phonePlaceholder}
-        onChange={(e) => {
-          let value = e.target.value.replace(/\D/g, "");
-          value = value.replace(/^0+/, "");
-          if (value.length > 10) value = value.slice(0, 10);
-          updateField("phone", value);
-        }}
-        error={phoneError}
-      />
+      <div className={authInputStyles.inputWrapper}>
+        <label htmlFor="phone" className={authInputStyles.label}>
+          {data.phoneLabel}
+        </label>
+        <PhoneInput
+          country={"in"}
+          value={fullPhone}
+          onChange={(val, country) => {
+            setFullPhone(val);
+            const rawNum = val.slice(country.dialCode.length);
+            updateField("phone", rawNum);
+          }}
+          isValid={(value) => {
+            if (value && value.length < 10) return false;
+            return true;
+          }}
+          inputStyle={{
+            width: "100%",
+            height: "36px",
+            fontSize: "14px",
+            fontFamily: "var(--font-inter-regular), sans-serif",
+            border: "none",
+            borderBottom: phoneError
+              ? "1px solid var(--Tart-Orange)"
+              : "1px solid var(--Gray)",
+            borderRadius: "0",
+            boxShadow: "none",
+            paddingLeft: "48px",
+            backgroundColor: "transparent",
+            color: "var(--Eerie-Black)"
+          }}
+          buttonStyle={{
+            border: "none",
+            borderBottom: phoneError
+              ? "1px solid var(--Tart-Orange)"
+              : "1px solid var(--Gray)",
+            borderRadius: "0",
+            backgroundColor: "transparent",
+            padding: "2px",
+          }}
+          placeholder={data.phonePlaceholder}
+        />
+        {phoneError && <p className={authInputStyles.errorText}>{phoneError}</p>}
+      </div>
+
 
 
       {/* Roles */}
