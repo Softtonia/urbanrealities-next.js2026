@@ -398,9 +398,27 @@ const ProfileForm = () => {
       let data;
       if (activeTab === "personal") {
         const dataToSend = new FormData();
-        Object.entries(formData).forEach(([key, value]) => {
-          if (value !== undefined && value !== null && value !== "N/A") {
-            dataToSend.append(key, value);
+        const personalKeys = [
+          "first_name",
+          "last_name",
+          "user_name",
+          "email",
+          "phone",
+          "alternate_number",
+          "about_us",
+          "business_name",
+          "business_email",
+          "business_phone",
+          "no_of_employees"
+        ];
+        
+        personalKeys.forEach((key) => {
+          let val = formData[key];
+          if (key === "business_name") val = formData.bussiness_name || formData.business_name;
+          if (key === "business_email") val = formData.bussiness_email || formData.business_email;
+
+          if (val !== undefined && val !== null && val !== "N/A" && val !== "") {
+            dataToSend.append(key, val);
           }
         });
         data = await updatePersonalProfile(token, dataToSend);
@@ -417,16 +435,27 @@ const ProfileForm = () => {
           "state_id",
           "city_id",
           "street_address",
-          "pin_code",
+          "colony",
           "area_locality",
+          "address",
+          "pin_code",
+          "business_country_id",
+          "business_state_id",
+          "business_city_id",
+          "business_address",
+          "business_pin_code"
         ];
         addressKeys.forEach((key) => {
+          let val = formData[key];
+          if (key === "business_address") val = formData.bussiness_address || formData.business_address;
+
           if (
-            formData[key] !== undefined &&
-            formData[key] !== null &&
-            formData[key] !== "N/A"
+            val !== undefined &&
+            val !== null &&
+            val !== "N/A" &&
+            val !== ""
           ) {
-            dataToSend.append(key, formData[key]);
+            dataToSend.append(key, val);
           }
         });
         data = await updateAddressProfile(token, dataToSend);
