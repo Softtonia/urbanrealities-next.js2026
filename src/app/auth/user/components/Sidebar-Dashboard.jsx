@@ -33,7 +33,7 @@ export default function SidebarDashboard({ onItemClick }) {
   const [loading, setLoading] = useState(true);
   const [hasActiveMembership, setHasActiveMembership] = useState(false);
 
-  const isKycComplete = !kycStatus || ["submitted", "pending", "under review", "approved", "verified", "completed"].includes(kycStatus.toLowerCase());
+  const isKycComplete = !kycStatus || ["approved", "verified", "completed", "accepted", "2"].includes(String(kycStatus).trim().toLowerCase());
 
   useEffect(() => {
     let isMounted = true;
@@ -64,7 +64,11 @@ export default function SidebarDashboard({ onItemClick }) {
 
   const handleMobileClick = (link) => {
     if (!isKycComplete && link !== "/auth/user/dashboard") {
-      toast.error("Please complete your KYC first.");
+      if (kycStatus?.toLowerCase() === "submitted") {
+        toast.error("Waiting for admin to approve KYC.");
+      } else {
+        toast.error("Please complete your KYC first.");
+      }
       return;
     }
     if (pathname !== link) {
@@ -89,7 +93,13 @@ export default function SidebarDashboard({ onItemClick }) {
 
             if (!isKycComplete && item.link !== "/auth/user/dashboard") {
               return (
-                <div key={index} onClick={() => toast.error("Please complete your KYC first.")} className={`${styles.menuItem} ${isActive ? styles.active : ''}`} style={{ cursor: "pointer" }}>
+                <div key={index} onClick={() => {
+                  if (kycStatus?.toLowerCase() === "submitted") {
+                    toast.error("Waiting for admin to approve KYC.");
+                  } else {
+                    toast.error("Please complete your KYC first.");
+                  }
+                }} className={`${styles.menuItem} ${isActive ? styles.active : ''}`} style={{ cursor: "pointer" }}>
                   <div className={styles.menuContent}>
                     <div className={styles.icon}>
                       {loading ? <Skeleton variant="circular" width={24} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} /> : item.icon}

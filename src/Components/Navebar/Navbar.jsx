@@ -103,7 +103,7 @@ export default function Navbar() {
   const { settings, token, logout, isLoadingToken, role, kycStatus } = useSiteSettings();
   const [siteData, setSiteData] = useState(settings);
   const [isLoadingSiteData, setIsLoadingSiteData] = useState(true);
-  const isKycComplete = !token || !kycStatus || ["submitted", "pending", "under review", "approved", "verified", "completed"].includes(kycStatus.toLowerCase());
+  const isKycComplete = !token || !kycStatus || ["approved", "verified", "completed", "accepted", "2"].includes(String(kycStatus).trim().toLowerCase());
 
   useEffect(() => {
     const fetchSiteSettings = async () => {
@@ -346,7 +346,13 @@ export default function Navbar() {
           <div className="d-flex align-items-center gap-3">
             {!isKycComplete ? (
               <button
-                onClick={() => toast.error("Please complete your KYC first.")}
+                onClick={() => {
+                  if (kycStatus?.toLowerCase() === "submitted") {
+                    toast.error("Waiting for admin to approve KYC.");
+                  } else {
+                    toast.error("Please complete your KYC first.");
+                  }
+                }}
                 className="btn-property d-flex align-items-center gap-2 rounded-pill border-0"
                 style={{ background: 'var(--primary-color)', color: '#fff' }}
               >
@@ -579,7 +585,13 @@ export default function Navbar() {
           <div className="m-0" style={{ flexShrink: 0 }}>
             {!isKycComplete ? (
               <button
-                onClick={() => toast.error("Please complete your KYC first.")}
+                onClick={() => {
+                  if (kycStatus?.toLowerCase() === "submitted") {
+                    toast.error("Waiting for admin to approve KYC.");
+                  } else {
+                    toast.error("Please complete your KYC first.");
+                  }
+                }}
                 className="btn-property d-flex align-items-center gap-1 rounded-pill text-sm px-2 py-1 border-0"
                 style={{ fontSize: "12px", background: 'var(--primary-color)', color: '#fff' }}
               >

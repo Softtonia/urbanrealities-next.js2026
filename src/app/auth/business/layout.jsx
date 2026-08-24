@@ -23,11 +23,15 @@ function Layout({ children }) {
   const router = useRouter();
   const { kycStatus } = useSiteSettings();
 
-  const isKycComplete = !kycStatus ? true : ["submitted", "pending", "under review", "approved", "verified", "completed"].includes(kycStatus.toLowerCase());
+  const isKycComplete = !kycStatus || ["approved", "verified", "completed", "accepted", "2"].includes(String(kycStatus).trim().toLowerCase());
 
   useEffect(() => {
-    if (kycStatus !== null && !isKycComplete && pathname !== "/auth/business/dashboard" && !pathname.startsWith("/auth/business/dashboard/edit-profile")) {
-      toast.error("Please complete your KYC first.");
+    if (kycStatus !== null && kycStatus !== undefined && !isKycComplete && pathname !== "/auth/business/dashboard" && !pathname.startsWith("/auth/business/dashboard/edit-profile")) {
+      if (kycStatus?.toLowerCase() === "submitted") {
+        toast.error("Waiting for admin to approve KYC.");
+      } else {
+        toast.error("Please complete your KYC first.");
+      }
       router.replace("/auth/business/dashboard");
     }
   }, [kycStatus, pathname, isKycComplete, router]);

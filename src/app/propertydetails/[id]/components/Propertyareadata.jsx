@@ -59,6 +59,11 @@ const Propertyareadata = ({ property }) => {
         </>
       ),
     },
+    // Add this temporary field to see the dropdown!
+    {
+      label: "Test Area",
+      value: <AreaUnitDropdown baseSqft={1500} />
+    }
   ];
 
   // Combine all fields

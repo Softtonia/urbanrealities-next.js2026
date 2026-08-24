@@ -1,5 +1,5 @@
-
 import axios from "axios";
+import { getUserProfile } from "@/services/auth.service";
 
 export async function checkAuth() {
     const token = localStorage.getItem("token");
@@ -17,7 +17,20 @@ export async function checkAuth() {
         });
 
         const fetchedRole = res.data?.role || res.data?.role_name || res.data?.data?.role || res.data?.data?.role_name;
-        const kycStatus = res.data?.kyc_status || res.data?.data?.kyc_status || res.data?.data?.raw?.kyc_status;
+        console.log("CHECK_AUTH_RESPONSE:", res.data);
+        let kycStatus = res.data?.kyc_status || res.data?.data?.kyc_status || res.data?.data?.raw?.kyc_status || res.data?.data?.raw?.kyc || res.data?.data?.display?.kyc_status || res.data?.data?.kyc_module?.status;
+        
+        // If the getuser API doesn't return KYC status, fallback to the profile API which we know has it
+        if (kycStatus === undefined || kycStatus === null) {
+            try {
+                const profileRes = await getUserProfile(userId, token);
+                console.log("PROFILE_API_FALLBACK:", profileRes.data);
+                kycStatus = profileRes.data?.raw?.kyc_status || profileRes.data?.raw?.kyc || profileRes.data?.kyc_status || profileRes.kyc_status;
+            } catch (e) {
+                console.error("Profile fallback failed:", e);
+            }
+        }
+        
         return { isAuthenticated: true, user: res.data?.name, role: fetchedRole, is_otp_verified: res.data?.is_otp_verified, kyc_status: kycStatus };
     } catch (error) {
         console.error("Auth check failed:", error.response?.data || error.message);

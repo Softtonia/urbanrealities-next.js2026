@@ -444,12 +444,14 @@ const ListingDashboard = ({
                   },
                 },
               }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <FaSearch color="var(--Gray-400)" />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <FaSearch color="var(--Gray-400)" />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
 
