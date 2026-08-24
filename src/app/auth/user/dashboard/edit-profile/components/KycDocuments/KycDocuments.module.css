@@ -18,7 +18,7 @@
 
 .documentCard {
   background: var(--White, #fff);
-  border: 1px solid #E5E7EB;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 16px;
   display: flex;
@@ -30,7 +30,7 @@
 
 .documentCard:hover {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border-color: #D1D5DB;
+  border-color: #d1d5db;
 }
 
 .documentCard.hasFile {
@@ -38,7 +38,7 @@
 }
 .documentCard.hasFile:hover {
   box-shadow: none;
-  border-color: #E5E7EB;
+  border-color: #e5e7eb;
 }
 
 .cardHeader {
@@ -61,28 +61,28 @@
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  background: #F3F4F6;
-  color: #6B7280;
+  background: #f3f4f6;
+  color: #6b7280;
 }
 
 .iconCircle.orange {
-  background: #FFF1F2; /* Light red/pink */
-  color: #E11D48;
+  background: #fff1f2; /* Light red/pink */
+  color: #e11d48;
 }
 
 .iconCircle.purple {
-  background: #F5F3FF;
-  color: #7C3AED;
+  background: #f5f3ff;
+  color: #7c3aed;
 }
 
 .iconCircle.green {
-  background: #ECFDF5;
+  background: #ecfdf5;
   color: #059669;
 }
 
 .iconCircle.blue {
-  background: #EFF6FF;
-  color: #2563EB;
+  background: #eff6ff;
+  color: #2563eb;
 }
 
 .docTitle {
@@ -103,13 +103,13 @@
 }
 
 .uploadedStatus {
-  color: #16A34A; /* Green */
+  color: #16a34a; /* Green */
 }
 
 .filePreviewBox {
   border-radius: 8px;
   padding: 12px;
-  background: #F9FAFB;
+  background: #f9fafb;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -122,12 +122,13 @@
   width: 100%;
 }
 
-.fileThumbnail, .fileThumbnailPlaceholder {
+.fileThumbnail,
+.fileThumbnailPlaceholder {
   width: 48px;
   height: 48px;
   border-radius: 4px;
   object-fit: cover;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #e5e7eb;
   background: #fff;
   cursor: pointer;
 }
@@ -136,7 +137,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #9CA3AF;
+  color: #9ca3af;
   font-size: 24px;
 }
 
@@ -158,13 +159,13 @@
 
 .filesize {
   font-size: 12px;
-  color: #6B7280;
+  color: #6b7280;
 }
 
 .removeFileBtn {
   background: none;
   border: none;
-  color: #6B7280;
+  color: #6b7280;
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -176,8 +177,8 @@
 }
 
 .removeFileBtn:hover {
-  color: #EF4444;
-  background: #FEE2E2;
+  color: #ef4444;
+  background: #fee2e2;
 }
 
 .uploadPlaceholder {
@@ -186,20 +187,20 @@
   justify-content: center;
   height: 48px;
   width: 100%;
-  border: 1px dashed #D1D5DB;
+  border: 1px dashed #d1d5db;
   border-radius: 8px;
-  background: #F9FAFB;
+  background: #f9fafb;
   cursor: pointer;
   transition: all 0.2s;
   gap: 8px;
 }
 .uploadPlaceholder:hover {
-  background: #F3F4F6;
-  border-color: #9CA3AF;
+  background: #f3f4f6;
+  border-color: #9ca3af;
 }
 
 .uploadPlaceholderText {
-  color: #6B7280;
+  color: #6b7280;
   font-size: 13px;
   text-align: center;
   line-height: 1.2;
@@ -210,19 +211,19 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background-color: #FFF7ED; /* Orange lightest */
+  background-color: #fff7ed; /* Orange lightest */
   padding: 16px;
   border-radius: 8px;
   margin-top: 16px;
 }
 
 .infoBannerIcon {
-  color: #EA580C;
+  color: #ea580c;
   font-size: 20px;
 }
 
 .infoBannerText {
-  color: #C2410C;
+  color: #c2410c;
   font-size: 14px;
   font-weight: 500;
 }
@@ -256,11 +257,12 @@
     align-items: flex-start;
     gap: 16px;
   }
-  
-  .middleSection, .rightSection {
+
+  .middleSection,
+  .rightSection {
     width: 100%;
   }
-  
+
   .rightSection {
     justify-content: space-between;
   }
@@ -385,7 +387,8 @@
   background: #111827;
 }
 
-.toolbarLeft, .toolbarRight {
+.toolbarLeft,
+.toolbarRight {
   display: flex;
   align-items: center;
   gap: 20px;
@@ -449,7 +452,7 @@
   color: #d1d5db;
   border: 2px solid transparent;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .thumbnail.active {
@@ -478,7 +481,7 @@
   width: 100%;
   max-width: 600px;
   aspect-ratio: 1.58; /* Standard ID card ratio */
-  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -515,7 +518,9 @@
   width: 80%;
   max-width: 800px;
   padding: 24px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
@@ -533,7 +538,7 @@
 .btnBack {
   background: var(--White, #fff);
   color: var(--Eerie-Black, #374151);
-  border: 1px solid #D1D5DB;
+  border: 1px solid #d1d5db;
   padding: 10px 24px;
   border-radius: 6px;
   font-size: 14px;
@@ -545,11 +550,11 @@
 }
 
 .btnBack:hover {
-  background: #F3F4F6;
+  background: #f3f4f6;
 }
 
 .btnSave {
-  background: #F97316; /* Orange */
+  background: #f97316; /* Orange */
   color: var(--White, #fff);
   border: none;
   padding: 10px 24px;

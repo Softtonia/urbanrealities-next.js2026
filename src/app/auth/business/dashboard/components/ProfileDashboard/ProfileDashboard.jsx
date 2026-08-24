@@ -5,6 +5,7 @@ import Link from "next/link";
 import { encodeId } from "@/lib/utils";
 import {
   FaCheckCircle,
+  FaTimesCircle,
   FaUser,
   FaPhoneAlt,
   FaEnvelope,
@@ -39,6 +40,7 @@ const Dashboard = () => {
   const [profileCompletion, setProfileCompletion] = useState({ percentage: 0 });
   const [kycDetails, setKycDetails] = useState({});
   const [showKycSuccess, setShowKycSuccess] = useState(false);
+  const [showKycRejected, setShowKycRejected] = useState(false);
 
   const fetchProfile = async () => {
     setLoading(true);
@@ -60,6 +62,11 @@ const Dashboard = () => {
           const hasSeen = localStorage.getItem(`hasSeenKycSuccess_${userId}`);
           if (!hasSeen) {
             setShowKycSuccess(true);
+          }
+        } else if (["Rejected", "Declined"].includes(rawProfile.kyc_status)) {
+          const hasSeen = localStorage.getItem(`hasSeenKycRejected_${userId}`);
+          if (!hasSeen) {
+            setShowKycRejected(true);
           }
         }
       }
@@ -87,6 +94,11 @@ const Dashboard = () => {
   const handleCloseKycSuccess = () => {
     localStorage.setItem(`hasSeenKycSuccess_${userId}`, "true");
     setShowKycSuccess(false);
+  };
+
+  const handleCloseKycRejected = () => {
+    localStorage.setItem(`hasSeenKycRejected_${userId}`, "true");
+    setShowKycRejected(false);
   };
 
   return (
@@ -597,11 +609,12 @@ const Dashboard = () => {
       {showKycSuccess && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
-            <div className={styles.successIconWrapper}>
-              <div className={styles.successShield}>
-                <FaShieldAlt />
-              </div>
-              <div className={styles.successCheckmark}>✓</div>
+            <div className={styles.successIconWrapper} style={{ height: '150px', background: 'transparent' }}>
+              <iframe 
+                src="https://embed.lottiefiles.com/animation/NO8yOK8non" 
+                style={{ width: '150px', height: '150px', border: 'none', background: 'transparent' }} 
+                title="Success Animation"
+              ></iframe>
             </div>
             <h2 className={styles.successTitle}>Congratulations!</h2>
             <h3 className={styles.successSubtitle}>Your KYC has been Approved</h3>
@@ -623,6 +636,24 @@ const Dashboard = () => {
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showKycRejected && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <div className={styles.successIconWrapper} style={{ height: '150px', background: 'transparent' }}>
+              <FaTimesCircle style={{ width: '100px', height: '100px', color: '#dc3545', margin: '25px auto', display: 'block' }} />
+            </div>
+            <h2 className={styles.successTitle} style={{ color: '#dc3545' }}>KYC Rejected</h2>
+            <h3 className={styles.successSubtitle} style={{ color: '#dc3545' }}>Action Required for Verification</h3>
+            <p className={styles.successText}>
+              Unfortunately, your KYC application has been rejected. Please update your documents and try again.
+            </p>
+            <button className={styles.successBtn} style={{ background: '#dc3545' }} onClick={handleCloseKycRejected}>
+              Review and Update →
+            </button>
           </div>
         </div>
       )}

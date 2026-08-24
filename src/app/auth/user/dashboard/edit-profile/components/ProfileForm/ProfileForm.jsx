@@ -755,6 +755,8 @@ const ProfileForm = () => {
                   </label>
                   <PhoneInput
                     country={"in"}
+                    onlyCountries={['in']}
+                    disableDropdown={true}
                     value={formData.phone || ""}
                     countryCodeEditable={false}
                     onChange={(val) =>

@@ -968,6 +968,8 @@ const ProfileForm = () => {
                     </label>
                     <PhoneInput
                       country={"in"}
+                      onlyCountries={['in']}
+                      disableDropdown={true}
                       value={formData.phone || ""}
                       countryCodeEditable={false}
                       onChange={(val) =>
@@ -1018,6 +1020,8 @@ const ProfileForm = () => {
                     <label>Alternate Number</label>
                     <PhoneInput
                       country={"in"}
+                      onlyCountries={['in']}
+                      disableDropdown={true}
                       value={formData.alternate_number || ""}
                       countryCodeEditable={false}
                       onChange={(val) =>
@@ -1433,6 +1437,8 @@ const ProfileForm = () => {
                     <label>Business Phone</label>
                     <PhoneInput
                       country={"in"}
+                      onlyCountries={['in']}
+                      disableDropdown={true}
                       value={formData.business_phone || ""}
                       countryCodeEditable={false}
                       onChange={(phone) =>

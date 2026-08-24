@@ -64,7 +64,7 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
   const getInitialDocs = () => {
     const roleName = (profile?.role_name || profile?.role || "").toLowerCase();
     const isBusinessRole = ["agent", "builder", "developer"].includes(roleName);
-    
+
     const docs = [
       {
         id: 1,
@@ -96,7 +96,12 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
       },
     ];
 
-    if (isBusinessRole || roleName === "business" || !roleName || roleName === "agency") {
+    if (
+      isBusinessRole ||
+      roleName === "business" ||
+      !roleName ||
+      roleName === "agency"
+    ) {
       docs.push(
         {
           id: 3,
@@ -139,7 +144,7 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
           filename: "",
           field: "rera_certificate",
           previewUrl: profile?.rera_certificate || null,
-        }
+        },
       );
     }
     return docs;
@@ -152,8 +157,8 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
     setDocuments((prev) => {
       const newDocs = getInitialDocs();
       if (prev.length !== newDocs.length) {
-        return newDocs.map(newDoc => {
-          const existingDoc = prev.find(d => d.id === newDoc.id);
+        return newDocs.map((newDoc) => {
+          const existingDoc = prev.find((d) => d.id === newDoc.id);
           return existingDoc ? { ...newDoc, ...existingDoc } : newDoc;
         });
       }
@@ -164,8 +169,6 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
   const showFormActions = documents.some(
     (d) => !d.status || d.status.toLowerCase() === "rejected" || d.file,
   );
-
-
 
   const getBaseUrl = () => LARAVEL_API_BASE_URL;
 
@@ -365,7 +368,9 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
       });
 
       if (!hasNewFiles) {
-        const allUploaded = documents.every(d => d.status && d.status.toLowerCase() !== 'rejected');
+        const allUploaded = documents.every(
+          (d) => d.status && d.status.toLowerCase() !== "rejected",
+        );
         if (allUploaded) {
           toast.success("All documents are already uploaded.");
           if (onSuccess) onSuccess();
@@ -422,10 +427,11 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
                       return {
                         ...d,
                         uploading: !isDone,
-                        progress: fp.percent !== undefined && fp.percent !== null ? fp.percent : 100,
-                        status: isDone
-                          ? "Pending"
-                          : d.status,
+                        progress:
+                          fp.percent !== undefined && fp.percent !== null
+                            ? fp.percent
+                            : 100,
+                        status: isDone ? "Pending" : d.status,
                       };
                     }
                     return d;
@@ -443,7 +449,7 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
                     const submitRes = await submitKyc(token, uploadId, {
                       aadhaar_number: aadhaarNumber,
                       gst_number: gstNumber,
-                      rera_number: reraNumber
+                      rera_number: reraNumber,
                     });
                     const submitResult = await submitRes.json();
                     if (submitRes.ok && submitResult.status) {
@@ -605,29 +611,58 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
 
   return (
     <div className={styles.kycContainer}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+          gap: "20px",
+          marginBottom: "32px",
+        }}
+      >
         <div className={styles.inputGroup}>
-          <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151", display: 'block', marginBottom: '8px' }}>
+          <label
+            style={{
+              fontSize: "14px",
+              fontWeight: "500",
+              color: "#374151",
+              display: "block",
+              marginBottom: "8px",
+            }}
+          >
             Aadhaar Number
           </label>
           <input
             type="text"
             value={
-              (documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")
+              (documents.some(
+                (d) => d.status && d.status.toLowerCase() !== "rejected",
+              )
                 ? aadhaarNumber
                   ? aadhaarNumber.length >= 4 && !aadhaarNumber.includes("X")
                     ? "XXXXXXXX" + aadhaarNumber.slice(-4)
                     : aadhaarNumber
                   : ""
-                : aadhaarNumber)
-                ?.match(/.{1,4}/g)?.join(" ") || ""
+                : aadhaarNumber
+              )
+                ?.match(/.{1,4}/g)
+                ?.join(" ") || ""
             }
             onChange={(e) =>
               setAadhaarNumber(e.target.value.replace(/\D/g, "").slice(0, 12))
             }
-            readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
-            disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
-            placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your 12 digit Aadhaar number"}
+            readOnly={documents.some(
+              (d) => d.status && d.status.toLowerCase() !== "rejected",
+            )}
+            disabled={documents.some(
+              (d) => d.status && d.status.toLowerCase() !== "rejected",
+            )}
+            placeholder={
+              documents.some(
+                (d) => d.status && d.status.toLowerCase() !== "rejected",
+              )
+                ? ""
+                : "Enter your 12 digit Aadhaar number"
+            }
             style={{
               width: "100%",
               padding: "12px 16px",
@@ -636,16 +671,36 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
               outline: "none",
               fontSize: "clamp(14px, 1.5vw, 16px)",
               fontFamily: "var(--font-regular)",
-              backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
-              cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
-              color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
+              backgroundColor: documents.some(
+                (d) => d.status && d.status.toLowerCase() !== "rejected",
+              )
+                ? "#f3f4f6"
+                : "white",
+              cursor: documents.some(
+                (d) => d.status && d.status.toLowerCase() !== "rejected",
+              )
+                ? "not-allowed"
+                : "text",
+              color: documents.some(
+                (d) => d.status && d.status.toLowerCase() !== "rejected",
+              )
+                ? "#6b7280"
+                : "inherit",
             }}
           />
         </div>
 
-        {documents.some(d => d.field === 'gst_certificate') && (
+        {documents.some((d) => d.field === "gst_certificate") && (
           <div className={styles.inputGroup}>
-            <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151", display: 'block', marginBottom: '8px' }}>
+            <label
+              style={{
+                fontSize: "14px",
+                fontWeight: "500",
+                color: "#374151",
+                display: "block",
+                marginBottom: "8px",
+              }}
+            >
               GST Number
             </label>
             <input
@@ -653,9 +708,19 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
               value={gstNumber}
               maxLength={15}
               onChange={(e) => setGstNumber(e.target.value)}
-              readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
-              disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
-              placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your GST number"}
+              readOnly={documents.some(
+                (d) => d.status && d.status.toLowerCase() !== "rejected",
+              )}
+              disabled={documents.some(
+                (d) => d.status && d.status.toLowerCase() !== "rejected",
+              )}
+              placeholder={
+                documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? ""
+                  : "Enter your GST number"
+              }
               style={{
                 width: "100%",
                 padding: "12px 16px",
@@ -664,27 +729,57 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
                 outline: "none",
                 fontSize: "clamp(14px, 1.5vw, 16px)",
                 fontFamily: "var(--font-regular)",
-                backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
-                cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
+                backgroundColor: documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? "#f3f4f6"
+                  : "white",
+                cursor: documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? "not-allowed"
+                  : "text",
                 textTransform: "uppercase",
-                color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
+                color: documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? "#6b7280"
+                  : "inherit",
               }}
             />
           </div>
         )}
 
-        {documents.some(d => d.field === 'rera_certificate') && (
+        {documents.some((d) => d.field === "rera_certificate") && (
           <div className={styles.inputGroup}>
-            <label style={{ fontSize: "14px", fontWeight: "500", color: "#374151", display: 'block', marginBottom: '8px' }}>
+            <label
+              style={{
+                fontSize: "14px",
+                fontWeight: "500",
+                color: "#374151",
+                display: "block",
+                marginBottom: "8px",
+              }}
+            >
               RERA Number
             </label>
             <input
               type="text"
               value={reraNumber}
               onChange={(e) => setReraNumber(e.target.value)}
-              readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
-              disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
-              placeholder={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "" : "Enter your RERA number"}
+              readOnly={documents.some(
+                (d) => d.status && d.status.toLowerCase() !== "rejected",
+              )}
+              disabled={documents.some(
+                (d) => d.status && d.status.toLowerCase() !== "rejected",
+              )}
+              placeholder={
+                documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? ""
+                  : "Enter your RERA number"
+              }
               style={{
                 width: "100%",
                 padding: "12px 16px",
@@ -693,10 +788,22 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
                 outline: "none",
                 fontSize: "clamp(14px, 1.5vw, 16px)",
                 fontFamily: "var(--font-regular)",
-                backgroundColor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#f3f4f6" : "white",
-                cursor: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "not-allowed" : "text",
+                backgroundColor: documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? "#f3f4f6"
+                  : "white",
+                cursor: documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? "not-allowed"
+                  : "text",
                 textTransform: "uppercase",
-                color: documents.some((d) => d.status && d.status.toLowerCase() !== "rejected") ? "#6b7280" : "inherit",
+                color: documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? "#6b7280"
+                  : "inherit",
               }}
             />
           </div>
@@ -720,14 +827,18 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
           >
             <div className={styles.cardHeader}>
               <div className={styles.headerLeft}>
-                <div className={`${styles.iconCircle} ${styles[doc.iconColor]}`}>
+                <div
+                  className={`${styles.iconCircle} ${styles[doc.iconColor]}`}
+                >
                   {doc.icon}
                 </div>
                 <h4 className={styles.docTitle}>{doc.title}</h4>
               </div>
               <div className={styles.headerRight}>
                 {doc.status && (
-                  <span className={`${styles.statusText} ${styles.uploadedStatus}`}>
+                  <span
+                    className={`${styles.statusText} ${styles.uploadedStatus}`}
+                  >
                     Uploaded
                   </span>
                 )}
@@ -764,14 +875,19 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
                       {doc.filename || "document.png"}
                     </span>
                     <span className={styles.filesize}>
-                      {doc.file ? `${(doc.file.size / 1024).toFixed(2)} KB` : "3.07 KB"}
+                      {doc.file
+                        ? `${(doc.file.size / 1024).toFixed(2)} KB`
+                        : "3.07 KB"}
                     </span>
                   </div>
                   <button
                     className={styles.removeFileBtn}
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (doc.status === "Pending" || doc.status === "Verified") {
+                      if (
+                        doc.status === "Pending" ||
+                        doc.status === "Verified"
+                      ) {
                         // Normally you'd call an API to remove
                       }
                       setDocuments((prev) =>
@@ -785,8 +901,8 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
                                 status: null,
                                 uploadedOn: null,
                               }
-                            : d
-                        )
+                            : d,
+                        ),
                       );
                     }}
                   >
@@ -797,7 +913,7 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
             )}
 
             {!doc.file && !doc.status && !doc.previewUrl && (
-              <button 
+              <button
                 type="button"
                 className={styles.uploadPlaceholder}
                 onClick={(e) => {
@@ -805,8 +921,10 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
                   handleUpload(doc);
                 }}
               >
-                <FaUpload style={{ color: '#6B7280' }} />
-                <span className={styles.uploadPlaceholderText}>Click to upload document</span>
+                <FaUpload style={{ color: "#6B7280" }} />
+                <span className={styles.uploadPlaceholderText}>
+                  Click to upload document
+                </span>
               </button>
             )}
           </div>
@@ -829,14 +947,16 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
             // Assuming this component is rendered via ProfileForm which controls activeTab
             // Since activeTab isn't passed as a prop, you might need to handle this differently.
             // But per design, there's a back button.
-            if (typeof document !== 'undefined') {
-              const buttons = Array.from(document.querySelectorAll('button'));
-              const businessTabBtn = buttons.find(btn => btn.textContent.includes('Business Details'));
-              if(businessTabBtn) businessTabBtn.click();
+            if (typeof document !== "undefined") {
+              const buttons = Array.from(document.querySelectorAll("button"));
+              const businessTabBtn = buttons.find((btn) =>
+                btn.textContent.includes("Business Details"),
+              );
+              if (businessTabBtn) businessTabBtn.click();
             }
           }}
         >
-          <FaArrowLeft style={{ marginRight: '8px' }}/> Back
+          <FaArrowLeft style={{ marginRight: "8px" }} /> Back
         </button>
         <button
           type="button"
