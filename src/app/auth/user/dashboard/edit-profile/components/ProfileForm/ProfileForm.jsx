@@ -756,6 +756,7 @@ const ProfileForm = () => {
                   <PhoneInput
                     country={"in"}
                     value={formData.phone || ""}
+                    countryCodeEditable={false}
                     onChange={(val) =>
                       setFormData((p) => ({ ...p, phone: val }))
                     }

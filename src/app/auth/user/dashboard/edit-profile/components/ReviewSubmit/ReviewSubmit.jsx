@@ -30,6 +30,7 @@ const ReviewSubmit = ({ formData, setActiveTab, token, fetchProfile }) => {
         
         if (res.ok) {
           const result = await res.json();
+          console.log("result======> ", result);
           if (result.status && result.data) {
             setDocuments(result.data);
           }

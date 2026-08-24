@@ -16,6 +16,7 @@ import {
   FaUpload,
   FaEdit,
   FaBriefcase,
+  FaShieldAlt,
 } from "react-icons/fa";
 import { MdVerified } from "react-icons/md";
 import { Skeleton } from "@mui/material";
@@ -37,6 +38,7 @@ const Dashboard = () => {
   });
   const [profileCompletion, setProfileCompletion] = useState({ percentage: 0 });
   const [kycDetails, setKycDetails] = useState({});
+  const [showKycSuccess, setShowKycSuccess] = useState(false);
 
   const fetchProfile = async () => {
     setLoading(true);
@@ -47,11 +49,19 @@ const Dashboard = () => {
       ]);
 
       if (profileRes && profileRes.status && profileRes.data) {
-        setProfile(profileRes.data.raw || {});
+        const rawProfile = profileRes.data.raw || {};
+        setProfile(rawProfile);
         if (profileRes.data.dashboard_counts)
           setDashboardCounts(profileRes.data.dashboard_counts);
         if (profileRes.data.profile_completion)
           setProfileCompletion(profileRes.data.profile_completion);
+
+        if (["Approved", "Verified", "Completed"].includes(rawProfile.kyc_status)) {
+          const hasSeen = localStorage.getItem(`hasSeenKycSuccess_${userId}`);
+          if (!hasSeen) {
+            setShowKycSuccess(true);
+          }
+        }
       }
 
       if (kycRes && kycRes.status && kycRes.data) {
@@ -73,6 +83,11 @@ const Dashboard = () => {
   }, [token, userId]);
 
   const fullName = `${profile?.first_name} ${profile?.last_name}`;
+
+  const handleCloseKycSuccess = () => {
+    localStorage.setItem(`hasSeenKycSuccess_${userId}`, "true");
+    setShowKycSuccess(false);
+  };
 
   return (
     <div className={styles.dashboardContainer}>
@@ -106,7 +121,7 @@ const Dashboard = () => {
             </div>
           </div>
           <Link 
-            href={`/auth/business/dashboard/edit-profile?id=${encodeId(userId)}&tab=document`}
+            href={`/auth/business/dashboard/edit-profile?id=${encodeId(userId)}`}
             style={{ backgroundColor: '#f37021', color: 'white', padding: '8px 16px', borderRadius: '6px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}
           >
             Complete KYC Now
@@ -578,6 +593,39 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {showKycSuccess && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <div className={styles.successIconWrapper}>
+              <div className={styles.successShield}>
+                <FaShieldAlt />
+              </div>
+              <div className={styles.successCheckmark}>✓</div>
+            </div>
+            <h2 className={styles.successTitle}>Congratulations!</h2>
+            <h3 className={styles.successSubtitle}>Your KYC has been Approved</h3>
+            <p className={styles.successText}>
+              You can now access all features and start listing properties.
+            </p>
+            <button className={styles.successBtn} onClick={handleCloseKycSuccess}>
+              Go to Dashboard →
+            </button>
+            <div className={styles.successDetailsBox}>
+              <div className={styles.successDetailRow}>
+                <span className={styles.successDetailLabel}>KYC ID:</span>
+                <span className={styles.successDetailValue}>{kycDetails?.kyc_id || profile?.kyc_id || `#KYC-${String(userId).padStart(4, '0')}`}</span>
+              </div>
+              <div className={styles.successDetailRow}>
+                <span className={styles.successDetailLabel}>Approved on:</span>
+                <span className={styles.successDetailValue}>
+                  {kycDetails?.approved_at ? new Date(kycDetails.approved_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : (kycDetails?.updated_at ? new Date(kycDetails.updated_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }))}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -98,7 +98,7 @@ export default function SidebarDashboard({ onItemClick }) {
                   if (kycStatus?.toLowerCase() === "submitted") {
                     toast.error("Waiting for admin to approve KYC.");
                   } else {
-                    toast.error("Debug KYC: " + String(kycStatus) + " type: " + typeof kycStatus);
+                    toast.error("Please complete your KYC first.");
                   }
                 }} className={`${styles.menuItem} ${isActive ? styles.active : ''}`} style={{ cursor: "pointer" }}>
                   <div className={styles.menuContent}>

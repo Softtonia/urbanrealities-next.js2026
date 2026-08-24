@@ -123,7 +123,7 @@ const Dashboard = () => {
             </div>
           </div>
           <Link 
-            href={`/auth/user/dashboard/edit-profile?id=${encodeId(userId)}&tab=document`}
+            href={`/auth/user/dashboard/edit-profile?id=${encodeId(userId)}`}
             style={{ backgroundColor: '#f37021', color: 'white', padding: '8px 16px', borderRadius: '6px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}
           >
             Complete KYC Now

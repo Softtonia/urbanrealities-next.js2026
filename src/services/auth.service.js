@@ -161,6 +161,21 @@ export async function updateProfilePhoto(token, payload) {
   }
 }
 
+export async function updateBusinessLogo(token, payload) {
+  try {
+    const res = await nextJsApi.post("/api/auth/profile/company-logo", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    if (error.response) return { success: false, ...error.response.data };
+    return { success: false, message: error.message };
+  }
+}
+
 export async function updateAddressProfile(token, payload) {
   try {
     const res = await nextJsApi.post("/api/auth/profile/address", payload, {

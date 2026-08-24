@@ -35,6 +35,7 @@ import {
 import {
   updatePersonalProfile,
   updateProfilePhoto,
+  updateBusinessLogo,
   updateAddressProfile,
   getUserProfile,
 } from "@/services/auth.service";
@@ -61,6 +62,7 @@ const ProfileForm = () => {
   const [states, setStates] = useState([]);
 
   const [profileImage, setProfileImage] = useState("/profile-placeholder.png");
+  const [businessLogo, setBusinessLogo] = useState("/profile-placeholder.png");
   const [profile, setProfile] = useState({});
   const [profileCompletion, setProfileCompletion] = useState({
     percentage: 0,
@@ -174,6 +176,9 @@ const ProfileForm = () => {
 
         if (rawData.profile_photo) {
           setProfileImage(rawData.profile_photo);
+        }
+        if (rawData.company_logo || rawData.business_logo) {
+          setBusinessLogo(rawData.company_logo || rawData.business_logo);
         }
       }
     } catch (err) {
@@ -323,8 +328,15 @@ const ProfileForm = () => {
     fileInputRef.current.click();
   };
 
+  const handleBusinessLogoClick = () => {
+    businessLogoInputRef.current.click();
+  };
+
   const [photoProgress, setPhotoProgress] = useState(0);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [logoProgress, setLogoProgress] = useState(0);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const businessLogoInputRef = useRef(null);
 
   const [kycStatus, setKycStatus] = useState(null);
   const [kycReasons, setKycReasons] = useState([]);
@@ -400,6 +412,40 @@ const ProfileForm = () => {
         setIsUploadingPhoto(false);
         setPhotoProgress(0);
         toast.error("An error occurred while uploading photo.");
+      }
+    }
+  };
+
+  const handleBusinessLogoChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setBusinessLogo(imageUrl);
+      setIsUploadingLogo(true);
+      setLogoProgress(10);
+
+      const payload = new FormData();
+      payload.append("company_logo", file);
+
+      try {
+        const data = await updateBusinessLogo(token, payload);
+
+        if (data && data.status) {
+          setLogoProgress(100);
+          setTimeout(() => {
+            setIsUploadingLogo(false);
+            toast.success(data.message || "Business logo updated successfully!");
+          }, 1000);
+        } else {
+          setIsUploadingLogo(false);
+          setLogoProgress(0);
+          toast.error(data?.message || "Failed to update business logo.");
+        }
+      } catch (err) {
+        console.error("Business logo upload error:", err);
+        setIsUploadingLogo(false);
+        setLogoProgress(0);
+        toast.error("An error occurred while uploading logo.");
       }
     }
   };
@@ -533,6 +579,9 @@ const ProfileForm = () => {
           "business_state_id",
           "business_city_id",
           "business_address",
+          "business_street_address",
+          "business_colony",
+          "business_area_locality",
           "business_pin_code"
         ];
         addressKeys.forEach((key) => {
@@ -741,7 +790,15 @@ const ProfileForm = () => {
         ]}
       />
 
-      <div className={styles.layoutGrid} style={{ gridTemplateColumns: "1fr" }}>
+      <div
+        className={styles.layoutGrid}
+        style={{
+          gridTemplateColumns:
+            activeTab === "document" || activeTab === "review" || activeTab === "verification"
+              ? "1fr"
+              : "2fr 1fr",
+        }}
+      >
         {/* Main Content Area (Left) */}
         <div className={styles.mainContent}>
           <form
@@ -912,6 +969,7 @@ const ProfileForm = () => {
                     <PhoneInput
                       country={"in"}
                       value={formData.phone || ""}
+                      countryCodeEditable={false}
                       onChange={(val) =>
                         setFormData((p) => ({ ...p, phone: val }))
                       }
@@ -961,6 +1019,7 @@ const ProfileForm = () => {
                     <PhoneInput
                       country={"in"}
                       value={formData.alternate_number || ""}
+                      countryCodeEditable={false}
                       onChange={(val) =>
                         setFormData((p) => ({ ...p, alternate_number: val }))
                       }
@@ -1375,6 +1434,7 @@ const ProfileForm = () => {
                     <PhoneInput
                       country={"in"}
                       value={formData.business_phone || ""}
+                      countryCodeEditable={false}
                       onChange={(phone) =>
                         setFormData((p) => ({ ...p, business_phone: phone }))
                       }
@@ -1684,6 +1744,95 @@ const ProfileForm = () => {
             )}
           </form>
         </div>
+
+        {/* Sidebar Widgets (Right) */}
+        {(activeTab === "personal" || activeTab === "business") && (
+          <div className={styles.sidebarWidgets}>
+            {activeTab === "personal" ? (
+              <div className={styles.widgetCard}>
+                <h4 className={styles.widgetTitle}>Profile Photo</h4>
+                <div className={styles.photoContainer}>
+                  <div className={styles.photoWrapper}>
+                    <img
+                      src={profileImage}
+                      alt="Profile"
+                      className={styles.avatarImg}
+                    />
+                    <button
+                      className={styles.cameraBtn}
+                      type="button"
+                      onClick={handleImageClick}
+                    >
+                      <FaCamera />
+                    </button>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      style={{ display: "none" }}
+                      onChange={handleFileChange}
+                    />
+                  </div>
+                </div>
+                <button
+                  className={styles.uploadPhotoBtn}
+                  type="button"
+                  onClick={handleImageClick}
+                >
+                  {isUploadingPhoto
+                    ? `Uploading (${photoProgress}%)`
+                    : "Upload New Photo"}
+                </button>
+                <p className={styles.photoInfo}>
+                  Recommended: JPG, PNG or WEBP
+                  <br />
+                  Max size: 2MB. Min dimension: 200x200px
+                </p>
+              </div>
+            ) : (
+              <div className={styles.widgetCard}>
+                <h4 className={styles.widgetTitle}>Business Logo</h4>
+                <div className={styles.photoContainer}>
+                  <div className={styles.photoWrapper}>
+                    <img
+                      src={businessLogo}
+                      alt="Business Logo"
+                      className={styles.avatarImg}
+                    />
+                    <button
+                      className={styles.cameraBtn}
+                      type="button"
+                      onClick={handleBusinessLogoClick}
+                    >
+                      <FaCamera />
+                    </button>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={businessLogoInputRef}
+                      style={{ display: "none" }}
+                      onChange={handleBusinessLogoChange}
+                    />
+                  </div>
+                </div>
+                <button
+                  className={styles.uploadPhotoBtn}
+                  type="button"
+                  onClick={handleBusinessLogoClick}
+                >
+                  {isUploadingLogo
+                    ? `Uploading (${logoProgress}%)`
+                    : "Upload Business Logo"}
+                </button>
+                <p className={styles.photoInfo}>
+                  Recommended: JPG, PNG or WEBP
+                  <br />
+                  Max size: 2MB. Min dimension: 200x200px
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

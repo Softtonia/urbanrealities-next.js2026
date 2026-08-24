@@ -563,3 +563,131 @@
     padding-top: 20px;
   }
 }
+
+/* KYC Success Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modalContent {
+  background-color: white;
+  border-radius: 16px;
+  padding: 40px;
+  width: 90%;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.successIconWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  background-color: #f0fdf4;
+  border-radius: 50%;
+  margin: 0 auto 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.successShield {
+  font-size: 64px;
+  color: #22c55e;
+  z-index: 2;
+}
+
+.successCheckmark {
+  display: none; /* Icon already has check if we use a specific shield, else we can leave it */
+}
+
+.successTitle {
+  color: #16a34a;
+  font-size: 24px;
+  font-family: var(--font-bold);
+  margin: 0 0 8px;
+}
+
+.successSubtitle {
+  color: #15803d;
+  font-size: 18px;
+  font-family: var(--font-semibold);
+  margin: 0 0 16px;
+}
+
+.successText {
+  color: #4b5563;
+  font-size: 14px;
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.successBtn {
+  background-color: var(--Orange-Red, #ff6b00);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: auto;
+  display: inline-block;
+  margin-bottom: 24px;
+}
+
+.successBtn:hover {
+  background-color: var(--Dark-Tangerine, #e65c00);
+}
+
+.successDetailsBox {
+  background-color: #dcfce7;
+  border-radius: 8px;
+  padding: 16px 24px;
+  text-align: left;
+}
+
+.successDetailRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.successDetailRow:last-child {
+  margin-bottom: 0;
+}
+
+.successDetailLabel {
+  color: #166534;
+  font-weight: 600;
+  min-width: 100px;
+}
+
+.successDetailValue {
+  color: #14532d;
+  font-weight: 500;
+}

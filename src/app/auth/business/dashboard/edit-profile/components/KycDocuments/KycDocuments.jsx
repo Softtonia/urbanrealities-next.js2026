@@ -651,6 +651,7 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
             <input
               type="text"
               value={gstNumber}
+              maxLength={15}
               onChange={(e) => setGstNumber(e.target.value)}
               readOnly={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
               disabled={documents.some((d) => d.status && d.status.toLowerCase() !== "rejected")}
