@@ -16,8 +16,8 @@ const VerifyOTP = () => {
   const [timer, setTimer] = useState(60);
   const [isResendVisible, setIsResendVisible] = useState(false);
 
-  const finalToken = token || localStorage.getItem("tempAuthToken");
-  console.log('finalToken', token)
+  const finalToken = token || (typeof window !== "undefined" ? localStorage.getItem("tempAuthToken") : null);
+  console.log('finalToken is:', finalToken)
 
   const data = {
     heading: "Verification",
@@ -64,14 +64,15 @@ const VerifyOTP = () => {
     try {
       const result = await verifyOtp(otp, finalToken);
 
-      if (result && result.status !== false) {
+      if (result && result.success !== false && result.status !== false) {
         toast.success(result.message || "Registration successful");
         localStorage.removeItem("tempAuthToken");
         setTimeout(() => {
           window.location.href = "/auth/login";
         }, 1500);
       } else {
-        setError(result.message || "Invalid OTP");
+        const errorMsg = result?.data?.message || result?.message || "Invalid OTP or session expired.";
+        setError(errorMsg);
       }
     } catch (err) {
       setError("Something went wrong. Try again.");

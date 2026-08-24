@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Skeleton } from "@mui/material";
 import {
   FaChartBar, FaBuilding, FaEnvelope, FaBook,
-  FaCalendarAlt, FaLifeRing, FaSignOutAlt, FaThLarge, FaCrown, FaPuzzlePiece
+  FaCalendarAlt, FaLifeRing, FaSignOutAlt, FaThLarge, FaCrown, FaPuzzlePiece, FaIdCard
 } from "react-icons/fa";
 import { HiDocumentChartBar,HiOutlineTicket } from "react-icons/hi2";
 import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
@@ -20,6 +20,7 @@ const menuItems = [
   { icon: <FaBook />, label: "Insights", link: "/auth/business/insight" },
   { icon: <HiOutlineTicket />, label: "Leads", link: "/auth/business/leads" },
   { icon: <HiDocumentChartBar />, label: "Document", link: "/auth/business/document" },
+  { icon: <FaIdCard />, label: "KYC", link: "/auth/business/dashboard/edit-profile" },
   // { icon: <FaCalendarAlt />, label: "Appointment", link: "/auth/business/appointment" },
   { icon: <FaCrown />, label: "Membership", link: "/auth/business/my-current-plan" },
   { icon: <FaPuzzlePiece />, label: "Add-ons", link: "/auth/business/addons" },
@@ -63,7 +64,7 @@ export default function SidebarDashboard({ onItemClick }) {
   }, [token]);
 
   const handleMobileClick = (link) => {
-    if (!isKycComplete && link !== "/auth/business/dashboard") {
+    if (!isKycComplete && link !== "/auth/business/dashboard" && !link.startsWith("/auth/business/dashboard/edit-profile")) {
       if (kycStatus?.toLowerCase() === "submitted") {
         toast.error("Waiting for admin to approve KYC.");
       } else {
@@ -91,7 +92,7 @@ export default function SidebarDashboard({ onItemClick }) {
             if (item.label === "Add-ons" && !hasActiveMembership) return null;
             const isActive = pathname === item.link;
 
-            if (!isKycComplete && item.link !== "/auth/business/dashboard") {
+            if (!isKycComplete && item.link !== "/auth/business/dashboard" && !item.link.startsWith("/auth/business/dashboard/edit-profile")) {
               return (
                 <div key={index} onClick={() => {
                   if (kycStatus?.toLowerCase() === "submitted") {

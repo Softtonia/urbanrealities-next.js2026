@@ -100,8 +100,12 @@ const SetPassword = () => {
       }
 
       if (result) {
+        console.log("REGISTER RESULT:", result);
         // Store token temporarily in localStorage for OTP verification
-        localStorage.setItem("tempAuthToken", result.api_token);
+        const tokenToSave = result.token || result.api_token || result.data?.token || result.data?.api_token;
+        if (tokenToSave) {
+          localStorage.setItem("tempAuthToken", tokenToSave);
+        }
 
         // Redirect to verify OTP page
         router.push(`/auth/login/verify-otp?email=${formData.email}&id=${result.user_id}`);

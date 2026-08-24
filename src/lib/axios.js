@@ -37,8 +37,12 @@ axios.interceptors.response.use(
     updateLoader();
     
     if (error.response && error.response.status === 401) {
+      // Do not force reload for registration/OTP verification endpoints
+      const url = error.response.config?.url || "";
+      const isAuthEndpoint = url.includes("/api/verify-register-otp") || url.includes("/api/register");
+      
       // If we are on the client-side, clear storage and log the user out
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && !isAuthEndpoint) {
         localStorage.removeItem("token");
         localStorage.removeItem("userId");
         localStorage.removeItem("userRole");
