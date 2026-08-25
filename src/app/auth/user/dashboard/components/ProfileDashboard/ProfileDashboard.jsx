@@ -107,7 +107,7 @@ const Dashboard = () => {
   return (
     <div className={styles.dashboardContainer}>
       <div className={styles.headerTitleBlock}>
-        <h1 className={styles.welcomeHeading}>
+        <h1 className={styles.welcomeHeading} style={{ textTransform: "capitalize" }}>
           Welcome Back,{" "}
           {loading ? (
             <Skeleton
@@ -205,7 +205,7 @@ const Dashboard = () => {
 
           <div className={styles.userInfo}>
             <div className={styles.nameRow}>
-              <h2>
+              <h2 style={{ textTransform: "capitalize" }}>
                 {loading ? <Skeleton variant="text" width={150} /> : fullName}
               </h2>
               {!loading && (
@@ -327,11 +327,42 @@ const Dashboard = () => {
       {/* Stats Grid */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.progressCircle}>
+          <div 
+            className={styles.progressCircle} 
+            style={{ 
+              background: 'transparent',
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '56px',
+              height: '56px'
+            }}
+          >
             {loading ? (
-              <Skeleton variant="circular" width={50} height={50} />
+              <Skeleton variant="circular" width={56} height={56} />
             ) : (
-              <span>{profileCompletion.percentage}%</span>
+              <>
+                <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}>
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#e5e7eb"
+                    strokeWidth="4"
+                  />
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#f37021"
+                    strokeWidth="4"
+                    strokeDasharray={`${profileCompletion.percentage}, 100`}
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span style={{ position: 'relative', zIndex: 1, fontSize: '12px', fontWeight: 'bold', color: '#111827' }}>
+                  {profileCompletion.percentage}%
+                </span>
+              </>
             )}
           </div>
           <div className={styles.statInfo}>

@@ -860,46 +860,6 @@ const ProfileForm = () => {
                 {/* Empty div to fill the second column for Row 3 */}
                 <div></div>
 
-                {/* Row 4: Aadhaar, GST, RERA */}
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-                    gap: "20px",
-                    gridColumn: "1 / -1",
-                  }}
-                >
-                  <div className={styles.inputGroup}>
-                    <label>Aadhaar Number</label>
-                    <input
-                      type="text"
-                      name="aadhaar_number"
-                      value={formData.aadhaar_number || ""}
-                      onChange={handleChange}
-                      placeholder="Aadhaar Number"
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>GST Number</label>
-                    <input
-                      type="text"
-                      name="gst_number"
-                      value={formData.gst_number || ""}
-                      onChange={handleChange}
-                      placeholder="GST Number"
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>RERA Number</label>
-                    <input
-                      type="text"
-                      name="rera_number"
-                      value={formData.rera_number || ""}
-                      onChange={handleChange}
-                      placeholder="RERA Number"
-                    />
-                  </div>
-                </div>
               </div>
             )}
 

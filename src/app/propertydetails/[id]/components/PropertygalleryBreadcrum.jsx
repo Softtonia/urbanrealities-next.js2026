@@ -44,16 +44,35 @@ const PropertygalleryBreadcrum = ({ property }) => {
 
 
   const price = hero.find(val =>
-    val?.template?.slug.includes("price")
+    val?.template?.slug?.includes("price")
   )?.field_value;
 
   const editgallery = hero.find(val =>
-    val?.template?.slug.includes("gallery")
+    val?.template?.slug?.includes("gallery")
   )?.field_value;
 
   const sqft = hero.find(val =>
-    val?.template?.slug.includes("built-up-area")
+    val?.template?.slug?.includes("built-up-area")
   )?.field_value;
+
+  const bhk = hero.find(val =>
+    val?.template?.slug?.includes("bedroom")
+  )?.field_value;
+
+  const propertyTypes = property?.propertyType?.map(value => value.property_type_name).join(", ");
+  const purpose = property?.purpose_id_name;
+  
+  const dynamicTitleParts = [];
+  if (bhk) dynamicTitleParts.push(`${bhk} BHK`);
+  if (sqft) dynamicTitleParts.push(`${sqft} sqft`);
+  if (propertyTypes) dynamicTitleParts.push(propertyTypes);
+  if (purpose) dynamicTitleParts.push(`For ${purpose}`);
+  if (property?.city?.name || property?.state?.name) {
+    const location = [property?.city?.name, property?.state?.name].filter(Boolean).join(", ");
+    dynamicTitleParts.push(`in ${location}`);
+  }
+  
+  const dynamicTitle = dynamicTitleParts.join(" ");
 
   console.log("heroo", property?.repeater_fields)
 
@@ -77,21 +96,13 @@ const PropertygalleryBreadcrum = ({ property }) => {
                 <span className="price body-text-20">₹{formatprice(price)} Onwards</span>
               </div>)}
 
-            <div className="label-desc d-flex flex-direction-column">
-              <span className="rent-label body-text-14">
-                For {property?.purpose_id_name}
+            <div className="label-desc d-flex flex-direction-column mt-2">
+              <span className="rent-label body-text-14 mb-2" style={{ width: 'fit-content' }}>
+                For {property?.purpose_id_name || "Sale"}
               </span>
-              {/* <span className="description">{sqft} sqft </span> */}
-              <span className="description">
-                {sqft} {sqft && `sqft `}
-                {property.propertyType
-                  ?.map((value) => value.property_type_name)
-                  .join(", ")}{" "}
-                {property?.city?.name ? `${property.city.name}, ` : ""}
-                {property?.state?.name ?? ""}
-              </span>
-
-
+              <h1 className="body-text-24 fw-bold m-0" style={{ fontSize: '24px', color: '#111827' }}>
+                {dynamicTitle || property?.property_name || "Untitled Listing"}
+              </h1>
             </div>
           </div>
 

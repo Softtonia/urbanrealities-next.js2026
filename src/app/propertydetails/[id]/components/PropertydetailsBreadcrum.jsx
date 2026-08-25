@@ -6,6 +6,20 @@ import { FaChevronRight } from "react-icons/fa";
 
 const PropertydetailsBreadcrum = ({property}) => {
   console.log(property);
+  const repeaterFields = property?.repeater_fields ? Object.values(property.repeater_fields) : [];
+  const bhk = repeaterFields?.find(val => val?.template?.slug?.includes("bedroom"))?.field_value;
+  const sqft = repeaterFields?.find(val => val?.template?.slug?.includes("built-up-area"))?.field_value;
+  const propertyTypes = property?.propertyType?.map(value => value.property_type_name).join(", ");
+  const purpose = property?.purpose_id_name;
+  
+  const dynamicTitleParts = [];
+  if (bhk) dynamicTitleParts.push(`${bhk} BHK`);
+  if (sqft) dynamicTitleParts.push(`${sqft} sqft`);
+  if (propertyTypes) dynamicTitleParts.push(propertyTypes);
+  if (purpose) dynamicTitleParts.push(`for ${purpose}`);
+  
+  const dynamicTitle = dynamicTitleParts.length > 0 ? dynamicTitleParts.join(" ") : property?.property_name;
+
       return (
           <>
               <div className="breadcrumb-container">
@@ -16,7 +30,7 @@ const PropertydetailsBreadcrum = ({property}) => {
                               <FaChevronRight />
                               {/* <Link className="ms-3" href="/newly-listed ">Newly Listed Properties</Link> */}
                               {/* <FaChevronRight /> */}
-                              <span className="body-text-rg16 ms-3">{property?.property_name} </span>
+                              <span className="body-text-rg16 ms-3">{dynamicTitle} </span>
                               {property?.city?.name && property?.state?.name &&
                                   <span className="body-text-rg16">in {property.city.name} ,{property.state.name}</span>
                               }

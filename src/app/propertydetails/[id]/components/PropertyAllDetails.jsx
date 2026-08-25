@@ -17,32 +17,39 @@ import PropertyAmenities from "./PropertyAmenities";
 
 const PropertyDetails = ({ property, leadTypes, userDetail }) => {
   console.log(" details", userDetail)
+  const templateData = property?.original_data?.template;
+  const hasTemplate = templateData?.has_template;
+  const templateHtml = templateData?.rendered?.html_with_styles;
 
   return (
     <div>
       <PropertydetailsBreadcrum property={property} />
       <PropertygalleryBreadcrum property={property} />
-      <div className="project-highlight-background">
-        <div className="container">
-          <div className="row background-row">
-            <div className="col-8 large-col">
-              <PropertyHighlights property={property} />
-              <PropertyDescription property={property} />
-              <Propertyareadata property={property} />
-              <Propertyprice property={property} />
-              <PropertyAmenities property={property} />
+      
+      {hasTemplate && templateHtml ? (
+        <div dangerouslySetInnerHTML={{ __html: templateHtml }} />
+      ) : (
+        <div className="project-highlight-background">
+          <div className="container">
+            <div className="row background-row">
+              <div className="col-8 large-col">
+                <PropertyHighlights property={property} />
+                <PropertyDescription property={property} />
+                <Propertyareadata property={property} />
+                <Propertyprice property={property} />
+                <PropertyAmenities property={property} />
+              </div>
+              <div className="col-4 small-col">
+                <Projectactive />
+                {userDetail?.user &&
+                  <Projectagent property={property} userDetail={userDetail?.user} />
+                }
+                <PropertyEnquiryFrom property={property} leadTypes={leadTypes} />
+              </div>
             </div>
-            <div className="col-4 small-col">
-              <Projectactive />
-              {userDetail?.user &&
-                <Projectagent property={property} userDetail={userDetail?.user} />
-              }
-              <PropertyEnquiryFrom property={property} leadTypes={leadTypes} />
-            </div>
-
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

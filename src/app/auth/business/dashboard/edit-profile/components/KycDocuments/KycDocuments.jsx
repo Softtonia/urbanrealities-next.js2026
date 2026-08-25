@@ -354,6 +354,11 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
 
   const handleSaveKyc = async () => {
     try {
+      if (!aadhaarNumber || aadhaarNumber.length !== 12) {
+        toast.error("Please enter a valid 12-digit Aadhaar number.");
+        return;
+      }
+
       const formData = new FormData();
       formData.append("aadhaar_number", aadhaarNumber);
       if (gstNumber) formData.append("gst_number", gstNumber);
@@ -391,23 +396,10 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
         }),
       );
 
-      let res;
-      if (globalKycStatus && globalKycStatus.toLowerCase() === "rejected") {
-        res = await resubmitKyc(token, formData);
-      } else {
-        res = await startKycUpload(token, formData);
-      }
+      let res = await startKycUpload(token, formData);
       const result = await res.json();
 
       if (res.ok && result.status) {
-        if (globalKycStatus && globalKycStatus.toLowerCase() === "rejected") {
-          toast.success(result.message || "KYC resubmitted successfully.");
-          setIsSaving(false);
-          setTimeout(() => {
-            if (onSuccess) onSuccess();
-          }, 1000);
-          return;
-        }
 
         const uploadId = result.data?.upload_id || result.upload_id;
         if (uploadId) {
@@ -447,11 +439,18 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
                   clearInterval(pollInterval);
 
                   try {
-                    const submitRes = await submitKyc(token, uploadId, {
+                    const payload = {
                       aadhaar_number: aadhaarNumber,
                       gst_number: gstNumber,
                       rera_number: reraNumber,
-                    });
+                    };
+
+                    let submitRes;
+                    if (globalKycStatus && globalKycStatus.toLowerCase() === "rejected") {
+                      submitRes = await resubmitKyc(token, uploadId, payload);
+                    } else {
+                      submitRes = await submitKyc(token, uploadId, payload);
+                    }
                     const submitResult = await submitRes.json();
                     if (submitRes.ok && submitResult.status) {
                       toast.success(

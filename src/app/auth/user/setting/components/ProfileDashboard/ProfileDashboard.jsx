@@ -49,7 +49,7 @@ const Dashboard = () => {
   return (
     <div className={styles.dashboardContainer}>
       <div className={styles.headerTitleBlock}>
-        <h1 className={styles.welcomeHeading}>Welcome Back, {fullName}! 👋</h1>
+        <h1 className={styles.welcomeHeading} style={{ textTransform: "capitalize" }}>Welcome Back, {fullName}! 👋</h1>
         <p className={styles.welcomeSubtext}>Manage your profile, verify your account and grow your business.</p>
       </div>
 
@@ -71,7 +71,7 @@ const Dashboard = () => {
           
           <div className={styles.userInfo}>
             <div className={styles.nameRow}>
-              <h2>{fullName}</h2>
+              <h2 style={{ textTransform: "capitalize" }}>{fullName}</h2>
               <span className={styles.statusPill}>
                 <FaCheckCircle /> Approved
               </span>
@@ -116,8 +116,37 @@ const Dashboard = () => {
       {/* Stats Grid */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.progressCircle}>
-            <span>72%</span>
+          <div 
+            className={styles.progressCircle} 
+            style={{ 
+              background: 'transparent',
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '56px',
+              height: '56px'
+            }}
+          >
+                <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}>
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#e5e7eb"
+                    strokeWidth="4"
+                  />
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#f37021"
+                    strokeWidth="4"
+                    strokeDasharray="72, 100"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span style={{ position: 'relative', zIndex: 1, fontSize: '12px', fontWeight: 'bold', color: '#111827' }}>
+                  72%
+                </span>
           </div>
           <div className={styles.statInfo}>
             <h4>Profile Completion</h4>
