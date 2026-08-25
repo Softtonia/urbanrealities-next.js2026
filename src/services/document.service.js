@@ -69,16 +69,20 @@ export const submitKyc = async (token, uploadId, payloadData) => {
     });
 };
 
-export const resubmitKyc = async (token, formData) => {
+export const resubmitKyc = async (token, uploadId, payloadData) => {
+    const data = typeof payloadData === 'object' && payloadData !== null 
+        ? payloadData 
+        : { aadhaar_number: payloadData };
+
     return await fetch(getBaseUrl() + "/api/kyc/resubmit", {
         method: "POST",
         headers: {
-            "Accept": "application/json",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
             "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
             "X-App-Type": APP_TYPE
         },
-        body: formData
+        body: JSON.stringify({ upload_id: uploadId, declaration: true, ...data })
     });
 };
 

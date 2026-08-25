@@ -27,6 +27,7 @@ import KycTimeline from "@/app/auth/user/dashboard/edit-profile/components/KycTi
 import ProfileTabs from "@/app/auth/user/dashboard/edit-profile/components/ProfileTabs/ProfileTabs";
 import ReviewSubmit from "@/app/auth/user/dashboard/edit-profile/components/ReviewSubmit/ReviewSubmit";
 import VerificationStep from "@/app/auth/user/dashboard/edit-profile/components/VerificationStep/VerificationStep";
+import ApprovedProfileView from "@/app/auth/user/dashboard/edit-profile/components/ApprovedProfileView/ApprovedProfileView";
 import {
   LARAVEL_API_BASE_URL,
   LARAVEL_APPLICATION_PASSWORD,
@@ -104,6 +105,7 @@ const ProfileForm = () => {
 
   const [isSaving, setIsSaving] = useState(false);
   const [hasTimeline, setHasTimeline] = useState(false);
+  const [isKycApproved, setIsKycApproved] = useState(false);
 
   const getBaseUrl = () => LARAVEL_API_BASE_URL;
 
@@ -138,6 +140,14 @@ const ProfileForm = () => {
           return value;
         };
 
+        const formatPhone = (val) => {
+          let str = normalize(val);
+          if (str && /^\d{10}$/.test(str)) {
+            return "91" + str;
+          }
+          return str;
+        };
+
         // ✅ Pre-fill the form fields with normalization
         setFormData({
           unique_id: normalize(rawData.unique_id),
@@ -146,11 +156,11 @@ const ProfileForm = () => {
           last_name: normalize(rawData.last_name),
           role_id: normalize(rawData.role_name),
           user_name: normalize(rawData.user_name),
-          phone: normalize(rawData.phone),
-          alternate_number: normalize(rawData.alternate_number),
+          phone: formatPhone(rawData.phone),
+          alternate_number: formatPhone(rawData.alternate_number),
           bussiness_name: normalize(rawData.bussiness_name),
           bussiness_email: normalize(rawData.bussiness_email),
-          business_phone: normalize(rawData.business_phone),
+          business_phone: formatPhone(rawData.business_phone),
           country_id: normalize(rawData.country_id),
           state_id: normalize(rawData.state_id),
           city_id: normalize(rawData.city_id),
@@ -177,6 +187,11 @@ const ProfileForm = () => {
         if (rawData.profile_photo) {
           setProfileImage(rawData.profile_photo);
         }
+
+        if (rawData.kyc_status && ["approved", "verified", "completed"].includes(rawData.kyc_status.toLowerCase())) {
+          setIsKycApproved(true);
+        }
+        
         if (rawData.company_logo || rawData.business_logo) {
           setBusinessLogo(rawData.company_logo || rawData.business_logo);
         }
@@ -776,6 +791,15 @@ const ProfileForm = () => {
           { label: "Edit Profile", link: "" },
         ]}
       />
+      {isKycApproved ? (
+        <ApprovedProfileView 
+          formData={formData} 
+          profileImage={profileImage} 
+          token={token} 
+          isBusiness={true} 
+        />
+      ) : (
+        <>
       {/* Tabs */}
       <ProfileTabs
         activeTab={activeTab}
@@ -1840,6 +1864,8 @@ const ProfileForm = () => {
           </div>
         )}
       </div>
+      </>
+      )}
     </div>
   );
 };

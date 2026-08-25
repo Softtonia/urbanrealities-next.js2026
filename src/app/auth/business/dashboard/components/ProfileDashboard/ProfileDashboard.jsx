@@ -18,6 +18,7 @@ import {
   FaEdit,
   FaBriefcase,
   FaShieldAlt,
+  FaExclamationCircle,
 } from "react-icons/fa";
 import { MdVerified } from "react-icons/md";
 import { Skeleton } from "@mui/material";
@@ -123,22 +124,51 @@ const Dashboard = () => {
       </div>
 
       {/* KYC Alert Banner */}
-      {!loading && !["Submitted", "Pending", "Under Review", "Approved", "Verified", "Completed"].includes(profile?.kyc_status) && (
-        <div style={{ backgroundColor: '#fff4e5', borderLeft: '4px solid #f37021', padding: '16px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <FaIdCard style={{ color: '#f37021', fontSize: '24px' }} />
-            <div>
-              <h4 style={{ margin: 0, color: '#b95000', fontSize: '16px' }}>Complete Your KYC First</h4>
-              <p style={{ margin: 0, color: '#d97706', fontSize: '14px', marginTop: '4px' }}>You must upload your KYC documents to verify your account and unlock full features.</p>
-            </div>
-          </div>
-          <Link 
-            href={`/auth/business/dashboard/edit-profile?id=${encodeId(userId)}`}
-            style={{ backgroundColor: '#f37021', color: 'white', padding: '8px 16px', borderRadius: '6px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}
-          >
-            Complete KYC Now
-          </Link>
-        </div>
+      {!loading && (
+        (() => {
+          const statusStr = profile?.kyc_status || "";
+          const isRejected = statusStr.toLowerCase() === "rejected";
+          const isPendingOrApproved = ["submitted", "pending", "under review", "approved", "verified", "completed"].includes(statusStr.toLowerCase());
+          
+          if (isRejected) {
+            return (
+              <div style={{ backgroundColor: '#fef2f2', borderLeft: '4px solid #ef4444', padding: '16px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <FaExclamationCircle style={{ color: '#ef4444', fontSize: '24px' }} />
+                  <div>
+                    <h4 style={{ margin: 0, color: '#991b1b', fontSize: '16px' }}>Your KYC was Rejected</h4>
+                    <p style={{ margin: 0, color: '#b91c1c', fontSize: '14px', marginTop: '4px' }}>Please update your documents and re-submit your KYC.</p>
+                  </div>
+                </div>
+                <Link 
+                  href={`/auth/business/dashboard/edit-profile?id=${encodeId(userId)}`}
+                  style={{ backgroundColor: '#ef4444', color: 'white', padding: '8px 16px', borderRadius: '6px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}
+                >
+                  Re-submit KYC Now
+                </Link>
+              </div>
+            );
+          } else if (!isPendingOrApproved) {
+            return (
+              <div style={{ backgroundColor: '#fff4e5', borderLeft: '4px solid #f37021', padding: '16px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <FaIdCard style={{ color: '#f37021', fontSize: '24px' }} />
+                  <div>
+                    <h4 style={{ margin: 0, color: '#b95000', fontSize: '16px' }}>Complete Your KYC First</h4>
+                    <p style={{ margin: 0, color: '#d97706', fontSize: '14px', marginTop: '4px' }}>You must upload your KYC documents to verify your account and unlock full features.</p>
+                  </div>
+                </div>
+                <Link 
+                  href={`/auth/business/dashboard/edit-profile?id=${encodeId(userId)}`}
+                  style={{ backgroundColor: '#f37021', color: 'white', padding: '8px 16px', borderRadius: '6px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}
+                >
+                  Complete KYC Now
+                </Link>
+              </div>
+            );
+          }
+          return null;
+        })()
       )}
 
       {/* Orange Banner Card */}
@@ -610,11 +640,7 @@ const Dashboard = () => {
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <div className={styles.successIconWrapper} style={{ height: '150px', background: 'transparent' }}>
-              <iframe 
-                src="https://embed.lottiefiles.com/animation/NO8yOK8non" 
-                style={{ width: '150px', height: '150px', border: 'none', background: 'transparent' }} 
-                title="Success Animation"
-              ></iframe>
+              <FaCheckCircle style={{ width: '100px', height: '100px', color: '#28a745', margin: '25px auto', display: 'block' }} />
             </div>
             <h2 className={styles.successTitle}>Congratulations!</h2>
             <h3 className={styles.successSubtitle}>Your KYC has been Approved</h3>

@@ -14,6 +14,7 @@ import {
   FaDownload,
   FaTimes,
   FaExclamationCircle,
+  FaCheckCircle,
 } from "react-icons/fa";
 import styles from "./KycDocuments.module.css";
 import {
@@ -609,8 +610,11 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
     return `${LARAVEL_API_BASE_URL}/${clean.replace(/^\//, "")}`;
   };
 
+  const isKycApproved = ["approved", "verified", "completed"].includes(globalKycStatus?.toLowerCase());
+
   return (
     <div className={styles.kycContainer}>
+      {!isKycApproved && (
       <div
         style={{
           display: "grid",
@@ -809,6 +813,7 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
           </div>
         )}
       </div>
+      )}
       <input
         type="file"
         ref={fileInputRef}
@@ -816,7 +821,44 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
         onChange={handleFileChange}
         accept=".jpg,.png,.jpeg,.pdf"
       />
-      <div className={styles.documentsGrid}>
+      {isKycApproved ? (
+        <div style={{ background: "#fff", borderRadius: "12px", border: "1px solid #e5e7eb", padding: "24px", marginBottom: "32px" }}>
+          <h4 style={{ fontSize: "18px", fontWeight: "600", color: "#111827", marginBottom: "16px", marginTop: "0" }}>Uploaded Documents</h4>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {documents.filter(d => d.status && d.status.toLowerCase() !== "rejected").map(doc => (
+              <div key={doc.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", background: "#f9fafb", borderRadius: "8px", border: "1px solid #e5e7eb" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                  <div className={`${styles.iconCircle} ${styles[doc.iconColor]}`} style={{ width: "48px", height: "48px", fontSize: "20px", display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', margin: 0 }}>
+                    {doc.icon}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <span style={{ fontSize: "15px", fontWeight: "600", color: "#374151" }}>{doc.title}</span>
+                    <span style={{ fontSize: "13px", color: "#6b7280" }}>{doc.filename || "Document.png"}</span>
+                  </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#10b981", fontSize: "14px", fontWeight: "500" }}>
+                    <FaCheckCircle style={{ fontSize: "18px" }} />
+                    Uploaded
+                  </div>
+                  <button 
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleView(doc);
+                    }}
+                    style={{ background: "none", border: "none", color: "#f37021", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontSize: "14px", fontWeight: "600", padding: "8px 12px" }}
+                  >
+                    <FaEye style={{ fontSize: "16px" }} /> View
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className={styles.documentsGrid}>
         {documents.map((doc) => (
           <div
             key={doc.id}
@@ -936,8 +978,11 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
         <span className={styles.infoBannerText}>
           Supported formats: JPG, PNG, PDF | Max size: 5MB per file
         </span>
-      </div>
+          </div>
+        </>
+      )}
 
+      {!isKycApproved && (
       <div className={styles.formActions}>
         <button
           type="button"
@@ -967,6 +1012,7 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
           {isSaving ? "Saving..." : "Save & Continue \u2192"}
         </button>
       </div>
+      )}
 
       <div className={styles.securityBanner}>
         <FaShieldAlt className={styles.securityBannerIcon} />
