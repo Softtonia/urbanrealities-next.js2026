@@ -20,7 +20,7 @@ const menuItems = [
   { icon: <FaBook />, label: "Insights", link: "/auth/business/insight" },
   { icon: <HiOutlineTicket />, label: "Leads", link: "/auth/business/leads" },
   { icon: <HiDocumentChartBar />, label: "Document", link: "/auth/business/document" },
-  { icon: <FaIdCard />, label: "KYC", link: "/auth/business/dashboard/edit-profile" },
+  { icon: <FaIdCard />, label: "KYC", link: "/auth/business/kyc" },
   // { icon: <FaCalendarAlt />, label: "Appointment", link: "/auth/business/appointment" },
   { icon: <FaCrown />, label: "Membership", link: "/auth/business/my-current-plan" },
   { icon: <FaPuzzlePiece />, label: "Add-ons", link: "/auth/business/addons" },
@@ -64,7 +64,7 @@ export default function SidebarDashboard({ onItemClick }) {
   }, [token]);
 
   const handleMobileClick = (link) => {
-    if (!isKycComplete && link !== "/auth/business/dashboard" && !link.startsWith("/auth/business/dashboard/edit-profile")) {
+    if (!isKycComplete && link !== "/auth/business/kyc") {
       if (kycStatus?.toLowerCase() === "submitted") {
         toast.error("Waiting for admin to approve KYC.");
       } else {
@@ -92,7 +92,7 @@ export default function SidebarDashboard({ onItemClick }) {
             if (item.label === "Add-ons" && !hasActiveMembership) return null;
             const isActive = pathname === item.link;
 
-            if (!isKycComplete && item.link !== "/auth/business/dashboard" && !item.link.startsWith("/auth/business/dashboard/edit-profile")) {
+            if (!isKycComplete && item.link !== "/auth/business/kyc") {
               return (
                 <div key={index} onClick={() => {
                   if (kycStatus?.toLowerCase() === "submitted") {

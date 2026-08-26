@@ -19,10 +19,8 @@ import {
   FaClock,
 } from "react-icons/fa";
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
-import KycDocuments from "../KycDocuments/KycDocuments";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
 import KycTimeline from "../KycTimeline/KycTimeline";
+import KycDocuments from "../KycDocuments/KycDocuments";
 import ReviewSubmit from "@/app/auth/user/dashboard/edit-profile/components/ReviewSubmit/ReviewSubmit";
 import VerificationStep from "@/app/auth/user/dashboard/edit-profile/components/VerificationStep/VerificationStep";
 import ApprovedProfileView from "@/app/auth/user/dashboard/edit-profile/components/ApprovedProfileView/ApprovedProfileView";
@@ -1048,16 +1046,13 @@ const ProfileForm = () => {
               </div>
             )}
 
-            {activeTab === "document" && (
+            {activeTab === "kyc" && (
               <div className={styles.fieldsGrid} style={{ display: "block" }}>
                 <KycDocuments
                   profile={profile}
                   token={token}
-                  onKycError={(status, reasons) => {
-                    setKycStatus(status);
-                    setKycReasons(reasons);
-                  }}
-                  onSuccess={() => setActiveTab("review")}
+                  onKycError={(err) => console.error(err)}
+                  onSuccess={() => fetchProfile(false)}
                 />
               </div>
             )}

@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 
 const ProfileTabs = ({ activeTab, setActiveTab, completedSteps = null, steps = [
     { id: "personal", label: "Personal Details" },
-    { id: "document", label: "Document Upload" },
     { id: "review", label: "Review & Submit" },
     { id: "verification", label: "Verification" },
   ] }) => {

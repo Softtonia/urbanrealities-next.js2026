@@ -26,13 +26,13 @@ function Layout({ children }) {
   const isKycComplete = !kycStatus || ["approved", "verified", "completed", "accepted", "2"].includes(String(kycStatus).trim().toLowerCase());
 
   useEffect(() => {
-    if (kycStatus !== null && kycStatus !== undefined && !isKycComplete && pathname !== "/auth/user/dashboard" && !pathname.startsWith("/auth/user/dashboard/edit-profile")) {
+    if (kycStatus !== null && kycStatus !== undefined && !isKycComplete && pathname !== "/auth/user/kyc") {
       if (kycStatus?.toLowerCase() === "submitted") {
         toast.error("Waiting for admin to approve KYC.");
       } else {
         toast.error("Please complete your KYC first.");
       }
-      router.replace("/auth/user/dashboard");
+      router.replace("/auth/user/kyc");
     }
   }, [kycStatus, pathname, isKycComplete, router]);
   useEffect(() => {

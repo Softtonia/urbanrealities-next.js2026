@@ -33,7 +33,7 @@ import {
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
+const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess }) => {
   const router = useRouter();
   const fileInputRef = useRef(null);
   const [activeUploadId, setActiveUploadId] = useState(null);
@@ -625,7 +625,8 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
           marginBottom: "32px",
         }}
       >
-        <div className={styles.inputGroup}>
+        {!viewOnly && (
+          <div className={styles.inputGroup}>
           <label
             style={{
               fontSize: "14px",
@@ -695,6 +696,7 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
             }}
           />
         </div>
+      )}
       </div>
       <input
         type="file"
@@ -864,35 +866,35 @@ const KycDocuments = ({ profile, token, onKycError, onSuccess }) => {
         </>
       )}
 
-      <div className={styles.formActions}>
-        <button
-          type="button"
-          className={styles.btnBack}
-          onClick={() => {
-            // Logic to go back to previous tab
-            // Assuming this component is rendered via ProfileForm which controls activeTab
-            // Since activeTab isn't passed as a prop, you might need to handle this differently.
-            // But per design, there's a back button.
-            if (typeof document !== "undefined") {
-              const buttons = Array.from(document.querySelectorAll("button"));
-              const personalTabBtn = buttons.find((btn) =>
-                btn.textContent.includes("Personal Details"),
-              );
-              if (personalTabBtn) personalTabBtn.click();
-            }
-          }}
+      {!viewOnly && (
+        <div
+          className={styles.formActions}
+          style={{ justifyContent: "space-between", marginTop: "32px" }}
         >
-          <FaArrowLeft style={{ marginRight: "8px" }} /> Back
-        </button>
-        <button
-          type="button"
-          onClick={handleSaveKyc}
-          disabled={isSaving}
-          className={styles.btnSave}
-        >
-          {isSaving ? "Saving..." : "Save & Continue \u2192"}
-        </button>
-      </div>
+          <button
+            type="button"
+            className={styles.btnCancel}
+            onClick={() => router.push("/auth/user/dashboard/edit-profile?tab=personal")}
+            disabled={isSaving}
+          >
+            <FaArrowLeft style={{ marginRight: "8px" }} /> Back
+          </button>
+          <button
+            type="button"
+            className={styles.btnSave}
+            onClick={handleSaveKyc}
+            disabled={isSaving}
+          >
+            {isSaving ? (
+              <span className={styles.savingState}>
+                <FaSpinner className={styles.spinnerIcon} /> Saving...
+              </span>
+            ) : (
+              "Save & Continue \u2192"
+            )}
+          </button>
+        </div>
+      )}
 
       <div className={styles.securityBanner}>
         <FaShieldAlt className={styles.securityBannerIcon} />

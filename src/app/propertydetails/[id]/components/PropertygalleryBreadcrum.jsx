@@ -38,7 +38,8 @@ const PropertygalleryBreadcrum = ({ property }) => {
           val?.template?.slug?.startsWith("overview")) &&
         (val?.template?.slug?.includes("price") ||
           val?.template?.slug?.includes("gallery") ||
-          val?.template?.slug?.includes("built-up-area"))
+          val?.template?.slug?.includes("built-up-area") ||
+          val?.template?.slug?.includes("bedroom"))
     )
     : [];
 
