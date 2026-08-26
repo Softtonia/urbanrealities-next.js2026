@@ -25,16 +25,7 @@ function Layout({ children }) {
 
   const isKycComplete = !kycStatus || ["approved", "verified", "completed", "accepted", "2"].includes(String(kycStatus).trim().toLowerCase());
 
-  useEffect(() => {
-    if (kycStatus !== null && kycStatus !== undefined && !isKycComplete && pathname !== "/auth/business/kyc") {
-      if (kycStatus?.toLowerCase() === "submitted") {
-        toast.error("Waiting for admin to approve KYC.");
-      } else {
-        toast.error("Please complete your KYC first.");
-      }
-      router.replace("/auth/business/kyc");
-    }
-  }, [kycStatus, pathname, isKycComplete, router]);
+  // Redirect removed per user request
   useEffect(() => {
     setHasMounted(true);
 
