@@ -247,7 +247,7 @@ export default function PropertyProfileStep() {
                           className={styles.unitSelect}
                           classNamePrefix="unit"
                           value={field.options
-                            .map((opt) => ({ label: opt.value, value: opt.value }))
+                            .map((opt) => ({ label: opt.name || opt.value, value: opt.value }))
                             .find((opt) => opt.value === (fieldValue.unit || "sq.ft"))
                           }
                           onChange={(selected) =>
@@ -258,7 +258,7 @@ export default function PropertyProfileStep() {
                             })
                           }
                           options={field.options.map((opt) => ({
-                            label: opt.value,
+                            label: opt.name || opt.value,
                             value: opt.value,
                           }))}
                           placeholder="sq.ft"
