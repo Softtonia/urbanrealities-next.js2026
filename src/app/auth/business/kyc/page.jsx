@@ -38,21 +38,24 @@ export default function BusinessKycPage() {
 
   return (
     <ProtectedRoute>
-      <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, margin: '0 auto' }}>
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 4, color: 'var(--Gray-800)' }}>
+      <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, margin: "0 auto" }}>
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: 700, mb: 4, color: "var(--Gray-800)" }}
+        >
           KYC Documents
         </Typography>
         {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-            <CircularProgress sx={{ color: 'var(--Orange-500)' }} />
+          <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+            <CircularProgress sx={{ color: "var(--Orange-500)" }} />
           </Box>
         ) : (
-          <KycDocuments 
-            profile={profile} 
-            token={token} 
+          <KycDocuments
+            profile={profile}
+            token={token}
             viewOnly={true}
-            onKycError={(err) => console.error(err)} 
-            onSuccess={() => window.location.reload()} 
+            onKycError={(err) => console.error(err)}
+            onSuccess={() => window.location.reload()}
           />
         )}
       </Box>

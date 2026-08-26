@@ -165,7 +165,12 @@ const ProfileForm = () => {
           setProfileImage(rawData.profile_photo);
         }
 
-        if (rawData.kyc_status && ["approved", "verified", "completed"].includes(rawData.kyc_status.toLowerCase())) {
+        if (
+          rawData.kyc_status &&
+          ["approved", "verified", "completed"].includes(
+            rawData.kyc_status.toLowerCase(),
+          )
+        ) {
           setIsKycApproved(true);
         }
       }
@@ -234,7 +239,7 @@ const ProfileForm = () => {
           setLoading(false);
         }
       };
-      
+
       loadAllData();
     }
   }, [token]);
@@ -423,15 +428,22 @@ const ProfileForm = () => {
           "business_name",
           "business_email",
           "business_phone",
-          "no_of_employees"
+          "no_of_employees",
         ];
-        
+
         personalKeys.forEach((key) => {
           let val = formData[key];
-          if (key === "business_name") val = formData.bussiness_name || formData.business_name;
-          if (key === "business_email") val = formData.bussiness_email || formData.business_email;
+          if (key === "business_name")
+            val = formData.bussiness_name || formData.business_name;
+          if (key === "business_email")
+            val = formData.bussiness_email || formData.business_email;
 
-          if (val !== undefined && val !== null && val !== "N/A" && val !== "") {
+          if (
+            val !== undefined &&
+            val !== null &&
+            val !== "N/A" &&
+            val !== ""
+          ) {
             dataToSend.append(key, val);
           }
         });
@@ -457,11 +469,12 @@ const ProfileForm = () => {
           "business_state_id",
           "business_city_id",
           "business_address",
-          "business_pin_code"
+          "business_pin_code",
         ];
         addressKeys.forEach((key) => {
           let val = formData[key];
-          if (key === "business_address") val = formData.bussiness_address || formData.business_address;
+          if (key === "business_address")
+            val = formData.bussiness_address || formData.business_address;
 
           if (
             val !== undefined &&
@@ -653,534 +666,550 @@ const ProfileForm = () => {
         ]}
       />
       {isKycApproved ? (
-        <ApprovedProfileView 
-          formData={formData} 
-          profileImage={profileImage} 
-          token={token} 
-          isBusiness={false} 
+        <ApprovedProfileView
+          formData={formData}
+          profileImage={profileImage}
+          token={token}
+          isBusiness={false}
         />
       ) : (
         <>
-      {/* Tabs */}
-      <ProfileTabs
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        hasTimeline={hasTimeline}
-      />
+          {/* Tabs */}
+          <ProfileTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            hasTimeline={hasTimeline}
+          />
 
-      <div
-        className={styles.layoutGrid}
-        style={
-          ["document", "review", "verification"].includes(activeTab)
-            ? { gridTemplateColumns: "1fr" }
-            : {}
-        }
-      >
-        {/* Main Content Area (Left) */}
-        <div className={styles.mainContent}>
-          <form
-            className={styles.form}
-            onSubmit={handleSubmit}
-            autoComplete="off"
+          <div
+            className={styles.layoutGrid}
+            style={
+              ["document", "review", "verification"].includes(activeTab)
+                ? { gridTemplateColumns: "1fr" }
+                : {}
+            }
           >
-            <div className={styles.formHeader}>
-              <div className={styles.formHeaderIcon}>
-                <FaUser />
-              </div>
-              <div className={styles.formHeaderText}>
-                <h3>
-                  {activeTab === "personal"
-                    ? "Personal & Business Details"
-                    : activeTab === "address"
-                      ? "Address Information"
-                      : activeTab === "kyc"
-                        ? "Documents & KYC"
-                        : "Remarks"}
-                </h3>
-                <p>
-                  {activeTab === "personal"
-                    ? "Please enter your details as per official documents."
-                    : "Update your details"}
-                </p>
-              </div>
+            {/* Main Content Area (Left) */}
+            <div className={styles.mainContent}>
+              <form
+                className={styles.form}
+                onSubmit={handleSubmit}
+                autoComplete="off"
+              >
+                <div className={styles.formHeader}>
+                  <div className={styles.formHeaderIcon}>
+                    <FaUser />
+                  </div>
+                  <div className={styles.formHeaderText}>
+                    <h3>
+                      {activeTab === "personal"
+                        ? "Personal & Business Details"
+                        : activeTab === "address"
+                          ? "Address Information"
+                          : activeTab === "kyc"
+                            ? "Documents & KYC"
+                            : "Remarks"}
+                    </h3>
+                    <p>
+                      {activeTab === "personal"
+                        ? "Please enter your details as per official documents."
+                        : "Update your details"}
+                    </p>
+                  </div>
+                </div>
+
+                {activeTab === "personal" && (
+                  <div className={styles.fieldsGrid}>
+                    {/* Row 1: Full Name */}
+                    <div
+                      className={styles.inputGroup}
+                      style={{ gridColumn: "1 / -1" }}
+                    >
+                      <label>
+                        Full Name <span className={styles.required}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="first_name"
+                        value={formData.first_name || ""}
+                        onChange={handleChange}
+                        placeholder="Full Name"
+                        style={
+                          formErrors.first_name
+                            ? { borderColor: "red", outline: "none" }
+                            : {}
+                        }
+                      />
+                      {formErrors.first_name && (
+                        <span
+                          style={{
+                            color: "red",
+                            fontSize: "12px",
+                            marginTop: "4px",
+                            display: "block",
+                          }}
+                        >
+                          {formErrors.first_name[0]}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Row 2: Email and Mobile */}
+                    <div className={styles.inputGroup}>
+                      <label>
+                        Email Address <span className={styles.required}>*</span>
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email || ""}
+                        readOnly
+                        className={styles.readOnly}
+                        style={
+                          formErrors.email
+                            ? { borderColor: "red", outline: "none" }
+                            : {}
+                        }
+                      />
+                      {formErrors.email && (
+                        <span
+                          style={{
+                            color: "red",
+                            fontSize: "12px",
+                            marginTop: "4px",
+                            display: "block",
+                          }}
+                        >
+                          {formErrors.email[0]}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                      <label>
+                        Mobile Number <span className={styles.required}>*</span>
+                      </label>
+                      <PhoneInput
+                        country={"in"}
+                        onlyCountries={["in"]}
+                        disableDropdown={true}
+                        value={formData.phone || ""}
+                        countryCodeEditable={false}
+                        onChange={(val) =>
+                          setFormData((p) => ({ ...p, phone: val }))
+                        }
+                        isValid={(value) => {
+                          if (value && value.length < 10) return false;
+                          return true;
+                        }}
+                        inputStyle={{
+                          width: "100%",
+                          height: "45px",
+                          fontSize: "14px",
+                          fontFamily: "var(--font-regular)",
+                          borderRadius: "8px",
+                          border: formErrors.phone
+                            ? "1px solid red"
+                            : "1px solid #E0E0E0",
+                          boxShadow: "none",
+                          paddingLeft: "48px",
+                        }}
+                        buttonStyle={{
+                          border: formErrors.phone
+                            ? "1px solid red"
+                            : "1px solid #E0E0E0",
+                          borderRight: "none",
+                          borderTopLeftRadius: "8px",
+                          borderBottomLeftRadius: "8px",
+                          backgroundColor: "#fff",
+                          padding: "2px",
+                        }}
+                        placeholder="Mobile Number"
+                      />
+                      {formErrors.phone && (
+                        <span
+                          style={{
+                            color: "red",
+                            fontSize: "12px",
+                            marginTop: "4px",
+                            display: "block",
+                          }}
+                        >
+                          {formErrors.phone[0]}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Row 3: Role */}
+                    <div className={styles.inputGroup}>
+                      <label>
+                        Role <span className={styles.required}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="role_id"
+                        value={formData.role_id || ""}
+                        readOnly
+                        className={styles.readOnly}
+                        style={
+                          formErrors.role_id
+                            ? { borderColor: "red", outline: "none" }
+                            : {}
+                        }
+                      />
+                      {formErrors.role_id && (
+                        <span
+                          style={{
+                            color: "red",
+                            fontSize: "12px",
+                            marginTop: "4px",
+                            display: "block",
+                          }}
+                        >
+                          {formErrors.role_id[0]}
+                        </span>
+                      )}
+                    </div>
+                    {/* Empty div to fill the second column for Row 3 */}
+                    <div></div>
+                  </div>
+                )}
+
+                {activeTab === "address" && (
+                  <div className={styles.fieldsGrid}>
+                    <div className={styles.inputGroup}>
+                      <label>Street Address</label>
+                      <textarea
+                        name="street_address"
+                        value={formData.street_address || ""}
+                        onChange={handleChange}
+                        placeholder="Enter street address"
+                        autoComplete="new-password"
+                        style={{
+                          height: "100px",
+                          ...(formErrors.street_address
+                            ? { borderColor: "red", outline: "none" }
+                            : {}),
+                        }}
+                      ></textarea>
+                      {formErrors.street_address && (
+                        <span
+                          style={{
+                            color: "red",
+                            fontSize: "12px",
+                            marginTop: "4px",
+                            display: "block",
+                          }}
+                        >
+                          {formErrors.street_address[0]}
+                        </span>
+                      )}
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>Area / Locality</label>
+                      <textarea
+                        name="area_locality"
+                        value={formData.area_locality || ""}
+                        onChange={handleChange}
+                        placeholder="Enter area or locality"
+                        autoComplete="new-password"
+                        style={{
+                          height: "100px",
+                          ...(formErrors.area_locality
+                            ? { borderColor: "red", outline: "none" }
+                            : {}),
+                        }}
+                      ></textarea>
+                      {formErrors.area_locality && (
+                        <span
+                          style={{
+                            color: "red",
+                            fontSize: "12px",
+                            marginTop: "4px",
+                            display: "block",
+                          }}
+                        >
+                          {formErrors.area_locality[0]}
+                        </span>
+                      )}
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>Country</label>
+                      <Select
+                        filterOption={(option, inputValue) => {
+                          if (!inputValue) return true;
+                          return option.label
+                            .toLowerCase()
+                            .startsWith(inputValue.toLowerCase());
+                        }}
+                        options={countries.map((c) => ({
+                          value: c.id,
+                          label: c.name,
+                        }))}
+                        value={
+                          countries
+                            .map((c) => ({ value: c.id, label: c.name }))
+                            .find((opt) => opt.value === formData.country_id) ||
+                          null
+                        }
+                        onChange={(opt) =>
+                          setFormData((p) => ({
+                            ...p,
+                            country_id: opt?.value || null,
+                            state_id: null,
+                            city_id: null,
+                          }))
+                        }
+                        placeholder="Select Country"
+                        styles={customStyles}
+                        instanceId="country-select-dummy-88"
+                        name="random_country_select_88"
+                      />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>State</label>
+                      <Select
+                        filterOption={(option, inputValue) => {
+                          if (!inputValue) return true;
+                          return option.label
+                            .toLowerCase()
+                            .startsWith(inputValue.toLowerCase());
+                        }}
+                        options={states.map((s) => ({
+                          value: s.id,
+                          label: s.name,
+                        }))}
+                        value={
+                          states
+                            .map((s) => ({ value: s.id, label: s.name }))
+                            .find((opt) => opt.value === formData.state_id) ||
+                          null
+                        }
+                        onChange={(opt) =>
+                          setFormData((p) => ({
+                            ...p,
+                            state_id: opt?.value || null,
+                            city_id: null,
+                          }))
+                        }
+                        placeholder="Select State"
+                        styles={customStyles}
+                        instanceId="state-select-dummy-88"
+                        name="random_state_select_88"
+                        isDisabled={!formData.country_id}
+                      />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>City</label>
+                      <Select
+                        filterOption={(option, inputValue) => {
+                          if (!inputValue) return true;
+                          return option.label
+                            .toLowerCase()
+                            .startsWith(inputValue.toLowerCase());
+                        }}
+                        options={cities.map((c) => ({
+                          value: c.id,
+                          label: c.name,
+                        }))}
+                        value={
+                          cities
+                            .map((city) => ({
+                              value: city.id,
+                              label: city.name,
+                            }))
+                            .find((opt) => opt.value === formData.city_id) ||
+                          null
+                        }
+                        onChange={(opt) =>
+                          setFormData((p) => ({
+                            ...p,
+                            city_id: opt?.value || null,
+                          }))
+                        }
+                        placeholder="Select City"
+                        styles={customStyles}
+                        instanceId="city-select-dummy-88"
+                        name="random_city_select_88"
+                        isDisabled={!formData.state_id}
+                      />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>Pin Code</label>
+                      <input
+                        type="text"
+                        name="pin_code"
+                        value={formData.pin_code || ""}
+                        onChange={handleChange}
+                        placeholder="Enter pin code"
+                        autoComplete="new-password"
+                        style={
+                          formErrors.pin_code
+                            ? { borderColor: "red", outline: "none" }
+                            : {}
+                        }
+                      />
+                      {formErrors.pin_code && (
+                        <span
+                          style={{
+                            color: "red",
+                            fontSize: "12px",
+                            marginTop: "4px",
+                            display: "block",
+                          }}
+                        >
+                          {formErrors.pin_code[0]}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === "document" && (
+                  <div
+                    className={styles.fieldsGrid}
+                    style={{ display: "block" }}
+                  >
+                    <KycDocuments
+                      profile={profile}
+                      token={token}
+                      onKycError={(err) => console.error(err)}
+                      onSuccess={() => {
+                        fetchProfile(false);
+                        setActiveTab("review");
+                      }}
+                    />
+                  </div>
+                )}
+
+                {activeTab === "review" && (
+                  <div
+                    className={styles.fieldsGrid}
+                    style={{ display: "block" }}
+                  >
+                    <ReviewSubmit
+                      formData={formData}
+                      setActiveTab={setActiveTab}
+                      token={token}
+                      fetchProfile={fetchProfile}
+                    />
+                  </div>
+                )}
+
+                {activeTab === "timeline" && (
+                  <div
+                    className={styles.fieldsGrid}
+                    style={{ display: "block" }}
+                  >
+                    <KycTimeline token={token} />
+                  </div>
+                )}
+
+                {activeTab === "verification" && (
+                  <div
+                    className={styles.fieldsGrid}
+                    style={{ display: "block" }}
+                  >
+                    <VerificationStep
+                      formData={formData}
+                      profile={profile}
+                      setActiveTab={setActiveTab}
+                    />
+                  </div>
+                )}
+
+                {activeTab !== "document" &&
+                  activeTab !== "timeline" &&
+                  activeTab !== "review" &&
+                  activeTab !== "verification" && (
+                    <div
+                      className={styles.formActions}
+                      style={
+                        activeTab === "personal"
+                          ? { justifyContent: "flex-end" }
+                          : {}
+                      }
+                    >
+                      <button type="submit" className={styles.btnSave}>
+                        {activeTab === "personal"
+                          ? "Save & Continue \u2192"
+                          : "Save Changes"}
+                      </button>
+                      {activeTab !== "personal" && (
+                        <button
+                          type="button"
+                          className={styles.btnCancel}
+                          onClick={() => router.push("/auth/user/dashboard")}
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
+                  )}
+              </form>
             </div>
 
-            {activeTab === "personal" && (
-              <div className={styles.fieldsGrid}>
-                {/* Row 1: Full Name */}
-                <div
-                  className={styles.inputGroup}
-                  style={{ gridColumn: "1 / -1" }}
-                >
-                  <label>
-                    Full Name <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="first_name"
-                    value={formData.first_name || ""}
-                    onChange={handleChange}
-                    placeholder="Full Name"
-                    style={
-                      formErrors.first_name
-                        ? { borderColor: "red", outline: "none" }
-                        : {}
-                    }
-                  />
-                  {formErrors.first_name && (
-                    <span
-                      style={{
-                        color: "red",
-                        fontSize: "12px",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {formErrors.first_name[0]}
-                    </span>
-                  )}
-                </div>
-
-                {/* Row 2: Email and Mobile */}
-                <div className={styles.inputGroup}>
-                  <label>
-                    Email Address <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email || ""}
-                    readOnly
-                    className={styles.readOnly}
-                    style={
-                      formErrors.email
-                        ? { borderColor: "red", outline: "none" }
-                        : {}
-                    }
-                  />
-                  {formErrors.email && (
-                    <span
-                      style={{
-                        color: "red",
-                        fontSize: "12px",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {formErrors.email[0]}
-                    </span>
-                  )}
-                </div>
-
-                <div className={styles.inputGroup}>
-                  <label>
-                    Mobile Number <span className={styles.required}>*</span>
-                  </label>
-                  <PhoneInput
-                    country={"in"}
-                    onlyCountries={['in']}
-                    disableDropdown={true}
-                    value={formData.phone || ""}
-                    countryCodeEditable={false}
-                    onChange={(val) =>
-                      setFormData((p) => ({ ...p, phone: val }))
-                    }
-                    isValid={(value) => {
-                      if (value && value.length < 10) return false;
-                      return true;
-                    }}
-                    inputStyle={{
-                      width: "100%",
-                      height: "45px",
-                      fontSize: "14px",
-                      fontFamily: "var(--font-regular)",
-                      borderRadius: "8px",
-                      border: formErrors.phone
-                        ? "1px solid red"
-                        : "1px solid #E0E0E0",
-                      boxShadow: "none",
-                      paddingLeft: "48px",
-                    }}
-                    buttonStyle={{
-                      border: formErrors.phone
-                        ? "1px solid red"
-                        : "1px solid #E0E0E0",
-                      borderRight: "none",
-                      borderTopLeftRadius: "8px",
-                      borderBottomLeftRadius: "8px",
-                      backgroundColor: "#fff",
-                      padding: "2px",
-                    }}
-                    placeholder="Mobile Number"
-                  />
-                  {formErrors.phone && (
-                    <span
-                      style={{
-                        color: "red",
-                        fontSize: "12px",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {formErrors.phone[0]}
-                    </span>
-                  )}
-                </div>
-
-                {/* Row 3: Role */}
-                <div className={styles.inputGroup}>
-                  <label>
-                    Role <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="role_id"
-                    value={formData.role_id || ""}
-                    readOnly
-                    className={styles.readOnly}
-                    style={
-                      formErrors.role_id
-                        ? { borderColor: "red", outline: "none" }
-                        : {}
-                    }
-                  />
-                  {formErrors.role_id && (
-                    <span
-                      style={{
-                        color: "red",
-                        fontSize: "12px",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {formErrors.role_id[0]}
-                    </span>
-                  )}
-                </div>
-                {/* Empty div to fill the second column for Row 3 */}
-                <div></div>
-
-              </div>
-            )}
-
-            {activeTab === "address" && (
-              <div className={styles.fieldsGrid}>
-                <div className={styles.inputGroup}>
-                  <label>Street Address</label>
-                  <textarea
-                    name="street_address"
-                    value={formData.street_address || ""}
-                    onChange={handleChange}
-                    placeholder="Enter street address"
-                    autoComplete="new-password"
-                    style={{
-                      height: "100px",
-                      ...(formErrors.street_address
-                        ? { borderColor: "red", outline: "none" }
-                        : {}),
-                    }}
-                  ></textarea>
-                  {formErrors.street_address && (
-                    <span
-                      style={{
-                        color: "red",
-                        fontSize: "12px",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {formErrors.street_address[0]}
-                    </span>
-                  )}
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Area / Locality</label>
-                  <textarea
-                    name="area_locality"
-                    value={formData.area_locality || ""}
-                    onChange={handleChange}
-                    placeholder="Enter area or locality"
-                    autoComplete="new-password"
-                    style={{
-                      height: "100px",
-                      ...(formErrors.area_locality
-                        ? { borderColor: "red", outline: "none" }
-                        : {}),
-                    }}
-                  ></textarea>
-                  {formErrors.area_locality && (
-                    <span
-                      style={{
-                        color: "red",
-                        fontSize: "12px",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {formErrors.area_locality[0]}
-                    </span>
-                  )}
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Country</label>
-                  <Select
-                    filterOption={(option, inputValue) => {
-                      if (!inputValue) return true;
-                      return option.label
-                        .toLowerCase()
-                        .startsWith(inputValue.toLowerCase());
-                    }}
-                    options={countries.map((c) => ({
-                      value: c.id,
-                      label: c.name,
-                    }))}
-                    value={
-                      countries
-                        .map((c) => ({ value: c.id, label: c.name }))
-                        .find((opt) => opt.value === formData.country_id) ||
-                      null
-                    }
-                    onChange={(opt) =>
-                      setFormData((p) => ({
-                        ...p,
-                        country_id: opt?.value || null,
-                        state_id: null,
-                        city_id: null,
-                      }))
-                    }
-                    placeholder="Select Country"
-                    styles={customStyles}
-                    instanceId="country-select-dummy-88"
-                    name="random_country_select_88"
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>State</label>
-                  <Select
-                    filterOption={(option, inputValue) => {
-                      if (!inputValue) return true;
-                      return option.label
-                        .toLowerCase()
-                        .startsWith(inputValue.toLowerCase());
-                    }}
-                    options={states.map((s) => ({
-                      value: s.id,
-                      label: s.name,
-                    }))}
-                    value={
-                      states
-                        .map((s) => ({ value: s.id, label: s.name }))
-                        .find((opt) => opt.value === formData.state_id) || null
-                    }
-                    onChange={(opt) =>
-                      setFormData((p) => ({
-                        ...p,
-                        state_id: opt?.value || null,
-                        city_id: null,
-                      }))
-                    }
-                    placeholder="Select State"
-                    styles={customStyles}
-                    instanceId="state-select-dummy-88"
-                    name="random_state_select_88"
-                    isDisabled={!formData.country_id}
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>City</label>
-                  <Select
-                    filterOption={(option, inputValue) => {
-                      if (!inputValue) return true;
-                      return option.label
-                        .toLowerCase()
-                        .startsWith(inputValue.toLowerCase());
-                    }}
-                    options={cities.map((c) => ({
-                      value: c.id,
-                      label: c.name,
-                    }))}
-                    value={
-                      cities
-                        .map((city) => ({ value: city.id, label: city.name }))
-                        .find((opt) => opt.value === formData.city_id) || null
-                    }
-                    onChange={(opt) =>
-                      setFormData((p) => ({
-                        ...p,
-                        city_id: opt?.value || null,
-                      }))
-                    }
-                    placeholder="Select City"
-                    styles={customStyles}
-                    instanceId="city-select-dummy-88"
-                    name="random_city_select_88"
-                    isDisabled={!formData.state_id}
-                  />
-                </div>
-                <div className={styles.inputGroup}>
-                  <label>Pin Code</label>
-                  <input
-                    type="text"
-                    name="pin_code"
-                    value={formData.pin_code || ""}
-                    onChange={handleChange}
-                    placeholder="Enter pin code"
-                    autoComplete="new-password"
-                    style={
-                      formErrors.pin_code
-                        ? { borderColor: "red", outline: "none" }
-                        : {}
-                    }
-                  />
-                  {formErrors.pin_code && (
-                    <span
-                      style={{
-                        color: "red",
-                        fontSize: "12px",
-                        marginTop: "4px",
-                        display: "block",
-                      }}
-                    >
-                      {formErrors.pin_code[0]}
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {activeTab === "document" && (
-              <div className={styles.fieldsGrid} style={{ display: "block" }}>
-                <KycDocuments
-                  profile={profile}
-                  token={token}
-                  onKycError={(err) => console.error(err)}
-                  onSuccess={() => {
-                    fetchProfile(false);
-                    setActiveTab("review");
-                  }}
-                />
-              </div>
-            )}
-
-            {activeTab === "review" && (
-              <div className={styles.fieldsGrid} style={{ display: "block" }}>
-                <ReviewSubmit
-                  formData={formData}
-                  setActiveTab={setActiveTab}
-                  token={token}
-                  fetchProfile={fetchProfile}
-                />
-              </div>
-            )}
-
-            {activeTab === "timeline" && (
-              <div className={styles.fieldsGrid} style={{ display: "block" }}>
-                <KycTimeline token={token} />
-              </div>
-            )}
-
-            {activeTab === "verification" && (
-              <div className={styles.fieldsGrid} style={{ display: "block" }}>
-                <VerificationStep
-                  formData={formData}
-                  profile={profile}
-                  setActiveTab={setActiveTab}
-                />
-              </div>
-            )}
-
-            {activeTab !== "document" &&
-              activeTab !== "timeline" &&
-              activeTab !== "review" &&
-              activeTab !== "verification" && (
-                <div
-                  className={styles.formActions}
-                  style={
-                    activeTab === "personal"
-                      ? { justifyContent: "flex-end" }
-                      : {}
-                  }
-                >
-                  <button type="submit" className={styles.btnSave}>
-                    {activeTab === "personal"
-                      ? "Save & Continue \u2192"
-                      : "Save Changes"}
-                  </button>
-                  {activeTab !== "personal" && (
-                    <button
-                      type="button"
-                      className={styles.btnCancel}
-                      onClick={() => router.push("/auth/user/dashboard")}
-                    >
-                      Cancel
-                    </button>
-                  )}
-                </div>
-              )}
-          </form>
-        </div>
-
-        {/* Sidebar Widgets (Right) */}
-        {!["document", "review", "verification"].includes(activeTab) && (
-          <div className={styles.sidebarWidgets}>
-            {/* Profile Photo Widget */}
-            <div className={styles.widgetCard}>
-              <h4 className={styles.widgetTitle}>Profile Photo</h4>
-              <div className={styles.photoContainer}>
-                <div className={styles.photoWrapper}>
-                  <img
-                    src={profileImage}
-                    alt="Profile"
-                    className={styles.avatarImg}
-                  />
+            {/* Sidebar Widgets (Right) */}
+            {!["document", "review", "verification"].includes(activeTab) && (
+              <div className={styles.sidebarWidgets}>
+                {/* Profile Photo Widget */}
+                <div className={styles.widgetCard}>
+                  <h4 className={styles.widgetTitle}>Profile Photo</h4>
+                  <div className={styles.photoContainer}>
+                    <div className={styles.photoWrapper}>
+                      <img
+                        src={profileImage}
+                        alt="Profile"
+                        className={styles.avatarImg}
+                      />
+                      <button
+                        className={styles.cameraBtn}
+                        onClick={handleImageClick}
+                      >
+                        <FaCamera />
+                      </button>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        style={{ display: "none" }}
+                        onChange={handleFileChange}
+                      />
+                    </div>
+                  </div>
                   <button
-                    className={styles.cameraBtn}
+                    className={styles.uploadPhotoBtn}
                     onClick={handleImageClick}
                   >
-                    <FaCamera />
+                    {isUploadingPhoto
+                      ? `Uploading (${photoProgress}%)`
+                      : "Upload New Photo"}
                   </button>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    ref={fileInputRef}
-                    style={{ display: "none" }}
-                    onChange={handleFileChange}
-                  />
+                  <p className={styles.photoInfo}>
+                    Recommended: JPG, PNG or WEBP
+                    <br />
+                    Max size: 2MB. Min dimension: 200x200px
+                  </p>
+                </div>
+
+                {/* Need Help Widget */}
+                <div className={styles.widgetCard}>
+                  <h4 className={styles.widgetTitle}>Need Help?</h4>
+                  <p className={styles.helpText}>
+                    If you face any issues while updating your profile, our
+                    support team is here to help you.
+                  </p>
+                  <button
+                    className={styles.contactSupportBtn}
+                    onClick={() => router.push("/auth/user/support")}
+                  >
+                    <FaHeadset /> Contact Support
+                  </button>
                 </div>
               </div>
-              <button
-                className={styles.uploadPhotoBtn}
-                onClick={handleImageClick}
-              >
-                {isUploadingPhoto
-                  ? `Uploading (${photoProgress}%)`
-                  : "Upload New Photo"}
-              </button>
-              <p className={styles.photoInfo}>
-                Recommended: JPG, PNG or WEBP
-                <br />
-                Max size: 2MB. Min dimension: 200x200px
-              </p>
-            </div>
-
-            {/* Need Help Widget */}
-            <div className={styles.widgetCard}>
-              <h4 className={styles.widgetTitle}>Need Help?</h4>
-              <p className={styles.helpText}>
-                If you face any issues while updating your profile, our support
-                team is here to help you.
-              </p>
-              <button
-                className={styles.contactSupportBtn}
-                onClick={() => router.push("/auth/user/support")}
-              >
-                <FaHeadset /> Contact Support
-              </button>
-            </div>
+            )}
           </div>
-        )}
-      </div>
-      </>
+        </>
       )}
     </div>
   );

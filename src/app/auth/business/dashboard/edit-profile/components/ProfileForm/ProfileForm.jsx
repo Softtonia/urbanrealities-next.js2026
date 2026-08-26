@@ -188,10 +188,15 @@ const ProfileForm = () => {
           setProfileImage(rawData.profile_photo);
         }
 
-        if (rawData.kyc_status && ["approved", "verified", "completed"].includes(rawData.kyc_status.toLowerCase())) {
+        if (
+          rawData.kyc_status &&
+          ["approved", "verified", "completed"].includes(
+            rawData.kyc_status.toLowerCase(),
+          )
+        ) {
           setIsKycApproved(true);
         }
-        
+
         if (rawData.company_logo || rawData.business_logo) {
           setBusinessLogo(rawData.company_logo || rawData.business_logo);
         }
@@ -261,7 +266,7 @@ const ProfileForm = () => {
           setLoading(false);
         }
       };
-      
+
       loadAllData();
     }
   }, [token]);
@@ -449,7 +454,9 @@ const ProfileForm = () => {
           setLogoProgress(100);
           setTimeout(() => {
             setIsUploadingLogo(false);
-            toast.success(data.message || "Business logo updated successfully!");
+            toast.success(
+              data.message || "Business logo updated successfully!",
+            );
           }, 1000);
         } else {
           setIsUploadingLogo(false);
@@ -562,15 +569,22 @@ const ProfileForm = () => {
           "business_name",
           "business_email",
           "business_phone",
-          "no_of_employees"
+          "no_of_employees",
         ];
-        
+
         personalKeys.forEach((key) => {
           let val = formData[key];
-          if (key === "business_name") val = formData.bussiness_name || formData.business_name;
-          if (key === "business_email") val = formData.bussiness_email || formData.business_email;
+          if (key === "business_name")
+            val = formData.bussiness_name || formData.business_name;
+          if (key === "business_email")
+            val = formData.bussiness_email || formData.business_email;
 
-          if (val !== undefined && val !== null && val !== "N/A" && val !== "") {
+          if (
+            val !== undefined &&
+            val !== null &&
+            val !== "N/A" &&
+            val !== ""
+          ) {
             personalDataToSend.append(key, val);
           }
         });
@@ -597,11 +611,12 @@ const ProfileForm = () => {
           "business_street_address",
           "business_colony",
           "business_area_locality",
-          "business_pin_code"
+          "business_pin_code",
         ];
         addressKeys.forEach((key) => {
           let val = formData[key];
-          if (key === "business_address") val = formData.bussiness_address || formData.business_address;
+          if (key === "business_address")
+            val = formData.bussiness_address || formData.business_address;
 
           if (
             val !== undefined &&
@@ -792,1079 +807,1109 @@ const ProfileForm = () => {
         ]}
       />
       {isKycApproved ? (
-        <ApprovedProfileView 
-          formData={formData} 
-          profileImage={profileImage} 
-          token={token} 
-          isBusiness={true} 
+        <ApprovedProfileView
+          formData={formData}
+          profileImage={profileImage}
+          token={token}
+          isBusiness={true}
         />
       ) : (
         <>
-      {/* Tabs */}
-      <ProfileTabs
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        hasTimeline={hasTimeline}
-        steps={[
-          { id: "personal", label: "Personal Details" },
-          { id: "business", label: "Business Details" },
-          { id: "document", label: "Document Upload" },
-          { id: "review", label: "Review & Submit" },
-          { id: "verification", label: "Verification" },
-        ]}
-      />
+          {/* Tabs */}
+          <ProfileTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            hasTimeline={hasTimeline}
+            steps={[
+              { id: "personal", label: "Personal Details" },
+              { id: "business", label: "Business Details" },
+              { id: "document", label: "Document Upload" },
+              { id: "review", label: "Review & Submit" },
+              { id: "verification", label: "Verification" },
+            ]}
+          />
 
-      <div
-        className={styles.layoutGrid}
-        style={{
-          gridTemplateColumns:
-            activeTab === "document" || activeTab === "review" || activeTab === "verification"
-              ? "1fr"
-              : "2fr 1fr",
-        }}
-      >
-        {/* Main Content Area (Left) */}
-        <div className={styles.mainContent}>
-          <form
-            className={styles.form}
-            onSubmit={handleSubmit}
-            autoComplete="off"
+          <div
+            className={styles.layoutGrid}
+            style={{
+              gridTemplateColumns:
+                activeTab === "document" ||
+                activeTab === "review" ||
+                activeTab === "verification"
+                  ? "1fr"
+                  : "2fr 1fr",
+            }}
           >
-            <div className={styles.formHeader}>
-              <div className={styles.formHeaderIcon}>
-                {activeTab === "personal" ? (
-                  <FaUser />
-                ) : activeTab === "business" ? (
-                  <FaBuilding />
-                ) : activeTab === "document" ? (
-                  <FaIdCard />
-                ) : (
-                  <FaClock />
+            {/* Main Content Area (Left) */}
+            <div className={styles.mainContent}>
+              <form
+                className={styles.form}
+                onSubmit={handleSubmit}
+                autoComplete="off"
+              >
+                <div className={styles.formHeader}>
+                  <div className={styles.formHeaderIcon}>
+                    {activeTab === "personal" ? (
+                      <FaUser />
+                    ) : activeTab === "business" ? (
+                      <FaBuilding />
+                    ) : activeTab === "document" ? (
+                      <FaIdCard />
+                    ) : (
+                      <FaClock />
+                    )}
+                  </div>
+                  <div className={styles.formHeaderText}>
+                    <h3>
+                      {activeTab === "personal"
+                        ? "Personal Details"
+                        : activeTab === "business"
+                          ? "Business Details"
+                          : activeTab === "document"
+                            ? "Documents & KYC"
+                            : "Remarks"}
+                    </h3>
+                    <p>
+                      {activeTab === "personal"
+                        ? "Update your personal and address details"
+                        : activeTab === "business"
+                          ? "Update your business and address details"
+                          : "Update your details"}
+                    </p>
+                  </div>
+                </div>
+
+                {activeTab === "personal" && (
+                  <>
+                    <div className={styles.fieldsGrid}>
+                      {/* Row 1 */}
+                      <div className={styles.inputGroup}>
+                        <label>
+                          First Name <span className={styles.required}>*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="first_name"
+                          value={formData.first_name || ""}
+                          onChange={handleChange}
+                          placeholder="First name"
+                          style={
+                            formErrors.first_name
+                              ? { borderColor: "red", outline: "none" }
+                              : {}
+                          }
+                        />
+                        {formErrors.first_name && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.first_name[0]}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>
+                          Last Name <span className={styles.required}>*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="last_name"
+                          value={formData.last_name || ""}
+                          onChange={handleChange}
+                          placeholder="Last name"
+                          style={
+                            formErrors.last_name
+                              ? { borderColor: "red", outline: "none" }
+                              : {}
+                          }
+                        />
+                        {formErrors.last_name && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.last_name[0]}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Row 2 */}
+                      <div className={styles.inputGroup}>
+                        <label>
+                          Username <span className={styles.required}>*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="user_name"
+                          value={formData.user_name || ""}
+                          readOnly
+                          className={styles.readOnly}
+                          style={
+                            formErrors.user_name
+                              ? { borderColor: "red", outline: "none" }
+                              : {}
+                          }
+                        />
+                        {formErrors.user_name && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.user_name[0]}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>
+                          Email Address{" "}
+                          <span className={styles.required}>*</span>
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email || ""}
+                          readOnly
+                          className={styles.readOnly}
+                          style={
+                            formErrors.email
+                              ? { borderColor: "red", outline: "none" }
+                              : {}
+                          }
+                        />
+                        {formErrors.email && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.email[0]}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Row 3 */}
+                      <div className={styles.inputGroup}>
+                        <label>
+                          Mobile Number{" "}
+                          <span className={styles.required}>*</span>
+                        </label>
+                        <PhoneInput
+                          country={"in"}
+                          onlyCountries={["in"]}
+                          disableDropdown={true}
+                          value={formData.phone || ""}
+                          countryCodeEditable={false}
+                          onChange={(val) =>
+                            setFormData((p) => ({ ...p, phone: val }))
+                          }
+                          isValid={(value) => {
+                            if (value && value.length < 10) return false;
+                            return true;
+                          }}
+                          inputStyle={{
+                            width: "100%",
+                            height: "45px",
+                            fontSize: "14px",
+                            fontFamily: "var(--font-regular)",
+                            borderRadius: "8px",
+                            border: formErrors.phone
+                              ? "1px solid red"
+                              : "1px solid #E0E0E0",
+                            boxShadow: "none",
+                            paddingLeft: "48px",
+                          }}
+                          buttonStyle={{
+                            border: formErrors.phone
+                              ? "1px solid red"
+                              : "1px solid #E0E0E0",
+                            borderRight: "none",
+                            borderTopLeftRadius: "8px",
+                            borderBottomLeftRadius: "8px",
+                            backgroundColor: "#fff",
+                            padding: "2px",
+                          }}
+                          placeholder="Mobile Number"
+                        />
+                        {formErrors.phone && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.phone[0]}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>Alternate Number</label>
+                        <PhoneInput
+                          country={"in"}
+                          onlyCountries={["in"]}
+                          disableDropdown={true}
+                          value={formData.alternate_number || ""}
+                          countryCodeEditable={false}
+                          onChange={(val) =>
+                            setFormData((p) => ({
+                              ...p,
+                              alternate_number: val,
+                            }))
+                          }
+                          isValid={(value) => {
+                            if (value && value.length > 0 && value.length < 10)
+                              return false;
+                            return true;
+                          }}
+                          inputStyle={{
+                            width: "100%",
+                            height: "45px",
+                            fontSize: "14px",
+                            fontFamily: "var(--font-regular)",
+                            borderRadius: "8px",
+                            border: formErrors.alternate_number
+                              ? "1px solid red"
+                              : "1px solid #E0E0E0",
+                            boxShadow: "none",
+                            paddingLeft: "48px",
+                          }}
+                          buttonStyle={{
+                            border: formErrors.alternate_number
+                              ? "1px solid red"
+                              : "1px solid #E0E0E0",
+                            borderRight: "none",
+                            borderTopLeftRadius: "8px",
+                            borderBottomLeftRadius: "8px",
+                            backgroundColor: "#fff",
+                            padding: "2px",
+                          }}
+                          placeholder="Enter alternate number (optional)"
+                        />
+                        {formErrors.alternate_number && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.alternate_number[0]}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Row 4 */}
+                      <div className={styles.inputGroup}>
+                        <label>
+                          Role <span className={styles.required}>*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="role_id"
+                          value={formData.role_id || ""}
+                          readOnly
+                          className={styles.readOnly}
+                          style={
+                            formErrors.role_id
+                              ? { borderColor: "red", outline: "none" }
+                              : {}
+                          }
+                        />
+                        {formErrors.role_id && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.role_id[0]}
+                          </span>
+                        )}
+                      </div>
+
+                      <div
+                        className={styles.inputGroup}
+                        style={{ gridColumn: "1 / -1" }}
+                      >
+                        <label>About You</label>
+                        <textarea
+                          name="about_us"
+                          value={formData.about_us || ""}
+                          onChange={handleChange}
+                          placeholder="Tell us something about yourself..."
+                          rows={4}
+                          style={
+                            formErrors.about_us
+                              ? { borderColor: "red", outline: "none" }
+                              : {}
+                          }
+                        ></textarea>
+                        {formErrors.about_us && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.about_us[0]}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* === ADDRESS INFORMATION SECTION === */}
+                    <div
+                      style={{
+                        gridColumn: "1 / -1",
+                        marginTop: "1rem",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      <div className={styles.formHeader}>
+                        <div className={styles.formHeaderIcon}>
+                          <FaMapMarkerAlt />
+                        </div>
+                        <div className={styles.formHeaderText}>
+                          <h3 style={{ fontSize: "18px", margin: 0 }}>
+                            Address Information
+                          </h3>
+                          <p style={{ margin: 0, opacity: 0.7 }}>
+                            Update your personal address
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={styles.fieldsGrid}>
+                      <div className={styles.inputGroup}>
+                        <label>Street Address</label>
+                        <textarea
+                          name="street_address"
+                          value={formData.street_address || ""}
+                          onChange={handleChange}
+                          placeholder="Enter street address"
+                          autoComplete="new-password"
+                          style={{
+                            height: "100px",
+                            ...(formErrors.street_address
+                              ? { borderColor: "red", outline: "none" }
+                              : {}),
+                          }}
+                        ></textarea>
+                        {formErrors.street_address && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.street_address[0]}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>Area / Locality</label>
+                        <textarea
+                          name="area_locality"
+                          value={formData.area_locality || ""}
+                          onChange={handleChange}
+                          placeholder="Enter area or locality"
+                          autoComplete="new-password"
+                          style={{
+                            height: "100px",
+                            ...(formErrors.area_locality
+                              ? { borderColor: "red", outline: "none" }
+                              : {}),
+                          }}
+                        ></textarea>
+                        {formErrors.area_locality && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.area_locality[0]}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>Country</label>
+                        <Select
+                          filterOption={(option, inputValue) => {
+                            if (!inputValue) return true;
+                            return option.label
+                              .toLowerCase()
+                              .startsWith(inputValue.toLowerCase());
+                          }}
+                          options={countries.map((c) => ({
+                            value: c.id,
+                            label: c.name,
+                          }))}
+                          value={
+                            countries
+                              .map((c) => ({ value: c.id, label: c.name }))
+                              .find(
+                                (opt) => opt.value === formData.country_id,
+                              ) || null
+                          }
+                          onChange={(opt) =>
+                            setFormData((p) => ({
+                              ...p,
+                              country_id: opt?.value || null,
+                              state_id: null,
+                              city_id: null,
+                            }))
+                          }
+                          placeholder="Select Country"
+                          styles={customStyles}
+                          instanceId="country-select-dummy-88"
+                          name="random_country_select_88"
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>State</label>
+                        <Select
+                          filterOption={(option, inputValue) => {
+                            if (!inputValue) return true;
+                            return option.label
+                              .toLowerCase()
+                              .startsWith(inputValue.toLowerCase());
+                          }}
+                          options={states.map((s) => ({
+                            value: s.id,
+                            label: s.name,
+                          }))}
+                          value={
+                            states
+                              .map((s) => ({ value: s.id, label: s.name }))
+                              .find((opt) => opt.value === formData.state_id) ||
+                            null
+                          }
+                          onChange={(opt) =>
+                            setFormData((p) => ({
+                              ...p,
+                              state_id: opt?.value || null,
+                              city_id: null,
+                            }))
+                          }
+                          placeholder="Select State"
+                          styles={customStyles}
+                          instanceId="state-select-dummy-88"
+                          name="random_state_select_88"
+                          isDisabled={!formData.country_id}
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>City</label>
+                        <Select
+                          filterOption={(option, inputValue) => {
+                            if (!inputValue) return true;
+                            return option.label
+                              .toLowerCase()
+                              .startsWith(inputValue.toLowerCase());
+                          }}
+                          options={cities.map((c) => ({
+                            value: c.id,
+                            label: c.name,
+                          }))}
+                          value={
+                            cities
+                              .map((city) => ({
+                                value: city.id,
+                                label: city.name,
+                              }))
+                              .find((opt) => opt.value === formData.city_id) ||
+                            null
+                          }
+                          onChange={(opt) =>
+                            setFormData((p) => ({
+                              ...p,
+                              city_id: opt?.value || null,
+                            }))
+                          }
+                          placeholder="Select City"
+                          styles={customStyles}
+                          instanceId="city-select-dummy-88"
+                          name="random_city_select_88"
+                          isDisabled={!formData.state_id}
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>Pin Code</label>
+                        <input
+                          type="text"
+                          name="pin_code"
+                          value={formData.pin_code || ""}
+                          onChange={handleChange}
+                          placeholder="Enter pin code"
+                          autoComplete="new-password"
+                          style={
+                            formErrors.pin_code
+                              ? { borderColor: "red", outline: "none" }
+                              : {}
+                          }
+                        />
+                        {formErrors.pin_code && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.pin_code[0]}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className={styles.formActions}>
+                      <button type="submit" className={styles.btnSave}>
+                        Save & Continue &rarr;
+                      </button>
+                    </div>
+                  </>
                 )}
-              </div>
-              <div className={styles.formHeaderText}>
-                <h3>
-                  {activeTab === "personal"
-                    ? "Personal Details"
-                    : activeTab === "business"
-                      ? "Business Details"
-                      : activeTab === "document"
-                        ? "Documents & KYC"
-                        : "Remarks"}
-                </h3>
-                <p>
-                  {activeTab === "personal"
-                    ? "Update your personal and address details"
-                    : activeTab === "business"
-                      ? "Update your business and address details"
-                      : "Update your details"}
-                </p>
-              </div>
+
+                {activeTab === "business" && (
+                  <>
+                    <div className={styles.fieldsGrid}>
+                      <div className={styles.inputGroup}>
+                        <label>Business Name</label>
+                        <input
+                          type="text"
+                          name="bussiness_name"
+                          value={formData.bussiness_name || ""}
+                          onChange={handleChange}
+                          placeholder="Enter business name"
+                          autoComplete="new-password"
+                          style={
+                            formErrors.bussiness_name
+                              ? { borderColor: "red", outline: "none" }
+                              : {}
+                          }
+                        />
+                        {formErrors.bussiness_name && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.bussiness_name[0]}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>No. of Employees</label>
+                        <input
+                          type="number"
+                          name="no_of_employees"
+                          value={formData.no_of_employees || ""}
+                          onChange={handleChange}
+                          placeholder="Enter number of employees"
+                          autoComplete="new-password"
+                          style={
+                            formErrors.no_of_employees
+                              ? { borderColor: "red", outline: "none" }
+                              : {}
+                          }
+                        />
+                        {formErrors.no_of_employees && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.no_of_employees[0]}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>Business Email</label>
+                        <input
+                          type="email"
+                          name="bussiness_email"
+                          value={formData.bussiness_email || ""}
+                          onChange={handleChange}
+                          placeholder="Enter business email"
+                          style={
+                            formErrors.bussiness_email
+                              ? { borderColor: "red", outline: "none" }
+                              : {}
+                          }
+                        />
+                        {formErrors.bussiness_email && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.bussiness_email[0]}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>Business Phone</label>
+                        <PhoneInput
+                          country={"in"}
+                          onlyCountries={["in"]}
+                          disableDropdown={true}
+                          value={formData.business_phone || ""}
+                          countryCodeEditable={false}
+                          onChange={(phone) =>
+                            setFormData((p) => ({
+                              ...p,
+                              business_phone: phone,
+                            }))
+                          }
+                          isValid={(value, country) => {
+                            if (value && value.length < 10) {
+                              return false;
+                            }
+                            return true;
+                          }}
+                          inputStyle={{
+                            width: "100%",
+                            height: "45px",
+                            fontSize: "14px",
+                            fontFamily: "var(--font-regular)",
+                            borderRadius: "8px",
+                            border: formErrors.business_phone
+                              ? "1px solid red"
+                              : "1px solid #E0E0E0",
+                            boxShadow: "none",
+                            paddingLeft: "48px",
+                          }}
+                          buttonStyle={{
+                            border: formErrors.business_phone
+                              ? "1px solid red"
+                              : "1px solid #E0E0E0",
+                            borderRight: "none",
+                            borderTopLeftRadius: "8px",
+                            borderBottomLeftRadius: "8px",
+                            backgroundColor: "#fff",
+                            padding: "2px",
+                          }}
+                          placeholder="Enter business phone number"
+                        />
+                        {formErrors.business_phone && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.business_phone[0]}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* === BUSINESS ADDRESS INFORMATION SECTION === */}
+                    <div
+                      style={{
+                        gridColumn: "1 / -1",
+                        marginTop: "1rem",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      <div className={styles.formHeader}>
+                        <div className={styles.formHeaderIcon}>
+                          <FaBuilding />
+                        </div>
+                        <div className={styles.formHeaderText}>
+                          <h3 style={{ fontSize: "18px", margin: 0 }}>
+                            Business Address Information
+                          </h3>
+                          <p style={{ margin: 0, opacity: 0.7 }}>
+                            Update your business address details
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={styles.fieldsGrid}>
+                      <div className={styles.inputGroup}>
+                        <label>Business Street Address</label>
+                        <textarea
+                          name="business_street_address"
+                          value={formData.business_street_address || ""}
+                          onChange={handleChange}
+                          placeholder="Enter business street address"
+                          autoComplete="new-password"
+                          style={{
+                            height: "100px",
+                            ...(formErrors.business_street_address
+                              ? { borderColor: "red", outline: "none" }
+                              : {}),
+                          }}
+                        ></textarea>
+                        {formErrors.business_street_address && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.business_street_address[0]}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>Business Area / Locality</label>
+                        <textarea
+                          name="business_area_locality"
+                          value={formData.business_area_locality || ""}
+                          onChange={handleChange}
+                          placeholder="Enter business area or locality"
+                          autoComplete="new-password"
+                          style={{
+                            height: "100px",
+                            ...(formErrors.business_area_locality
+                              ? { borderColor: "red", outline: "none" }
+                              : {}),
+                          }}
+                        ></textarea>
+                        {formErrors.business_area_locality && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.business_area_locality[0]}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>Business Country</label>
+                        <Select
+                          filterOption={(option, inputValue) => {
+                            if (!inputValue) return true;
+                            return option.label
+                              .toLowerCase()
+                              .startsWith(inputValue.toLowerCase());
+                          }}
+                          options={countries.map((c) => ({
+                            value: c.id,
+                            label: c.name,
+                          }))}
+                          value={
+                            countries
+                              .map((c) => ({ value: c.id, label: c.name }))
+                              .find(
+                                (opt) =>
+                                  opt.value === formData.business_country_id,
+                              ) || null
+                          }
+                          onChange={(opt) =>
+                            setFormData((p) => ({
+                              ...p,
+                              business_country_id: opt?.value || null,
+                              business_state_id: null,
+                              business_city_id: null,
+                            }))
+                          }
+                          placeholder="Select Country"
+                          styles={customStyles}
+                          instanceId="business-country-select-dummy-88"
+                          name="business_country_id"
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>Business State</label>
+                        <Select
+                          filterOption={(option, inputValue) => {
+                            if (!inputValue) return true;
+                            return option.label
+                              .toLowerCase()
+                              .startsWith(inputValue.toLowerCase());
+                          }}
+                          options={businessStates.map((s) => ({
+                            value: s.id,
+                            label: s.name,
+                          }))}
+                          value={
+                            businessStates
+                              .map((s) => ({ value: s.id, label: s.name }))
+                              .find(
+                                (opt) =>
+                                  opt.value === formData.business_state_id,
+                              ) || null
+                          }
+                          onChange={(opt) =>
+                            setFormData((p) => ({
+                              ...p,
+                              business_state_id: opt?.value || null,
+                              business_city_id: null,
+                            }))
+                          }
+                          placeholder="Select State"
+                          styles={customStyles}
+                          instanceId="business-state-select-dummy-88"
+                          name="business_state_id"
+                          isDisabled={!formData.business_country_id}
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>Business City</label>
+                        <Select
+                          filterOption={(option, inputValue) => {
+                            if (!inputValue) return true;
+                            return option.label
+                              .toLowerCase()
+                              .startsWith(inputValue.toLowerCase());
+                          }}
+                          options={businessCities.map((c) => ({
+                            value: c.id,
+                            label: c.name,
+                          }))}
+                          value={
+                            businessCities
+                              .map((city) => ({
+                                value: city.id,
+                                label: city.name,
+                              }))
+                              .find(
+                                (opt) =>
+                                  opt.value === formData.business_city_id,
+                              ) || null
+                          }
+                          onChange={(opt) =>
+                            setFormData((p) => ({
+                              ...p,
+                              business_city_id: opt?.value || null,
+                            }))
+                          }
+                          placeholder="Select City"
+                          styles={customStyles}
+                          instanceId="business-city-select-dummy-88"
+                          name="business_city_id"
+                          isDisabled={!formData.business_state_id}
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>Business Pin Code</label>
+                        <input
+                          type="text"
+                          name="business_pin_code"
+                          value={formData.business_pin_code || ""}
+                          onChange={handleChange}
+                          placeholder="Enter business pin code"
+                          autoComplete="new-password"
+                          style={
+                            formErrors.business_pin_code
+                              ? { borderColor: "red", outline: "none" }
+                              : {}
+                          }
+                        />
+                        {formErrors.business_pin_code && (
+                          <span
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              display: "block",
+                            }}
+                          >
+                            {formErrors.business_pin_code[0]}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className={styles.formActions}>
+                      <button
+                        type="button"
+                        className={styles.btnCancel}
+                        onClick={() => setActiveTab("personal")}
+                      >
+                        <FaArrowLeft style={{ marginRight: "8px" }} /> Back
+                      </button>
+                      <button type="submit" className={styles.btnSave}>
+                        Save & Continue &rarr;
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {activeTab === "document" && (
+                  <div
+                    className={styles.fieldsGrid}
+                    style={{ display: "block" }}
+                  >
+                    <KycDocuments
+                      profile={profile}
+                      token={token}
+                      onKycError={(err) => console.error(err)}
+                      onSuccess={() => {
+                        fetchProfile(false);
+                        setActiveTab("review");
+                      }}
+                    />
+                  </div>
+                )}
+
+                {activeTab === "review" && (
+                  <div
+                    className={styles.fieldsGrid}
+                    style={{ display: "block" }}
+                  >
+                    <ReviewSubmit
+                      formData={formData}
+                      setActiveTab={setActiveTab}
+                      token={token}
+                      fetchProfile={fetchProfile}
+                    />
+                  </div>
+                )}
+
+                {activeTab === "verification" && (
+                  <div
+                    className={styles.fieldsGrid}
+                    style={{ display: "block" }}
+                  >
+                    <VerificationStep
+                      formData={formData}
+                      profile={profile}
+                      setActiveTab={setActiveTab}
+                    />
+                  </div>
+                )}
+              </form>
             </div>
 
-            {activeTab === "personal" && (
-              <>
-                <div className={styles.fieldsGrid}>
-                  {/* Row 1 */}
-                  <div className={styles.inputGroup}>
-                    <label>
-                      First Name <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="first_name"
-                      value={formData.first_name || ""}
-                      onChange={handleChange}
-                      placeholder="First name"
-                      style={
-                        formErrors.first_name
-                          ? { borderColor: "red", outline: "none" }
-                          : {}
-                      }
-                    />
-                    {formErrors.first_name && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.first_name[0]}
-                      </span>
-                    )}
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>
-                      Last Name <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="last_name"
-                      value={formData.last_name || ""}
-                      onChange={handleChange}
-                      placeholder="Last name"
-                      style={
-                        formErrors.last_name
-                          ? { borderColor: "red", outline: "none" }
-                          : {}
-                      }
-                    />
-                    {formErrors.last_name && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.last_name[0]}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Row 2 */}
-                  <div className={styles.inputGroup}>
-                    <label>
-                      Username <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="user_name"
-                      value={formData.user_name || ""}
-                      readOnly
-                      className={styles.readOnly}
-                      style={
-                        formErrors.user_name
-                          ? { borderColor: "red", outline: "none" }
-                          : {}
-                      }
-                    />
-                    {formErrors.user_name && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.user_name[0]}
-                      </span>
-                    )}
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>
-                      Email Address <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email || ""}
-                      readOnly
-                      className={styles.readOnly}
-                      style={
-                        formErrors.email
-                          ? { borderColor: "red", outline: "none" }
-                          : {}
-                      }
-                    />
-                    {formErrors.email && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.email[0]}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Row 3 */}
-                  <div className={styles.inputGroup}>
-                    <label>
-                      Mobile Number <span className={styles.required}>*</span>
-                    </label>
-                    <PhoneInput
-                      country={"in"}
-                      onlyCountries={['in']}
-                      disableDropdown={true}
-                      value={formData.phone || ""}
-                      countryCodeEditable={false}
-                      onChange={(val) =>
-                        setFormData((p) => ({ ...p, phone: val }))
-                      }
-                      isValid={(value) => {
-                        if (value && value.length < 10) return false;
-                        return true;
-                      }}
-                      inputStyle={{
-                        width: "100%",
-                        height: "45px",
-                        fontSize: "14px",
-                        fontFamily: "var(--font-regular)",
-                        borderRadius: "8px",
-                        border: formErrors.phone
-                          ? "1px solid red"
-                          : "1px solid #E0E0E0",
-                        boxShadow: "none",
-                        paddingLeft: "48px",
-                      }}
-                      buttonStyle={{
-                        border: formErrors.phone
-                          ? "1px solid red"
-                          : "1px solid #E0E0E0",
-                        borderRight: "none",
-                        borderTopLeftRadius: "8px",
-                        borderBottomLeftRadius: "8px",
-                        backgroundColor: "#fff",
-                        padding: "2px",
-                      }}
-                      placeholder="Mobile Number"
-                    />
-                    {formErrors.phone && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.phone[0]}
-                      </span>
-                    )}
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Alternate Number</label>
-                    <PhoneInput
-                      country={"in"}
-                      onlyCountries={['in']}
-                      disableDropdown={true}
-                      value={formData.alternate_number || ""}
-                      countryCodeEditable={false}
-                      onChange={(val) =>
-                        setFormData((p) => ({ ...p, alternate_number: val }))
-                      }
-                      isValid={(value) => {
-                        if (value && value.length > 0 && value.length < 10)
-                          return false;
-                        return true;
-                      }}
-                      inputStyle={{
-                        width: "100%",
-                        height: "45px",
-                        fontSize: "14px",
-                        fontFamily: "var(--font-regular)",
-                        borderRadius: "8px",
-                        border: formErrors.alternate_number
-                          ? "1px solid red"
-                          : "1px solid #E0E0E0",
-                        boxShadow: "none",
-                        paddingLeft: "48px",
-                      }}
-                      buttonStyle={{
-                        border: formErrors.alternate_number
-                          ? "1px solid red"
-                          : "1px solid #E0E0E0",
-                        borderRight: "none",
-                        borderTopLeftRadius: "8px",
-                        borderBottomLeftRadius: "8px",
-                        backgroundColor: "#fff",
-                        padding: "2px",
-                      }}
-                      placeholder="Enter alternate number (optional)"
-                    />
-                    {formErrors.alternate_number && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.alternate_number[0]}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Row 4 */}
-                  <div className={styles.inputGroup}>
-                    <label>
-                      Role <span className={styles.required}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="role_id"
-                      value={formData.role_id || ""}
-                      readOnly
-                      className={styles.readOnly}
-                      style={
-                        formErrors.role_id
-                          ? { borderColor: "red", outline: "none" }
-                          : {}
-                      }
-                    />
-                    {formErrors.role_id && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.role_id[0]}
-                      </span>
-                    )}
-                  </div>
-
-                  <div
-                    className={styles.inputGroup}
-                    style={{ gridColumn: "1 / -1" }}
-                  >
-                    <label>About You</label>
-                    <textarea
-                      name="about_us"
-                      value={formData.about_us || ""}
-                      onChange={handleChange}
-                      placeholder="Tell us something about yourself..."
-                      rows={4}
-                      style={
-                        formErrors.about_us
-                          ? { borderColor: "red", outline: "none" }
-                          : {}
-                      }
-                    ></textarea>
-                    {formErrors.about_us && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.about_us[0]}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* === ADDRESS INFORMATION SECTION === */}
-                <div
-                  style={{
-                    gridColumn: "1 / -1",
-                    marginTop: "1rem",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <div className={styles.formHeader}>
-                    <div className={styles.formHeaderIcon}>
-                      <FaMapMarkerAlt />
+            {/* Sidebar Widgets (Right) */}
+            {(activeTab === "personal" || activeTab === "business") && (
+              <div className={styles.sidebarWidgets}>
+                {activeTab === "personal" ? (
+                  <div className={styles.widgetCard}>
+                    <h4 className={styles.widgetTitle}>Profile Photo</h4>
+                    <div className={styles.photoContainer}>
+                      <div className={styles.photoWrapper}>
+                        <img
+                          src={profileImage}
+                          alt="Profile"
+                          className={styles.avatarImg}
+                        />
+                        <button
+                          className={styles.cameraBtn}
+                          type="button"
+                          onClick={handleImageClick}
+                        >
+                          <FaCamera />
+                        </button>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          ref={fileInputRef}
+                          style={{ display: "none" }}
+                          onChange={handleFileChange}
+                        />
+                      </div>
                     </div>
-                    <div className={styles.formHeaderText}>
-                      <h3 style={{ fontSize: "18px", margin: 0 }}>
-                        Address Information
-                      </h3>
-                      <p style={{ margin: 0, opacity: 0.7 }}>
-                        Update your personal address
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles.fieldsGrid}>
-                  <div className={styles.inputGroup}>
-                    <label>Street Address</label>
-                    <textarea
-                      name="street_address"
-                      value={formData.street_address || ""}
-                      onChange={handleChange}
-                      placeholder="Enter street address"
-                      autoComplete="new-password"
-                      style={{
-                        height: "100px",
-                        ...(formErrors.street_address
-                          ? { borderColor: "red", outline: "none" }
-                          : {}),
-                      }}
-                    ></textarea>
-                    {formErrors.street_address && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.street_address[0]}
-                      </span>
-                    )}
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Area / Locality</label>
-                    <textarea
-                      name="area_locality"
-                      value={formData.area_locality || ""}
-                      onChange={handleChange}
-                      placeholder="Enter area or locality"
-                      autoComplete="new-password"
-                      style={{
-                        height: "100px",
-                        ...(formErrors.area_locality
-                          ? { borderColor: "red", outline: "none" }
-                          : {}),
-                      }}
-                    ></textarea>
-                    {formErrors.area_locality && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.area_locality[0]}
-                      </span>
-                    )}
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Country</label>
-                    <Select
-                      filterOption={(option, inputValue) => {
-                        if (!inputValue) return true;
-                        return option.label
-                          .toLowerCase()
-                          .startsWith(inputValue.toLowerCase());
-                      }}
-                      options={countries.map((c) => ({
-                        value: c.id,
-                        label: c.name,
-                      }))}
-                      value={
-                        countries
-                          .map((c) => ({ value: c.id, label: c.name }))
-                          .find((opt) => opt.value === formData.country_id) ||
-                        null
-                      }
-                      onChange={(opt) =>
-                        setFormData((p) => ({
-                          ...p,
-                          country_id: opt?.value || null,
-                          state_id: null,
-                          city_id: null,
-                        }))
-                      }
-                      placeholder="Select Country"
-                      styles={customStyles}
-                      instanceId="country-select-dummy-88"
-                      name="random_country_select_88"
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>State</label>
-                    <Select
-                      filterOption={(option, inputValue) => {
-                        if (!inputValue) return true;
-                        return option.label
-                          .toLowerCase()
-                          .startsWith(inputValue.toLowerCase());
-                      }}
-                      options={states.map((s) => ({
-                        value: s.id,
-                        label: s.name,
-                      }))}
-                      value={
-                        states
-                          .map((s) => ({ value: s.id, label: s.name }))
-                          .find((opt) => opt.value === formData.state_id) ||
-                        null
-                      }
-                      onChange={(opt) =>
-                        setFormData((p) => ({
-                          ...p,
-                          state_id: opt?.value || null,
-                          city_id: null,
-                        }))
-                      }
-                      placeholder="Select State"
-                      styles={customStyles}
-                      instanceId="state-select-dummy-88"
-                      name="random_state_select_88"
-                      isDisabled={!formData.country_id}
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>City</label>
-                    <Select
-                      filterOption={(option, inputValue) => {
-                        if (!inputValue) return true;
-                        return option.label
-                          .toLowerCase()
-                          .startsWith(inputValue.toLowerCase());
-                      }}
-                      options={cities.map((c) => ({
-                        value: c.id,
-                        label: c.name,
-                      }))}
-                      value={
-                        cities
-                          .map((city) => ({ value: city.id, label: city.name }))
-                          .find((opt) => opt.value === formData.city_id) || null
-                      }
-                      onChange={(opt) =>
-                        setFormData((p) => ({
-                          ...p,
-                          city_id: opt?.value || null,
-                        }))
-                      }
-                      placeholder="Select City"
-                      styles={customStyles}
-                      instanceId="city-select-dummy-88"
-                      name="random_city_select_88"
-                      isDisabled={!formData.state_id}
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Pin Code</label>
-                    <input
-                      type="text"
-                      name="pin_code"
-                      value={formData.pin_code || ""}
-                      onChange={handleChange}
-                      placeholder="Enter pin code"
-                      autoComplete="new-password"
-                      style={
-                        formErrors.pin_code
-                          ? { borderColor: "red", outline: "none" }
-                          : {}
-                      }
-                    />
-                    {formErrors.pin_code && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.pin_code[0]}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className={styles.formActions}>
-                  <button type="submit" className={styles.btnSave}>
-                    Save & Continue &rarr;
-                  </button>
-                </div>
-              </>
-            )}
-
-            {activeTab === "business" && (
-              <>
-                <div className={styles.fieldsGrid}>
-                  <div className={styles.inputGroup}>
-                    <label>Business Name</label>
-                    <input
-                      type="text"
-                      name="bussiness_name"
-                      value={formData.bussiness_name || ""}
-                      onChange={handleChange}
-                      placeholder="Enter business name"
-                      autoComplete="new-password"
-                      style={
-                        formErrors.bussiness_name
-                          ? { borderColor: "red", outline: "none" }
-                          : {}
-                      }
-                    />
-                    {formErrors.bussiness_name && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.bussiness_name[0]}
-                      </span>
-                    )}
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>No. of Employees</label>
-                    <input
-                      type="number"
-                      name="no_of_employees"
-                      value={formData.no_of_employees || ""}
-                      onChange={handleChange}
-                      placeholder="Enter number of employees"
-                      autoComplete="new-password"
-                      style={
-                        formErrors.no_of_employees
-                          ? { borderColor: "red", outline: "none" }
-                          : {}
-                      }
-                    />
-                    {formErrors.no_of_employees && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.no_of_employees[0]}
-                      </span>
-                    )}
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business Email</label>
-                    <input
-                      type="email"
-                      name="bussiness_email"
-                      value={formData.bussiness_email || ""}
-                      onChange={handleChange}
-                      placeholder="Enter business email"
-                      style={
-                        formErrors.bussiness_email
-                          ? { borderColor: "red", outline: "none" }
-                          : {}
-                      }
-                    />
-                    {formErrors.bussiness_email && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.bussiness_email[0]}
-                      </span>
-                    )}
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business Phone</label>
-                    <PhoneInput
-                      country={"in"}
-                      onlyCountries={['in']}
-                      disableDropdown={true}
-                      value={formData.business_phone || ""}
-                      countryCodeEditable={false}
-                      onChange={(phone) =>
-                        setFormData((p) => ({ ...p, business_phone: phone }))
-                      }
-                      isValid={(value, country) => {
-                        if (value && value.length < 10) {
-                          return false;
-                        }
-                        return true;
-                      }}
-                      inputStyle={{
-                        width: "100%",
-                        height: "45px",
-                        fontSize: "14px",
-                        fontFamily: "var(--font-regular)",
-                        borderRadius: "8px",
-                        border: formErrors.business_phone
-                          ? "1px solid red"
-                          : "1px solid #E0E0E0",
-                        boxShadow: "none",
-                        paddingLeft: "48px",
-                      }}
-                      buttonStyle={{
-                        border: formErrors.business_phone
-                          ? "1px solid red"
-                          : "1px solid #E0E0E0",
-                        borderRight: "none",
-                        borderTopLeftRadius: "8px",
-                        borderBottomLeftRadius: "8px",
-                        backgroundColor: "#fff",
-                        padding: "2px",
-                      }}
-                      placeholder="Enter business phone number"
-                    />
-                    {formErrors.business_phone && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.business_phone[0]}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* === BUSINESS ADDRESS INFORMATION SECTION === */}
-                <div
-                  style={{
-                    gridColumn: "1 / -1",
-                    marginTop: "1rem",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <div className={styles.formHeader}>
-                    <div className={styles.formHeaderIcon}>
-                      <FaBuilding />
-                    </div>
-                    <div className={styles.formHeaderText}>
-                      <h3 style={{ fontSize: "18px", margin: 0 }}>
-                        Business Address Information
-                      </h3>
-                      <p style={{ margin: 0, opacity: 0.7 }}>
-                        Update your business address details
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles.fieldsGrid}>
-                  <div className={styles.inputGroup}>
-                    <label>Business Street Address</label>
-                    <textarea
-                      name="business_street_address"
-                      value={formData.business_street_address || ""}
-                      onChange={handleChange}
-                      placeholder="Enter business street address"
-                      autoComplete="new-password"
-                      style={{
-                        height: "100px",
-                        ...(formErrors.business_street_address
-                          ? { borderColor: "red", outline: "none" }
-                          : {}),
-                      }}
-                    ></textarea>
-                    {formErrors.business_street_address && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.business_street_address[0]}
-                      </span>
-                    )}
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business Area / Locality</label>
-                    <textarea
-                      name="business_area_locality"
-                      value={formData.business_area_locality || ""}
-                      onChange={handleChange}
-                      placeholder="Enter business area or locality"
-                      autoComplete="new-password"
-                      style={{
-                        height: "100px",
-                        ...(formErrors.business_area_locality
-                          ? { borderColor: "red", outline: "none" }
-                          : {}),
-                      }}
-                    ></textarea>
-                    {formErrors.business_area_locality && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.business_area_locality[0]}
-                      </span>
-                    )}
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business Country</label>
-                    <Select
-                      filterOption={(option, inputValue) => {
-                        if (!inputValue) return true;
-                        return option.label
-                          .toLowerCase()
-                          .startsWith(inputValue.toLowerCase());
-                      }}
-                      options={countries.map((c) => ({
-                        value: c.id,
-                        label: c.name,
-                      }))}
-                      value={
-                        countries
-                          .map((c) => ({ value: c.id, label: c.name }))
-                          .find(
-                            (opt) => opt.value === formData.business_country_id,
-                          ) || null
-                      }
-                      onChange={(opt) =>
-                        setFormData((p) => ({
-                          ...p,
-                          business_country_id: opt?.value || null,
-                          business_state_id: null,
-                          business_city_id: null,
-                        }))
-                      }
-                      placeholder="Select Country"
-                      styles={customStyles}
-                      instanceId="business-country-select-dummy-88"
-                      name="business_country_id"
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business State</label>
-                    <Select
-                      filterOption={(option, inputValue) => {
-                        if (!inputValue) return true;
-                        return option.label
-                          .toLowerCase()
-                          .startsWith(inputValue.toLowerCase());
-                      }}
-                      options={businessStates.map((s) => ({
-                        value: s.id,
-                        label: s.name,
-                      }))}
-                      value={
-                        businessStates
-                          .map((s) => ({ value: s.id, label: s.name }))
-                          .find(
-                            (opt) => opt.value === formData.business_state_id,
-                          ) || null
-                      }
-                      onChange={(opt) =>
-                        setFormData((p) => ({
-                          ...p,
-                          business_state_id: opt?.value || null,
-                          business_city_id: null,
-                        }))
-                      }
-                      placeholder="Select State"
-                      styles={customStyles}
-                      instanceId="business-state-select-dummy-88"
-                      name="business_state_id"
-                      isDisabled={!formData.business_country_id}
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business City</label>
-                    <Select
-                      filterOption={(option, inputValue) => {
-                        if (!inputValue) return true;
-                        return option.label
-                          .toLowerCase()
-                          .startsWith(inputValue.toLowerCase());
-                      }}
-                      options={businessCities.map((c) => ({
-                        value: c.id,
-                        label: c.name,
-                      }))}
-                      value={
-                        businessCities
-                          .map((city) => ({ value: city.id, label: city.name }))
-                          .find(
-                            (opt) => opt.value === formData.business_city_id,
-                          ) || null
-                      }
-                      onChange={(opt) =>
-                        setFormData((p) => ({
-                          ...p,
-                          business_city_id: opt?.value || null,
-                        }))
-                      }
-                      placeholder="Select City"
-                      styles={customStyles}
-                      instanceId="business-city-select-dummy-88"
-                      name="business_city_id"
-                      isDisabled={!formData.business_state_id}
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Business Pin Code</label>
-                    <input
-                      type="text"
-                      name="business_pin_code"
-                      value={formData.business_pin_code || ""}
-                      onChange={handleChange}
-                      placeholder="Enter business pin code"
-                      autoComplete="new-password"
-                      style={
-                        formErrors.business_pin_code
-                          ? { borderColor: "red", outline: "none" }
-                          : {}
-                      }
-                    />
-                    {formErrors.business_pin_code && (
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          display: "block",
-                        }}
-                      >
-                        {formErrors.business_pin_code[0]}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className={styles.formActions}>
-                  <button
-                    type="button"
-                    className={styles.btnCancel}
-                    onClick={() => setActiveTab("personal")}
-                  >
-                    <FaArrowLeft style={{ marginRight: "8px" }} /> Back
-                  </button>
-                  <button type="submit" className={styles.btnSave}>
-                    Save & Continue &rarr;
-                  </button>
-                </div>
-              </>
-            )}
-
-            {activeTab === "document" && (
-              <div className={styles.fieldsGrid} style={{ display: "block" }}>
-                <KycDocuments
-                  profile={profile}
-                  token={token}
-                  onKycError={(err) => console.error(err)}
-                  onSuccess={() => {
-                    fetchProfile(false);
-                    setActiveTab("review");
-                  }}
-                />
-              </div>
-            )}
-
-            {activeTab === "review" && (
-              <div className={styles.fieldsGrid} style={{ display: "block" }}>
-                <ReviewSubmit
-                  formData={formData}
-                  setActiveTab={setActiveTab}
-                  token={token}
-                  fetchProfile={fetchProfile}
-                />
-              </div>
-            )}
-
-            {activeTab === "verification" && (
-              <div className={styles.fieldsGrid} style={{ display: "block" }}>
-                <VerificationStep
-                  formData={formData}
-                  profile={profile}
-                  setActiveTab={setActiveTab}
-                />
-              </div>
-            )}
-          </form>
-        </div>
-
-        {/* Sidebar Widgets (Right) */}
-        {(activeTab === "personal" || activeTab === "business") && (
-          <div className={styles.sidebarWidgets}>
-            {activeTab === "personal" ? (
-              <div className={styles.widgetCard}>
-                <h4 className={styles.widgetTitle}>Profile Photo</h4>
-                <div className={styles.photoContainer}>
-                  <div className={styles.photoWrapper}>
-                    <img
-                      src={profileImage}
-                      alt="Profile"
-                      className={styles.avatarImg}
-                    />
                     <button
-                      className={styles.cameraBtn}
+                      className={styles.uploadPhotoBtn}
                       type="button"
                       onClick={handleImageClick}
                     >
-                      <FaCamera />
+                      {isUploadingPhoto
+                        ? `Uploading (${photoProgress}%)`
+                        : "Upload New Photo"}
                     </button>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      ref={fileInputRef}
-                      style={{ display: "none" }}
-                      onChange={handleFileChange}
-                    />
+                    <p className={styles.photoInfo}>
+                      Recommended: JPG, PNG or WEBP
+                      <br />
+                      Max size: 2MB. Min dimension: 200x200px
+                    </p>
                   </div>
-                </div>
-                <button
-                  className={styles.uploadPhotoBtn}
-                  type="button"
-                  onClick={handleImageClick}
-                >
-                  {isUploadingPhoto
-                    ? `Uploading (${photoProgress}%)`
-                    : "Upload New Photo"}
-                </button>
-                <p className={styles.photoInfo}>
-                  Recommended: JPG, PNG or WEBP
-                  <br />
-                  Max size: 2MB. Min dimension: 200x200px
-                </p>
-              </div>
-            ) : (
-              <div className={styles.widgetCard}>
-                <h4 className={styles.widgetTitle}>Business Logo</h4>
-                <div className={styles.photoContainer}>
-                  <div className={styles.photoWrapper}>
-                    <img
-                      src={businessLogo}
-                      alt="Business Logo"
-                      className={styles.avatarImg}
-                    />
+                ) : (
+                  <div className={styles.widgetCard}>
+                    <h4 className={styles.widgetTitle}>Business Logo</h4>
+                    <div className={styles.photoContainer}>
+                      <div className={styles.photoWrapper}>
+                        <img
+                          src={businessLogo}
+                          alt="Business Logo"
+                          className={styles.avatarImg}
+                        />
+                        <button
+                          className={styles.cameraBtn}
+                          type="button"
+                          onClick={handleBusinessLogoClick}
+                        >
+                          <FaCamera />
+                        </button>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          ref={businessLogoInputRef}
+                          style={{ display: "none" }}
+                          onChange={handleBusinessLogoChange}
+                        />
+                      </div>
+                    </div>
                     <button
-                      className={styles.cameraBtn}
+                      className={styles.uploadPhotoBtn}
                       type="button"
                       onClick={handleBusinessLogoClick}
                     >
-                      <FaCamera />
+                      {isUploadingLogo
+                        ? `Uploading (${logoProgress}%)`
+                        : "Upload Business Logo"}
                     </button>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      ref={businessLogoInputRef}
-                      style={{ display: "none" }}
-                      onChange={handleBusinessLogoChange}
-                    />
+                    <p className={styles.photoInfo}>
+                      Recommended: JPG, PNG or WEBP
+                      <br />
+                      Max size: 2MB. Min dimension: 200x200px
+                    </p>
                   </div>
-                </div>
-                <button
-                  className={styles.uploadPhotoBtn}
-                  type="button"
-                  onClick={handleBusinessLogoClick}
-                >
-                  {isUploadingLogo
-                    ? `Uploading (${logoProgress}%)`
-                    : "Upload Business Logo"}
-                </button>
-                <p className={styles.photoInfo}>
-                  Recommended: JPG, PNG or WEBP
-                  <br />
-                  Max size: 2MB. Min dimension: 200x200px
-                </p>
+                )}
               </div>
             )}
           </div>
-        )}
-      </div>
-      </>
+        </>
       )}
     </div>
   );

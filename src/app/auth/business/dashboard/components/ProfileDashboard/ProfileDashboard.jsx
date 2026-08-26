@@ -141,7 +141,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <Link 
-                  href={`/auth/business/dashboard/edit-profile?id=${encodeId(userId)}`}
+                  href={`/auth/business/dashboard/edit-profile?id=${encodeId(userId)}&tab=document`}
                   style={{ backgroundColor: '#ef4444', color: 'white', padding: '8px 16px', borderRadius: '6px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}
                 >
                   Re-submit KYC Now

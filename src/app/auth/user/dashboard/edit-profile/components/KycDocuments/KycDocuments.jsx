@@ -248,14 +248,6 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
             if (apiDoc) {
               let docStatus = apiDoc.status;
               if (
-                !apiDoc.rejection_reason &&
-                kycLabel &&
-                kycLabel.toLowerCase() === "rejected" &&
-                docStatus.toLowerCase() === "pending"
-              ) {
-                docStatus = "rejected";
-              }
-              if (
                 docStatus.toLowerCase() === "rejected" &&
                 apiDoc.rejection_reason
               ) {
@@ -277,14 +269,6 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
                   : "Uploaded";
 
                 let docStatus = apiDoc.status;
-                if (
-                  !apiDoc.rejection_reason &&
-                  kycLabel &&
-                  kycLabel.toLowerCase() === "rejected" &&
-                  docStatus.toLowerCase() === "pending"
-                ) {
-                  docStatus = "rejected";
-                }
 
                 return {
                   ...d,
@@ -770,9 +754,20 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
               <div className={styles.headerRight}>
                 {doc.status && (
                   <span
-                    className={`${styles.statusText} ${styles.uploadedStatus}`}
+                    className={`${styles.statusText} ${
+                      doc.status.toLowerCase() === "rejected" 
+                        ? styles.rejectedStatus 
+                        : doc.status.toLowerCase() === "verified" || doc.status.toLowerCase() === "approved"
+                          ? styles.verifiedStatus
+                          : styles.uploadedStatus
+                    }`}
+                    style={doc.status.toLowerCase() === "rejected" ? { color: "#ef4444", backgroundColor: "#fef2f2" } : {}}
                   >
-                    Uploaded
+                    {doc.status.toLowerCase() === "rejected" 
+                      ? "Rejected" 
+                      : doc.status.toLowerCase() === "verified" || doc.status.toLowerCase() === "approved"
+                        ? "Verified"
+                        : "Uploaded"}
                   </span>
                 )}
               </div>
@@ -813,34 +808,30 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
                         : "3.07 KB"}
                     </span>
                   </div>
-                  <button
-                    className={styles.removeFileBtn}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (
-                        doc.status === "Pending" ||
-                        doc.status === "Verified"
-                      ) {
-                        // Normally you'd call an API to remove
-                      }
-                      setDocuments((prev) =>
-                        prev.map((d) =>
-                          d.id === doc.id
-                            ? {
-                                ...d,
-                                file: null,
-                                filename: "",
-                                previewUrl: null,
-                                status: null,
-                                uploadedOn: null,
-                              }
-                            : d,
-                        ),
-                      );
-                    }}
-                  >
-                    <FaTimes />
-                  </button>
+                  {(!doc.status || doc.status.toLowerCase() === "rejected") && (
+                    <button
+                      className={styles.removeFileBtn}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDocuments((prev) =>
+                          prev.map((d) =>
+                            d.id === doc.id
+                              ? {
+                                  ...d,
+                                  file: null,
+                                  filename: "",
+                                  previewUrl: null,
+                                  status: null,
+                                  uploadedOn: null,
+                                }
+                              : d,
+                          ),
+                        );
+                      }}
+                    >
+                      <FaTimes />
+                    </button>
+                  )}
                 </div>
               </div>
             )}
