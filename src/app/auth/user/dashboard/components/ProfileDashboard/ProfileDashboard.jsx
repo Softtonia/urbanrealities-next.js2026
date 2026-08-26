@@ -61,16 +61,23 @@ const Dashboard = () => {
         if (profileRes.data.profile_completion)
           setProfileCompletion(profileRes.data.profile_completion);
 
-        if (["Approved", "Verified", "Completed"].includes(rawProfile.kyc_status)) {
+        const kycStatus = rawProfile.kyc_status ? rawProfile.kyc_status.toLowerCase() : "";
+
+        if (["approved", "verified", "completed"].includes(kycStatus)) {
+          localStorage.removeItem(`hasSeenKycRejected_${userId}`);
           const hasSeen = localStorage.getItem(`hasSeenKycSuccess_${userId}`);
           if (!hasSeen) {
             setShowKycSuccess(true);
           }
-        } else if (["Rejected", "Declined"].includes(rawProfile.kyc_status)) {
+        } else if (["rejected", "declined"].includes(kycStatus)) {
+          localStorage.removeItem(`hasSeenKycSuccess_${userId}`);
           const hasSeen = localStorage.getItem(`hasSeenKycRejected_${userId}`);
           if (!hasSeen) {
             setShowKycRejected(true);
           }
+        } else {
+          localStorage.removeItem(`hasSeenKycSuccess_${userId}`);
+          localStorage.removeItem(`hasSeenKycRejected_${userId}`);
         }
       }
 

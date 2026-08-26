@@ -65,9 +65,13 @@ async function fetchUser(id) {
   }
 }
 
-const PropertyDetailspage =async  ({ searchParams }) => {
-  const id = await searchParams.id; // ✅ Get ID from query string (?id=123)
-console.log(id)
+const PropertyDetailspage = async ({ params, searchParams }) => {
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  
+  // Prefer query string (?id=27) but fallback to path parameter (/propertydetails/27)
+  const id = resolvedSearchParams?.id || resolvedParams?.id; 
+  console.log("Property ID:", id);
   const property =await fetchProperty(id)
   let userDetail = null;
   if (property?.user_id) {
