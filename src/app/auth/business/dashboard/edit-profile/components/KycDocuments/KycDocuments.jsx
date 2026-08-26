@@ -222,7 +222,7 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
       if (statusRes.ok) {
         const statusResult = await statusRes.json();
         if (statusResult.status && statusResult.data) {
-          kycLabel = statusResult.data?.latest_kyc_request?.status;
+          kycLabel = statusResult.data?.latest_kyc_request?.status || null;
           setGlobalKycStatus(kycLabel);
           if (
             kycLabel &&
@@ -231,7 +231,11 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
           ) {
             reasons.push(statusResult.data.latest_kyc_request.rejection_reason);
           }
+        } else {
+          setGlobalKycStatus(null);
         }
+      } else {
+        setGlobalKycStatus(null);
       }
 
       if (docsRes.ok) {
@@ -447,7 +451,10 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
 
                     let submitRes;
                     if (globalKycStatus && globalKycStatus.toLowerCase() === "rejected") {
-                      submitRes = await resubmitKyc(token, uploadId, payload);
+                      submitRes = await resubmitKyc(token, uploadId, {
+                        ...payload,
+                        remarks: "Resubmitting updated documents after rejection."
+                      });
                     } else {
                       submitRes = await submitKyc(token, uploadId, payload);
                     }

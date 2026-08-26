@@ -19,6 +19,8 @@ import {
   FaClock,
 } from "react-icons/fa";
 import Breadcrumb from "@/Components/Breadcrumb/Breadcrumb";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import KycTimeline from "../KycTimeline/KycTimeline";
 import KycDocuments from "../KycDocuments/KycDocuments";
 import ReviewSubmit from "@/app/auth/user/dashboard/edit-profile/components/ReviewSubmit/ReviewSubmit";
@@ -1046,13 +1048,16 @@ const ProfileForm = () => {
               </div>
             )}
 
-            {activeTab === "kyc" && (
+            {activeTab === "document" && (
               <div className={styles.fieldsGrid} style={{ display: "block" }}>
                 <KycDocuments
                   profile={profile}
                   token={token}
                   onKycError={(err) => console.error(err)}
-                  onSuccess={() => fetchProfile(false)}
+                  onSuccess={() => {
+                    fetchProfile(false);
+                    setActiveTab("review");
+                  }}
                 />
               </div>
             )}

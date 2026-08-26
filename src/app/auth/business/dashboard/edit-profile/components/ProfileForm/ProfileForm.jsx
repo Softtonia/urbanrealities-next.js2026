@@ -1740,17 +1740,14 @@ const ProfileForm = () => {
 
             {activeTab === "document" && (
               <div className={styles.fieldsGrid} style={{ display: "block" }}>
-                
-              </div>
-            )}
-
-            {activeTab === "kyc" && (
-              <div className={styles.fieldsGrid} style={{ display: "block" }}>
                 <KycDocuments
                   profile={profile}
                   token={token}
                   onKycError={(err) => console.error(err)}
-                  onSuccess={() => fetchProfile(false)}
+                  onSuccess={() => {
+                    fetchProfile(false);
+                    setActiveTab("review");
+                  }}
                 />
               </div>
             )}

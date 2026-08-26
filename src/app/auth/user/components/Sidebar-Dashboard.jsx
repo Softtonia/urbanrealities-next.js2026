@@ -64,7 +64,7 @@ export default function SidebarDashboard({ onItemClick }) {
   }, [token]);
 
   const handleMobileClick = (link) => {
-    if (!isKycComplete && link !== "/auth/user/kyc") {
+    if (!isKycComplete && link !== "/auth/user/dashboard") {
       if (kycStatus?.toLowerCase() === "submitted") {
         toast.error("Waiting for admin to approve KYC.");
       } else {
@@ -92,7 +92,7 @@ export default function SidebarDashboard({ onItemClick }) {
             if (item.label === "Add-ons" && !hasActiveMembership) return null;
             const isActive = pathname === item.link;
 
-            if (!isKycComplete && item.link !== "/auth/user/kyc") {
+            if (!isKycComplete && item.link !== "/auth/user/dashboard") {
               return (
                 <div key={index} onClick={() => {
                   if (kycStatus?.toLowerCase() === "submitted") {
