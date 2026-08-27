@@ -1,9 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { FaCheck, FaClock, FaClipboardList, FaExclamationCircle } from "react-icons/fa";
 import styles from "./VerificationStep.module.css";
 
 const VerificationStep = ({ formData, profile, setActiveTab }) => {
   const isSubmitted = ["Submitted", "Pending", "Under Review", "Approved", "Verified", "Completed"].includes(profile?.kyc_status);
+  const router = useRouter();
+  const pathname = usePathname();
+  const [countdown, setCountdown] = useState(5);
+
+  useEffect(() => {
+    if (isSubmitted) {
+      if (countdown > 0) {
+        const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+        return () => clearTimeout(timer);
+      } else {
+        const dashboardPath = pathname.includes("/auth/business") 
+          ? "/auth/business/dashboard" 
+          : "/auth/user/dashboard";
+        router.push(dashboardPath);
+      }
+    }
+  }, [countdown, isSubmitted, pathname, router]);
 
   if (!isSubmitted) {
     return (
@@ -83,6 +101,10 @@ const VerificationStep = ({ formData, profile, setActiveTab }) => {
         You will be notified on <strong>{formData?.email || "your email"}</strong>
         <br />
         and <strong>{formData?.phone || "your mobile number"}</strong> once your KYC is verified.
+        
+        <div style={{ marginTop: '20px', fontWeight: 'bold', color: '#f37021' }}>
+          Redirecting to dashboard in {countdown}...
+        </div>
       </div>
     </div>
   );

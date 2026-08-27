@@ -448,14 +448,9 @@ const ProfileForm = () => {
           }
         });
         data = await updatePersonalProfile(token, dataToSend);
-      } else if (activeTab === "address") {
-        // Basic validation for pin code
-        if (formData.pin_code && formData.pin_code.length !== 6) {
-          toast.error("Please enter a valid 6-digit pin code.");
-          return;
-        }
 
-        const dataToSend = new FormData();
+        // Also save address fields
+        const addressDataToSend = new FormData();
         const addressKeys = [
           "country_id",
           "state_id",
@@ -464,28 +459,24 @@ const ProfileForm = () => {
           "colony",
           "area_locality",
           "address",
-          "pin_code",
-          "business_country_id",
-          "business_state_id",
-          "business_city_id",
-          "business_address",
-          "business_pin_code",
+          "pin_code"
         ];
         addressKeys.forEach((key) => {
           let val = formData[key];
-          if (key === "business_address")
-            val = formData.bussiness_address || formData.business_address;
-
           if (
             val !== undefined &&
             val !== null &&
             val !== "N/A" &&
             val !== ""
           ) {
-            dataToSend.append(key, val);
+            addressDataToSend.append(key, val);
           }
         });
-        data = await updateAddressProfile(token, dataToSend);
+        const addrData = await updateAddressProfile(token, addressDataToSend);
+        
+        if (!data.status || !addrData.status) {
+           data = data.status ? addrData : data; // Use the one that failed for error reporting
+        }
       } else {
         return; // Other tabs not handled here
       }
@@ -696,29 +687,44 @@ const ProfileForm = () => {
                 onSubmit={handleSubmit}
                 autoComplete="off"
               >
-                <div className={styles.formHeader}>
-                  <div className={styles.formHeaderIcon}>
-                    <FaUser />
+                <div className={styles.formHeader} style={{ position: 'relative', display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div className={styles.formHeaderIcon}>
+                      <FaUser />
+                    </div>
+                    <div className={styles.formHeaderText}>
+                      <h3>
+                        {activeTab === "personal"
+                          ? "Personal Details"
+                          : activeTab === "address"
+                            ? "Address Information"
+                            : activeTab === "document"
+                              ? "Documents & KYC"
+                              : "Remarks"}
+                      </h3>
+                      <p>
+                        {activeTab === "personal"
+                          ? "Please enter your details as per official documents."
+                          : "Update your details"}
+                      </p>
+                    </div>
                   </div>
-                  <div className={styles.formHeaderText}>
-                    <h3>
-                      {activeTab === "personal"
-                        ? "Personal & Business Details"
-                        : activeTab === "address"
-                          ? "Address Information"
-                          : activeTab === "kyc"
-                            ? "Documents & KYC"
-                            : "Remarks"}
-                    </h3>
-                    <p>
-                      {activeTab === "personal"
-                        ? "Please enter your details as per official documents."
-                        : "Update your details"}
-                    </p>
-                  </div>
+                  {activeTab === "document" && profile?.kyc_status && (
+                    <div style={{
+                        backgroundColor: ["approved", "verified", "completed", "accepted", "2"].includes(String(profile.kyc_status).toLowerCase()) ? "#e0f2fe" : ["rejected", "declined", "failed", "3"].includes(String(profile.kyc_status).toLowerCase()) ? "#fee2e2" : "#ffedd5",
+                        color: ["approved", "verified", "completed", "accepted", "2"].includes(String(profile.kyc_status).toLowerCase()) ? "#0284c7" : ["rejected", "declined", "failed", "3"].includes(String(profile.kyc_status).toLowerCase()) ? "#b91c1c" : "#c2410c",
+                        padding: "4px 12px",
+                        borderRadius: "16px",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                    }}>
+                      {["approved", "verified", "completed", "accepted", "2"].includes(String(profile.kyc_status).toLowerCase()) ? "KYC Verified" : ["rejected", "declined", "failed", "3"].includes(String(profile.kyc_status).toLowerCase()) ? "KYC Rejected" : "KYC Pending"}
+                    </div>
+                  )}
                 </div>
 
                 {activeTab === "personal" && (
+                  <>
                   <div className={styles.fieldsGrid}>
                     {/* Row 1: Full Name */}
                     <div
@@ -873,10 +879,11 @@ const ProfileForm = () => {
                     {/* Empty div to fill the second column for Row 3 */}
                     <div></div>
                   </div>
-                )}
 
-                {activeTab === "address" && (
-                  <div className={styles.fieldsGrid}>
+                    <div style={{ marginTop: '30px', marginBottom: '15px' }}>
+                      <h4 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>Address Information</h4>
+                    </div>
+                    <div className={styles.fieldsGrid}>
                     <div className={styles.inputGroup}>
                       <label>Street Address</label>
                       <textarea
@@ -1062,14 +1069,12 @@ const ProfileForm = () => {
                         </span>
                       )}
                     </div>
-                  </div>
+                    </div>
+                  </>
                 )}
 
                 {activeTab === "document" && (
-                  <div
-                    className={styles.fieldsGrid}
-                    style={{ display: "block" }}
-                  >
+                  <div style={{ marginTop: '24px' }}>
                     <KycDocuments
                       profile={profile}
                       token={token}
@@ -1096,15 +1101,6 @@ const ProfileForm = () => {
                   </div>
                 )}
 
-                {activeTab === "timeline" && (
-                  <div
-                    className={styles.fieldsGrid}
-                    style={{ display: "block" }}
-                  >
-                    <KycTimeline token={token} />
-                  </div>
-                )}
-
                 {activeTab === "verification" && (
                   <div
                     className={styles.fieldsGrid}
@@ -1124,26 +1120,25 @@ const ProfileForm = () => {
                   activeTab !== "verification" && (
                     <div
                       className={styles.formActions}
-                      style={
-                        activeTab === "personal"
-                          ? { justifyContent: "flex-end" }
-                          : {}
-                      }
+                      style={{ justifyContent: activeTab === "personal" ? "flex-end" : "space-between" }}
                     >
-                      <button type="submit" className={styles.btnSave}>
-                        {activeTab === "personal"
-                          ? "Save & Continue \u2192"
-                          : "Save Changes"}
-                      </button>
                       {activeTab !== "personal" && (
                         <button
                           type="button"
                           className={styles.btnCancel}
-                          onClick={() => router.push("/auth/user/dashboard")}
+                          onClick={() => {
+                            if (activeTab === "address") setActiveTab("personal");
+                            else router.push("/auth/user/dashboard");
+                          }}
                         >
-                          Cancel
+                          &larr; Back
                         </button>
                       )}
+                      <button type="submit" className={styles.btnSave}>
+                        {["personal", "address"].includes(activeTab)
+                          ? "Save & Continue \u2192"
+                          : "Save Changes"}
+                      </button>
                     </div>
                   )}
               </form>

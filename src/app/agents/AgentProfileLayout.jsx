@@ -47,7 +47,7 @@ const AgentProfileLayout = ({ agentProfile, relatedProperties, userProperties })
   // const [relatedProperties, setRelatedProperties] = useState([])
   const [isEmpty, setIsEmpty] = useState(false)
   const handleViewProjectlist = (id) => {
-    router.push(`/propertydetails/id=${id}`);
+    router.push(`/propertydetails/property?id=${id}`);
   };
 
   console.log("agent=>", relatedProperties)

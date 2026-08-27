@@ -8,58 +8,212 @@ import {
   FaBuilding, 
   FaIdCard, 
   FaCheckCircle, 
-  FaSpinner 
+  FaSpinner,
+  FaEdit,
+  FaSave,
+  FaTimes,
+  FaCamera
 } from "react-icons/fa";
 import {
   LARAVEL_API_BASE_URL,
   LARAVEL_APPLICATION_PASSWORD,
   APP_TYPE,
 } from "@/lib/config";
+import { updatePersonalProfile, updateAddressProfile, updateProfilePhoto } from "@/services/auth.service";
+import { toast } from "react-toastify";
+import { useSiteSettings } from "@/Components/mycontext/siteSettingContext";
 
 const ApprovedProfileView = ({ formData, profileImage, token, isBusiness = false }) => {
-  const [documents, setDocuments] = useState([]);
-  const [isLoadingDocs, setIsLoadingDocs] = useState(true);
+  const { kycStatus } = useSiteSettings();
+
+  // Inline editing state
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [localData, setLocalData] = useState(formData);
+  const [localProfileImage, setLocalProfileImage] = useState(profileImage);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [photoProgress, setPhotoProgress] = useState(0);
+  const fileInputRef = React.useRef(null);
 
   useEffect(() => {
-    const fetchUploadedDocuments = async () => {
-      if (!token) return;
-      try {
-        const res = await fetch(`${LARAVEL_API_BASE_URL}/api/kyc/documents`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
-            "X-App-Type": APP_TYPE,
-          },
-        });
-        
-        if (res.ok) {
-          const result = await res.json();
-          if (result.status && result.data) {
-            setDocuments(result.data);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to fetch KYC documents:", err);
-      } finally {
-        setIsLoadingDocs(false);
-      }
-    };
+    setLocalData(formData);
+  }, [formData]);
 
-    fetchUploadedDocuments();
-  }, [token]);
+  useEffect(() => {
+    setLocalProfileImage(profileImage);
+  }, [profileImage]);
 
-  const getDocIconAndColor = (type) => {
-    if (type.includes("aadhaar") || type.includes("gst")) {
-      return { icon: <FaIdCard />, color: "orange" };
+  const handleImageClick = () => {
+    if (isEditing && fileInputRef.current) {
+      fileInputRef.current.click();
     }
-    return { icon: <FaBuilding />, color: "green" };
   };
 
-  const getDocTitle = (type) => {
-    return type
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setLocalProfileImage(imageUrl);
+      setIsUploadingPhoto(true);
+      setPhotoProgress(10);
+
+      const payload = new FormData();
+      payload.append("profile_photo", file);
+
+      try {
+        const data = await updateProfilePhoto(token, payload);
+        if (data && data.status) {
+          if (data.upload_id) {
+            const { checkUploadProgress } = await import("@/services/document.service");
+            const pollInterval = setInterval(async () => {
+              try {
+                const progressRes = await checkUploadProgress(token, data.upload_id);
+                if (progressRes.ok) {
+                  const progressData = await progressRes.json();
+                  const fileProgress = progressData?.progress?.files?.profile_photo;
+                  if (fileProgress) {
+                    setPhotoProgress(fileProgress.percent || 10);
+                    if (fileProgress.percent >= 100 || fileProgress.status === "completed" || fileProgress.status === "verified") {
+                      clearInterval(pollInterval);
+                      setPhotoProgress(100);
+                      setTimeout(() => {
+                        setIsUploadingPhoto(false);
+                        toast.success(data.message || "Profile photo updated successfully!");
+                      }, 1000);
+                    }
+                  }
+                }
+              } catch (err) {
+                console.error("Polling error", err);
+              }
+            }, 2000);
+          } else {
+            setPhotoProgress(100);
+            setTimeout(() => {
+              setIsUploadingPhoto(false);
+              toast.success(data.message || "Profile photo updated successfully!");
+            }, 1000);
+          }
+        } else {
+          setIsUploadingPhoto(false);
+          setPhotoProgress(0);
+          toast.error(data?.message || "Failed to update profile photo.");
+        }
+      } catch (err) {
+        console.error("Profile photo upload error:", err);
+        setIsUploadingPhoto(false);
+        setPhotoProgress(0);
+        toast.error("An error occurred while uploading photo.");
+      }
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setLocalData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      // 1. Update Personal & Business Info
+      const personalDataToSend = new FormData();
+      const personalKeys = [
+        "first_name",
+        "last_name",
+        "user_name",
+        "email",
+        "phone",
+        "alternate_number",
+        "about_us",
+        "business_name",
+        "business_email",
+        "business_phone",
+        "no_of_employees",
+        "aadhaar_number",
+        "gst_number",
+        "rera_number"
+      ];
+
+      personalKeys.forEach((key) => {
+        let val = localData[key];
+        if (key === "business_name") val = localData.bussiness_name || localData.business_name;
+        if (key === "business_email") val = localData.bussiness_email || localData.business_email;
+
+        if (val !== undefined && val !== null && val !== "N/A" && val !== "") {
+          personalDataToSend.append(key, val);
+        }
+      });
+      const personalRes = await updatePersonalProfile(token, personalDataToSend);
+
+      // 2. Update Address Info
+      const addressDataToSend = new FormData();
+      const addressKeys = [
+        "country_id",
+        "state_id",
+        "city_id",
+        "street_address",
+        "colony",
+        "area_locality",
+        "address",
+        "pin_code",
+        "business_country_id",
+        "business_state_id",
+        "business_city_id",
+        "business_address",
+        "business_street_address",
+        "business_colony",
+        "business_area_locality",
+        "business_pin_code",
+      ];
+      addressKeys.forEach((key) => {
+        let val = localData[key];
+        if (key === "business_address") val = localData.bussiness_address || localData.business_address;
+
+        if (val !== undefined && val !== null && val !== "N/A" && val !== "") {
+          addressDataToSend.append(key, val);
+        }
+      });
+      const addressRes = await updateAddressProfile(token, addressDataToSend);
+
+      if (personalRes?.status && addressRes?.status) {
+        toast.success("Profile updated successfully!");
+        setIsEditing(false);
+      } else {
+        toast.error("Profile update failed. Please check the fields and try again.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred while saving.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const renderField = (name, value, label, isReadOnly = false) => {
+    if (!isEditing) {
+      return <span className={styles.value}>{value || "-"}</span>;
+    }
+    return (
+      <input 
+        type="text" 
+        name={name} 
+        value={value || ""} 
+        onChange={handleChange} 
+        className={styles.editInput} 
+        readOnly={isReadOnly}
+        style={{
+          width: '100%',
+          padding: '8px 12px',
+          border: '1px solid #ccc',
+          borderRadius: '4px',
+          outline: 'none',
+          backgroundColor: isReadOnly ? '#f5f5f5' : 'white',
+          cursor: isReadOnly ? 'not-allowed' : 'text'
+        }}
+        placeholder={label}
+      />
+    );
   };
 
   return (
@@ -67,29 +221,113 @@ const ApprovedProfileView = ({ formData, profileImage, token, isBusiness = false
       {/* Header Section */}
       <div className={styles.headerCard}>
         <div className={styles.profileMeta}>
-          <div className={styles.avatarWrapper}>
-            {profileImage ? (
-              <img src={profileImage} alt="Profile" className={styles.avatarImg} />
+          <div 
+            className={styles.avatarWrapper} 
+            onClick={handleImageClick}
+            style={{ cursor: isEditing ? 'pointer' : 'default', position: 'relative' }}
+          >
+            {localProfileImage ? (
+              <img src={localProfileImage} alt="Profile" className={styles.avatarImg} />
             ) : (
               <FaUserCircle className={styles.defaultAvatar} />
             )}
-            <div className={styles.verifiedBadge}>
-              <FaCheckCircle />
-            </div>
+            
+            {isEditing && (
+              <div style={{ position: 'absolute', bottom: '0px', right: '0px', background: '#ea580c', color: 'white', padding: '6px', borderRadius: '50%', display: 'flex', zIndex: 2 }}>
+                <FaCamera size={14} />
+              </div>
+            )}
+            
+            {isUploadingPhoto && (
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.7)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', zIndex: 3 }}>
+                <FaSpinner className="fa-spin" style={{ color: '#ea580c' }} />
+                <span style={{ fontSize: '10px', marginTop: '2px', fontWeight: 'bold' }}>{photoProgress}%</span>
+              </div>
+            )}
+            
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              style={{ display: 'none' }} 
+              accept="image/*" 
+              onChange={handleFileChange} 
+            />
+            
+            {!isEditing && (
+              <div className={styles.verifiedBadge}>
+                <FaCheckCircle />
+              </div>
+            )}
           </div>
           <div className={styles.headerInfo}>
             <div className={styles.badgeWrapper}>
-              <span className={styles.statusBadge}>KYC Verified</span>
+              {(() => {
+                const status = (kycStatus || localData.kyc_status || "pending").toString().toLowerCase();
+                let statusText = "KYC Pending";
+                let statusBg = "#fef08a"; // yellow
+                let statusColor = "#b45309";
+                
+                if (["approved", "verified", "completed", "accepted", "2"].includes(status)) {
+                  statusText = "KYC Verified";
+                  statusBg = "#e0f2fe"; // blue
+                  statusColor = "#0284c7";
+                } else if (["rejected", "declined", "failed", "3"].includes(status)) {
+                  statusText = "KYC Rejected";
+                  statusBg = "#fee2e2"; // red
+                  statusColor = "#b91c1c";
+                } else if (["submitted", "under review"].includes(status)) {
+                  statusText = "KYC Submitted";
+                  statusBg = "#ffedd5"; // orange
+                  statusColor = "#c2410c";
+                }
+                
+                return (
+                  <span className={styles.statusBadge} style={{ backgroundColor: statusBg, color: statusColor, border: 'none' }}>
+                    {statusText}
+                  </span>
+                );
+              })()}
               {isBusiness && <span className={styles.roleBadge}>Business Account</span>}
             </div>
-            <h2>{formData.first_name} {formData.last_name}</h2>
+            <h2>{localData.first_name} {localData.last_name}</h2>
             <p>Your profile has been fully verified and approved.</p>
+            
+            <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
+              {!isEditing ? (
+                <button 
+                  onClick={() => setIsEditing(true)} 
+                  style={{ padding: '8px 16px', background: 'var(--Orange-Red, #ea580c)', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', fontSize: '14px' }}
+                >
+                  <FaEdit /> Edit Profile
+                </button>
+              ) : (
+                <>
+                  <button 
+                    onClick={handleSave} 
+                    disabled={isSaving}
+                    style={{ padding: '8px 16px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '6px', cursor: isSaving ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', fontSize: '14px' }}
+                  >
+                    {isSaving ? <FaSpinner className="fa-spin" /> : <FaSave />} Save Changes
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setLocalData(formData);
+                      setIsEditing(false);
+                    }} 
+                    disabled={isSaving}
+                    style={{ padding: '8px 16px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: isSaving ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', fontSize: '14px' }}
+                  >
+                    <FaTimes /> Cancel
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       <div className={styles.contentGrid}>
-        {/* Left Column: Personal & Address Info */}
+        {/* Left Column: Personal Info */}
         <div className={styles.infoColumn}>
           {/* Personal Info Card */}
           <div className={styles.glassCard}>
@@ -99,22 +337,24 @@ const ApprovedProfileView = ({ formData, profileImage, token, isBusiness = false
             </div>
             <div className={styles.cardBody}>
               <div className={styles.infoRow}>
-                <span className={styles.label}>Full Name</span>
-                <span className={styles.value}>{formData.first_name} {formData.last_name}</span>
+                <span className={styles.label}>First Name</span>
+                {renderField('first_name', localData.first_name, 'First Name')}
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.label}>Last Name</span>
+                {renderField('last_name', localData.last_name, 'Last Name')}
               </div>
               <div className={styles.infoRow}>
                 <span className={styles.label}>Email Address</span>
-                <span className={styles.value}><FaEnvelope className={styles.inlineIcon} /> {formData.email || "-"}</span>
+                {renderField('email', localData.email, 'Email Address', true)}
               </div>
               <div className={styles.infoRow}>
                 <span className={styles.label}>Phone Number</span>
-                <span className={styles.value}><FaPhone className={styles.inlineIcon} /> {formData.phone || "-"}</span>
+                {renderField('phone', localData.phone, 'Phone Number')}
               </div>
               <div className={styles.infoRow}>
                 <span className={styles.label}>Aadhaar Number</span>
-                <span className={styles.value}>
-                  {formData.aadhaar_number ? `XXXXXXXX${formData.aadhaar_number.slice(-4)}` : "-"}
-                </span>
+                {renderField('aadhaar_number', localData.aadhaar_number, 'Aadhaar Number')}
               </div>
             </div>
           </div>
@@ -129,24 +369,27 @@ const ApprovedProfileView = ({ formData, profileImage, token, isBusiness = false
               <div className={styles.cardBody}>
                 <div className={styles.infoRow}>
                   <span className={styles.label}>Business Name</span>
-                  <span className={styles.value}>{formData.bussiness_name || "-"}</span>
+                  {renderField('bussiness_name', localData.bussiness_name, 'Business Name')}
                 </div>
                 <div className={styles.infoRow}>
                   <span className={styles.label}>Business Email</span>
-                  <span className={styles.value}>{formData.bussiness_email || "-"}</span>
+                  {renderField('bussiness_email', localData.bussiness_email, 'Business Email')}
                 </div>
                 <div className={styles.infoRow}>
                   <span className={styles.label}>GST Number</span>
-                  <span className={styles.value}>{formData.gst_number || "-"}</span>
+                  {renderField('gst_number', localData.gst_number, 'GST Number')}
                 </div>
                 <div className={styles.infoRow}>
                   <span className={styles.label}>RERA Number</span>
-                  <span className={styles.value}>{formData.rera_number || "-"}</span>
+                  {renderField('rera_number', localData.rera_number, 'RERA Number')}
                 </div>
               </div>
             </div>
           )}
+        </div>
 
+        {/* Right Column: Address Details */}
+        <div className={styles.documentsColumn}>
           {/* Address Info Card */}
           <div className={styles.glassCard}>
             <div className={styles.cardHeader}>
@@ -156,52 +399,15 @@ const ApprovedProfileView = ({ formData, profileImage, token, isBusiness = false
             <div className={styles.cardBody}>
               <div className={styles.infoRow}>
                 <span className={styles.label}>Street Address</span>
-                <span className={styles.value}>{formData.street_address || "-"}</span>
+                {renderField('street_address', localData.street_address, 'Street Address')}
               </div>
               <div className={styles.infoRow}>
                 <span className={styles.label}>Area / Locality</span>
-                <span className={styles.value}>{formData.area_locality || "-"}</span>
+                {renderField('area_locality', localData.area_locality, 'Area / Locality')}
               </div>
               <div className={styles.infoRow}>
                 <span className={styles.label}>Pincode</span>
-                <span className={styles.value}>{formData.pin_code || "-"}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Documents */}
-        <div className={styles.documentsColumn}>
-          <div className={styles.glassCard}>
-            <div className={styles.cardHeader}>
-              <div className={styles.iconBox}><FaCheckCircle style={{ color: "#10b981" }} /></div>
-              <h3>Verified Documents</h3>
-            </div>
-            <div className={styles.cardBody}>
-              <div className={styles.documentsList}>
-                {isLoadingDocs ? (
-                  <div className={styles.loadingWrapper}>
-                    <FaSpinner className="fa-spin" style={{ color: "#ea580c", fontSize: "24px" }} />
-                    <p>Loading documents...</p>
-                  </div>
-                ) : documents.length > 0 ? (
-                  documents.map((doc, idx) => {
-                    const { icon, color } = getDocIconAndColor(doc.document_type);
-                    return (
-                      <div key={idx} className={styles.documentItem}>
-                        <div className={`${styles.docIconWrap} ${styles[color]}`}>
-                          {icon}
-                        </div>
-                        <div className={styles.docInfo}>
-                          <span className={styles.docName}>{getDocTitle(doc.document_type)}</span>
-                          <span className={styles.docStatus}><FaCheckCircle /> Verified</span>
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p className={styles.emptyState}>No documents found.</p>
-                )}
+                {renderField('pin_code', localData.pin_code, 'Pincode')}
               </div>
             </div>
           </div>

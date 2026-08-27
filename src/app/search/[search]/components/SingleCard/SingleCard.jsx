@@ -14,8 +14,11 @@ import { useRouter } from "next/navigation";
 export default function SingleCard({ property }) {
   const router = useRouter();
 
-  const handleClick = () => {
-    router.push(`/propertydetails/${property.id}`); // navigate to dynamic route
+  const handleClick = async () => {
+    const { slugify } = await import("@/utils/slugify");
+    const title = property?.title || "property";
+    const slug = slugify(title);
+    router.push(`/propertydetails/${slug}?id=${property.id}`); 
   };
   return (
     <div className={styles.card}>

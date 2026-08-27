@@ -79,11 +79,18 @@ const AgentPropertyCard = ({ property }) => {
             <button className={styles.request}>Request Call-back</button>
             <button
               className={styles.visit}
-              onClick={() =>
+              onClick={async () => {
+                const { slugify } = await import("@/utils/slugify");
+                const propertyTypeName = property?.propertyType?.[0]?.property_type_name || "property";
+                const slugParts = [];
+                if (bhk) slugParts.push(`${bhk}-bhk`);
+                if (area) slugParts.push(`${area}-sqft`);
+                slugParts.push(propertyTypeName);
+                const slug = slugify(slugParts.join('-'));
                 router.push(
-                  `/propertydetails/${bhk ? `${bhk}bhk-` : ""}${property.propertyType[0].property_type_name}?id=${property.id}`
-                )
-              }
+                  `/propertydetails/${slug}?id=${property.id}`
+                );
+              }}
             >
               Visit Property
             </button>

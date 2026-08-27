@@ -59,7 +59,19 @@ export default function ProjectCard({ property }) {
 
 
   const handleNavigate = async () => {
-    const slug = await slugify(`${area && area} ${property.propertyType[0]?.property_type_name}-for-${property?.purpose_id_name}-in-${property?.state.name}`)
+    const propertyTypeName = property?.propertyType?.[0]?.property_type_name || "property";
+    const stateName = property?.state?.name || "india";
+    const purposeName = property?.purpose_id_name || "sale";
+    
+    const slugParts = [];
+    if (area) slugParts.push(`${area}-sqft`);
+    slugParts.push(propertyTypeName);
+    slugParts.push('for');
+    slugParts.push(purposeName);
+    slugParts.push('in');
+    slugParts.push(stateName);
+    
+    const slug = await slugify(slugParts.join('-'));
     router.push(`/propertydetails/${slug}?id=${property?.id}`);
   }
 

@@ -33,13 +33,15 @@ export default function SidebarDashboard({ onItemClick }) {
   const { logout, token, kycStatus } = useSiteSettings();
   const [loading, setLoading] = useState(true);
   const [hasActiveMembership, setHasActiveMembership] = useState(false);
+  const [requiresKyc, setRequiresKyc] = useState(true);
 
-  const isKycComplete = !kycStatus || ["approved", "verified", "completed", "accepted", "2"].includes(String(kycStatus).trim().toLowerCase());
+  const isKycComplete = !requiresKyc || !kycStatus || ["approved", "verified", "completed", "accepted", "2"].includes(String(kycStatus).trim().toLowerCase());
 
   useEffect(() => {
     let isMounted = true;
     const fetchStatus = async () => {
       if (token) {
+        // Fetch membership status
         try {
           const { fetchMyStatus } = await import('@/services/membership.service');
           const result = await fetchMyStatus(token);
@@ -48,6 +50,27 @@ export default function SidebarDashboard({ onItemClick }) {
           }
         } catch (error) {
           console.error("Failed to fetch membership status:", error);
+        }
+
+        // Fetch KYC requires status
+        try {
+          const { LARAVEL_API_BASE_URL, LARAVEL_APPLICATION_PASSWORD, APP_TYPE } = await import('@/lib/config');
+          const kycRes = await fetch(`${LARAVEL_API_BASE_URL}/api/kyc/status`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-Application-Password": LARAVEL_APPLICATION_PASSWORD,
+              "X-App-Type": APP_TYPE,
+            },
+          });
+          if (kycRes.ok) {
+            const kycData = await kycRes.json();
+            if (isMounted && kycData?.status && kycData?.data) {
+              // If requires_kyc is explicitly false, set it
+              setRequiresKyc(kycData.data.requires_kyc ?? true);
+            }
+          }
+        } catch (error) {
+          console.error("Failed to fetch KYC status:", error);
         }
       }
     };

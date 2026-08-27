@@ -33,7 +33,13 @@ import {
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess }) => {
+const KycDocuments = ({
+  profile,
+  token,
+  viewOnly = false,
+  onKycError,
+  onSuccess,
+}) => {
   const router = useRouter();
   const fileInputRef = useRef(null);
   const [activeUploadId, setActiveUploadId] = useState(null);
@@ -388,7 +394,6 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
       const result = await res.json();
 
       if (res.ok && result.status) {
-
         const uploadId = result.data?.upload_id || result.upload_id;
         if (uploadId) {
           const pollInterval = setInterval(async () => {
@@ -440,7 +445,8 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
                     ) {
                       submitRes = await resubmitKyc(token, uploadId, {
                         ...payload,
-                        remarks: "Resubmitting updated documents after rejection."
+                        remarks:
+                          "Resubmitting updated documents after rejection.",
                       });
                     } else {
                       submitRes = await submitKyc(token, uploadId, payload);
@@ -604,91 +610,93 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
     return `${LARAVEL_API_BASE_URL}/${clean.replace(/^\//, "")}`;
   };
 
-  const isKycApproved = ["approved", "verified", "completed"].includes(globalKycStatus?.toLowerCase());
+  const isKycApproved = ["approved", "verified", "completed"].includes(
+    globalKycStatus?.toLowerCase(),
+  );
 
   return (
     <div className={styles.kycContainer}>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-          gap: "20px",
-          marginBottom: "32px",
-        }}
-      >
-        {!viewOnly && (
+      {!viewOnly && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            gap: "20px",
+            marginBottom: "32px",
+          }}
+        >
           <div className={styles.inputGroup}>
-          <label
-            style={{
-              fontSize: "14px",
-              fontWeight: "500",
-              color: "#374151",
-              display: "block",
-              marginBottom: "8px",
-            }}
-          >
-            Aadhaar Number
-          </label>
-          <input
-            type="text"
-            value={
-              (documents.some(
+            <label
+              style={{
+                fontSize: "14px",
+                fontWeight: "500",
+                color: "#374151",
+                display: "block",
+                marginBottom: "8px",
+              }}
+            >
+              Aadhaar Number
+            </label>
+            <input
+              type="text"
+              value={
+                (documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? aadhaarNumber
+                    ? aadhaarNumber.length >= 4 && !aadhaarNumber.includes("X")
+                      ? "XXXXXXXX" + aadhaarNumber.slice(-4)
+                      : aadhaarNumber
+                    : ""
+                  : aadhaarNumber
+                )
+                  ?.match(/.{1,4}/g)
+                  ?.join(" ") || ""
+              }
+              onChange={(e) =>
+                setAadhaarNumber(e.target.value.replace(/\D/g, "").slice(0, 12))
+              }
+              readOnly={documents.some(
                 (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )
-                ? aadhaarNumber
-                  ? aadhaarNumber.length >= 4 && !aadhaarNumber.includes("X")
-                    ? "XXXXXXXX" + aadhaarNumber.slice(-4)
-                    : aadhaarNumber
-                  : ""
-                : aadhaarNumber
-              )
-                ?.match(/.{1,4}/g)
-                ?.join(" ") || ""
-            }
-            onChange={(e) =>
-              setAadhaarNumber(e.target.value.replace(/\D/g, "").slice(0, 12))
-            }
-            readOnly={documents.some(
-              (d) => d.status && d.status.toLowerCase() !== "rejected",
-            )}
-            disabled={documents.some(
-              (d) => d.status && d.status.toLowerCase() !== "rejected",
-            )}
-            placeholder={
-              documents.some(
+              )}
+              disabled={documents.some(
                 (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )
-                ? ""
-                : "Enter your 12 digit Aadhaar number"
-            }
-            style={{
-              width: "100%",
-              padding: "12px 16px",
-              border: "1px solid #9E9E9E",
-              borderRadius: "8px",
-              outline: "none",
-              fontSize: "clamp(14px, 1.5vw, 16px)",
-              fontFamily: "var(--font-regular)",
-              backgroundColor: documents.some(
-                (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )
-                ? "#f3f4f6"
-                : "white",
-              cursor: documents.some(
-                (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )
-                ? "not-allowed"
-                : "text",
-              color: documents.some(
-                (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )
-                ? "#6b7280"
-                : "inherit",
-            }}
-          />
+              )}
+              placeholder={
+                documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? ""
+                  : "Enter your 12 digit Aadhaar number"
+              }
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                border: "1px solid #9E9E9E",
+                borderRadius: "8px",
+                outline: "none",
+                fontSize: "clamp(14px, 1.5vw, 16px)",
+                fontFamily: "var(--font-regular)",
+                backgroundColor: documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? "#f3f4f6"
+                  : "white",
+                cursor: documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? "not-allowed"
+                  : "text",
+                color: documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? "#6b7280"
+                  : "inherit",
+              }}
+            />
+          </div>
         </div>
       )}
-      </div>
       <input
         type="file"
         ref={fileInputRef}
@@ -697,169 +705,279 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
         accept=".jpg,.png,.jpeg,.pdf"
       />
       {isKycApproved ? (
-        <div style={{ background: "#fff", borderRadius: "12px", border: "1px solid #e5e7eb", padding: "24px", marginBottom: "32px" }}>
-          <h4 style={{ fontSize: "18px", fontWeight: "600", color: "#111827", marginBottom: "16px", marginTop: "0" }}>Uploaded Documents</h4>
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            {documents.filter(d => d.status && d.status.toLowerCase() !== "rejected").map(doc => (
-              <div key={doc.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", background: "#f9fafb", borderRadius: "8px", border: "1px solid #e5e7eb" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                  <div className={`${styles.iconCircle} ${styles[doc.iconColor]}`} style={{ width: "48px", height: "48px", fontSize: "20px", display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', margin: 0 }}>
-                    {doc.icon}
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <span style={{ fontSize: "15px", fontWeight: "600", color: "#374151" }}>{doc.title}</span>
-                    <span style={{ fontSize: "13px", color: "#6b7280" }}>{doc.filename || "Document.png"}</span>
-                  </div>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#10b981", fontSize: "14px", fontWeight: "500" }}>
-                    <FaCheckCircle style={{ fontSize: "18px" }} />
-                    Uploaded
-                  </div>
-                  <button 
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleView(doc);
+        <div
+          style={{
+            background: "#fff",
+            borderRadius: "12px",
+            border: "1px solid #e5e7eb",
+            padding: "24px",
+            marginBottom: "32px",
+          }}
+        >
+          <h4
+            style={{
+              fontSize: "18px",
+              fontWeight: "600",
+              color: "#111827",
+              marginBottom: "16px",
+              marginTop: "0",
+            }}
+          >
+            Uploaded Documents
+          </h4>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+          >
+            {documents
+              .filter((d) => d.status && d.status.toLowerCase() !== "rejected")
+              .map((doc) => (
+                <div
+                  key={doc.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "16px",
+                    background: "#f9fafb",
+                    borderRadius: "8px",
+                    border: "1px solid #e5e7eb",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "16px",
+                      minWidth: 0,
+                      overflow: "hidden",
                     }}
-                    style={{ background: "none", border: "none", color: "#f37021", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontSize: "14px", fontWeight: "600", padding: "8px 12px" }}
                   >
-                    <FaEye style={{ fontSize: "16px" }} /> View
-                  </button>
+                    <div
+                      className={`${styles.iconCircle} ${styles[doc.iconColor]}`}
+                      style={{
+                        width: "48px",
+                        height: "48px",
+                        minWidth: "48px",
+                        fontSize: "20px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "50%",
+                        margin: 0,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {doc.icon}
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "4px",
+                        minWidth: 0,
+                        overflow: "hidden",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "15px",
+                          fontWeight: "600",
+                          color: "#374151",
+                        }}
+                      >
+                        {doc.title}
+                      </span>
+                      <span style={{ fontSize: "13px", color: "#6b7280", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {doc.filename || "Document.png"}
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "24px",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        color: "#10b981",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      <FaCheckCircle style={{ fontSize: "18px" }} />
+                      Uploaded
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleView(doc);
+                      }}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#f37021",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        padding: "8px 12px",
+                      }}
+                    >
+                      <FaEye style={{ fontSize: "16px" }} /> View
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       ) : (
         <>
           <div className={styles.documentsGrid}>
-        {documents.map((doc) => (
-          <div
-            key={doc.id}
-            className={`${styles.documentCard} ${doc.file || doc.status ? styles.hasFile : ""}`}
-            onClick={() => {
-              if (!doc.file && !doc.status) handleUpload(doc);
-            }}
-          >
-            <div className={styles.cardHeader}>
-              <div className={styles.headerLeft}>
-                <div
-                  className={`${styles.iconCircle} ${styles[doc.iconColor]}`}
-                >
-                  {doc.icon}
-                </div>
-                <h4 className={styles.docTitle}>{doc.title}</h4>
-              </div>
-              <div className={styles.headerRight}>
-                {doc.status && (
-                  <span
-                    className={`${styles.statusText} ${
-                      doc.status.toLowerCase() === "rejected" 
-                        ? styles.rejectedStatus 
-                        : doc.status.toLowerCase() === "verified" || doc.status.toLowerCase() === "approved"
-                          ? styles.verifiedStatus
-                          : styles.uploadedStatus
-                    }`}
-                    style={doc.status.toLowerCase() === "rejected" ? { color: "#ef4444", backgroundColor: "#fef2f2" } : {}}
-                  >
-                    {doc.status.toLowerCase() === "rejected" 
-                      ? "Rejected" 
-                      : doc.status.toLowerCase() === "verified" || doc.status.toLowerCase() === "approved"
-                        ? "Verified"
-                        : "Uploaded"}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {(doc.file || doc.status || doc.previewUrl) && (
-              <div className={styles.filePreviewBox}>
-                <div className={styles.filePreviewInner}>
-                  {doc.previewUrl && !imageErrors[doc.id] ? (
-                    <img
-                      src={
-                        doc.previewUrl.startsWith("blob:")
-                          ? doc.previewUrl
-                          : getFullUrl(doc.previewUrl)
-                      }
-                      alt={doc.title}
-                      className={styles.fileThumbnail}
-                      onError={() => {
-                        setImageErrors((prev) => ({ ...prev, [doc.id]: true }));
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleView(doc);
-                      }}
-                    />
-                  ) : (
-                    <div className={styles.fileThumbnailPlaceholder}>
-                      {doc.icon || <FaIdCard />}
-                    </div>
-                  )}
-                  <div className={styles.fileDetails}>
-                    <span className={styles.filename}>
-                      {doc.filename || "document.png"}
-                    </span>
-                    <span className={styles.filesize}>
-                      {doc.file
-                        ? `${(doc.file.size / 1024).toFixed(2)} KB`
-                        : "3.07 KB"}
-                    </span>
-                  </div>
-                  {(!doc.status || doc.status.toLowerCase() === "rejected") && (
-                    <button
-                      className={styles.removeFileBtn}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDocuments((prev) =>
-                          prev.map((d) =>
-                            d.id === doc.id
-                              ? {
-                                  ...d,
-                                  file: null,
-                                  filename: "",
-                                  previewUrl: null,
-                                  status: null,
-                                  uploadedOn: null,
-                                }
-                              : d,
-                          ),
-                        );
-                      }}
-                    >
-                      <FaTimes />
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {!doc.file && !doc.status && !doc.previewUrl && (
-              <button
-                type="button"
-                className={styles.uploadPlaceholder}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleUpload(doc);
+            {documents.map((doc) => (
+              <div
+                key={doc.id}
+                className={`${styles.documentCard} ${doc.file || doc.status ? styles.hasFile : ""}`}
+                onClick={() => {
+                  if (!doc.file && !doc.status) handleUpload(doc);
                 }}
               >
-                <FaUpload style={{ color: "#6B7280" }} />
-                <span className={styles.uploadPlaceholderText}>
-                  Click to upload document
-                </span>
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
+                <div className={styles.cardHeader}>
+                  <div className={styles.headerLeft}>
+                    <div
+                      className={`${styles.iconCircle} ${styles[doc.iconColor]}`}
+                    >
+                      {doc.icon}
+                    </div>
+                    <h4 className={styles.docTitle}>{doc.title}</h4>
+                  </div>
+                  <div className={styles.headerRight}>
+                    {doc.status && (
+                      <span
+                        className={`${styles.statusText} ${
+                          doc.status.toLowerCase() === "rejected"
+                            ? styles.rejectedStatus
+                            : doc.status.toLowerCase() === "verified" ||
+                                doc.status.toLowerCase() === "approved"
+                              ? styles.verifiedStatus
+                              : styles.uploadedStatus
+                        }`}
+                        style={
+                          doc.status.toLowerCase() === "rejected"
+                            ? { color: "#ef4444", backgroundColor: "#fef2f2" }
+                            : {}
+                        }
+                      >
+                        {doc.status.toLowerCase() === "rejected"
+                          ? "Rejected"
+                          : doc.status.toLowerCase() === "verified" ||
+                              doc.status.toLowerCase() === "approved"
+                            ? "Verified"
+                            : "Uploaded"}
+                      </span>
+                    )}
+                  </div>
+                </div>
 
-      <div className={styles.infoBanner}>
-        <FaExclamationCircle className={styles.infoBannerIcon} />
-        <span className={styles.infoBannerText}>
-          Supported formats: JPG, PNG, PDF | Max size: 5MB per file
-        </span>
+                {(doc.file || doc.status || doc.previewUrl) && (
+                  <div className={styles.filePreviewBox}>
+                    <div className={styles.filePreviewInner}>
+                      {doc.previewUrl && !imageErrors[doc.id] ? (
+                        <img
+                          src={
+                            doc.previewUrl.startsWith("blob:")
+                              ? doc.previewUrl
+                              : getFullUrl(doc.previewUrl)
+                          }
+                          alt={doc.title}
+                          className={styles.fileThumbnail}
+                          onError={() => {
+                            setImageErrors((prev) => ({
+                              ...prev,
+                              [doc.id]: true,
+                            }));
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleView(doc);
+                          }}
+                        />
+                      ) : (
+                        <div className={styles.fileThumbnailPlaceholder}>
+                          {doc.icon || <FaIdCard />}
+                        </div>
+                      )}
+                      <div className={styles.fileDetails}>
+                        <span className={styles.filename}>
+                          {doc.filename || "document.png"}
+                        </span>
+                        <span className={styles.filesize}>
+                          {doc.file
+                            ? `${(doc.file.size / 1024).toFixed(2)} KB`
+                            : "3.07 KB"}
+                        </span>
+                      </div>
+                      {(!doc.status ||
+                        doc.status.toLowerCase() === "rejected") && (
+                        <button
+                          className={styles.removeFileBtn}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDocuments((prev) =>
+                              prev.map((d) =>
+                                d.id === doc.id
+                                  ? {
+                                      ...d,
+                                      file: null,
+                                      filename: "",
+                                      previewUrl: null,
+                                      status: null,
+                                      uploadedOn: null,
+                                    }
+                                  : d,
+                              ),
+                            );
+                          }}
+                        >
+                          <FaTimes />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {!doc.file && !doc.status && !doc.previewUrl && (
+                  <button
+                    type="button"
+                    className={styles.uploadPlaceholder}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleUpload(doc);
+                    }}
+                  >
+                    <FaUpload style={{ color: "#6B7280" }} />
+                    <span className={styles.uploadPlaceholderText}>
+                      Click to upload document
+                    </span>
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.infoBanner}>
+            <FaExclamationCircle className={styles.infoBannerIcon} />
+            <span className={styles.infoBannerText}>
+              Supported formats: JPG, PNG, PDF | Max size: 5MB per file
+            </span>
           </div>
         </>
       )}
@@ -872,7 +990,9 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
           <button
             type="button"
             className={styles.btnCancel}
-            onClick={() => router.push("/auth/user/dashboard/edit-profile?tab=personal")}
+            onClick={() =>
+              router.push("/auth/user/dashboard/edit-profile?tab=personal")
+            }
             disabled={isSaving}
           >
             <FaArrowLeft style={{ marginRight: "8px" }} /> Back

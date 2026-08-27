@@ -847,36 +847,50 @@ const ProfileForm = () => {
                 onSubmit={handleSubmit}
                 autoComplete="off"
               >
-                <div className={styles.formHeader}>
-                  <div className={styles.formHeaderIcon}>
-                    {activeTab === "personal" ? (
-                      <FaUser />
-                    ) : activeTab === "business" ? (
-                      <FaBuilding />
-                    ) : activeTab === "document" ? (
-                      <FaIdCard />
-                    ) : (
-                      <FaClock />
-                    )}
+                <div className={styles.formHeader} style={{ position: 'relative', display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div className={styles.formHeaderIcon}>
+                      {activeTab === "personal" ? (
+                        <FaUser />
+                      ) : activeTab === "business" ? (
+                        <FaBuilding />
+                      ) : activeTab === "document" ? (
+                        <FaIdCard />
+                      ) : (
+                        <FaClock />
+                      )}
+                    </div>
+                    <div className={styles.formHeaderText}>
+                      <h3>
+                        {activeTab === "personal"
+                          ? "Personal Details"
+                          : activeTab === "business"
+                            ? "Business Details"
+                            : activeTab === "document"
+                              ? "Documents & KYC"
+                              : "Remarks"}
+                      </h3>
+                      <p>
+                        {activeTab === "personal"
+                          ? "Update your personal and address details"
+                          : activeTab === "business"
+                            ? "Update your business and address details"
+                            : "Update your details"}
+                      </p>
+                    </div>
                   </div>
-                  <div className={styles.formHeaderText}>
-                    <h3>
-                      {activeTab === "personal"
-                        ? "Personal Details"
-                        : activeTab === "business"
-                          ? "Business Details"
-                          : activeTab === "document"
-                            ? "Documents & KYC"
-                            : "Remarks"}
-                    </h3>
-                    <p>
-                      {activeTab === "personal"
-                        ? "Update your personal and address details"
-                        : activeTab === "business"
-                          ? "Update your business and address details"
-                          : "Update your details"}
-                    </p>
-                  </div>
+                  {activeTab === "document" && profile?.kyc_status && (
+                    <div style={{
+                        backgroundColor: ["approved", "verified", "completed", "accepted", "2"].includes(String(profile.kyc_status).toLowerCase()) ? "#e0f2fe" : ["rejected", "declined", "failed", "3"].includes(String(profile.kyc_status).toLowerCase()) ? "#fee2e2" : "#ffedd5",
+                        color: ["approved", "verified", "completed", "accepted", "2"].includes(String(profile.kyc_status).toLowerCase()) ? "#0284c7" : ["rejected", "declined", "failed", "3"].includes(String(profile.kyc_status).toLowerCase()) ? "#b91c1c" : "#c2410c",
+                        padding: "4px 12px",
+                        borderRadius: "16px",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                    }}>
+                      {["approved", "verified", "completed", "accepted", "2"].includes(String(profile.kyc_status).toLowerCase()) ? "KYC Verified" : ["rejected", "declined", "failed", "3"].includes(String(profile.kyc_status).toLowerCase()) ? "KYC Rejected" : "KYC Pending"}
+                    </div>
+                  )}
                 </div>
 
                 {activeTab === "personal" && (
@@ -1775,10 +1789,7 @@ const ProfileForm = () => {
                 )}
 
                 {activeTab === "document" && (
-                  <div
-                    className={styles.fieldsGrid}
-                    style={{ display: "block" }}
-                  >
+                  <div style={{ marginTop: '24px' }}>
                     <KycDocuments
                       profile={profile}
                       token={token}

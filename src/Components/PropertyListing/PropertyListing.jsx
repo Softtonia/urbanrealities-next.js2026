@@ -25,11 +25,19 @@ export const PropertyCard = ({ property, handleViewProjectlist }) => {
     const propertyTypeName =
       property?.propertyType?.[0]?.property_type_name ||
       property?.property_type_name ||
-      "";
-    const stateName = property?.state?.name || property?.state_name || "";
-    const slug = await slugify(
-      `${bedroom && bedroom} ${area && area} ${propertyTypeName}-for-${property?.purpose_id_name}-in-${stateName}`,
-    );
+      "property";
+    const stateName = property?.state?.name || property?.state_name || "india";
+    const purposeName = property?.purpose_id_name || "sale";
+    const slugParts = [];
+    if (bedroom) slugParts.push(`${bedroom}-bhk`);
+    if (area) slugParts.push(`${area}-sqft`);
+    slugParts.push(propertyTypeName);
+    slugParts.push('for');
+    slugParts.push(purposeName);
+    slugParts.push('in');
+    slugParts.push(stateName);
+
+    const slug = await slugify(slugParts.join('-'));
     handleViewProjectlist(`${slug}?id=${property?.id}`);
   };
 

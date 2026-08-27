@@ -304,7 +304,7 @@ const Dashboard = () => {
             </div>
             {!loading && (
               <Link
-                href={`/auth/business/dashboard/edit-profile?id=${encodeId(profile.id)}`}
+                href={`/auth/business/dashboard/edit-profile-inline?id=${encodeId(profile.id)}`}
                 className={styles.editBtn}
               >
                 <FaEdit /> Edit Profile
@@ -708,9 +708,14 @@ const Dashboard = () => {
             <p className={styles.successText}>
               Unfortunately, your KYC application has been rejected. Please update your documents and try again.
             </p>
-            <button className={styles.successBtn} style={{ background: '#dc3545' }} onClick={handleCloseKycRejected}>
+            <Link 
+              href={`/auth/business/dashboard/edit-profile?id=${encodeId(userId)}&tab=document`}
+              className={styles.successBtn} 
+              style={{ background: '#dc3545', display: 'inline-block', textDecoration: 'none', textAlign: 'center' }} 
+              onClick={handleCloseKycRejected}
+            >
               Review and Update →
-            </button>
+            </Link>
           </div>
         </div>
       )}

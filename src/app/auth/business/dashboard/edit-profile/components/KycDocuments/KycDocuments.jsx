@@ -605,204 +605,204 @@ const KycDocuments = ({ profile, token, viewOnly = false, onKycError, onSuccess 
   return (
     <div className={styles.kycContainer}>
       {!isKycApproved && !viewOnly && (
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-          gap: "20px",
-          marginBottom: "32px",
-        }}
-      >
-        <div className={styles.inputGroup}>
-          <label
-            style={{
-              fontSize: "14px",
-              fontWeight: "500",
-              color: "#374151",
-              display: "block",
-              marginBottom: "8px",
-            }}
-          >
-            Aadhaar Number
-          </label>
-          <input
-            type="text"
-            value={
-              (documents.some(
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            gap: "20px",
+            marginBottom: "32px",
+          }}
+        >
+          <div className={styles.inputGroup}>
+            <label
+              style={{
+                fontSize: "14px",
+                fontWeight: "500",
+                color: "#374151",
+                display: "block",
+                marginBottom: "8px",
+              }}
+            >
+              Aadhaar Number
+            </label>
+            <input
+              type="text"
+              value={
+                (documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? aadhaarNumber
+                    ? aadhaarNumber.length >= 4 && !aadhaarNumber.includes("X")
+                      ? "XXXXXXXX" + aadhaarNumber.slice(-4)
+                      : aadhaarNumber
+                    : ""
+                  : aadhaarNumber
+                )
+                  ?.match(/.{1,4}/g)
+                  ?.join(" ") || ""
+              }
+              onChange={(e) =>
+                setAadhaarNumber(e.target.value.replace(/\D/g, "").slice(0, 12))
+              }
+              readOnly={documents.some(
                 (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )
-                ? aadhaarNumber
-                  ? aadhaarNumber.length >= 4 && !aadhaarNumber.includes("X")
-                    ? "XXXXXXXX" + aadhaarNumber.slice(-4)
-                    : aadhaarNumber
-                  : ""
-                : aadhaarNumber
-              )
-                ?.match(/.{1,4}/g)
-                ?.join(" ") || ""
-            }
-            onChange={(e) =>
-              setAadhaarNumber(e.target.value.replace(/\D/g, "").slice(0, 12))
-            }
-            readOnly={documents.some(
-              (d) => d.status && d.status.toLowerCase() !== "rejected",
-            )}
-            disabled={documents.some(
-              (d) => d.status && d.status.toLowerCase() !== "rejected",
-            )}
-            placeholder={
-              documents.some(
+              )}
+              disabled={documents.some(
                 (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )
-                ? ""
-                : "Enter your 12 digit Aadhaar number"
-            }
-            style={{
-              width: "100%",
-              padding: "12px 16px",
-              border: "1px solid #9E9E9E",
-              borderRadius: "8px",
-              outline: "none",
-              fontSize: "clamp(14px, 1.5vw, 16px)",
-              fontFamily: "var(--font-regular)",
-              backgroundColor: documents.some(
-                (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )
-                ? "#f3f4f6"
-                : "white",
-              cursor: documents.some(
-                (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )
-                ? "not-allowed"
-                : "text",
-              color: documents.some(
-                (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )
-                ? "#6b7280"
-                : "inherit",
-            }}
-          />
+              )}
+              placeholder={
+                documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? ""
+                  : "Enter your 12 digit Aadhaar number"
+              }
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                border: "1px solid #9E9E9E",
+                borderRadius: "8px",
+                outline: "none",
+                fontSize: "clamp(14px, 1.5vw, 16px)",
+                fontFamily: "var(--font-regular)",
+                backgroundColor: documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? "#f3f4f6"
+                  : "white",
+                cursor: documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? "not-allowed"
+                  : "text",
+                color: documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )
+                  ? "#6b7280"
+                  : "inherit",
+              }}
+            />
+          </div>
+
+          {!viewOnly && documents.some((d) => d.field === "gst_certificate") && (
+            <div className={styles.inputGroup}>
+              <label
+                style={{
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  color: "#374151",
+                  display: "block",
+                  marginBottom: "8px",
+                }}
+              >
+                GST Number
+              </label>
+              <input
+                type="text"
+                value={gstNumber}
+                maxLength={15}
+                onChange={(e) => setGstNumber(e.target.value)}
+                readOnly={documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )}
+                disabled={documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )}
+                placeholder={
+                  documents.some(
+                    (d) => d.status && d.status.toLowerCase() !== "rejected",
+                  )
+                    ? ""
+                    : "Enter your GST number"
+                }
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  border: "1px solid #9E9E9E",
+                  borderRadius: "8px",
+                  outline: "none",
+                  fontSize: "clamp(14px, 1.5vw, 16px)",
+                  fontFamily: "var(--font-regular)",
+                  backgroundColor: documents.some(
+                    (d) => d.status && d.status.toLowerCase() !== "rejected",
+                  )
+                    ? "#f3f4f6"
+                    : "white",
+                  cursor: documents.some(
+                    (d) => d.status && d.status.toLowerCase() !== "rejected",
+                  )
+                    ? "not-allowed"
+                    : "text",
+                  textTransform: "uppercase",
+                  color: documents.some(
+                    (d) => d.status && d.status.toLowerCase() !== "rejected",
+                  )
+                    ? "#6b7280"
+                    : "inherit",
+                }}
+              />
+            </div>
+          )}
+
+          {documents.some((d) => d.field === "rera_certificate") && !viewOnly && (
+            <div className={styles.inputGroup}>
+              <label
+                style={{
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  color: "#374151",
+                  display: "block",
+                  marginBottom: "8px",
+                }}
+              >
+                RERA Number
+              </label>
+              <input
+                type="text"
+                value={reraNumber}
+                onChange={(e) => setReraNumber(e.target.value)}
+                readOnly={documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )}
+                disabled={documents.some(
+                  (d) => d.status && d.status.toLowerCase() !== "rejected",
+                )}
+                placeholder={
+                  documents.some(
+                    (d) => d.status && d.status.toLowerCase() !== "rejected",
+                  )
+                    ? ""
+                    : "Enter your RERA number"
+                }
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  border: "1px solid #9E9E9E",
+                  borderRadius: "8px",
+                  outline: "none",
+                  fontSize: "clamp(14px, 1.5vw, 16px)",
+                  fontFamily: "var(--font-regular)",
+                  backgroundColor: documents.some(
+                    (d) => d.status && d.status.toLowerCase() !== "rejected",
+                  )
+                    ? "#f3f4f6"
+                    : "white",
+                  cursor: documents.some(
+                    (d) => d.status && d.status.toLowerCase() !== "rejected",
+                  )
+                    ? "not-allowed"
+                    : "text",
+                  textTransform: "uppercase",
+                  color: documents.some(
+                    (d) => d.status && d.status.toLowerCase() !== "rejected",
+                  )
+                    ? "#6b7280"
+                    : "inherit",
+                }}
+              />
+            </div>
+          )}
         </div>
-
-        {documents.some((d) => d.field === "gst_certificate") && (
-          <div className={styles.inputGroup}>
-            <label
-              style={{
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#374151",
-                display: "block",
-                marginBottom: "8px",
-              }}
-            >
-              GST Number
-            </label>
-            <input
-              type="text"
-              value={gstNumber}
-              maxLength={15}
-              onChange={(e) => setGstNumber(e.target.value)}
-              readOnly={documents.some(
-                (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )}
-              disabled={documents.some(
-                (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )}
-              placeholder={
-                documents.some(
-                  (d) => d.status && d.status.toLowerCase() !== "rejected",
-                )
-                  ? ""
-                  : "Enter your GST number"
-              }
-              style={{
-                width: "100%",
-                padding: "12px 16px",
-                border: "1px solid #9E9E9E",
-                borderRadius: "8px",
-                outline: "none",
-                fontSize: "clamp(14px, 1.5vw, 16px)",
-                fontFamily: "var(--font-regular)",
-                backgroundColor: documents.some(
-                  (d) => d.status && d.status.toLowerCase() !== "rejected",
-                )
-                  ? "#f3f4f6"
-                  : "white",
-                cursor: documents.some(
-                  (d) => d.status && d.status.toLowerCase() !== "rejected",
-                )
-                  ? "not-allowed"
-                  : "text",
-                textTransform: "uppercase",
-                color: documents.some(
-                  (d) => d.status && d.status.toLowerCase() !== "rejected",
-                )
-                  ? "#6b7280"
-                  : "inherit",
-              }}
-            />
-          </div>
-        )}
-
-        {documents.some((d) => d.field === "rera_certificate") && (
-          <div className={styles.inputGroup}>
-            <label
-              style={{
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#374151",
-                display: "block",
-                marginBottom: "8px",
-              }}
-            >
-              RERA Number
-            </label>
-            <input
-              type="text"
-              value={reraNumber}
-              onChange={(e) => setReraNumber(e.target.value)}
-              readOnly={documents.some(
-                (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )}
-              disabled={documents.some(
-                (d) => d.status && d.status.toLowerCase() !== "rejected",
-              )}
-              placeholder={
-                documents.some(
-                  (d) => d.status && d.status.toLowerCase() !== "rejected",
-                )
-                  ? ""
-                  : "Enter your RERA number"
-              }
-              style={{
-                width: "100%",
-                padding: "12px 16px",
-                border: "1px solid #9E9E9E",
-                borderRadius: "8px",
-                outline: "none",
-                fontSize: "clamp(14px, 1.5vw, 16px)",
-                fontFamily: "var(--font-regular)",
-                backgroundColor: documents.some(
-                  (d) => d.status && d.status.toLowerCase() !== "rejected",
-                )
-                  ? "#f3f4f6"
-                  : "white",
-                cursor: documents.some(
-                  (d) => d.status && d.status.toLowerCase() !== "rejected",
-                )
-                  ? "not-allowed"
-                  : "text",
-                textTransform: "uppercase",
-                color: documents.some(
-                  (d) => d.status && d.status.toLowerCase() !== "rejected",
-                )
-                  ? "#6b7280"
-                  : "inherit",
-              }}
-            />
-          </div>
-        )}
-      </div>
       )}
       <input
         type="file"

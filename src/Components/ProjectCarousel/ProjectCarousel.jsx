@@ -54,11 +54,12 @@ const ProjectCarousel = ({ projects }) => {
     }
   };
 
-  const handleProject = (project) => {
-    const name = project.name || project.title;
-    const propertyName = project.property_id_name || project.title;
+  const handleProject = async (project) => {
+    const { slugify } = await import("@/utils/slugify");
+    const propertyName = project?.property_id_name || project?.title || project?.name || "property";
+    const slug = slugify(propertyName);
     router.push(
-      `/propertydetails/${propertyName}?id=${project.id}`,
+      `/propertydetails/${slug}?id=${project.id}`,
     );
   };
 
