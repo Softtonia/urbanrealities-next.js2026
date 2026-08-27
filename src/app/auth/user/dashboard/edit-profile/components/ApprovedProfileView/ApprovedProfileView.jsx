@@ -359,33 +359,7 @@ const ApprovedProfileView = ({ formData, profileImage, token, isBusiness = false
             </div>
           </div>
 
-          {/* Business Info Card (If Business) */}
-          {isBusiness && (
-            <div className={styles.glassCard}>
-              <div className={styles.cardHeader}>
-                <div className={styles.iconBox}><FaBuilding /></div>
-                <h3>Business Details</h3>
-              </div>
-              <div className={styles.cardBody}>
-                <div className={styles.infoRow}>
-                  <span className={styles.label}>Business Name</span>
-                  {renderField('bussiness_name', localData.bussiness_name, 'Business Name')}
-                </div>
-                <div className={styles.infoRow}>
-                  <span className={styles.label}>Business Email</span>
-                  {renderField('bussiness_email', localData.bussiness_email, 'Business Email')}
-                </div>
-                <div className={styles.infoRow}>
-                  <span className={styles.label}>GST Number</span>
-                  {renderField('gst_number', localData.gst_number, 'GST Number')}
-                </div>
-                <div className={styles.infoRow}>
-                  <span className={styles.label}>RERA Number</span>
-                  {renderField('rera_number', localData.rera_number, 'RERA Number')}
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Business Info Card (If Business) - Hidden per user request */}
         </div>
 
         {/* Right Column: Address Details */}

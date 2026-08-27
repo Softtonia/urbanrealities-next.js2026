@@ -354,7 +354,7 @@ export default function Navbar() {
                   }
                 }}
                 className="btn-property d-flex align-items-center gap-2 rounded-pill border-0"
-                style={{ background: 'var(--primary-color)', color: '#fff' }}
+                style={{ background: 'var(--Orange-Red)', color: '#fff' }}
               >
                 <Image
                   src={homeLogo}
@@ -372,6 +372,7 @@ export default function Navbar() {
                     : "/auth/post-property/basic-details"
                 }
                 className="btn-property d-flex align-items-center gap-2 rounded-pill"
+                style={{ background: 'var(--Orange-Red)', color: '#fff', border: 'none' }}
               >
                 <Image
                   src={homeLogo}
@@ -593,7 +594,7 @@ export default function Navbar() {
                   }
                 }}
                 className="btn-property d-flex align-items-center gap-1 rounded-pill text-sm px-2 py-1 border-0"
-                style={{ fontSize: "12px", background: 'var(--primary-color)', color: '#fff' }}
+                style={{ fontSize: "12px", background: 'var(--Orange-Red)', color: '#fff' }}
               >
                 <Image
                   src={homeLogo}
@@ -616,8 +617,8 @@ export default function Navbar() {
                     ? `/auth/login?redirect=/auth/post-property/basic-details`
                     : "/auth/post-property/basic-details"
                 }
-                className="btn-property d-flex align-items-center gap-1 rounded-pill text-sm px-2 py-1"
-                style={{ fontSize: "12px" }}
+                className="btn-property d-flex align-items-center gap-1 rounded-pill text-sm px-2 py-1 border-0"
+                style={{ fontSize: "12px", background: 'var(--Orange-Red)', color: '#fff' }}
               >
                 <Image
                   src={homeLogo}

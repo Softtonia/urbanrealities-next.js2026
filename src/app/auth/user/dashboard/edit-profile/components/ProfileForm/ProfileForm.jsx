@@ -156,7 +156,7 @@ const ProfileForm = () => {
           street_address: normalize(rawData.street_address),
           address: normalize(rawData.address),
           about_us: normalize(rawData.about_us || rawData.about),
-          aadhaar_number: normalize(rawData.aadhaar_number),
+          aadhaar_number: normalize(rawData.aadhaar_number || rawData.aadhar_number),
           gst_number: normalize(rawData.gst_number),
           rera_number: normalize(rawData.rera_number),
         });

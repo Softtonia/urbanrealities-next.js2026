@@ -178,7 +178,7 @@ const ProfileForm = () => {
           business_street_address: normalize(rawData.business_street_address),
           business_pin_code: normalize(rawData.business_pin_code),
           bussiness_address: normalize(rawData.bussiness_address),
-          aadhaar_number: normalize(rawData.aadhaar_number),
+          aadhaar_number: normalize(rawData.aadhaar_number || rawData.aadhar_number),
           gst_number: normalize(rawData.gst_number),
           rera_number: normalize(rawData.rera_number),
           no_of_employees: normalize(rawData.no_of_employees),
