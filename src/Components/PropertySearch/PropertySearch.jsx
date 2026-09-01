@@ -22,6 +22,8 @@ export default function PropertySearch({ purpose }) {
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [localPurpose, setLocalPurpose] = useState(purpose || "sell");
   const [isOptionsLoading, setIsOptionsLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isViewSearching, setIsViewSearching] = useState(false);
 
   useEffect(() => {
     if (purpose) {
@@ -56,6 +58,7 @@ export default function PropertySearch({ purpose }) {
   }, [globalCity]);
 
   const handleViewsearch = () => {
+    setIsViewSearching(true);
     router.push("/FilterMobile");
   };
 
@@ -199,6 +202,7 @@ export default function PropertySearch({ purpose }) {
 
   const { search } = useSearch({}, { autoPush: false });
   const handleSearch = () => {
+    setIsSearching(true);
 
     const typeIds = selectedTypes;
 
@@ -230,6 +234,13 @@ export default function PropertySearch({ purpose }) {
   // console.log('==>', );
   return (
     <>
+      {(isSearching || isViewSearching) && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(255, 255, 255, 0.7)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div className="loaderWrapper" style={{ height: 'auto' }}>
+            <div className="spinner"></div>
+          </div>
+        </div>
+      )}
       <div className="container">
         <div className="searchbar-cts d-flex justify-content-center align-items-center">
           <div className="search-container">
@@ -282,21 +293,7 @@ export default function PropertySearch({ purpose }) {
                   onClick={(e) => e.stopPropagation()}
                   style={{ minWidth: "720px", border: "none", boxShadow: "0px 4px 12px rgba(0,0,0,0.1)", borderRadius: "8px" }}
                 >
-                  {/* Recent Searches */}
-                  <div className="recent-searches mb-3">
-                    <h6 style={{ fontSize: "12px", fontWeight: "bold", color: "#555" }}>Recent Searches</h6>
-                    <div 
-                      className="recent-search-item p-2 mt-2" 
-                      style={{ backgroundColor: "#f8f9fa", border: "1px solid #e9ecef", borderRadius: "8px", cursor: "pointer" }}
-                      onClick={() => {
-                        setInputLocation("Bangalore");
-                        setIsLocationOpen(false);
-                      }}
-                    >
-                      <div style={{ color: "#333", fontSize: "14px" }}>Buy in Bangalore</div>
-                      <div style={{ color: "#888", fontSize: "12px" }}>Flat, House/Villa, Plot, All ...</div>
-                    </div>
-                  </div>
+
 
                   {/* Location Header and List - ONLY visible when NO city is selected */}
                   {!localCity && (
@@ -588,9 +585,9 @@ export default function PropertySearch({ purpose }) {
               type="button"
               onClick={handleSearch}
               className="btn search-btn text-white"
+              disabled={isSearching}
             >
               <IoSearch />
-
               Search
             </button>
           </div>
@@ -607,13 +604,17 @@ export default function PropertySearch({ purpose }) {
             placeholder="Search By City, Locality, Project"
           />
           <div className="small-btn">
-            <div
-              className="btn circle-btn text-white "
+            <button
+              className="btn circle-btn text-white"
               onClick={handleViewsearch}
+              disabled={isViewSearching}
+              style={{
+                pointerEvents: isViewSearching ? "none" : "auto",
+                opacity: isViewSearching ? 0.7 : 1,
+              }}
             >
-
               <IoSearch />
-            </div>
+            </button>
           </div>
         </div>
       </div>

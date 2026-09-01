@@ -20,8 +20,10 @@ import { useCity } from "@/utils/CityContext";
 // }));
 
 export const PropertyCard = ({ property, handleViewProjectlist }) => {
+  const [isNavigating, setIsNavigating] = useState(false);
   console.log("property", property);
   const handleNavigate = async () => {
+    setIsNavigating(true);
     const propertyTypeName =
       property?.propertyType?.[0]?.property_type_name ||
       property?.property_type_name ||
@@ -89,7 +91,15 @@ export const PropertyCard = ({ property, handleViewProjectlist }) => {
   const locationText = [cityStr, stateStr].filter(Boolean).join(", ");
 
   return (
-    <div className="property-card" onClick={handleNavigate} style={{cursor: 'pointer'}}>
+    <>
+      {isNavigating && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(255, 255, 255, 0.7)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div className="loaderWrapper" style={{ height: 'auto' }}>
+            <div className="spinner"></div>
+          </div>
+        </div>
+      )}
+      <div className="property-card" onClick={!isNavigating ? handleNavigate : undefined} style={{cursor: isNavigating ? 'default' : 'pointer'}}>
       <div className="property-image-container" style={{position: 'relative'}}>
         <img
           src={property?.featured_image}
@@ -147,13 +157,17 @@ export const PropertyCard = ({ property, handleViewProjectlist }) => {
           <div
             className="btn-property-detail btn-more-details"
             style={{margin: '0', padding: '6px 12px', fontSize: '13px'}}
-            onClick={(e) => { e.stopPropagation(); handleNavigate(); }}
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              if (!isNavigating) handleNavigate(); 
+            }}
           >
             More Details
           </div>
         </div>
       </div>
     </div>
+    </>
   );
 };
 
