@@ -8,6 +8,8 @@ import { RiParkingBoxLine } from 'react-icons/ri';
 import { BiRuler } from 'react-icons/bi';
 import { MdBatteryFull, MdLocationOn, MdBalcony } from "react-icons/md";
 
+import AreaUnitDropdown from "@/Components/AreaUnitDropdown/AreaUnitDropdown";
+
 // icon map for each template field
 const iconMap = {
   bedroom: <FaBed className="highlight-svg" />,
@@ -73,7 +75,13 @@ const PropertyHighlights = ({ property }) => {
           {highlights.map((item, idx) => (
             <div key={idx} className="highlight-box">
               {item.icon}
-              <span className="highlight-span">{item.value}</span>
+              <span className="highlight-span">
+                {item.label === "built-up" ? (
+                  <AreaUnitDropdown baseSqft={item.value} />
+                ) : (
+                  item.value
+                )}
+              </span>
               <p className="highlight-para">{item.fieldLabel}</p>
             </div>
           ))}

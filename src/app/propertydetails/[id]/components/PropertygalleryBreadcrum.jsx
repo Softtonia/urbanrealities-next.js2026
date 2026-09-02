@@ -4,6 +4,7 @@ import "./PropertygalleryBreadcrum.css";
 import SharePropertyPopup from "./SharePropertyPopup";
 import { usePathname } from "next/navigation";
 import { formatprice } from "@/utils/formatprice";
+import AreaUnitDropdown from "@/Components/AreaUnitDropdown/AreaUnitDropdown";
 
 const propertyData = {
   title: "3BHK, Mundeshwari",
@@ -63,17 +64,26 @@ const PropertygalleryBreadcrum = ({ property }) => {
   const propertyTypes = property?.propertyType?.map(value => value.property_type_name).join(", ");
   const purpose = property?.purpose_id_name;
   
-  const dynamicTitleParts = [];
-  if (bhk) dynamicTitleParts.push(`${bhk} BHK`);
-  if (sqft) dynamicTitleParts.push(`${sqft} sqft`);
-  if (propertyTypes) dynamicTitleParts.push(propertyTypes);
-  if (purpose) dynamicTitleParts.push(`For ${purpose}`);
-  if (property?.city?.name || property?.state?.name) {
-    const location = [property?.city?.name, property?.state?.name].filter(Boolean).join(", ");
-    dynamicTitleParts.push(`in ${location}`);
-  }
-  
-  const dynamicTitle = dynamicTitleParts.join(" ");
+  const renderDynamicTitle = () => {
+    const parts = [];
+    if (bhk) parts.push(<React.Fragment key="bhk">{bhk} BHK</React.Fragment>);
+    if (sqft) parts.push(<div key="sqft" style={{ display: 'inline-block' }}><AreaUnitDropdown baseSqft={sqft} /></div>);
+    if (propertyTypes) parts.push(<React.Fragment key="type">{propertyTypes}</React.Fragment>);
+    if (purpose) parts.push(<React.Fragment key="purpose">For {purpose}</React.Fragment>);
+    if (property?.city?.name || property?.state?.name) {
+      const location = [property?.city?.name, property?.state?.name].filter(Boolean).join(", ");
+      parts.push(<React.Fragment key="loc">in {location}</React.Fragment>);
+    }
+
+    if (parts.length === 0) return property?.property_name || "Untitled Listing";
+
+    return parts.map((part, index) => (
+      <React.Fragment key={index}>
+        {part}
+        {index < parts.length - 1 && " "}
+      </React.Fragment>
+    ));
+  };
 
   console.log("heroo", property?.repeater_fields)
 
@@ -101,8 +111,8 @@ const PropertygalleryBreadcrum = ({ property }) => {
               <span className="rent-label body-text-14 mb-2" style={{ width: 'fit-content' }}>
                 For {property?.purpose_id_name || "Sale"}
               </span>
-              <h1 className="body-text-24 fw-bold m-0" style={{ fontSize: '24px', color: '#111827' }}>
-                {dynamicTitle || property?.property_name || "Untitled Listing"}
+              <h1 className="body-text-24 fw-bold m-0 d-flex align-items-center gap-2 flex-wrap" style={{ fontSize: '24px', color: '#111827' }}>
+                {renderDynamicTitle()}
               </h1>
             </div>
           </div>

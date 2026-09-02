@@ -72,16 +72,28 @@ const PropertyDetailspage = async ({ params, searchParams }) => {
   // Prefer query string (?id=27) but fallback to path parameter (/propertydetails/27)
   const id = resolvedSearchParams?.id || resolvedParams?.id; 
   console.log("Property ID:", id);
-  const property =await fetchProperty(id)
+  const property = await fetchProperty(id);
   let userDetail = null;
   if (property?.user_id) {
     userDetail = await fetchUser(property.user_id);
   }
-  const leadTypes =await fetchLeadType()
+  const leadTypes = await fetchLeadType();
   console.log("userDetail:", userDetail);
  
+  let customWidth = '100%';
+  if (property?.layout_json) {
+    try {
+      const parsedLayout = typeof property.layout_json === 'string' ? JSON.parse(property.layout_json) : property.layout_json;
+      if (parsedLayout?.settings?.contentWidthType === 'custom' && parsedLayout?.settings?.customWidth) {
+        customWidth = parsedLayout.settings.customWidth;
+      }
+    } catch (e) {
+      console.error("Error parsing layout_json:", e);
+    }
+  }
+
   return (
-    <div>
+    <div style={{ maxWidth: customWidth, margin: '0 auto', width: '100%' }}>
       <PropertyAllDetails property={property} leadTypes={leadTypes} userDetail={userDetail}/>
     </div>
   );

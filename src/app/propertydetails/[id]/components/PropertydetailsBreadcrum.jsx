@@ -3,6 +3,7 @@ import React from "react";
 import Link from "next/link";
 import "./PropertydetailsBreadcrum.css";
 import { FaChevronRight } from "react-icons/fa";
+import AreaUnitDropdown from "@/Components/AreaUnitDropdown/AreaUnitDropdown";
 
 const PropertydetailsBreadcrum = ({property}) => {
   console.log(property);
@@ -12,25 +13,34 @@ const PropertydetailsBreadcrum = ({property}) => {
   const propertyTypes = property?.propertyType?.map(value => value.property_type_name).join(", ");
   const purpose = property?.purpose_id_name;
   
-  const dynamicTitleParts = [];
-  if (bhk) dynamicTitleParts.push(`${bhk} BHK`);
-  if (sqft) dynamicTitleParts.push(`${sqft} sqft`);
-  if (propertyTypes) dynamicTitleParts.push(propertyTypes);
-  if (purpose) dynamicTitleParts.push(`for ${purpose}`);
-  
-  const dynamicTitle = dynamicTitleParts.length > 0 ? dynamicTitleParts.join(" ") : property?.property_name;
+  const renderDynamicTitle = () => {
+    const parts = [];
+    if (bhk) parts.push(<React.Fragment key="bhk">{bhk} BHK</React.Fragment>);
+    if (sqft) parts.push(<div key="sqft" style={{ display: 'inline-block' }}><AreaUnitDropdown baseSqft={sqft} /></div>);
+    if (propertyTypes) parts.push(<React.Fragment key="type">{propertyTypes}</React.Fragment>);
+    if (purpose) parts.push(<React.Fragment key="purpose">for {purpose}</React.Fragment>);
+    
+    if (parts.length === 0) return property?.property_name;
+
+    return parts.map((part, index) => (
+      <React.Fragment key={index}>
+        {part}
+        {index < parts.length - 1 && " "}
+      </React.Fragment>
+    ));
+  };
 
       return (
           <>
               <div className="breadcrumb-container">
                   <div className="container">
                       <div className="details-breadcrum body-text-rg16">
-                          <div className="left-breadcrumb m-0">
+                          <div className="left-breadcrumb m-0" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '4px' }}>
                               <Link className="" href="/">Home</Link>
                               <FaChevronRight />
                               {/* <Link className="ms-3" href="/newly-listed ">Newly Listed Properties</Link> */}
                               {/* <FaChevronRight /> */}
-                              <span className="body-text-rg16 ms-3">{dynamicTitle} </span>
+                              <span className="body-text-rg16 ms-3 d-flex align-items-center gap-1" style={{ whiteSpace: 'nowrap' }}>{renderDynamicTitle()}</span>
                               {property?.city?.name && property?.state?.name &&
                                   <span className="body-text-rg16">in {property.city.name} ,{property.state.name}</span>
                               }
