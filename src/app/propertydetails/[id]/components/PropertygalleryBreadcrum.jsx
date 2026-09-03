@@ -6,13 +6,6 @@ import { usePathname } from "next/navigation";
 import { formatprice } from "@/utils/formatprice";
 import AreaUnitDropdown from "@/Components/AreaUnitDropdown/AreaUnitDropdown";
 
-const propertyData = {
-  title: "3BHK, Mundeshwari",
-  price: "₹ 3 Crore",
-  label: "For Rent",
-  details: "Builder Floor 1700sqft.",
-  state: " Ernakulam, Kerala",
-};
 
 const PropertygalleryBreadcrum = ({ property }) => {
   const [showModal, setShowModal] = useState(false);
@@ -75,7 +68,7 @@ const PropertygalleryBreadcrum = ({ property }) => {
       parts.push(<React.Fragment key="loc">in {location}</React.Fragment>);
     }
 
-    if (parts.length === 0) return property?.property_name || "Untitled Listing";
+    if (parts.length === 0) return property?.property_name || "";
 
     return parts.map((part, index) => (
       <React.Fragment key={index}>
@@ -108,9 +101,11 @@ const PropertygalleryBreadcrum = ({ property }) => {
               </div>)}
 
             <div className="label-desc d-flex flex-direction-column mt-2">
-              <span className="rent-label body-text-14 mb-2" style={{ width: 'fit-content' }}>
-                For {property?.purpose_id_name || "Sale"}
-              </span>
+              {property?.purpose_id_name && (
+                <span className="rent-label body-text-14 mb-2" style={{ width: 'fit-content' }}>
+                  For {property.purpose_id_name}
+                </span>
+              )}
               <h1 className="body-text-24 fw-bold m-0 d-flex align-items-center gap-2 flex-wrap" style={{ fontSize: '24px', color: '#111827' }}>
                 {renderDynamicTitle()}
               </h1>
@@ -140,77 +135,83 @@ const PropertygalleryBreadcrum = ({ property }) => {
         </div>
       </div>
 
-      <div className="gallery">
-        <div className="container">
-          <div className="gallery-content">
-            <div className="main-image">
-              <img
-                src={property?.featured_image && property?.featured_image }
-                alt="Main"
-                width={832}
-                height={493}
-                className="featured-img"
-                onError={(e) => {
-                  e.currentTarget.src = "/property-placeholders.jpg";
-                }}
-              />
-            </div>
+      {(property?.featured_image || editgallery?.length > 0) && (
+        <div className="gallery">
+          <div className="container">
+            <div className="gallery-content">
+              {property?.featured_image && (
+                <div className="main-image">
+                  <img
+                    src={property.featured_image}
+                    alt="Main"
+                    width={832}
+                    height={493}
+                    className="featured-img"
+                    onError={(e) => {
+                      e.currentTarget.src = "/property-placeholders.jpg";
+                    }}
+                  />
+                </div>
+              )}
 
-            <div className="side-images">
-              {/* Main Side Image */}
-              <img
-                src={editgallery?.[0] || "/kitchen.png"}
-                alt="Main"
-                width={584}
-                height={246}
-                className="project-img"
-                onError={(e) => {
-                  e.currentTarget.src = "/property-placeholders.jpg";
-                }}
-              />
-
-              {/* Sub Images */}
-              {editgallery?.length > 1 && (
-                <div className="overlay-view d-flex">
-                  {/* Second Image */}
-                  {editgallery?.[1] && (
-                    <div className="side-sub-image">
-                      <img
-                        src={editgallery[1]}
-                        alt="Sub Image"
-                        width={274}
-                        height={227}
-                        className="project-thumb-img"
-                        onError={(e) => {
-                          e.currentTarget.src = "/property-placeholders.jpg";
-                        }}
-                      />
-                    </div>
+              {editgallery?.length > 0 && (
+                <div className="side-images">
+                  {/* Main Side Image */}
+                  {editgallery[0] && (
+                    <img
+                      src={editgallery[0]}
+                      alt="Main"
+                      width={584}
+                      height={246}
+                      className="project-img"
+                      onError={(e) => {
+                        e.currentTarget.src = "/property-placeholders.jpg";
+                      }}
+                    />
                   )}
 
-                  {/* Third Image */}
-                  {editgallery?.[2] && (
-                    <div className="view-more">
-                      <img
-                        src={editgallery[2]}
-                        alt="Sub Image"
-                        width={274}
-                        height={227}
-                        className="project-thumb-img"
-                        onError={(e) => {
-                          e.currentTarget.src = "/property-placeholders.jpg";
-                        }}
-                      />
-                      {/* <span className="overlay-text">View All {editgallery.length} Photos</span> */}
+                  {/* Sub Images */}
+                  {editgallery.length > 1 && (
+                    <div className="overlay-view d-flex">
+                      {/* Second Image */}
+                      {editgallery[1] && (
+                        <div className="side-sub-image">
+                          <img
+                            src={editgallery[1]}
+                            alt="Sub Image"
+                            width={274}
+                            height={227}
+                            className="project-thumb-img"
+                            onError={(e) => {
+                              e.currentTarget.src = "/property-placeholders.jpg";
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      {/* Third Image */}
+                      {editgallery[2] && (
+                        <div className="view-more">
+                          <img
+                            src={editgallery[2]}
+                            alt="Sub Image"
+                            width={274}
+                            height={227}
+                            className="project-thumb-img"
+                            onError={(e) => {
+                              e.currentTarget.src = "/property-placeholders.jpg";
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
               )}
             </div>
           </div>
-
         </div>
-      </div>
+      )}
       <SharePropertyPopup
         show={showModal}
         handleClose={handleCloseModal}
